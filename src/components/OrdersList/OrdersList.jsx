@@ -63,27 +63,30 @@ const OrdersList = () => {
     const [limit, setLimit] = useState(20);
 
     // Get list of columns that need redering from Cookies
-    const [colsToRender, setColsToRender] = useState(JSON.parse(Cookies.get('ordersListCols')) || {
-        id: true,
-        created_at: true,
-        status: true,
-        supplier_name: true,
-        user_created_name: true,
-        total_quantity: true,
-        total_price: true,
-        supplier_id: false,
-        user_cancelled_name: false,
-        user_completed_name: false,
-        user_ended_name: false,
-        supplier_phone: false,
-        supplier_address: false,
-        supplier_email: false,
-        note: false,
-        tags: false,
-        expected_at: false,
-        completed_at: false,
-        ended_at: false,
-        cancelled_at: false
+    const [colsToRender, setColsToRender] = useState(() => {
+        const storedCols = Cookies.get('ordersListCols');
+        return storedCols ? JSON.parse(storedCols) : {
+            id: true,
+            created_at: true,
+            status: true,
+            supplier_name: true,
+            user_created_name: true,
+            total_quantity: true,
+            total_price: true,
+            supplier_id: false,
+            user_cancelled_name: false,
+            user_completed_name: false,
+            user_ended_name: false,
+            supplier_phone: false,
+            supplier_address: false,
+            supplier_email: false,
+            note: false,
+            tags: false,
+            expected_at: false,
+            completed_at: false,
+            ended_at: false,
+            cancelled_at: false
+        }
     })
 
     // Set required columns to Cookies
