@@ -1,0 +1,44 @@
+import React from 'react'
+import { Route, Routes } from 'react-router-dom'
+
+// Import CSS
+import s from './Layout.module.scss'
+
+// Import Components
+import Sidebar from '../components/Sidebar/Sidebar'
+
+// Import Pages
+import Dashboard from '../pages/Dashboard/Dashboard'
+import Products from '../pages/Products/Products'
+import Variants from '../pages/Variants/Variants'
+import OrderSuppliers from '../pages/OrderSuppliers/OrderSuppliers'
+import PurchaseOrders from '../pages/PurchaseOrders/PurchaseOrders'
+import StockAdjustments from '../pages/StockAdjustments/StockAdjustments'
+import Suppliers from '../pages/Suppliers/Suppliers'
+import PriceAdjustments from '../pages/PriceAdjustments/PriceAdjustments'
+import PaymentVouchers from '../pages/PaymentVouchers/PaymentVouchers'
+import Reports from '../pages/Reports/Reports'
+
+const Layout = () => {
+  return (
+    <div className={s.container}>
+        <Sidebar />
+        <div className='right'>
+          <Routes>
+              <Route path='/dashboard/*' element={<Dashboard />} />
+              <Route path='/products/*' element={<Products />} />
+              <Route path='/variants/*' element={<Variants />} />
+              <Route path='/order_suppliers/*' element={<OrderSuppliers />} />
+              <Route path='/purchase_orders/*' element={<PurchaseOrders />} />
+              <Route path='/stock_adjustments/*' element={<StockAdjustments />} />
+              <Route path='/suppliers/*' element={<Suppliers />} />
+              <Route path='/price_adjustments/*' element={<PriceAdjustments />} />
+              <Route path='/payment_vouchers/*' element={<PaymentVouchers />} />
+              <Route path='/reports/*' element={<Reports />} />
+          </Routes>
+        </div>
+    </div>
+  )
+}
+
+export default Layout
