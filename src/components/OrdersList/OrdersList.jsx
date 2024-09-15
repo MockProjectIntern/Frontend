@@ -1,4 +1,8 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import cn from 'classnames'
+import Cookies from 'js-cookie'
+
+// Import Components
 import Header from '../Header/Header'
 
 // Import Columns Info
@@ -11,7 +15,6 @@ import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
-import cn from 'classnames'
 
 const ordersList = [
     {
@@ -21,9 +24,7 @@ const ordersList = [
         supplier_name: "MDC",
         user_created_name: "Admin",
         total_quantity: 7,
-        total_price: "2,448,000",
-        supplier_id: "",
-        user_ended_name: ""
+        total_price: "2,448,000"
     },
     {
         id: "OSN00003",
@@ -61,17 +62,41 @@ const OrdersList = () => {
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
 
+    // Get list of columns that need redering from Cookies
+    const [colsToRender, setColsToRender] = useState(JSON.parse(Cookies.get('ordersListCols')) || {
+        id: true,
+        created_at: true,
+        status: true,
+        supplier_name: true,
+        user_created_name: true,
+        total_quantity: true,
+        total_price: true,
+        supplier_id: false,
+        user_cancelled_name: false,
+        user_completed_name: false,
+        user_ended_name: false,
+        supplier_phone: false,
+        supplier_address: false,
+        supplier_email: false,
+        note: false,
+        tags: false,
+        expected_at: false,
+        completed_at: false,
+        ended_at: false,
+        cancelled_at: false
+    })
+
+    // Set required columns to Cookies
+    useEffect(() => {
+        Cookies.set('ordersListCols', JSON.stringify(colsToRender));
+    }, [colsToRender])
+
     const headersRef = useRef(null);
     const contentRef = useRef(null);
 
     const handleScroll = (e, target) => {
         target.scrollLeft = e.target.scrollLeft;
     }
-
-    // Filter the columns based on the keys that exist in the ordersList
-    const columnsToRender = Object.keys(col).filter((key) =>
-        ordersList.some(order => key in order)
-    );
 
     const handlePrevPage = () => {
         if (page > 1) {
@@ -83,6 +108,10 @@ const OrdersList = () => {
         if (page < pageQuantiy) {
             setPage(prev => prev + 1);
         }
+    }
+
+    const handleColsChange = (name) => {
+        setColsToRender({...colsToRender, [name]: !colsToRender[name]})
     }
 
   return (
@@ -185,15 +214,20 @@ const OrdersList = () => {
                     <table className="box-table-headers">
                         <colgroup>
                         <col style={{ width: "80px" }} />
-                            {/* Render the <colgroup> only for the columns that have data */}
-                            {columnsToRender.map((key) => (
-                                <col
-                                    key={key}
-                                    style={{
-                                        width: col[key].width
-                                    }}
-                                />
-                            ))}
+                            {/* Render the <colgroup> only for the columns that are in colsToRender */}
+                            {Object.entries(colsToRender).map(([key, value]) => {
+                                if (value) {
+                                    return (
+                                        <col
+                                            key={key}
+                                            style={{
+                                                width: col[key].width
+                                            }}
+                                        />
+                                    )
+                                }
+                                return null;
+                            })}
                         </colgroup>
                         <thead>
                             <tr className="group-table-headers">
@@ -211,8 +245,25 @@ const OrdersList = () => {
                                     </div>
                                 </th>
                                 {/* Render table headers for columns that exist in ordersList */}
-                                {columnsToRender.map((key) => {
-                                    if (key === "created_at") {
+                                {Object.entries(colsToRender).map(([key, value]) => {
+                                    if (value) {
+                                        if (key === "created_at") {
+                                            return (
+                                                <th 
+                                                    key={key}
+                                                    colSpan={1} 
+                                                    rowSpan={1} 
+                                                    className={cn("table-header-item", col[key].align)}
+                                                >
+                                                    <div className="box-sort-date">
+                                                        {col[key].name}
+                                                        <span className='box-icon'>
+                                                            <FontAwesomeIcon icon={faCaretDown} />
+                                                        </span>
+                                                    </div>
+                                                </th>
+                                            )
+                                        }
                                         return (
                                             <th 
                                                 key={key}
@@ -220,25 +271,11 @@ const OrdersList = () => {
                                                 rowSpan={1} 
                                                 className={cn("table-header-item", col[key].align)}
                                             >
-                                                <div className="box-sort-date">
-                                                    {col[key].name}
-                                                    <span className='box-icon'>
-                                                        <FontAwesomeIcon icon={faCaretDown} />
-                                                    </span>
-                                                </div>
+                                                {col[key].name}
                                             </th>
                                         )
                                     }
-                                    return (
-                                        <th 
-                                            key={key}
-                                            colSpan={1} 
-                                            rowSpan={1} 
-                                            className={cn("table-header-item", col[key].align)}
-                                        >
-                                            {col[key].name}
-                                        </th>
-                                    )
+                                    return null;
                                 })}
                             </tr>
                         </thead>
@@ -254,15 +291,20 @@ const OrdersList = () => {
                             <table className="box-table-data">
                                 <colgroup>
                                     <col style={{ width: "80px" }} />
-                                    {/* Render the <colgroup> only for the columns that have data */}
-                                    {columnsToRender.map((key) => (
-                                        <col
-                                            key={key}
-                                            style={{
-                                                width: col[key].width
-                                            }}
-                                        />
-                                    ))}
+                                    {/* Render the <colgroup> only for the columns that are in colsToRender */}
+                                    {Object.entries(colsToRender).map(([key, value]) => {
+                                        if (value) {
+                                            return (
+                                                <col
+                                                    key={key}
+                                                    style={{
+                                                        width: col[key].width
+                                                    }}
+                                                />
+                                            )
+                                        }
+                                        return null;
+                                    })}
                                 </colgroup>
                                 <tbody>
                                     {ordersList.map((order, index) => {
@@ -281,37 +323,40 @@ const OrdersList = () => {
                                                         </div>
                                                     </div> 
                                                 </td>
-                                                {columnsToRender.map((key) => {
-                                                    if (key.includes("status")) {
+                                                {Object.entries(colsToRender).map(([key, value]) => {
+                                                    if (value) {
+                                                        if (key.includes("status")) {
+                                                            return (
+                                                                <td
+                                                                    key={key}
+                                                                    className={cn("table-data-item", col[key].align)}
+                                                                >
+                                                                    <div className={cn('box-status', {
+                                                                        'box-status--pending': order[key] === "Chưa nhập",
+                                                                        'box-status--partial': order[key] === "Nhập một phần",
+                                                                        'box-status--completed': order[key] === "Hoàn thành",
+                                                                        'box-status--cancelled': order[key] === "Đã hủy",
+                                                                    })}>
+                                                                        <span>{order[key]}</span>
+                                                                    </div>
+                                                                </td>
+                                                            )
+                                                        }
                                                         return (
                                                             <td
                                                                 key={key}
                                                                 className={cn("table-data-item", col[key].align)}
                                                             >
-                                                                <div className={cn('box-status', {
-                                                                    'box-status--pending': order[key] === "Chưa nhập",
-                                                                    'box-status--partial': order[key] === "Nhập một phần",
-                                                                    'box-status--completed': order[key] === "Hoàn thành",
-                                                                    'box-status--cancelled': order[key] === "Đã hủy",
-                                                                })}>
-                                                                    <span>{order[key]}</span>
-                                                                </div>
+                                                                <p className='box-text'>
+                                                                    {
+                                                                        key !== "id" ? order[key] :
+                                                                        <a className='box-id'>{order[key]}</a>
+                                                                    }
+                                                                </p>
                                                             </td>
                                                         )
                                                     }
-                                                    return (
-                                                        <td
-                                                            key={key}
-                                                            className={cn("table-data-item", col[key].align)}
-                                                        >
-                                                            <p className='box-text'>
-                                                                {
-                                                                    key !== "id" ? order[key] :
-                                                                    <a className='box-id'>{order[key]}</a>
-                                                                }
-                                                            </p>
-                                                        </td>
-                                                    )
+                                                    return null;
                                                 })}
                                             </tr>
                                         )
@@ -341,6 +386,7 @@ const OrdersList = () => {
                         {
                             Array(pageQuantiy).fill(null).map((_, index) => (
                                 <div 
+                                    key={index}
                                     className={cn("box-page", { 'active': page === index + 1})}
                                     onClick={() => setPage(index + 1)}
                                 >
