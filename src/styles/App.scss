@@ -304,8 +304,8 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
     width: 30px;
     background: transparent;
 
-    &:hover {
-        background: rgb(232, 234, 235);
+    &:has(svg):hover {
+        background-color: rgb(232, 234, 235);
     }
 
     svg {
