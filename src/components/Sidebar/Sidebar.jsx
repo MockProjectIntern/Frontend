@@ -13,7 +13,7 @@ import productIcon from '../../assets/icons/ProductIcon.jsx'
 import reportIcon from '../../assets/icons/ReportIcon.jsx'
 
 // Import actions
-import { changeOpenedSidebarItem } from '../../actions/sidebar.js'
+import { changeActiveSidebarItem, changeOpenedSidebarItem } from '../../actions/sidebar.js'
 
 const Sidebar = () => {
   const sidebar = useSelector((state) => state.sidebar);
@@ -33,13 +33,20 @@ const Sidebar = () => {
           <div className={s.menuListWrapper}>
             <nav className={s.menuList}>
               <MenuListItem 
+                index='dashboard'
                 isHeader={true}
                 icon={homeIcon}
                 title="Tổng quan"
                 link='/admin/dashboard'
+                openedItem={sidebar.openedItem}
+                handleOpenedSidebarItemChange={(openedItem) => dispatch(changeOpenedSidebarItem(openedItem))}
+                activeItem={sidebar.activeItem}
+                handleActiveItemChange={(activeItem) => dispatch(changeActiveSidebarItem(activeItem))}
               />
               <hr className={s.menuDivider} />
-              <h5 className={s.menuListTitle}>Menu</h5>
+              <div className={s.menuListTitle}>
+                <p>Menu</p>
+              </div>
               <MenuListItem 
                 isHeader={true}
                 icon={productIcon}
@@ -47,6 +54,8 @@ const Sidebar = () => {
                 index='products'
                 openedItem={sidebar.openedItem}
                 handleOpenedSidebarItemChange={(openedItem) => dispatch(changeOpenedSidebarItem(openedItem))}
+                activeItem={sidebar.activeItem}
+                handleActiveItemChange={(activeItem) => dispatch(changeActiveSidebarItem(activeItem))}
                 childItems={[
                   {
                     title: "Danh sách sản phẩm",
@@ -85,6 +94,8 @@ const Sidebar = () => {
                 index='reports'
                 openedItem={sidebar.openedItem}                
                 handleOpenedSidebarItemChange={(openedItem) => dispatch(changeOpenedSidebarItem(openedItem))}
+                activeItem={sidebar.activeItem}
+                handleActiveItemChange={(activeItem) => dispatch(changeActiveSidebarItem(activeItem))}
                 childItems={[
                   {
                     title: "Phiếu chi",

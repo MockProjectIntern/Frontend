@@ -1,12 +1,14 @@
-import classNames from 'classnames';
+import cn from 'classnames';
 import React, { useEffect, useState } from 'react'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { Collapse } from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 // Import CSS
 import s from './MenuListItem.module.scss'
+
+// Import Icons
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 const MenuListItem = ({
     index,
@@ -16,10 +18,13 @@ const MenuListItem = ({
     link,
     childItems,
     openedItem,
-    handleOpenedSidebarItemChange
+    handleOpenedSidebarItemChange,
+    activeItem,
+    handleActiveItemChange,
 }) => {
     const [isClicked, setIsClicked] = useState(false);
     const isOpen = openedItem && openedItem === index && isClicked;
+    const location = useLocation();
 
     const togglePanelCollapse = (index) => {
         setIsClicked(!isClicked);
@@ -31,6 +36,16 @@ const MenuListItem = ({
         setIsClicked(false);
     }, [openedItem])
 
+    useEffect(() => {
+        if (childItems?.some((child) => child.link === location.pathname)) {
+            setIsClicked(true);
+            handleOpenedSidebarItemChange(index)
+        }
+        if (location.pathname === link) {
+            handleActiveItemChange(title)
+        }
+    }, [])
+
     if (!childItems) {
         if (isHeader) {
             return (
@@ -40,6 +55,10 @@ const MenuListItem = ({
                         className={({ isActive }) => 
                             isActive ? s.headerItemActive : ''
                         }
+                        onClick={() => {
+                            handleOpenedSidebarItemChange(index)
+                            handleActiveItemChange(null)
+                        }}
                     >
                         <span className={s.menuItemIcon}>
                             {icon}
@@ -52,24 +71,27 @@ const MenuListItem = ({
             )
         }
         return (
-            <div>
-                <NavLink
-                    to={link}
-                    className={({ isActive }) => 
-                        isActive ? s.childItemActive : ''
-                    }
-                >
-                    <div className={s.menuItemTitle}>
-                        <p>{title}</p>
-                    </div>
-                </NavLink>
-            </div>
+            <NavLink
+                to={link}
+                className={({ isActive }) => 
+                    cn(s.childItem, {[s.childItemActive]: isActive})
+                }
+                onClick={() => handleActiveItemChange(title)}
+            >
+                <div className={s.menuItemTitle}>
+                    <p>{title}</p>
+                </div>
+            </NavLink>
         )
     }
     return (
         <div className={s.headerItem}>
-            <div 
-                className={classNames("d-flex", s.headerItemActive, { [s.collapsed]: isOpen })}
+            <a 
+                className={cn(
+                    "d-flex",
+                    { [s.headerItemActive]: childItems?.some((child) => child.title === activeItem) },
+                    { [s.collapsed]: isOpen }
+                )}
                 onClick={() => togglePanelCollapse(index)}
             >
                 <span className={s.menuItemIcon}>
@@ -78,8 +100,8 @@ const MenuListItem = ({
                 <div className={s.menuItemTitle}>
                     <p>{title}</p>
                 </div>
-                <FontAwesomeIcon icon={faChevronRight} />
-            </div>
+                <FontAwesomeIcon className={s.dropdownIcon} icon={faChevronRight} />
+            </a>
             <Collapse className={s.panel} isOpen={isOpen}>
                 {
                     childItems && childItems.map((childItem, index) => {
@@ -90,6 +112,8 @@ const MenuListItem = ({
                                 icon={null}
                                 title={childItem.title}
                                 link={childItem.link}
+                                activeItem={activeItem}
+                                handleActiveItemChange={handleActiveItemChange}
                             />
                         )
                     })
