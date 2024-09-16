@@ -94,7 +94,7 @@ a.headerItemActive {
     text-decoration: none !important;
     bottom: 0;
     outline: 0;
-    margin: 4px;
+    margin: 4px 0;
     padding: 0;
     padding-left: 40px;
     cursor: pointer;
@@ -116,9 +116,8 @@ a.headerItemActive {
 }
 
 a.childItemActive {
-    background-color: $violet !important;
     font-size: 1rem;
-    color: $white !important;
+    color: $violet !important;
 }
 
 .collapsed .dropdownIcon {

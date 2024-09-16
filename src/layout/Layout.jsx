@@ -16,6 +16,7 @@ import PurchaseOrders from '../pages/PurchaseOrders/PurchaseOrders'
 import StockAdjustments from '../pages/StockAdjustments/StockAdjustments'
 import Suppliers from '../pages/Suppliers/Suppliers'
 import PriceAdjustments from '../pages/PriceAdjustments/PriceAdjustments'
+import ReceiptVouchers from '../pages/ReceiptVouchers/ReceiptVouchers'
 import PaymentVouchers from '../pages/PaymentVouchers/PaymentVouchers'
 import Reports from '../pages/Reports/Reports'
 
@@ -33,6 +34,7 @@ const Layout = () => {
               <Route path='/stock_adjustments/*' element={<StockAdjustments />} />
               <Route path='/suppliers/*' element={<Suppliers />} />
               <Route path='/price_adjustments/*' element={<PriceAdjustments />} />
+              <Route path='/receipt_vouchers/*' element={<ReceiptVouchers />} />
               <Route path='/payment_vouchers/*' element={<PaymentVouchers />} />
               <Route path='/reports/*' element={<Reports />} />
           </Routes>

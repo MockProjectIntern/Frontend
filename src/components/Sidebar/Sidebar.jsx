@@ -98,6 +98,10 @@ const Sidebar = () => {
                 handleActiveItemChange={(activeItem) => dispatch(changeActiveSidebarItem(activeItem))}
                 childItems={[
                   {
+                    title: "Phiếu thu",
+                    link: '/admin/receipt_vouchers'
+                  },
+                  {
                     title: "Phiếu chi",
                     link: '/admin/payment_vouchers'
                   },
