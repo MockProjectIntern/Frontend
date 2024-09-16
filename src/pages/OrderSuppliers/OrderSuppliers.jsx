@@ -1,8 +1,16 @@
 import React from 'react'
+import { Route, Routes } from 'react-router-dom'
+
+// Import Components
+import OrdersList from '../../components/OrdersList/OrdersList'
 
 const OrderSuppliers = () => {
   return (
-    <div>OrderSuppliers</div>
+    <>
+      <Routes>
+        <Route path='/' element={<OrdersList />} />
+      </Routes>
+    </>
   )
 }
 
