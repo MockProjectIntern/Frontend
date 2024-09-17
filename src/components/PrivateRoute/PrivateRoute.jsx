@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { logout } from '../../actions/auth';
 
 const PrivateRoute = ({ isAuthenticated, dispatch }) => {
-  if (!isAuthenticated) {
+  if (isAuthenticated) {
     dispatch(logout());
     return <Navigate to='/login' />
   } else {

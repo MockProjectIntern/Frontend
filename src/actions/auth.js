@@ -43,6 +43,7 @@ export const login = () => {
 export const logout = () => {
     return (dispatch) => {
         if (1 === 1) {
+            localStorage.clear();
             localStorage.removeItem('isAuthenticated');
             dispatch(logoutSuccess());
         } else {
