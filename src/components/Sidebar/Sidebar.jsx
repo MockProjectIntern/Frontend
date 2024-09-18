@@ -71,7 +71,7 @@ const Sidebar = () => {
                   },
                   {
                     title: "Nhập hàng",
-                    link: '/admin/purchase_orders'
+                    link: '/admin/grns'
                   },
                   {
                     title: "Kiểm hàng",
@@ -84,7 +84,7 @@ const Sidebar = () => {
                   {
                     title: "Điều chỉnh giá vốn",
                     link: '/admin/price_adjustments'
-                  }
+                  },
                 ]}
               />
               <MenuListItem 

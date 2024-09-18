@@ -6,7 +6,7 @@ import Cookies from 'js-cookie'
 import Header from '../Header/Header'
 
 // Import Columns Info
-import col from '../../assets/colgroup/orders-list.js'
+import col from '../../assets/colgroup/grn-list.js'
 
 // Import Icons
 import exportIcon from '../../assets/icons/ExportIcon'
@@ -16,74 +16,55 @@ import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 
-const ordersList = [
+const grnList = [
     {
         id: "OSN00004",
         created_at: "13/09/2024 11:36",
-        status: "Nhập một phần",
+        status: "Đang giao dịch",
+        received_status: "Chưa nhập",
         supplier_name: "MDC",
-        user_created_name: "Admin",
-        total_quantity: 7,
-        total_price: "2,448,000"
+        user_created: "Admin",
+        total_value: "2,448,000"
     },
     {
         id: "OSN00003",
         created_at: "13/09/2024 11:36",
-        status: "Đã hủy",
+        status: "Đang giao dịch",
+        received_status: "Chưa nhập",
         supplier_name: "MDC",
-        user_created_name: "Admin",
-        total_quantity: 7,
-        total_price: "2,448,000"
-    },
-    {
-        id: "OSN00002",
-        created_at: "13/09/2024 11:36",
-        status: "Hoàn thành",
-        supplier_name: "MDC",
-        user_created_name: "Admin",
-        total_quantity: 7,
-        total_price: "2,448,000"
-    },
-    {
-        id: "OSN00001",
-        created_at: "13/09/2024 11:36",
-        status: "Chưa nhập",
-        supplier_name: "MDC",
-        user_created_name: "Admin",
-        total_quantity: 7,
-        total_price: "2,448,000"
+        user_created: "Admin",
+        total_value: "2,448,000"
+        
     }
+  
 ]
 
-const ordersQuantity = 4;
+const grnsQuantity = 4;
 
-const OrdersList = () => {
+const GRNList = () => {
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
 
+    console.log(col);
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('ordersListCols');
+        const storedCols = Cookies.get('grnListCols');
         return storedCols ? JSON.parse(storedCols) : {
             id: true,
             created_at: true,
             status: true,
+            received_status: true,
             supplier_name: true,
-            user_created_name: true,
-            total_quantity: true,
-            total_price: true,
-            supplier_id: false,
-            user_cancelled_name: false,
-            user_completed_name: false,
-            user_ended_name: false,
-            supplier_phone: false,
-            supplier_address: false,
-            supplier_email: false,
+            user_created: true,
+            total_received_quantity: false,
+            total_value: true,
+            user_cancelled: false,
+            user_imported: false,
+            user_ended: false,
             note: false,
             tags: false,
-            expected_at: false,
-            completed_at: false,
+            expected_delivery_at: false,
             ended_at: false,
             cancelled_at: false
         }
@@ -91,7 +72,7 @@ const OrdersList = () => {
 
     // Set required columns to Cookies
     useEffect(() => {
-        Cookies.set('ordersListCols', JSON.stringify(colsToRender));
+        Cookies.set('grnListCols', JSON.stringify(colsToRender));
     }, [colsToRender])
 
     const headersRef = useRef(null);
@@ -145,7 +126,7 @@ const OrdersList = () => {
                     <span className="btn__icon">
                         <FontAwesomeIcon icon={faPlus} />
                     </span>
-                    <span className="btn__title">Tạo đơn đặt hàng</span>
+                    <span className="btn__title">Tạo phiếu nhập hàng</span>
                 </button>
             </div>
             </div>
@@ -220,6 +201,7 @@ const OrdersList = () => {
                             {/* Render the <colgroup> only for the columns that are in colsToRender */}
                             {Object.entries(colsToRender).map(([key, value]) => {
                                 if (value) {
+                                    console.log(key + " " + col[key])
                                     return (
                                         <col
                                             key={key}
@@ -247,7 +229,7 @@ const OrdersList = () => {
                                         </div>
                                     </div>
                                 </th>
-                                {/* Render table headers for columns that exist in ordersList */}
+                                {/* Render table headers for columns that exist in grnList */}
                                 {Object.entries(colsToRender).map(([key, value]) => {
                                     if (value) {
                                         if (key === "created_at") {
@@ -310,7 +292,7 @@ const OrdersList = () => {
                                     })}
                                 </colgroup>
                                 <tbody>
-                                    {ordersList.map((order, index) => {
+                                    {grnList.map((grn, index) => {
                                         return (
                                             <tr key={index} className="table-data-row">
                                                 <td rowSpan={1} className='table-icon'>
@@ -335,12 +317,12 @@ const OrdersList = () => {
                                                                     className={cn("table-data-item", col[key].align)}
                                                                 >
                                                                     <div className={cn('box-status', {
-                                                                        'box-status--pending': order[key] === "Chưa nhập",
-                                                                        'box-status--partial': order[key] === "Nhập một phần",
-                                                                        'box-status--completed': order[key] === "Hoàn thành",
-                                                                        'box-status--cancelled': order[key] === "Đã hủy",
+                                                                        'box-status--pending': grn[key] === "Chưa nhập",
+                                                                        'box-status--partial': grn[key] === "Nhập một phần",
+                                                                        'box-status--completed': grn[key] === "Hoàn thành",
+                                                                        'box-status--cancelled': grn[key] === "Đã hủy",
                                                                     })}>
-                                                                        <span>{order[key]}</span>
+                                                                        <span>{grn[key]}</span>
                                                                     </div>
                                                                 </td>
                                                             )
@@ -352,8 +334,8 @@ const OrdersList = () => {
                                                             >
                                                                 <p className='box-text'>
                                                                     {
-                                                                        key !== "id" ? order[key] :
-                                                                        <a className='box-id'>{order[key]}</a>
+                                                                        key !== "id" ? grn[key] :
+                                                                        <a className='box-id'>{grn[key]}</a>
                                                                     }
                                                                 </p>
                                                             </td>
@@ -379,7 +361,7 @@ const OrdersList = () => {
                             </button>
                         </div>
                         <p>kết quả</p>
-                        <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + ordersList.length} trên tổng {ordersQuantity}</p>
+                        <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + grnList.length} trên tổng {grnsQuantity}</p>
                         <button 
                             className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
                             onClick={handlePrevPage}
@@ -411,4 +393,4 @@ const OrdersList = () => {
   )
 }
 
-export default OrdersList;
+export default GRNList;
