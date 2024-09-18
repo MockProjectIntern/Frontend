@@ -6,7 +6,7 @@ import Cookies from 'js-cookie'
 import Header from '../Header/Header'
 
 // Import Columns Info
-import col from '../../assets/colgroup/grn-list.js'
+import col from '../../assets/colgroup/gin-list.js'
 
 // Import Icons
 import exportIcon from '../../assets/icons/ExportIcon'
@@ -16,62 +16,46 @@ import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 
-const grnList = [
+const ginList = [
     {
         id: "OSN00004",
         created_at: "13/09/2024 11:36",
+        balanced_at: "13/09/2024 11:36",
         status: "Đang giao dịch",
-        received_status: "Chưa nhập",
-        supplier_name: "MDC",
         user_created: "Admin",
-        total_value: "2,448,000"
+        user_inspection: "Admin",
+        user_balanced: "Admin",
+        note: "Giao hàng",
     },
-    {
-        id: "OSN00003",
-        created_at: "13/09/2024 11:36",
-        status: "Đang giao dịch",
-        received_status: "Chưa nhập",
-        supplier_name: "MDC",
-        user_created: "Admin",
-        total_value: "2,448,000"
-        
-    }
   
 ]
 
 const grnsQuantity = 4;
 
-const GRNList = () => {
+const GINList = () => {
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
 
+    console.log(col);
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('grnListCols');
+        const storedCols = Cookies.get('ginListCols');
         return storedCols ? JSON.parse(storedCols) : {
             id: true,
             created_at: true,
             status: true,
-            received_status: true,
-            supplier_name: true,
             user_created: true,
-            total_received_quantity: false,
-            total_value: true,
-            user_cancelled: false,
-            user_imported: false,
-            user_ended: false,
-            note: false,
-            tags: false,
-            expected_delivery_at: false,
-            ended_at: false,
-            cancelled_at: false
+            user_inspection: true,
+            user_balanced: true,
+            note: true,
+            balanced_at: true,
         }
     })
 
     // Set required columns to Cookies
     useEffect(() => {
-        Cookies.set('grnListCols', JSON.stringify(colsToRender));
+        Cookies.set('ginListCols', JSON.stringify(colsToRender));
     }, [colsToRender])
 
     const headersRef = useRef(null);
@@ -200,7 +184,7 @@ const GRNList = () => {
                             {/* Render the <colgroup> only for the columns that are in colsToRender */}
                             {Object.entries(colsToRender).map(([key, value]) => {
                                 if (value) {
-                                    
+                                    console.log(key + " " + col[key])
                                     return (
                                         <col
                                             key={key}
@@ -228,7 +212,7 @@ const GRNList = () => {
                                         </div>
                                     </div>
                                 </th>
-                                {/* Render table headers for columns that exist in grnList */}
+                                {/* Render table headers for columns that exist in ginList */}
                                 {Object.entries(colsToRender).map(([key, value]) => {
                                     if (value) {
                                         if (key === "created_at") {
@@ -291,7 +275,7 @@ const GRNList = () => {
                                     })}
                                 </colgroup>
                                 <tbody>
-                                    {grnList.map((grn, index) => {
+                                    {ginList.map((gin, index) => {
                                         return (
                                             <tr key={index} className="table-data-row">
                                                 <td rowSpan={1} className='table-icon'>
@@ -316,12 +300,12 @@ const GRNList = () => {
                                                                     className={cn("table-data-item", col[key].align)}
                                                                 >
                                                                     <div className={cn('box-status', {
-                                                                        'box-status--pending': grn[key] === "Chưa nhập",
-                                                                        'box-status--partial': grn[key] === "Nhập một phần",
-                                                                        'box-status--completed': grn[key] === "Hoàn thành",
-                                                                        'box-status--cancelled': grn[key] === "Đã hủy",
+                                                                        'box-status--pending': gin[key] === "Chưa nhập",
+                                                                        'box-status--partial': gin[key] === "Nhập một phần",
+                                                                        'box-status--completed': gin[key] === "Hoàn thành",
+                                                                        'box-status--cancelled': gin[key] === "Đã hủy",
                                                                     })}>
-                                                                        <span>{grn[key]}</span>
+                                                                        <span>{gin[key]}</span>
                                                                     </div>
                                                                 </td>
                                                             )
@@ -333,8 +317,8 @@ const GRNList = () => {
                                                             >
                                                                 <p className='box-text'>
                                                                     {
-                                                                        key !== "id" ? grn[key] :
-                                                                        <a className='box-id'>{grn[key]}</a>
+                                                                        key !== "id" ? gin[key] :
+                                                                        <a className='box-id'>{gin[key]}</a>
                                                                     }
                                                                 </p>
                                                             </td>
@@ -360,7 +344,7 @@ const GRNList = () => {
                             </button>
                         </div>
                         <p>kết quả</p>
-                        <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + grnList.length} trên tổng {grnsQuantity}</p>
+                        <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + ginList.length} trên tổng {grnsQuantity}</p>
                         <button 
                             className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
                             onClick={handlePrevPage}
@@ -392,4 +376,4 @@ const GRNList = () => {
   )
 }
 
-export default GRNList;
+export default GINList;

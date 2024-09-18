@@ -20,6 +20,7 @@ import ReceiptVouchers from '../pages/ReceiptVouchers/ReceiptVouchers'
 import PaymentVouchers from '../pages/PaymentVouchers/PaymentVouchers'
 import Reports from '../pages/Reports/Reports'
 import GRNPage from '../pages/GRN/GRNPage'
+import GINPage from '../pages/GIN/GINPage'
 
 const Layout = () => {
   return (
@@ -39,6 +40,7 @@ const Layout = () => {
               <Route path='/payment_vouchers/*' element={<PaymentVouchers />} />
               <Route path='/reports/*' element={<Reports />} />
               <Route path='/grns/*' element={<GRNPage/>}/>
+              <Route path='/gins/*' element={<GINPage/>}/>
           </Routes>
         </div>
     </div>

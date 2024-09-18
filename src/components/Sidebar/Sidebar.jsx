@@ -75,7 +75,7 @@ const Sidebar = () => {
                   },
                   {
                     title: "Kiểm hàng",
-                    link: '/admin/stock_adjustments'
+                    link: '/admin/gins'
                   },
                   {
                     title: "Nhà cung cấp",
