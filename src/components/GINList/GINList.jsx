@@ -37,7 +37,6 @@ const GINList = () => {
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
 
-    console.log(col);
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('ginListCols');
@@ -117,10 +116,9 @@ const GINList = () => {
                 <div className="right__table-scroller">
                     <div className="box-scroller">
                         <div className="group-scroller-btns">
-                            <button className="btn-scroller active">Tất cả đơn đặt hàng</button>
-                            <button className="btn-scroller">Chưa nhập</button>
-                            <button className="btn-scroller">Nhập một phần</button>
-                            <button className="btn-scroller">Hoàn thành</button>
+                            <button className="btn-scroller active">Tất cả phiếu kiểm hàng</button>
+                            <button className="btn-scroller">Đang kiểm</button>
+                            <button className="btn-scroller">Đã cân bằng</button>
                         </div>
                     </div>
                 </div>
@@ -184,7 +182,6 @@ const GINList = () => {
                             {/* Render the <colgroup> only for the columns that are in colsToRender */}
                             {Object.entries(colsToRender).map(([key, value]) => {
                                 if (value) {
-                                    console.log(key + " " + col[key])
                                     return (
                                         <col
                                             key={key}

@@ -119,6 +119,11 @@ const GRNList = () => {
                             Nhập file
                         </span>
                     </button>
+                    <button className="btn btn-base btn-text">
+                        <span className="btn__label">
+                            Quản lý hoàn trả NCC
+                        </span>
+                    </button>
                 </div>
             <div className="btn-toolbar">
                 <button className="btn btn-primary">
@@ -133,9 +138,8 @@ const GRNList = () => {
                 <div className="right__table-scroller">
                     <div className="box-scroller">
                         <div className="group-scroller-btns">
-                            <button className="btn-scroller active">Tất cả đơn đặt hàng</button>
-                            <button className="btn-scroller">Chưa nhập</button>
-                            <button className="btn-scroller">Nhập một phần</button>
+                            <button className="btn-scroller active">Tất cả đơn nhập hàng</button>
+                            <button className="btn-scroller">Đang giao dịch</button>
                             <button className="btn-scroller">Hoàn thành</button>
                         </div>
                     </div>
