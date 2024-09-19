@@ -909,7 +909,7 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
         }
     }
 
-    &--completed {
+    &--completed, &--imported, &--balanced {
         border: 1px solid rgb(159, 237, 207);
         background-color: rgb(243, 252, 249);
 
@@ -918,7 +918,7 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
         }
     }
 
-    &--cancelled {
+    &--cancelled, &--deleted {
         border: 1px solid rgb(255, 184, 184);
         background-color: rgb(255, 246, 246);
 

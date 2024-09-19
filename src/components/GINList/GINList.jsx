@@ -21,12 +21,33 @@ const ginList = [
         id: "OSN00004",
         created_at: "13/09/2024 11:36",
         balanced_at: "13/09/2024 11:36",
-        status: "Đang giao dịch",
+        status: "Đang kiểm kho",
         user_created: "Admin",
         user_inspection: "Admin",
         user_balanced: "Admin",
         note: "Giao hàng",
     },
+    {
+        id: "OSN00003",
+        created_at: "13/09/2024 11:36",
+        balanced_at: "13/09/2024 11:36",
+        status: "Đã cân bằng",
+        user_created: "Admin",
+        user_inspection: "Admin",
+        user_balanced: "Admin",
+        note: "Giao hàng",
+    },
+    {
+        id: "OSN00002",
+        created_at: "13/09/2024 11:36",
+        balanced_at: "13/09/2024 11:36",
+        status: "Đã xóa",
+        user_created: "Admin",
+        user_inspection: "Admin",
+        user_balanced: "Admin",
+        note: "Giao hàng",
+    }
+    
   
 ]
 
@@ -39,7 +60,7 @@ const GINList = () => {
 
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('ginListCols');
+        const storedCols = Cookies.get('filter_gins');
         return storedCols ? JSON.parse(storedCols) : {
             id: true,
             created_at: true,
@@ -54,7 +75,7 @@ const GINList = () => {
 
     // Set required columns to Cookies
     useEffect(() => {
-        Cookies.set('ginListCols', JSON.stringify(colsToRender));
+        Cookies.set('filter_gins', JSON.stringify(colsToRender));
     }, [colsToRender])
 
     const headersRef = useRef(null);
@@ -150,14 +171,7 @@ const GINList = () => {
                                     </span>
                                 </span>
                             </button>
-                            <button className="btn btn-base btn-filter">
-                                <span className="btn__label">
-                                    Sản phẩm
-                                    <span className="btn__icon">
-                                        <FontAwesomeIcon icon={faCaretDown} />
-                                    </span>
-                                </span>
-                            </button>
+                        
                             <button className="btn btn-base btn-filter">
                                 <span className="btn__label">
                                     Bộ lọc khác
@@ -297,10 +311,9 @@ const GINList = () => {
                                                                     className={cn("table-data-item", col[key].align)}
                                                                 >
                                                                     <div className={cn('box-status', {
-                                                                        'box-status--pending': gin[key] === "Chưa nhập",
-                                                                        'box-status--partial': gin[key] === "Nhập một phần",
-                                                                        'box-status--completed': gin[key] === "Hoàn thành",
-                                                                        'box-status--cancelled': gin[key] === "Đã hủy",
+                                                                        'box-status--pending': gin[key] === "Đang kiểm kho",
+                                                                        'box-status--balanced': gin[key] === "Đã cân bằng",
+                                                                        'box-status--deleted': gin[key] === "Đã xóa",
                                                                     })}>
                                                                         <span>{gin[key]}</span>
                                                                     </div>

@@ -20,17 +20,17 @@ const gin_list_colgroup = {
         align: "text-start"
     },
     user_created: {
-        name: "ADMIn",
+        name: "Nhân viên tạo",
         width: "160px",
         align: "text-start"
     },
     user_balanced: {
-        name: "ADMIN",
+        name: "Nhân viên cân bằng",
         width: "160px",
         align: "text-start"
     },
     user_inspection: {
-        name: "ADMIN",
+        name: "Nhân viên kiểm",
         width: "160px",
         align: "text-start"
     },

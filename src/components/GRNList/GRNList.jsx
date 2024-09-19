@@ -29,13 +29,32 @@ const grnList = [
     {
         id: "OSN00003",
         created_at: "13/09/2024 11:36",
+        status: "Đã hủy",
+        received_status: "Đã nhập",
+        supplier_name: "MDC",
+        user_created: "Admin",
+        total_value: "2,448,000"
+        
+    },
+    {
+        id: "OSN00002",
+        created_at: "13/09/2024 11:36",
+        status: "Hoàn thành",
+        received_status: "Đã nhập",
+        supplier_name: "MDC",
+        user_created: "Admin",
+        total_value: "2,448,000"
+    },
+    {
+        id: "OSN00001",
+        created_at: "13/09/2024 11:36",
         status: "Đang giao dịch",
         received_status: "Chưa nhập",
         supplier_name: "MDC",
         user_created: "Admin",
         total_value: "2,448,000"
-        
     }
+
   
 ]
 
@@ -48,7 +67,7 @@ const GRNList = () => {
 
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('grnListCols');
+        const storedCols = Cookies.get('filter_grns');
         return storedCols ? JSON.parse(storedCols) : {
             id: true,
             created_at: true,
@@ -71,7 +90,7 @@ const GRNList = () => {
 
     // Set required columns to Cookies
     useEffect(() => {
-        Cookies.set('grnListCols', JSON.stringify(colsToRender));
+        Cookies.set('filter_grns', JSON.stringify(colsToRender));
     }, [colsToRender])
 
     const headersRef = useRef(null);
@@ -321,9 +340,10 @@ const GRNList = () => {
                                                                 >
                                                                     <div className={cn('box-status', {
                                                                         'box-status--pending': grn[key] === "Chưa nhập",
-                                                                        'box-status--partial': grn[key] === "Nhập một phần",
+                                                                        'box-status--partial': grn[key] === "Đang giao dịch",
                                                                         'box-status--completed': grn[key] === "Hoàn thành",
                                                                         'box-status--cancelled': grn[key] === "Đã hủy",
+                                                                        'box-status--imported': grn[key] === "Đã nhập",
                                                                     })}>
                                                                         <span>{grn[key]}</span>
                                                                     </div>
