@@ -140,7 +140,6 @@ const OrdersList = () => {
                         </span>
                     </button>
                 </div>
-
                 <div className="btn-toolbar">
                     <button onClick={() => navigate('/admin/order_suppliers/create')} className="btn btn-primary">
                         <span className="btn__icon">
