@@ -84,7 +84,7 @@ const ReceiptVouchersList = () => {
 
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('receiptVouchersListCols');
+        const storedCols = Cookies.get('filter_transaction_receipt');
         return storedCols ? JSON.parse(storedCols) : {
             created_at: true,
             id: true,
@@ -108,7 +108,7 @@ const ReceiptVouchersList = () => {
 
     // Set required columns to Cookies
     useEffect(() => {
-        Cookies.set('receiptVouchersListCols', JSON.stringify(colsToRender));
+        Cookies.set('filter_transaction_receipt', JSON.stringify(colsToRender));
     }, [colsToRender])
 
     const headersRef = useRef(null);

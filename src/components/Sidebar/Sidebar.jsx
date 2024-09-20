@@ -81,10 +81,10 @@ const Sidebar = () => {
                     title: "Nhà cung cấp",
                     link: '/admin/suppliers'
                   },
-                  {
-                    title: "Điều chỉnh giá vốn",
-                    link: '/admin/price_adjustments'
-                  }
+                  // {
+                  //   title: "Điều chỉnh giá vốn",
+                  //   link: '/admin/price_adjustments'
+                  // }
                 ]}
               />
               <MenuListItem 

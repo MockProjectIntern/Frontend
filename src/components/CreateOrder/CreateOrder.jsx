@@ -49,7 +49,7 @@ const CreateOrder = () => {
     
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('orderProductsTableCols');
+        const storedCols = Cookies.get('filter_products_table');
         return storedCols ? JSON.parse(storedCols) : {
             index: true,
             image: true,
@@ -66,7 +66,7 @@ const CreateOrder = () => {
 
     // Set required columns to Cookies
     useEffect(() => {
-        Cookies.set('orderProductsTableCols', JSON.stringify(colsToRender));
+        Cookies.set('filter_products_table', JSON.stringify(colsToRender));
     }, [colsToRender])
 
     const addTag = (e) => {
