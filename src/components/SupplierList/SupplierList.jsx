@@ -23,7 +23,7 @@ const suppliersList = [
         phone: "0987654321",
         email: "mdc@supplier.com",
         supplier_group_id: "G01",
-        status: "đang giao dịch",
+        status: "ACTIVE",
     },
 ]
 
@@ -300,10 +300,9 @@ const SupplierList = () => {
                                                                         className={cn("table-data-item", col[key].align)}
                                                                     >
                                                                         <div className={cn('box-status', {
-                                                                            'box-status--pending': order[key] === "Chưa nhập",
-                                                                            'box-status--partial': order[key] === "Nhập một phần",
-                                                                            'box-status--completed': order[key] === "Hoàn thành",
-                                                                            'box-status--cancelled': order[key] === "Đã hủy",
+                                                                            'box-status--pending': order[key] === "INACTIVE",
+                                                                            'box-status--completed': order[key] === 'ACTIVE',
+                                                                            'box-status--cancelled': order[key] === "DELETED",
                                                                         })}>
                                                                             <span>{order[key]}</span>
                                                                         </div>
