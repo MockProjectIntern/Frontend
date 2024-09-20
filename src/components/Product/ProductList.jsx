@@ -110,7 +110,7 @@ const ProductList = () => {
     }
     //Cookies.remove("ordersListCols")
     const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('productsList');
+        const storedCols = Cookies.get('filter_products');
         return storedCols ? JSON.parse(storedCols) : {
             name: true,
             status: true,
@@ -138,7 +138,7 @@ const ProductList = () => {
     const [limit, setLimit] = useState(20);
 
     useEffect(() => {
-        Cookies.set('productsList', JSON.stringify(colsToRender));
+        Cookies.set('filter_products', JSON.stringify(colsToRender));
     }, [colsToRender])
     //console.log(col)
     return (

@@ -14,6 +14,7 @@ import reportIcon from '../../assets/icons/ReportIcon.jsx'
 
 // Import actions
 import { changeActiveSidebarItem, changeOpenedSidebarItem } from '../../actions/sidebar.js'
+import userSettingIcon from '../../assets/icons/UserSettingIcon.jsx'
 
 const Sidebar = () => {
   const sidebar = useSelector((state) => state.sidebar);
@@ -110,6 +111,20 @@ const Sidebar = () => {
                     link: '/admin/reports'
                   }
                 ]}
+              />
+              <div className={s.menuListTitle}>
+                <p>Cấu hình</p>
+              </div>
+              <MenuListItem 
+                index='settings'
+                isHeader={true}
+                icon={userSettingIcon}
+                title="Tổng quan"
+                link='/admin/settings/user'
+                openedItem={sidebar.openedItem}
+                handleOpenedSidebarItemChange={(openedItem) => dispatch(changeOpenedSidebarItem(openedItem))}
+                activeItem={sidebar.activeItem}
+                handleActiveItemChange={(activeItem) => dispatch(changeActiveSidebarItem(activeItem))}
               />
             </nav>
           </div>

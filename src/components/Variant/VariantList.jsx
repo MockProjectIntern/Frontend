@@ -118,7 +118,7 @@ const VariantList = () => {
         }
     }
     const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('ordersListCols');
+        const storedCols = Cookies.get('filter_variants');
         return storedCols ? JSON.parse(storedCols) : {
             name: true,
             status: true,
@@ -130,18 +130,21 @@ const VariantList = () => {
             updated_at: true,
             cost_price : true,
             wholesale_price : true, 
-            retail_price : true 
-            
+            retail_price : true        
         }
     })
 
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
+
+    useEffect(() => {
+        Cookies.set('filter_variants', JSON.stringify(colsToRender))
+    }, [colsToRender])
+
     return (
         <>
         <Header />
-
         <div className='right__listPage'>
             <div className='right__toolbar'>
                 <div className='btn-toolbar'>
@@ -366,7 +369,7 @@ const VariantList = () => {
                                                                         'box-status--cancelled': order[key] === "INACTIVE",
                                                                     })}>
                                                                         <span>
-                                                                        {order[key] === "ACTIVE" ? 'Đang hoạt động' : order[key] === "INACTIVE" ? 'Ngừng giao dịch' : order[key]}
+                                                                            {order[key] === "ACTIVE" ? 'Đang giao dịch' : 'Ngừng giao dịch'}
                                                                         </span>
                                                                     </div>
                                                                 </td>
