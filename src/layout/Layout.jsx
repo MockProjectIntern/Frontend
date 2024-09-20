@@ -33,7 +33,7 @@ const Layout = () => {
               <Route path='/purchase_orders/*' element={<PurchaseOrders />} />
               <Route path='/stock_adjustments/*' element={<StockAdjustments />} />
               <Route path='/suppliers/*' element={<Suppliers />} />
-              <Route path='/price_adjustments/*' element={<PriceAdjustments />} />
+              {/* <Route path='/price_adjustments/*' element={<PriceAdjustments />} /> */}
               <Route path='/receipt_vouchers/*' element={<ReceiptVouchers />} />
               <Route path='/payment_vouchers/*' element={<PaymentVouchers />} />
               <Route path='/reports/*' element={<Reports />} />
