@@ -71,11 +71,11 @@ const Sidebar = () => {
                   },
                   {
                     title: "Nhập hàng",
-                    link: '/admin/purchase_orders'
+                    link: '/admin/grns'
                   },
                   {
                     title: "Kiểm hàng",
-                    link: '/admin/stock_adjustments'
+                    link: '/admin/gins'
                   },
                   {
                     title: "Nhà cung cấp",

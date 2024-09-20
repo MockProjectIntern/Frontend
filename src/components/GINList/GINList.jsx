@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import cn from 'classnames'
 import Cookies from 'js-cookie'
 
@@ -7,7 +6,7 @@ import Cookies from 'js-cookie'
 import Header from '../Header/Header'
 
 // Import Columns Info
-import col from '../../assets/colgroup/orders-list.js'
+import col from '../../assets/colgroup/gin-list.js'
 
 // Import Icons
 import exportIcon from '../../assets/icons/ExportIcon'
@@ -17,81 +16,66 @@ import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 
-const ordersList = [
+const ginList = [
     {
         id: "OSN00004",
         created_at: "13/09/2024 11:36",
-        status: "Nhập một phần",
-        supplier_name: "MDC",
-        user_created_name: "Admin",
-        total_quantity: 7,
-        total_price: "2,448,000"
+        balanced_at: "13/09/2024 11:36",
+        status: "Đang kiểm kho",
+        user_created: "Admin",
+        user_inspection: "Admin",
+        user_balanced: "Admin",
+        note: "Giao hàng",
     },
     {
         id: "OSN00003",
         created_at: "13/09/2024 11:36",
-        status: "Đã hủy",
-        supplier_name: "MDC",
-        user_created_name: "Admin",
-        total_quantity: 7,
-        total_price: "2,448,000"
+        balanced_at: "13/09/2024 11:36",
+        status: "Đã cân bằng",
+        user_created: "Admin",
+        user_inspection: "Admin",
+        user_balanced: "Admin",
+        note: "Giao hàng",
     },
     {
         id: "OSN00002",
         created_at: "13/09/2024 11:36",
-        status: "Hoàn thành",
-        supplier_name: "MDC",
-        user_created_name: "Admin",
-        total_quantity: 7,
-        total_price: "2,448,000"
-    },
-    {
-        id: "OSN00001",
-        created_at: "13/09/2024 11:36",
-        status: "Chưa nhập",
-        supplier_name: "MDC",
-        user_created_name: "Admin",
-        total_quantity: 7,
-        total_price: "2,448,000"
+        balanced_at: "13/09/2024 11:36",
+        status: "Đã xóa",
+        user_created: "Admin",
+        user_inspection: "Admin",
+        user_balanced: "Admin",
+        note: "Giao hàng",
     }
+    
+  
 ]
 
-const ordersQuantity = 4;
+const grnsQuantity = 4;
 
-const OrdersList = () => {
+const GINList = () => {
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
-    const navigate = useNavigate()
 
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('filter_orders');
+        const storedCols = Cookies.get('filter_gins');
         return storedCols ? JSON.parse(storedCols) : {
             id: true,
             created_at: true,
             status: true,
-            supplier_name: true,
-            user_created_name: true,
-            total_quantity: true,
-            total_price: true,
-            supplier_id: false,
-            user_cancelled_name: false,
-            user_completed_name: false,
-            supplier_phone: false,
-            supplier_address: false,
-            supplier_email: false,
-            note: false,
-            tags: false,
-            expected_at: false,
-            completed_at: false,
-            cancelled_at: false
+            user_created: true,
+            user_inspection: true,
+            user_balanced: true,
+            note: true,
+            balanced_at: true,
         }
     })
 
     // Set required columns to Cookies
     useEffect(() => {
-        Cookies.set('filter_orders', JSON.stringify(colsToRender));
+        Cookies.set('filter_gins', JSON.stringify(colsToRender));
     }, [colsToRender])
 
     const headersRef = useRef(null);
@@ -140,23 +124,22 @@ const OrdersList = () => {
                         </span>
                     </button>
                 </div>
-                <div className="btn-toolbar">
-                    <button onClick={() => navigate('/admin/order_suppliers/create')} className="btn btn-primary">
-                        <span className="btn__icon">
-                            <FontAwesomeIcon icon={faPlus} />
-                        </span>
-                        <span className="btn__title">Tạo đơn đặt hàng</span>
-                    </button>
-                </div>
+            <div className="btn-toolbar">
+                <button className="btn btn-primary">
+                    <span className="btn__icon">
+                        <FontAwesomeIcon icon={faPlus} />
+                    </span>
+                    <span className="btn__title">Tạo phiếu nhập hàng</span>
+                </button>
+            </div>
             </div>
             <div className="right__table">
                 <div className="right__table-scroller">
                     <div className="box-scroller">
                         <div className="group-scroller-btns">
-                            <button className="btn-scroller active">Tất cả đơn đặt hàng</button>
-                            <button className="btn-scroller">Chưa nhập</button>
-                            <button className="btn-scroller">Nhập một phần</button>
-                            <button className="btn-scroller">Hoàn thành</button>
+                            <button className="btn-scroller active">Tất cả phiếu kiểm hàng</button>
+                            <button className="btn-scroller">Đang kiểm</button>
+                            <button className="btn-scroller">Đã cân bằng</button>
                         </div>
                     </div>
                 </div>
@@ -188,14 +171,7 @@ const OrdersList = () => {
                                     </span>
                                 </span>
                             </button>
-                            <button className="btn btn-base btn-filter">
-                                <span className="btn__label">
-                                    Sản phẩm
-                                    <span className="btn__icon">
-                                        <FontAwesomeIcon icon={faCaretDown} />
-                                    </span>
-                                </span>
-                            </button>
+                        
                             <button className="btn btn-base btn-filter">
                                 <span className="btn__label">
                                     Bộ lọc khác
@@ -216,7 +192,7 @@ const OrdersList = () => {
                     className="right__table-headers">
                     <table className="box-table-headers">
                         <colgroup>
-                            <col style={{ width: "80px" }} />
+                        <col style={{ width: "80px" }} />
                             {/* Render the <colgroup> only for the columns that are in colsToRender */}
                             {Object.entries(colsToRender).map(([key, value]) => {
                                 if (value) {
@@ -247,7 +223,7 @@ const OrdersList = () => {
                                         </div>
                                     </div>
                                 </th>
-                                {/* Render table headers for columns that exist in ordersList */}
+                                {/* Render table headers for columns that exist in ginList */}
                                 {Object.entries(colsToRender).map(([key, value]) => {
                                     if (value) {
                                         if (key === "created_at") {
@@ -310,7 +286,7 @@ const OrdersList = () => {
                                     })}
                                 </colgroup>
                                 <tbody>
-                                    {ordersList.map((order, index) => {
+                                    {ginList.map((gin, index) => {
                                         return (
                                             <tr key={index} className="table-data-row">
                                                 <td rowSpan={1} className='table-icon'>
@@ -335,12 +311,11 @@ const OrdersList = () => {
                                                                     className={cn("table-data-item", col[key].align)}
                                                                 >
                                                                     <div className={cn('box-status', {
-                                                                        'box-status--pending': order[key] === "Chưa nhập",
-                                                                        'box-status--partial': order[key] === "Nhập một phần",
-                                                                        'box-status--completed': order[key] === "Hoàn thành",
-                                                                        'box-status--cancelled': order[key] === "Đã hủy",
+                                                                        'box-status--pending': gin[key] === "Đang kiểm kho",
+                                                                        'box-status--balanced': gin[key] === "Đã cân bằng",
+                                                                        'box-status--deleted': gin[key] === "Đã xóa",
                                                                     })}>
-                                                                        <span>{order[key]}</span>
+                                                                        <span>{gin[key]}</span>
                                                                     </div>
                                                                 </td>
                                                             )
@@ -352,8 +327,8 @@ const OrdersList = () => {
                                                             >
                                                                 <p className='box-text'>
                                                                     {
-                                                                        key !== "id" ? order[key] :
-                                                                        <a className='box-id'>{order[key]}</a>
+                                                                        key !== "id" ? gin[key] :
+                                                                        <a className='box-id'>{gin[key]}</a>
                                                                     }
                                                                 </p>
                                                             </td>
@@ -379,7 +354,7 @@ const OrdersList = () => {
                             </button>
                         </div>
                         <p>kết quả</p>
-                        <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + ordersList.length} trên tổng {ordersQuantity}</p>
+                        <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + ginList.length} trên tổng {grnsQuantity}</p>
                         <button 
                             className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
                             onClick={handlePrevPage}
@@ -411,4 +386,4 @@ const OrdersList = () => {
   )
 }
 
-export default OrdersList;
+export default GINList;
