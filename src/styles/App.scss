@@ -81,6 +81,10 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
     }
 }
 
+input::placeholder {
+    color: #A3A8AF;
+}
+
 .btn {
     display: inline-flex;
     -webkit-box-pack: center;
@@ -133,12 +137,20 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
 }
 
 .btn-primary {
-    gap: 8;
+    gap: 8px;
     border: none;
     
     &:hover {
         color: #fff;
         background-color: #6265E0;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        border: none;
+        background: rgb(243, 244, 245);
+        color: rgb(116, 124, 135);
+        pointer-events: none;
     }
     
     .btn__icon {
@@ -148,6 +160,7 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
         flex-shrink: 0;
         user-select: none;
         align-items: center;
+        justify-content: center;
         
         svg {
             fill: currentColor;
@@ -267,6 +280,7 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
 
 .btn-toolbar {
     align-items: center;
+    flex-wrap: nowrap;
 }
 
 .btn-group {
@@ -303,7 +317,7 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
     height: 30px;
     width: 30px;
     background: transparent;
-
+    
     &:has(svg):hover {
         background-color: rgb(232, 234, 235);
     }
@@ -311,10 +325,14 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
     svg {
         color: rgb(163, 168, 175);
         height: 24px;
-
+        
         &.svg-inline--fa {
             height: 16px;
         }
+    }
+
+    .btn-icon__label {
+        
     }
 }
 
@@ -327,6 +345,93 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
     border: 2px solid rgb(163, 168, 175);
     border-radius: 2px;
     box-sizing: border-box;
+}
+
+.box-search {
+    display: flex;
+    width: 100%;    
+    flex: 1 1 0%;
+
+    .box-input {
+        width: 100%;
+        height: 36px;
+        position: relative;
+
+        .search-icon {
+            top: 50%;
+            transform: translate(0px, -50%);
+            left: 16px;
+            position: absolute;
+            color: rgb(163, 168, 175);
+            display: flex;
+            -webkit-box-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            justify-content: center;
+
+            svg {
+                height: 16px;
+                width: 16px;
+                pointer-events: none;
+            }
+        }
+
+        > input {
+            background: transparent;
+            box-sizing: border-box;
+            padding: 10px 12px 10px 40px;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 3px;
+            font-family: $font-family-base;
+            font-weight: $font-weight-base;
+            font-size: $font-size-base;
+            line-height: 20px;
+            color: $default;
+            margin: 0;
+        }
+    }
+}
+
+.input-field {
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    width: 100%;
+    border-radius: 3px;
+    border: 1px solid #D3D5D7;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+input:focus-within ~ .input-field {
+    border-color: $violet;
+}
+
+.discount-popup {
+    position: absolute;
+    inset: auto auto 0px 0px;
+    z-index: 1000;
+    border: 1px solid rgb(211, 213, 215);
+    box-shadow: rgba(168, 168, 168, 0.25) 0px 8px 16px;
+    border-radius: 3px;
+    background: rgb(255, 255, 255);
+    box-sizing: border-box;
+    width: 208px;
+    padding: 12px 12px 3px;
+}
+
+.table-cell {
+    > .discount-popup {
+        transform: translate3d(-20%, -65px, 0px);
+    }
+}
+
+.info-item {
+    > .discount-popup {
+        transform: translate3d(-25%, -28px, 0px);
+    }
 }
 
 .right {
@@ -454,76 +559,7 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
                 padding: 16px;
                 align-items: center;
                 gap: 16px;
-
-                .box-search {
-                    display: flex;
-                    width: 100%;    
-                    flex: 1 1 0%;
-
-                    .box-input {
-                        width: 100%;
-                        height: 36px;
-                        position: relative;
-
-                        .search-icon {
-                            top: 50%;
-                            transform: translate(0px, -50%);
-                            left: 16px;
-                            position: absolute;
-                            color: rgb(163, 168, 175);
-                            display: flex;
-                            -webkit-box-align: center;
-                            align-items: center;
-                            -webkit-box-pack: center;
-                            justify-content: center;
-
-                            svg {
-                                height: 16px;
-                                width: 16px;
-                                pointer-events: none;
-                            }
-                        }
-
-                        > input {
-                            background: transparent;
-                            box-sizing: border-box;
-                            padding: 10px 12px 10px 40px;
-                            width: 100%;
-                            height: 100%;
-                            border: none;
-                            border-radius: 3px;
-                            font-family: $font-family-base;
-                            font-weight: $font-weight-base;
-                            font-size: $font-size-base;
-                            line-height: 20px;
-                            color: $default;
-                            margin: 0;
-
-                            &::placeholder {
-                                color: #A3A8AF;
-                            }
-                        }
-
-                        .input-field {
-                            pointer-events: none;
-                            position: absolute;
-                            inset: 0px;
-                            width: 100%;
-                            border-radius: 3px;
-                            border: 1px solid #D3D5D7;
-                            overflow: hidden;
-                            box-sizing: border-box;
-                        }
-
-                        &:hover > .input-field {
-                            border-color: #747C87;
-                        }
-                        
-                        &:focus-within > .input-field {
-                            border-color: $violet;
-                        }
-                    }
-                }
+                justify-content: space-between;
             }
         }
 
@@ -792,6 +828,571 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
             }
         }
     }
+
+    &__navbar {
+        top: 0;
+        width: 100%;
+        height: 52px;
+        display: inline-flex;
+        z-index: 1001;
+        position: sticky;
+        background: #fff;
+        box-shadow: 0px 2px 4px rgba(168, 168, 168, 0.25);
+        align-items: center;
+        justify-content: center;
+
+        .box-navbar {
+            width: 100%;
+            height: 100%;
+            display: inline-flex;
+            padding: 8px 32px;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1366px;
+
+            .btn-back {
+                display: inline-flex;
+                align-items: center;
+                cursor: pointer;
+                text-decoration: none;
+                margin: 0;
+                color: #747C87;
+                
+                > svg {
+                    margin-right: 12px;
+                }
+
+                > h6 {
+                    font-family: var(--bs-font-sans-serif);
+                    font-weight: $font-weight-semibold;
+                    line-height: 20px;
+                    margin: 0;
+                }
+            }
+
+            .btn-toolbar {
+                gap: 16px;
+            }
+        }
+    }
+
+    &__createPage {
+        width: 100%;
+
+        &-wrapper {
+            margin: 0 auto;
+            max-width: 1366px;
+            padding: 24px 32px;
+        }
+
+        &-container {
+            display: grid;
+            gap: 24px;
+            grid-template-columns: 2fr 1fr;
+            grid-template-areas: 
+                'supplier info'
+                'products products';
+            width: 100%;
+            box-sizing: border-box;
+            
+            .box-supplier {
+                grid-area: supplier;
+                height: 100%;
+
+                .box-paper {
+                    height: 100%;
+                }
+            }
+            
+            .box-info {
+                grid-area: info;
+                height: 100%;
+
+                .paper-content {
+                    padding-right: 0 !important;
+                }
+            }
+            
+            .box-products {
+                grid-area: products; 
+                height: 100%;    
+            }
+            
+            .box-paper {
+                box-shadow: none;
+                border-radius: 3px;
+                background-color: #fff;
+                color: $default;
+
+                .paper-header {
+                    padding: 16px 24px;
+
+                    p {
+                        box-sizing: border-box;
+                        font-family: $font-family-base;
+                        font-size: 16px;
+                        line-height: 20px;
+                        margin: 0;
+                        color: $default;
+                        text-align: inherit;
+                        font-weight: $font-weight-semibold;
+                    }
+
+                    .box-header {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+
+                        .btn-toolbar {
+                            gap: 6px;
+
+                            .btn-icon {
+                                height: 36px;
+                                width: 36px;
+
+                                svg {
+                                    height: 20px;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .paper-content {
+                    padding: 0 24px 16px;
+
+                    .group-info {
+                        overflow: auto;
+                        max-height: 152px;
+                        padding-right: 24px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 16px;
+
+                        &::-webkit-scrollbar {
+                            width: 4px;
+                        }
+
+                        /* Phần của thanh cuộn */
+                        &::-webkit-scrollbar-thumb {
+                            background-color: #A0A5AC; /* Màu xám của thanh cuộn */
+                            border-radius: 10px; /* Bo tròn góc */
+                        }
+
+                        /* Nền của thanh cuộn */
+                        &::-webkit-scrollbar-track {
+                            background-color: transparent; /* Nền trong suốt hoặc có thể đổi màu theo ý bạn */
+                        }
+
+                        .info-item {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            width: 100%;
+
+                            .info-title {
+                                box-sizing: border-box;
+                                font-family: $font-family-base;
+                                font-weight: $font-weight-base;
+                                font-size: $font-size-base;
+                                line-height: 20px;
+                                margin: 0px;
+                                color: $default;
+                                text-align: inherit;
+                            }
+
+                            .info-field {
+                                width: 75%;
+
+                                .btn-dropdown {
+                                    width: 100%;
+                                    margin: 0px;
+                                    display: block;
+                                    padding: 8px 36px 8px 12px;
+                                    height: 40px;
+                                    border: 1px solid rgb(211, 213, 215);
+                                    border-radius: 3px;
+                                    text-align: left;
+                                    white-space: nowrap;
+                                    text-overflow: ellipsis;
+                                    overflow: hidden;
+                                    position: relative;
+                                    cursor: pointer;
+                                    background: transparent;
+                                    
+                                    > p {
+                                        font-family: $font-family-base;
+                                        font-weight: $font-weight-base;
+                                        font-size: $font-size-base;
+                                        line-height: 20px;
+                                        box-sizing: border-box;
+                                        margin: 0px;
+                                        color: $default;
+                                        text-align: inherit;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;
+                                        white-space: nowrap;
+                                    }
+
+                                    > svg {
+                                        position: absolute;
+                                        top: 50%;
+                                        transform: translate(0px, -50%);
+                                        color: rgb(163, 168, 175);
+                                        right: 20px;
+                                    }
+                                }
+
+                                .box-input {
+                                    position: relative;
+                                    height: 40px;
+
+                                    .text-field {
+                                        background: transparent;
+                                        box-sizing: border-box;
+                                        padding: 10px 40px 10px 12px;
+                                        width: 100%;
+                                        height: 100%;
+                                        border: none;
+                                        border-radius: 3px;
+                                        font-family: $font-family-base;
+                                        font-weight: $font-weight-base;
+                                        font-size: $font-size-base;
+                                        line-height: 20px;
+                                        margin: 0px;
+                                        color: $default;
+                                    }
+
+                                    .calendar-icon {
+                                        transform: translate(0px, -50%);
+                                        position: absolute;
+                                        top: 50%;
+                                        right: 12px;
+                                        color: rgb(163, 168, 175);
+                                        display: flex;
+                                        -webkit-box-align: center;
+                                        align-items: center;
+                                        -webkit-box-pack: center;
+                                        justify-content: center;
+                                    }
+                                }
+                            }
+                        } 
+                    }
+
+                    .right__table {
+                        box-shadow: none;
+
+                        .box-search-filter-btns {
+                            padding: 0;
+
+                            .box-search {
+                                :first-child {
+                                    margin-right: -1px;
+                                    z-index: 2;
+                                }
+                            }
+                            
+                            .box-input {
+                                flex: 1 1;
+                                height: 40px;
+                                
+                                > fieldset {
+                                    border-radius: 3px 0 0 3px;
+                                }
+                            }
+
+                            .btn-base {
+                                border: 1px solid #D3D5D7;
+                                height: 40px;
+                                padding: 0 20px;
+                                white-space: nowrap;
+                                border-radius: 0 3px 3px 0;
+                                background-color: transparent;
+                                box-shadow: none;
+                                text-decoration: none;
+                                min-width: 64px;
+                                text-transform: none;
+                                box-sizing: border-box;
+
+                                .btn__label {
+                                    width: auto;
+                                    display: inherit;
+                                    font-size: 1rem;
+                                    align-items: inherit;
+                                    text-transform: none;
+                                    justify-content: inherit;
+
+                                    > p {
+                                        font-size: $font-size-base;
+                                        font-family: var(--bs-font-sans-serif);
+                                        font-weight: $font-weight-base;
+                                        line-height: 20px;
+                                        margin: 0;
+                                    }
+                                }
+                            }
+
+                            .btn-filter {
+                                width: 150px;
+                                padding: 8px 36px 8px 12px;
+                                height: 40px;
+                                border-radius: 3px;
+
+                                .btn__icon {
+                                    position: absolute;
+                                    top: 50%;
+                                    transform: translate(0px, -50%);
+                                    right: 12px;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .box-table {
+                    background-color: #fff;
+                }
+
+                .box-total {
+                    background-color: #fff;
+                    border-top: 1px solid #D3D5D7;
+
+                    &__container {
+                        background-color: #fff;
+                        display: flex;
+                        padding: 24px;
+                        align-items: flex-start;
+                        padding-right: 16px;
+                        justify-content: space-between;
+
+                        .box-subinfo {
+                            background: rgb(255, 255, 255);
+                            width: 300px;
+                            
+                            .input-label {
+                                display: inline-flex;
+                                font-family: $font-family-base;
+                                font-weight: $font-weight-base;
+                                font-size: $font-size-base;
+                                line-height: 20px;
+                                box-sizing: border-box;
+                                padding: 0px;
+                                margin: 0px 0px 4px;
+                                color: rgb(70, 81, 95);
+                            }
+
+                            .box-note {
+                                width: 100%;
+                            }
+                            
+                            .box-tags {
+                                padding-top: 16px;
+                                
+                                .tags-field {
+                                    border: 0;
+                                    margin: 0;
+                                    display: inline-flex;
+                                    padding: 0;
+                                    position: relative;
+                                    min-width: 0;
+                                    flex-direction: column;
+                                    vertical-align: top;
+                                    width: 100%;
+                                    
+                                    .group-tags {
+                                        color: #0F1824;
+                                        border-radius: 3px;
+                                        display: flex;
+                                        padding: 5px;
+                                        min-height: 72px;
+                                        align-items: flex-start;
+                                        padding-right: 5px !important;
+                                        justify-content: flex-start;
+                                        flex-wrap: wrap;
+                                        position: relative;
+                                        width: 100%;
+                                        cursor: text;
+                                        font-size: $font-size-base;
+                                        box-sizing: border-box;
+                                        font-family: var(--bs-font-sans-serif);
+                                        font-weight: $font-weight-base;
+                                        line-height: 16px;
+                                        
+                                        .tags-input {
+                                            min-width: 156px;
+                                            padding: 10px 6px;
+                                            flex-grow: 1;
+                                            text-overflow: ellipsis;
+                                            font: inherit;
+                                            color: currentColor;
+                                            border: 0;
+                                            width: 0;
+                                            height: 16px;
+                                            margin: 0;
+                                            display: block;
+                                            background: none;
+                                            box-sizing: content-box;
+                                            -webkit-tap-highlight-color: transparent;
+                                        }
+
+                                        .btn-tag-item {
+                                            font-size: 14px;
+                                            color: #2B4263;
+                                            height: unset;
+                                            margin: 4px;
+                                            min-height: 24px;
+                                            user-select: auto;
+                                            white-space: normal;
+                                            background-color: #f6f3ff;
+                                            max-width: calc(100% - 6px);
+                                            border: none;
+                                            cursor: default;
+                                            display: inline-flex;
+                                            outline: 0;
+                                            box-sizing: border-box;
+                                            transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+                                            align-items: center;
+                                            font-family: var(--bs-font-sans-serif);
+                                            border-radius: 16px;
+                                            vertical-align: middle;
+                                            justify-content: center;
+                                            text-decoration: none;
+
+                                            .tag-label {
+                                                white-space: normal;
+                                                overflow: hidden;
+                                                padding-left: 12px;
+                                                padding-right: 12px;
+                                                text-overflow: ellipsis;
+                                                padding-bottom: 2px;
+                                            }
+
+                                            > svg {
+                                                color: rgba(0, 0, 0, 0.26);
+                                                font-size: 14px; 
+                                                cursor: pointer;
+                                                margin: 0 5px 0 0;
+                                                -webkit-tap-highlight-color: transparent;
+
+                                                &:hover {
+                                                    color: rgba(0, 0, 0, 0.4);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            .text-field, .group-tags {
+                                position: relative;
+                                display: flex;
+
+                                &:hover > .input-field {
+                                    border-color: rgb(116, 124, 135);
+                                }
+
+                                &:focus-within > .input-field {
+                                    border-color: $violet;
+                                }
+                                
+                                > textarea {
+                                    height: 72px;
+                                    resize: none;
+                                    background: #fff;
+                                    box-sizing: border-box;
+                                    padding: 10px 12px;
+                                    width: 100%;
+                                    border: none;
+                                    min-height: 40px;
+                                    max-height: 100px;
+                                    font-family: $font-family-base;
+                                    font-weight: $font-weight-base;
+                                    font-size: $font-size-base;
+                                    line-height: 20px;
+                                    margin: 0px;
+                                    color: $default;
+                                }
+                            }
+                        }
+
+                        .box-price-info {
+                            background: rgb(255, 255, 255);
+                            width: 364px;
+                            padding-right: 64px;
+                            
+                            .info-item {
+                                display: flex;
+                                padding: 4px;
+                                align-items: center;
+                                padding-right: 0;
+                                justify-content: space-between;
+                                position: relative;
+
+                                p {
+                                    box-sizing: border-box;
+                                    font-family: $font-family-base;
+                                    font-weight: $font-weight-base;
+                                    font-size: $font-size-base;
+                                    line-height: 20px;
+                                    margin: 0px;
+                                    color: $default;
+                                    text-align: inherit;
+
+                                    &.total-price {
+                                        font-weight: $font-weight-semibold;
+                                    }
+                                    
+                                    > svg {
+                                        margin-left: 6px;
+                                        vertical-align: top;
+                                        color: $violet;
+                                    }
+                                }
+
+                                .btn-base {
+                                    display: flex;
+                                    font-size: 14px;
+                                    box-shadow: none;
+                                    min-height: 36px;
+                                    align-items: center;
+                                    border-radius: 3px;
+                                    text-transform: none;
+                                    justify-content: center;
+                                    width: 100px;
+                                    border: unset;
+                                    height: 20px;
+                                    min-height: 0;
+                                    margin-left: -4px;
+
+                                    .btn__label {
+                                        width: 100%;
+                                        display: inherit;
+                                        font-size: $font-size-base;
+                                        align-items: inherit;
+                                        text-transform: none;
+                                        justify-content: inherit;
+
+                                        > p {
+                                            box-sizing: border-box;
+                                            font-family: $font-family-base;
+                                            font-weight: $font-weight-base;
+                                            font-size: $font-size-base;
+                                            line-height: 20px;
+                                            margin: 0px;
+                                            color: $violet;
+                                            text-align: inherit;
+                                            text-wrap: nowrap;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 .table-icon {
@@ -815,51 +1416,64 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
         -webkit-box-align: center;
         align-items: center;
         width: 80px;
-        
-        .checkbox {
-            &__container {
-                display: inline-flex;
-                -webkit-box-pack: center;
-                justify-content: center;
-                position: relative;
-                -webkit-box-align: center;
-                align-items: center;
-                background-color: transparent;
-                font-family: $font-family-base;
-                font-weight: $font-weight-base;
-                font-size: $font-size-base;
-                line-height: 20px;
-                margin: 0px;
-            }
-    
-            &__wrapper {
-                width: 30px;
-                height: 30px;
-                display: flex;
-                -webkit-box-pack: center;
-                justify-content: center;
-                -webkit-box-align: center;
-                align-items: center;
-                background-color: transparent;
-                border-radius: 50%;
-                overflow: hidden;
-                position: relative;
-    
-                &:hover {
-                    background: rgb(232, 234, 235);
-                }
-            }
-    
-            &__input {
-                position: absolute;
-                height: 24px;
-                width: 24px;
-                opacity: 0;
-                z-index: 4;
-                margin: 0px;
-                padding: 0px;
-                cursor: pointer;
-            }
+
+        .checkbox__wrapper:hover {
+            background: rgb(232, 234, 235);
+        }
+    }
+}
+
+.checkbox {
+    &__container {
+        display: inline-flex;
+        -webkit-box-pack: center;
+        justify-content: center;
+        position: relative;
+        -webkit-box-align: center;
+        align-items: center;
+        background-color: transparent;
+        font-family: $font-family-base;
+        font-weight: $font-weight-base;
+        font-size: $font-size-base;
+        line-height: 20px;
+        margin: 0px;
+    }
+
+    &__wrapper {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        -webkit-box-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        align-items: center;
+        background-color: transparent;
+        border-radius: 50%;
+        overflow: hidden;
+        position: relative;
+    }
+
+    &__input {
+        position: absolute;
+        height: 24px;
+        width: 24px;
+        opacity: 0;
+        z-index: 4;
+        margin: 0px;
+        padding: 0px;
+        cursor: pointer;
+    }
+
+    &__label {
+        text-align: center;
+        margin-left: 0.285714rem;
+        padding: 0px;
+        display: block;
+        color: $default;
+        cursor: pointer;
+
+        &:hover {
+            color: $violet;
         }
     }
 }

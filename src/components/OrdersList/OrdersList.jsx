@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import cn from 'classnames'
 import Cookies from 'js-cookie'
 
@@ -61,6 +62,7 @@ const OrdersList = () => {
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
+    const navigate = useNavigate()
 
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
@@ -76,7 +78,6 @@ const OrdersList = () => {
             supplier_id: false,
             user_cancelled_name: false,
             user_completed_name: false,
-            user_ended_name: false,
             supplier_phone: false,
             supplier_address: false,
             supplier_email: false,
@@ -84,7 +85,6 @@ const OrdersList = () => {
             tags: false,
             expected_at: false,
             completed_at: false,
-            ended_at: false,
             cancelled_at: false
         }
     })
@@ -140,14 +140,14 @@ const OrdersList = () => {
                         </span>
                     </button>
                 </div>
-            <div className="btn-toolbar">
-                <button className="btn btn-primary">
-                    <span className="btn__icon">
-                        <FontAwesomeIcon icon={faPlus} />
-                    </span>
-                    <span className="btn__title">Tạo đơn đặt hàng</span>
-                </button>
-            </div>
+                <div className="btn-toolbar">
+                    <button onClick={() => navigate('/admin/order_suppliers/create')} className="btn btn-primary">
+                        <span className="btn__icon">
+                            <FontAwesomeIcon icon={faPlus} />
+                        </span>
+                        <span className="btn__title">Tạo đơn đặt hàng</span>
+                    </button>
+                </div>
             </div>
             <div className="right__table">
                 <div className="right__table-scroller">
@@ -216,7 +216,7 @@ const OrdersList = () => {
                     className="right__table-headers">
                     <table className="box-table-headers">
                         <colgroup>
-                        <col style={{ width: "80px" }} />
+                            <col style={{ width: "80px" }} />
                             {/* Render the <colgroup> only for the columns that are in colsToRender */}
                             {Object.entries(colsToRender).map(([key, value]) => {
                                 if (value) {
