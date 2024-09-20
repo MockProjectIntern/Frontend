@@ -37,11 +37,11 @@ const MenuListItem = ({
     }, [openedItem])
 
     useEffect(() => {
-        if (childItems?.some((child) => child.link === location.pathname)) {
+        if (childItems?.some((child) => location.pathname.includes(child.link))) {
             setIsClicked(true);
             handleOpenedSidebarItemChange(index)
         }
-        if (location.pathname === link) {
+        if (location.pathname.includes(link)) {
             handleActiveItemChange(title)
         }
     }, [])

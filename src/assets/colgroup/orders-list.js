@@ -49,11 +49,6 @@ const ordersListColgroup = {
         width: "180px",
         align: "text-start"
     },
-    user_ended_name: {
-        name: "Nhân viên kết thúc",
-        width: "160px",
-        align: "text-start"
-    },
     supplier_phone: {
         name: "SĐT nhà cung cấp",
         width: "160px",
@@ -86,11 +81,6 @@ const ordersListColgroup = {
     },
     completed_at: {
         name: "Ngày hoàn thành",
-        width: "160px",
-        align: "text-start"
-    },
-    ended_at: {
-        name: "Ngày kết thúc",
         width: "160px",
         align: "text-start"
     },
