@@ -136,6 +136,10 @@ const ProductList = () => {
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
+
+    useEffect(() => {
+        Cookies.set('productsList', JSON.stringify(colsToRender));
+    }, [colsToRender])
     //console.log(col)
     return (
         <>  
