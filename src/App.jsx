@@ -22,9 +22,9 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Navigate to='/admin/dashboard' />} />
           <Route path="/admin" element={<Navigate to='/admin/dashboard' />} />
-          <Route element={<PrivateRoute isAuthenticated={isAuthenticated} dispatch={dispatch} />}>
+          {/*<Route element={<PrivateRoute isAuthenticated={isAuthenticated} dispatch={dispatch} />}>*/}
             <Route path='/admin/*' element={<Layout />} />
-          </Route>
+          {/*</Route>*/}
           <Route path='login' element={<Login />} />
         </Routes>
       </BrowserRouter>
