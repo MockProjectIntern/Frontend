@@ -118,7 +118,7 @@ const VariantList = () => {
         }
     }
     const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('ordersListCols');
+        const storedCols = Cookies.get('variantsList');
         return storedCols ? JSON.parse(storedCols) : {
             name: true,
             status: true,
@@ -138,6 +138,10 @@ const VariantList = () => {
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
+
+    useEffect(() => {
+        Cookies.set('variantsList', JSON.stringify(colsToRender));
+    }, [colsToRender])
     return (
         <>
         <Header />
