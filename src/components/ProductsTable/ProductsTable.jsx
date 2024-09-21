@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import cn from 'classnames'
 
 // Import Components
-import DiscountPopup from '../DiscountPopup/DiscountPopup'
+import DiscountTableCell from '../DiscountTableCell/DiscountTableCell'
 
 // Import CSS
 import s from './ProductsTable.module.scss'
@@ -18,13 +18,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCircleMinus, faCirclePlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 
 const ProductsTable = ({ productsList, colsToRender }) => {
-    const [isDiscountPopup, setIsDiscountPopup] = useState(false)
-    const discountBtnRef = useRef(null)
-
-    const closeDiscountPopup = () => {
-        setIsDiscountPopup(false);
-    }
-
   return (
     <div className={s.container}>
         <table className={s.table}>
@@ -147,18 +140,7 @@ const ProductsTable = ({ productsList, colsToRender }) => {
                                         )
                                     } else if (key === "discount") {
                                         return (
-                                            <td
-                                                key={key} 
-                                                className={cn(s.tableCell, s.tableCellBody, col[key].align, "table-cell")}
-                                            >
-                                                <button ref={discountBtnRef} onClick={() => setIsDiscountPopup(true)} className={cn("btn-base", s.btnDiscount)}>
-                                                    <span className={s.btnLabel}>
-                                                        <p className={s.discountValue}>{product.discount}</p>
-                                                        {product.discount !== 0 && <p className={s.discountRate}>{(product.discount / product.price * 100).toFixed(2)}%</p>}
-                                                    </span>
-                                                </button>
-                                                {isDiscountPopup && <DiscountPopup price={product.price} discount={product.discount} btnRef={discountBtnRef} closePopup={closeDiscountPopup} />}
-                                            </td>
+                                            <DiscountTableCell key={key} price={product.price} discount={product.discount} />
                                         )
                                     } else if (key === "tax") {
                                         return (
