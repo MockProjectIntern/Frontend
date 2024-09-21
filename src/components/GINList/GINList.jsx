@@ -15,6 +15,7 @@ import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { useNavigate } from 'react-router-dom'
 
 const ginList = [
     {
@@ -57,6 +58,7 @@ const GINList = () => {
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
+    const navigate = useNavigate();
 
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
@@ -125,11 +127,11 @@ const GINList = () => {
                     </button>
                 </div>
             <div className="btn-toolbar">
-                <button className="btn btn-primary">
+                <button className="btn btn-primary" onClick={()=> navigate("/admin/gins/create")}>
                     <span className="btn__icon">
                         <FontAwesomeIcon icon={faPlus} />
                     </span>
-                    <span className="btn__title">Tạo phiếu nhập hàng</span>
+                    <span className="btn__title">Tạo phiếu kiểm hàng</span>
                 </button>
             </div>
             </div>

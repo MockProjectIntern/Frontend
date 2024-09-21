@@ -283,6 +283,56 @@ input::placeholder {
     flex-wrap: nowrap;
 }
 
+.btn-tab {
+    display: inline-flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    position: relative;
+    -webkit-box-align: center;
+    align-items: center;
+    padding: 0px;
+    outline: 0px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: $font-family-base;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.42857rem;
+    margin: 0px;
+        > button {
+            display: inline-block;
+            -webkit-box-pack: center;
+            justify-content: center;
+            position: relative;
+            padding: 0.428571rem 1.14286rem;
+            box-sizing: border-box;
+            -webkit-box-align: center;
+            align-items: center;
+            border-top: none;
+            border-right: none;
+            border-left: none;
+            border-image: initial;
+            background-color: transparent;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: left;
+            cursor: pointer;
+            font-family: $font-family-base;
+            font-size: 1rem;
+            line-height: 1.42857rem;
+            margin: 0px;
+            height: 3.42857rem;
+            max-width: 17.1429rem;
+            color: $default;
+            font-weight: 500;
+        }
+        button.active {
+            color: rgb(0, 136, 255);
+            border-bottom: 2px solid rgb(0, 136, 255);
+        }
+}
+
 .btn-group {
     > .btn:not(:last-child) {
         border-right-color: transparent;
@@ -916,7 +966,7 @@ input:focus-within ~ .input-field {
                 grid-area: products; 
                 height: 100%;    
             }
-            
+                     
             .box-paper {
                 box-shadow: none;
                 border-radius: 3px;
