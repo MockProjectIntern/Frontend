@@ -112,6 +112,7 @@ const Sidebar = () => {
                   }
                 ]}
               />
+              <hr className={s.menuDivider} />
               <div className={s.menuListTitle}>
                 <p>Cấu hình</p>
               </div>
@@ -119,8 +120,8 @@ const Sidebar = () => {
                 index='settings'
                 isHeader={true}
                 icon={userSettingIcon}
-                title="Tổng quan"
-                link='/admin/settings/user'
+                title="Nhân viên"
+                link='/admin/settings/users'
                 openedItem={sidebar.openedItem}
                 handleOpenedSidebarItemChange={(openedItem) => dispatch(changeOpenedSidebarItem(openedItem))}
                 activeItem={sidebar.activeItem}
