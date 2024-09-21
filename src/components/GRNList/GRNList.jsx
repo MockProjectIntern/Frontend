@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 import Cookies from 'js-cookie'
+import { useNavigate } from 'react-router-dom'
 
 // Import Components
 import Header from '../Header/Header'
@@ -61,6 +62,7 @@ const grnList = [
 const grnsQuantity = 4;
 
 const GRNList = () => {
+    const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
@@ -145,7 +147,7 @@ const GRNList = () => {
                     </button>
                 </div>
             <div className="btn-toolbar">
-                <button className="btn btn-primary">
+                <button className="btn btn-primary" onClick={() => {navigate("/admin/grns/create")}}>
                     <span className="btn__icon">
                         <FontAwesomeIcon icon={faPlus} />
                     </span>
