@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
-import exportIcon from '../../assets/icons/ExportIcon'
-import importIcon from '../../assets/icons/ImportIcon'
-import filterIcon from '../../assets/icons/FilterIcon'
-import col from '../../assets/colgroup/variant-list.js'
+import exportIcon from '../../assets/icons/ExportIcon.jsx'
+import importIcon from '../../assets/icons/ImportIcon.jsx'
+import filterIcon from '../../assets/icons/FilterIcon.jsx'
+import col from '../../assets/colgroup/variants-list.js'
 import cn from "classnames"
 import Cookies from 'js-cookie'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
-import Header from '../Header/Header'
+import Header from '../Header/Header.jsx'
 
 
 const variantsList = [
@@ -16,7 +16,7 @@ const variantsList = [
         name: "Sản phẩm 4",
         images:[
             {
-                url: "https://www.fahasa.com/tuyen-tap-nam-cao.html?p=2&web_ref=dore.vn&srsltid=AfmBOoo6dzj-e4CSuvi9JhjkEh-Xm2thx6cV5A7kycQ3i0TPAtiR1ngw#lg=1&slide=0",
+                url: "https://cdn0.fahasa.com/media/catalog/product/i/m/image_195509_1_25943.jpg",
                 alt: ""
             },
             {
@@ -120,12 +120,12 @@ const VariantList = () => {
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_variants');
         return storedCols ? JSON.parse(storedCols) : {
+            images: true,
             name: true,
             status: true,
             category_name: true,
             brand_name: true,
             quantity: true,
-            images: false,
             created_at: true,
             updated_at: true,
             cost_price : true,
@@ -337,7 +337,7 @@ const VariantList = () => {
                                     })}
                                 </colgroup>
                                 <tbody>
-                                    {variantsList.map((order, index) => {
+                                    {variantsList.map((variant, index) => {
                                         return (
                                             <tr key={index} className="table-data-row">
                                                 <td rowSpan={1} className='table-icon'>
@@ -363,14 +363,23 @@ const VariantList = () => {
                                                                 >
                                                                     <div className={cn('box-status', {
                                                                         //'box-status--pending': order[key] === "Chưa nhập",
-                                                                        'box-status--partial': order[key] === "ACTIVE",
+                                                                        'box-status--partial': variant[key] === "ACTIVE",
                                                                         //'box-status--completed': order[key] === "INACTIVE",
-                                                                        'box-status--cancelled': order[key] === "INACTIVE",
+                                                                        'box-status--cancelled': variant[key] === "INACTIVE",
                                                                     })}>
                                                                         <span>
-                                                                            {order[key] === "ACTIVE" ? 'Đang giao dịch' : 'Ngừng giao dịch'}
+                                                                            {variant[key] === "ACTIVE" ? 'Đang giao dịch' : 'Ngừng giao dịch'}
                                                                         </span>
                                                                     </div>
+                                                                </td>
+                                                            )
+                                                        } else if (key === "images") {
+                                                            return (
+                                                                <td
+                                                                    key={key}
+                                                                    className={cn("table-data-item", col[key].align)}
+                                                                >
+                                                                    <img src={variant.images[0].url} alt={variant.images[0].alt} />
                                                                 </td>
                                                             )
                                                         }
@@ -381,8 +390,8 @@ const VariantList = () => {
                                                             >
                                                                 <p className='box-text'>
                                                                     {
-                                                                        key !== "id" ? order[key] :
-                                                                        <a className='box-id'>{order[key]}</a>
+                                                                        key !== "id" ? variant[key] :
+                                                                        <a className='box-id'>{variant[key]}</a>
                                                                     }
                                                                 </p>
                                                             </td>

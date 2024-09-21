@@ -1,4 +1,5 @@
-const productsListColgroup = {
+
+const variantsListColgroup = {
     name: {
         name: "Sản phẩm",
         width: "270px",
@@ -7,7 +8,7 @@ const productsListColgroup = {
     images: {
         name: "Ảnh",
         width: "67px",
-        align: "text-start"
+        align: "text-center"
     },
     category_name: {
         name: "Loại",
@@ -22,7 +23,7 @@ const productsListColgroup = {
     quantity: {
         name: "Tồn kho",
         width: "110px",
-        align: "text-start"
+        align: "text-center"
     },
     status:{
         name: "Trạng thái",
@@ -38,7 +39,21 @@ const productsListColgroup = {
         name: "Cập nhật cuối",
         width: "150px",
         align: "text-start"
-    }
+    },
+    cost_price : {
+        name: "Giá nhập",
+        width: "150px",
+        align: "text-end"
+    },
+    wholesale_price : {
+        name: "Giá bán buôn",
+        width: "150px",
+        align: "text-end"
+    },
+    retail_price : {
+        name: "Giá bán lẻ",
+        width: "150px",
+        align: "text-end"
+    },
 }
-
-export default productsListColgroup;
+export default variantsListColgroup;

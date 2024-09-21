@@ -701,6 +701,13 @@ input:focus-within ~ .input-field {
                                     }
                                 }
                             }
+
+                            > img {
+                                height: 35px;
+                                display: block;
+                                margin: auto;
+                                max-height: 35px;
+                            }
                         }
                     }
                 }
