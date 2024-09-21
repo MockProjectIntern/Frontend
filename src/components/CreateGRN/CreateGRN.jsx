@@ -12,15 +12,16 @@ import { useState, useEffect, useRef } from 'react'
 import ProductsTable from '../ProductsTable/ProductsTable.jsx'
 import DiscountPopup from '../DiscountPopup/DiscountPopup.jsx'
 const CreateGRN = () => {
-    const [supplier, setSupplier] = useState({
-        name: "Test",
-        phone: "0123456789",
-        address: "Hà Nội, Phường Bách Khoa, Quận Hai Bà Trưng, Hà Nội, Việt Nam",
-        debt: "4,000,000",
-        grn_quantity: 0,
-        grn_total: 0,
-        return: 0,
-    });
+    // const [supplier, setSupplier] = useState({
+    //     name: "Test",
+    //     phone: "0123456789",
+    //     address: "Hà Nội, Phường Bách Khoa, Quận Hai Bà Trưng, Hà Nội, Việt Nam",
+    //     debt: "4,000,000",
+    //     grn_quantity: 0,
+    //     grn_total: 0,
+    //     return: 0,
+    // });
+    const [supplier, setSupplier] = useState(null);
     const [tags, setTags] = useState([]);
     const [tagValue, setTagValue] = useState("");
     const [isDiscountPopup, setIsDiscountPopup] = useState(false)
