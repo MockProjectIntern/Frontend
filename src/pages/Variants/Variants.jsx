@@ -1,11 +1,11 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
-import VariantList from '../../components/Variant/VariantList'
+import VariantsList from '../../components/VariantsList/VariantsList'
 const Variants = () => {
   return (
     <>
       <Routes>
-        <Route path='/' element = {<VariantList />}/>
+        <Route path='/' element = {<VariantsList />}/>
       </Routes>
     </>
   )
