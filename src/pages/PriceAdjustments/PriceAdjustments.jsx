@@ -1,8 +1,15 @@
 import React from 'react'
+import { Route, Routes } from 'react-router-dom'
+import PriceAdjustmentsList from '../../components/PriceAdjustmentsList/PriceAdjustments'
+
 
 const PriceAdjustments = () => {
   return (
-    <div>PriceAdjustments</div>
+    <>
+      <Routes>
+        <Route path='/' element={<PriceAdjustmentsList />} />
+      </Routes>
+    </>
   )
 }
 

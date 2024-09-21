@@ -1,98 +1,62 @@
 import React, { useEffect, useRef, useState } from 'react'
+import cn from 'classnames'
+import Cookies from 'js-cookie'
+
+// Import Components
+import Header from '../Header/Header'
+
+// Import Columns Info
+import col from '../../assets/colgroup/price-adjustments-list.js'
+
+// Import Icons
 import exportIcon from '../../assets/icons/ExportIcon'
 import importIcon from '../../assets/icons/ImportIcon'
 import filterIcon from '../../assets/icons/FilterIcon'
-import col from '../../assets/colgroup/product-list.js'
-import cn from "classnames"
-import Cookies from 'js-cookie'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
-import Header from '../Header/Header'
-import { useNavigate } from 'react-router-dom'
 
-
-const productsList = [
+const ordersList = [
     {
-        name: "Sản phẩm 4",
-        images:[
-            {
-                url: "https://www.fahasa.com/tuyen-tap-nam-cao.html?p=2&web_ref=dore.vn&srsltid=AfmBOoo6dzj-e4CSuvi9JhjkEh-Xm2thx6cV5A7kycQ3i0TPAtiR1ngw#lg=1&slide=0",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "ACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024"
+        id: "PRD00001",
+        status: "PENDING",
+        created_at: "13/09/2024 11:36",
+        updated_at: "14/09/2024 09:00"
     },
-    {
-        name: "Sản phẩm 3",
-        images:[
-            {
-                url: "abc",
-                alt: ""
-            },
-            {
 
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "INACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024"
-    },
-    {
-        name: "Sản phẩm 2",
-        images:[
-            {
-                url: "abc",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "ACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024"
-    },
-    {
-        name: "Sản phẩm 1",
-        images:[
-            {
-                url: "abc",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "ACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024"
-    }
 ]
 
 const ordersQuantity = 4;
+const PriceAdjustmentsList = () => {
+    const [page, setPage] = useState(1);
+    const [pageQuantiy, setPageQuantity] = useState(1);
+    const [limit, setLimit] = useState(20);
 
-const ProductList = () => {
-    const navigate = useNavigate();
+    // Get list of columns that need redering from Cookies
+    const [colsToRender, setColsToRender] = useState(() => {
+        const storedCols = Cookies.get('priceAdjustmentsListCols');
+        return storedCols ? JSON.parse(storedCols) : {
+            id: true,
+            sub_id: false,
+            status: true,
+            note: false,
+            tags: false,
+            new_price: false,
+            user_created_id: false,
+            product_id: false,
+            created_at: true,
+            updated_at: true
+        }
+    })
+
+    // Set required columns to Cookies
+    useEffect(() => {
+        Cookies.set('priceAdjustmentsListCols', JSON.stringify(colsToRender));
+    }, [colsToRender])
+
     const headersRef = useRef(null);
     const contentRef = useRef(null);
+
     const handleScroll = (e, target) => {
         target.scrollLeft = e.target.scrollLeft;
     }
@@ -108,46 +72,17 @@ const ProductList = () => {
             setPage(prev => prev + 1);
         }
     }
-    //Cookies.remove("ordersListCols")
-    const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('filter_products');
-        return storedCols ? JSON.parse(storedCols) : {
-            name: true,
-            status: true,
-            category_name: true,
-            brand_name: true,
-            quantity: true,
-            images: false,
-            created_at: true,
-            updated_at: true
-            // user_completed_name: false,
-            // user_ended_name: false,
-            // supplier_phone: false,
-            // supplier_address: false,
-            // supplier_email: false,
-            // note: false,
-            // tags: false,
-            // expected_at: false,
-            // completed_at: false,
-            // ended_at: false,
-            // cancelled_at: false
-        }
-    })
-    const [page, setPage] = useState(1);
-    const [pageQuantiy, setPageQuantity] = useState(1);
-    const [limit, setLimit] = useState(20);
 
-    useEffect(() => {
-        Cookies.set('filter_products', JSON.stringify(colsToRender));
-    }, [colsToRender])
-    //console.log(col)
+    const handleColsChange = (name) => {
+        setColsToRender({ ...colsToRender, [name]: !colsToRender[name] })
+    }
     return (
-        <>  
-            <Header />
+        <>
             <div className='right__listPage'>
+                <h1>Điều chỉnh giá vốn</h1>
                 <div className='right__toolbar'>
-                    <div className='btn-toolbar'>
-                        <button className='btn btn-base btn-text'>
+                    <div className="btn-toolbar">
+                        <button className="btn btn-base btn-text">
                             <span className="btn__label">
                                 <span className="btn__icon">
                                     {exportIcon}
@@ -163,48 +98,40 @@ const ProductList = () => {
                                 Nhập file
                             </span>
                         </button>
-                        <button className="btn btn-base btn-text">
-                            <span className="btn__label">
-                                <span className="btn__icon">
-                                    {importIcon}
-                                </span>
-                                Loại sản phẩm
-                            </span>
-                        </button>
                     </div>
                     <div className="btn-toolbar">
-                        <button className="btn btn-primary" onClick={() => navigate('/admin/products/create')}>
+                        <button className="btn btn-primary">
                             <span className="btn__icon">
                                 <FontAwesomeIcon icon={faPlus} />
                             </span>
-                            <span className="btn__title">Thêm sản phẩm</span>
+                            <span className="btn__title">Tạo đơn đặt hàng</span>
                         </button>
                     </div>
                 </div>
-
-                <div className='right__table'>
+                <div className="right__table">
                     <div className="right__table-scroller">
                         <div className="box-scroller">
                             <div className="group-scroller-btns">
-                                <button className="btn-scroller active">Tất cả sản phẩm</button>
+                                <button className="btn-scroller active">Tất cả phiếu điều chỉnh</button>
+                                <button className="btn-scroller">Đang điều chỉnh</button>
                             </div>
                         </div>
                     </div>
-                    <div className='right__table-search-filter'>
-                        <div className='box-search-filter-btns'>
+                    <div className="right__table-search-filter">
+                        <div className="box-search-filter-btns">
                             <div className="box-search">
                                 <div className="box-input">
                                     <div className="search-icon">
                                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                                     </div>
-                                    <input placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode' type="text" name="search" id="" autoComplete='on' />
+                                    <input placeholder='Tìm mã phiếu' type="text" name="search" id="" autoComplete='on' />
                                     <fieldset className='input-field' />
                                 </div>
                             </div>
                             <div className="btn-group group-filter-btns">
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
-                                        Loại sản phẩm
+                                        Trạng thái
                                         <span className="btn__icon">
                                             <FontAwesomeIcon icon={faCaretDown} />
                                         </span>
@@ -220,7 +147,7 @@ const ProductList = () => {
                                 </button>
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
-                                        Nhãn hiệu
+                                        Sản phẩm
                                         <span className="btn__icon">
                                             <FontAwesomeIcon icon={faCaretDown} />
                                         </span>
@@ -241,7 +168,7 @@ const ProductList = () => {
                         </div>
                     </div>
                     <div
-                        ref={headersRef} 
+                        ref={headersRef}
                         onScroll={(e) => handleScroll(e, contentRef.current)}
                         className="right__table-headers">
                         <table className="box-table-headers">
@@ -277,15 +204,15 @@ const ProductList = () => {
                                             </div>
                                         </div>
                                     </th>
-                                    {/* Render table headers for columns that exist in productsList */}
+                                    {/* Render table headers for columns that exist in ordersList */}
                                     {Object.entries(colsToRender).map(([key, value]) => {
                                         if (value) {
                                             if (key === "created_at") {
                                                 return (
-                                                    <th 
+                                                    <th
                                                         key={key}
-                                                        colSpan={1} 
-                                                        rowSpan={1} 
+                                                        colSpan={1}
+                                                        rowSpan={1}
                                                         className={cn("table-header-item", col[key].align)}
                                                     >
                                                         <div className="box-sort-date">
@@ -298,10 +225,10 @@ const ProductList = () => {
                                                 )
                                             }
                                             return (
-                                                <th 
+                                                <th
                                                     key={key}
-                                                    colSpan={1} 
-                                                    rowSpan={1} 
+                                                    colSpan={1}
+                                                    rowSpan={1}
                                                     className={cn("table-header-item", col[key].align)}
                                                 >
                                                     {col[key].name}
@@ -317,8 +244,8 @@ const ProductList = () => {
                     <div className="right__table-content">
                         <div className="right__table-data">
                             <div
-                                ref={contentRef} 
-                                onScroll={(e) => handleScroll(e, headersRef.current)} 
+                                ref={contentRef}
+                                onScroll={(e) => handleScroll(e, headersRef.current)}
                                 className='table-data__container'
                             >
                                 <table className="box-table-data">
@@ -340,7 +267,7 @@ const ProductList = () => {
                                         })}
                                     </colgroup>
                                     <tbody>
-                                        {productsList.map((order, index) => {
+                                        {ordersList.map((order, index) => {
                                             return (
                                                 <tr key={index} className="table-data-row">
                                                     <td rowSpan={1} className='table-icon'>
@@ -354,7 +281,7 @@ const ProductList = () => {
                                                                     <div className="btn-checkbox"></div>
                                                                 </div>
                                                             </div>
-                                                        </div> 
+                                                        </div>
                                                     </td>
                                                     {Object.entries(colsToRender).map(([key, value]) => {
                                                         if (value) {
@@ -365,14 +292,12 @@ const ProductList = () => {
                                                                         className={cn("table-data-item", col[key].align)}
                                                                     >
                                                                         <div className={cn('box-status', {
-                                                                            //'box-status--pending': order[key] === "Chưa nhập",
-                                                                            'box-status--partial': order[key] === "ACTIVE",
-                                                                            //'box-status--completed': order[key] === "INACTIVE",
-                                                                            'box-status--cancelled': order[key] === "INACTIVE",
+                                                                            'box-status--pending': order[key] === "Chưa nhập",
+                                                                            'box-status--partial': order[key] === "Nhập một phần",
+                                                                            'box-status--completed': order[key] === "Hoàn thành",
+                                                                            'box-status--cancelled': order[key] === "Đã hủy",
                                                                         })}>
-                                                                            <span>
-                                                                            {order[key] === "ACTIVE" ? 'Đang hoạt động' : order[key] === "INACTIVE" ? 'Ngừng giao dịch' : order[key]}
-                                                                            </span>
+                                                                            <span>{order[key]}</span>
                                                                         </div>
                                                                     </td>
                                                                 )
@@ -385,7 +310,7 @@ const ProductList = () => {
                                                                     <p className='box-text'>
                                                                         {
                                                                             key !== "id" ? order[key] :
-                                                                            <a className='box-id'>{order[key]}</a>
+                                                                                <a className='box-id'>{order[key]}</a>
                                                                         }
                                                                     </p>
                                                                 </td>
@@ -411,26 +336,26 @@ const ProductList = () => {
                                 </button>
                             </div>
                             <p>kết quả</p>
-                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + productsList.length} trên tổng {ordersQuantity}</p>
-                            <button 
-                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
+                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + ordersList.length} trên tổng {ordersQuantity}</p>
+                            <button
+                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1 })}
                                 onClick={handlePrevPage}
                             >
                                 <FontAwesomeIcon icon={faChevronLeft} />
                             </button>
                             {
                                 Array(pageQuantiy).fill(null).map((_, index) => (
-                                    <div 
+                                    <div
                                         key={index}
-                                        className={cn("box-page", { 'active': page === index + 1})}
+                                        className={cn("box-page", { 'active': page === index + 1 })}
                                         onClick={() => setPage(index + 1)}
                                     >
                                         {index + 1}
                                     </div>
                                 ))
                             }
-                            <button 
-                                className={cn('btn-icon', 'btn-page', { 'inactive': page === pageQuantiy})}
+                            <button
+                                className={cn('btn-icon', 'btn-page', { 'inactive': page === pageQuantiy })}
                                 onClick={handleNextPage}
                             >
                                 <FontAwesomeIcon icon={faChevronRight} />
@@ -442,4 +367,5 @@ const ProductList = () => {
         </>
     )
 }
-export default ProductList
+
+export default PriceAdjustmentsList

@@ -669,7 +669,6 @@ input:focus-within ~ .input-field {
                             line-height: 20px;
                             border-right: none;
                             overflow: hidden;
-                            text-overflow: ellipsis;
                             height: 52px;
 
                             > .box-text {
@@ -1523,7 +1522,7 @@ input:focus-within ~ .input-field {
         }
     }
 
-    &--completed {
+    &--completed, &--imported, &--balanced {
         border: 1px solid rgb(159, 237, 207);
         background-color: rgb(243, 252, 249);
 
@@ -1532,7 +1531,7 @@ input:focus-within ~ .input-field {
         }
     }
 
-    &--cancelled {
+    &--cancelled, &--deleted {
         border: 1px solid rgb(255, 184, 184);
         background-color: rgb(255, 246, 246);
 

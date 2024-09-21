@@ -1,107 +1,86 @@
 import React, { useEffect, useRef, useState } from 'react'
+import cn from 'classnames'
+import Cookies from 'js-cookie'
+
+// Import Components
+import Header from '../Header/Header'
+
+// Import Columns Info
+import col from '../../assets/colgroup/gin-list.js'
+
+// Import Icons
 import exportIcon from '../../assets/icons/ExportIcon'
 import importIcon from '../../assets/icons/ImportIcon'
 import filterIcon from '../../assets/icons/FilterIcon'
-import col from '../../assets/colgroup/variant-list.js'
-import cn from "classnames"
-import Cookies from 'js-cookie'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
-import Header from '../Header/Header'
 
-
-const variantsList = [
+const ginList = [
     {
-        name: "Sản phẩm 4",
-        images:[
-            {
-                url: "https://www.fahasa.com/tuyen-tap-nam-cao.html?p=2&web_ref=dore.vn&srsltid=AfmBOoo6dzj-e4CSuvi9JhjkEh-Xm2thx6cV5A7kycQ3i0TPAtiR1ngw#lg=1&slide=0",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "ACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024",
-        cost_price : 500.000,
-        wholesale_price : 550.000, 
-        retail_price : 700.000 
+        id: "OSN00004",
+        created_at: "13/09/2024 11:36",
+        balanced_at: "13/09/2024 11:36",
+        status: "Đang kiểm kho",
+        user_created: "Admin",
+        user_inspection: "Admin",
+        user_balanced: "Admin",
+        note: "Giao hàng",
     },
     {
-        name: "Sản phẩm 3",
-        images:[
-            {
-                url: "abc",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "INACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024",
-        cost_price : 500.000,
-        wholesale_price : 550.000, 
-        retail_price : 700.000 
+        id: "OSN00003",
+        created_at: "13/09/2024 11:36",
+        balanced_at: "13/09/2024 11:36",
+        status: "Đã cân bằng",
+        user_created: "Admin",
+        user_inspection: "Admin",
+        user_balanced: "Admin",
+        note: "Giao hàng",
     },
     {
-        name: "Sản phẩm 2",
-        images:[
-            {
-                url: "abc",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "ACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024",
-        cost_price : 500.000,
-        wholesale_price : 550.000, 
-        retail_price : 700.000 
-    },
-    {
-        name: "Sản phẩm 1",
-        images:[
-            {
-                url: "abc",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "ACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024",
-        cost_price : 500.000,
-        wholesale_price : 550.000, 
-        retail_price : 700.000 
+        id: "OSN00002",
+        created_at: "13/09/2024 11:36",
+        balanced_at: "13/09/2024 11:36",
+        status: "Đã xóa",
+        user_created: "Admin",
+        user_inspection: "Admin",
+        user_balanced: "Admin",
+        note: "Giao hàng",
     }
+    
+  
 ]
 
-const ordersQuantity = 4;
-const VariantList = () => {
+const grnsQuantity = 4;
+
+const GINList = () => {
+    const [page, setPage] = useState(1);
+    const [pageQuantiy, setPageQuantity] = useState(1);
+    const [limit, setLimit] = useState(20);
+
+    // Get list of columns that need redering from Cookies
+    const [colsToRender, setColsToRender] = useState(() => {
+        const storedCols = Cookies.get('filter_gins');
+        return storedCols ? JSON.parse(storedCols) : {
+            id: true,
+            created_at: true,
+            status: true,
+            user_created: true,
+            user_inspection: true,
+            user_balanced: true,
+            note: true,
+            balanced_at: true,
+        }
+    })
+
+    // Set required columns to Cookies
+    useEffect(() => {
+        Cookies.set('filter_gins', JSON.stringify(colsToRender));
+    }, [colsToRender])
+
     const headersRef = useRef(null);
     const contentRef = useRef(null);
+
     const handleScroll = (e, target) => {
         target.scrollLeft = e.target.scrollLeft;
     }
@@ -117,37 +96,18 @@ const VariantList = () => {
             setPage(prev => prev + 1);
         }
     }
-    const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('filter_variants');
-        return storedCols ? JSON.parse(storedCols) : {
-            name: true,
-            status: true,
-            category_name: true,
-            brand_name: true,
-            quantity: true,
-            images: false,
-            created_at: true,
-            updated_at: true,
-            cost_price : true,
-            wholesale_price : true, 
-            retail_price : true        
-        }
-    })
 
-    const [page, setPage] = useState(1);
-    const [pageQuantiy, setPageQuantity] = useState(1);
-    const [limit, setLimit] = useState(20);
+    const handleColsChange = (name) => {
+        setColsToRender({...colsToRender, [name]: !colsToRender[name]})
+    }
 
-    useEffect(() => {
-        Cookies.set('filter_variants', JSON.stringify(colsToRender))
-    }, [colsToRender])
-    return (
-        <>
+  return (
+    <>
         <Header />
         <div className='right__listPage'>
             <div className='right__toolbar'>
-                <div className='btn-toolbar'>
-                    <button className='btn btn-base btn-text'>
+                <div className="btn-toolbar">
+                    <button className="btn btn-base btn-text">
                         <span className="btn__label">
                             <span className="btn__icon">
                                 {exportIcon}
@@ -160,48 +120,44 @@ const VariantList = () => {
                             <span className="btn__icon">
                                 {importIcon}
                             </span>
-                                Nhập file
-                            </span>
-                    </button>
-                    <button className="btn btn-base btn-text">
-                        <span className="btn__label">
-                            <span className="btn__icon">
-                                {importIcon}
-                            </span>
-                                Loại sản phẩm
-                            </span>
+                            Nhập file
+                        </span>
                     </button>
                 </div>
-                <div className="btn-toolbar">
-                    <button className="btn btn-primary">
-                        <span className="btn__title">Xem danh sách sản phẩm</span>
-                    </button>
-                </div>
+            <div className="btn-toolbar">
+                <button className="btn btn-primary">
+                    <span className="btn__icon">
+                        <FontAwesomeIcon icon={faPlus} />
+                    </span>
+                    <span className="btn__title">Tạo phiếu nhập hàng</span>
+                </button>
             </div>
-
-            <div className='right__table'>
+            </div>
+            <div className="right__table">
                 <div className="right__table-scroller">
                     <div className="box-scroller">
                         <div className="group-scroller-btns">
-                            <button className="btn-scroller active">Tất cả sản phẩm</button>
+                            <button className="btn-scroller active">Tất cả phiếu kiểm hàng</button>
+                            <button className="btn-scroller">Đang kiểm</button>
+                            <button className="btn-scroller">Đã cân bằng</button>
                         </div>
                     </div>
                 </div>
-                <div className='right__table-search-filter'>
-                    <div className='box-search-filter-btns'>
+                <div className="right__table-search-filter">
+                    <div className="box-search-filter-btns">
                         <div className="box-search">
                             <div className="box-input">
                                 <div className="search-icon">
                                     <FontAwesomeIcon icon={faMagnifyingGlass} />
                                 </div>
-                                <input placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode' type="text" name="search" id="" autoComplete='on' />
+                                <input placeholder='Tìm mã đơn nhập, đơn đặt hàng, tên, SĐT, mã NCC' type="text" name="search" id="" autoComplete='on' />
                                 <fieldset className='input-field' />
                             </div>
                         </div>
                         <div className="btn-group group-filter-btns">
                             <button className="btn btn-base btn-filter">
                                 <span className="btn__label">
-                                    Loại sản phẩm
+                                    Trạng thái
                                     <span className="btn__icon">
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </span>
@@ -215,14 +171,7 @@ const VariantList = () => {
                                     </span>
                                 </span>
                             </button>
-                            <button className="btn btn-base btn-filter">
-                                <span className="btn__label">
-                                    Nhãn hiệu
-                                    <span className="btn__icon">
-                                        <FontAwesomeIcon icon={faCaretDown} />
-                                    </span>
-                                </span>
-                            </button>
+                        
                             <button className="btn btn-base btn-filter">
                                 <span className="btn__label">
                                     Bộ lọc khác
@@ -237,13 +186,13 @@ const VariantList = () => {
                         </button>
                     </div>
                 </div>
-                <div
+                <div 
                     ref={headersRef} 
                     onScroll={(e) => handleScroll(e, contentRef.current)}
                     className="right__table-headers">
                     <table className="box-table-headers">
                         <colgroup>
-                            <col style={{ width: "80px" }} />
+                        <col style={{ width: "80px" }} />
                             {/* Render the <colgroup> only for the columns that are in colsToRender */}
                             {Object.entries(colsToRender).map(([key, value]) => {
                                 if (value) {
@@ -274,7 +223,7 @@ const VariantList = () => {
                                         </div>
                                     </div>
                                 </th>
-                                {/* Render table headers for columns that exist in variantsList */}
+                                {/* Render table headers for columns that exist in ginList */}
                                 {Object.entries(colsToRender).map(([key, value]) => {
                                     if (value) {
                                         if (key === "created_at") {
@@ -288,7 +237,7 @@ const VariantList = () => {
                                                     <div className="box-sort-date">
                                                         {col[key].name}
                                                         <span className='box-icon'>
-                                                        <FontAwesomeIcon icon={faCaretDown} />
+                                                            <FontAwesomeIcon icon={faCaretDown} />
                                                         </span>
                                                     </div>
                                                 </th>
@@ -307,16 +256,16 @@ const VariantList = () => {
                                     }
                                     return null;
                                 })}
-                        </tr>
-                    </thead>
+                            </tr>
+                        </thead>
                     </table>
                 </div>
                 <div className="right__table-content">
                     <div className="right__table-data">
-                        <div
-                                ref={contentRef} 
-                                onScroll={(e) => handleScroll(e, headersRef.current)} 
-                                className='table-data__container'
+                        <div 
+                            ref={contentRef} 
+                            onScroll={(e) => handleScroll(e, headersRef.current)} 
+                            className='table-data__container'
                         >
                             <table className="box-table-data">
                                 <colgroup>
@@ -324,11 +273,11 @@ const VariantList = () => {
                                     {/* Render the <colgroup> only for the columns that are in colsToRender */}
                                     {Object.entries(colsToRender).map(([key, value]) => {
                                         if (value) {
-                                             return (
+                                            return (
                                                 <col
                                                     key={key}
                                                     style={{
-                                                         width: col[key].width
+                                                        width: col[key].width
                                                     }}
                                                 />
                                             )
@@ -337,7 +286,7 @@ const VariantList = () => {
                                     })}
                                 </colgroup>
                                 <tbody>
-                                    {variantsList.map((order, index) => {
+                                    {ginList.map((gin, index) => {
                                         return (
                                             <tr key={index} className="table-data-row">
                                                 <td rowSpan={1} className='table-icon'>
@@ -362,14 +311,11 @@ const VariantList = () => {
                                                                     className={cn("table-data-item", col[key].align)}
                                                                 >
                                                                     <div className={cn('box-status', {
-                                                                        //'box-status--pending': order[key] === "Chưa nhập",
-                                                                        'box-status--partial': order[key] === "ACTIVE",
-                                                                        //'box-status--completed': order[key] === "INACTIVE",
-                                                                        'box-status--cancelled': order[key] === "INACTIVE",
+                                                                        'box-status--pending': gin[key] === "Đang kiểm kho",
+                                                                        'box-status--balanced': gin[key] === "Đã cân bằng",
+                                                                        'box-status--deleted': gin[key] === "Đã xóa",
                                                                     })}>
-                                                                        <span>
-                                                                            {order[key] === "ACTIVE" ? 'Đang giao dịch' : 'Ngừng giao dịch'}
-                                                                        </span>
+                                                                        <span>{gin[key]}</span>
                                                                     </div>
                                                                 </td>
                                                             )
@@ -381,8 +327,8 @@ const VariantList = () => {
                                                             >
                                                                 <p className='box-text'>
                                                                     {
-                                                                        key !== "id" ? order[key] :
-                                                                        <a className='box-id'>{order[key]}</a>
+                                                                        key !== "id" ? gin[key] :
+                                                                        <a className='box-id'>{gin[key]}</a>
                                                                     }
                                                                 </p>
                                                             </td>
@@ -408,7 +354,7 @@ const VariantList = () => {
                             </button>
                         </div>
                         <p>kết quả</p>
-                        <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + variantsList.length} trên tổng {ordersQuantity}</p>
+                        <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + ginList.length} trên tổng {grnsQuantity}</p>
                         <button 
                             className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
                             onClick={handlePrevPage}
@@ -436,9 +382,8 @@ const VariantList = () => {
                 </div>
             </div>
         </div>
-
-        </>
-    )
+    </>
+  )
 }
 
-export default VariantList
+export default GINList;
