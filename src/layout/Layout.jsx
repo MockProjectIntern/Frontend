@@ -21,28 +21,30 @@ import PaymentVouchers from '../pages/PaymentVouchers/PaymentVouchers'
 import Reports from '../pages/Reports/Reports'
 import GRNPage from '../pages/GRN/GRNPage'
 import GINPage from '../pages/GIN/GINPage'
+import Employees from '../pages/Employees/Employees'
 
 const Layout = () => {
   return (
     <div className={s.container}>
-        <Sidebar />
-        <div className='right'>
-          <Routes>
-              <Route path='/dashboard/*' element={<Dashboard />} />
-              <Route path='/products/*' element={<Products />} />
-              <Route path='/variants/*' element={<Variants />} />
-              <Route path='/order_suppliers/*' element={<OrderSuppliers />} />
-              <Route path='/purchase_orders/*' element={<PurchaseOrders />} />
-              <Route path='/stock_adjustments/*' element={<StockAdjustments />} />
-              <Route path='/suppliers/*' element={<Suppliers />} />
-              {/* <Route path='/price_adjustments/*' element={<PriceAdjustments />} /> */}
-              <Route path='/receipt_vouchers/*' element={<ReceiptVouchers />} />
-              <Route path='/payment_vouchers/*' element={<PaymentVouchers />} />
-              <Route path='/reports/*' element={<Reports />} />
-              <Route path='/grns/*' element={<GRNPage/>}/>
-              <Route path='/gins/*' element={<GINPage/>}/>
-          </Routes>
-        </div>
+      <Sidebar />
+      <div className='right'>
+        <Routes>
+          <Route path='/dashboard/*' element={<Dashboard />} />
+          <Route path='/products/*' element={<Products />} />
+          <Route path='/variants/*' element={<Variants />} />
+          <Route path='/order_suppliers/*' element={<OrderSuppliers />} />
+          <Route path='/purchase_orders/*' element={<PurchaseOrders />} />
+          <Route path='/stock_adjustments/*' element={<StockAdjustments />} />
+          <Route path='/suppliers/*' element={<Suppliers />} />
+          {/* <Route path='/price_adjustments/*' element={<PriceAdjustments />} /> */}
+          <Route path='/receipt_vouchers/*' element={<ReceiptVouchers />} />
+          <Route path='/payment_vouchers/*' element={<PaymentVouchers />} />
+          <Route path='/reports/*' element={<Reports />} />
+          <Route path='/grns/*' element={<GRNPage />} />
+          <Route path='/gins/*' element={<GINPage />} />
+          <Route path='/employees/*' element={<Employees />} />
+        </Routes>
+      </div>
     </div>
   )
 }

@@ -33,7 +33,7 @@ const Sidebar = () => {
         <div className={s.menuListContainer}>
           <div className={s.menuListWrapper}>
             <nav className={s.menuList}>
-              <MenuListItem 
+              <MenuListItem
                 index='dashboard'
                 isHeader={true}
                 icon={homeIcon}
@@ -48,7 +48,7 @@ const Sidebar = () => {
               <div className={s.menuListTitle}>
                 <p>Menu</p>
               </div>
-              <MenuListItem 
+              <MenuListItem
                 isHeader={true}
                 icon={productIcon}
                 title="Sản phẩm"
@@ -88,12 +88,12 @@ const Sidebar = () => {
                   // }
                 ]}
               />
-              <MenuListItem 
+              <MenuListItem
                 isHeader={true}
                 icon={reportIcon}
                 title="Sổ quỹ"
                 index='reports'
-                openedItem={sidebar.openedItem}                
+                openedItem={sidebar.openedItem}
                 handleOpenedSidebarItemChange={(openedItem) => dispatch(changeOpenedSidebarItem(openedItem))}
                 activeItem={sidebar.activeItem}
                 handleActiveItemChange={(activeItem) => dispatch(changeActiveSidebarItem(activeItem))}
@@ -116,12 +116,12 @@ const Sidebar = () => {
               <div className={s.menuListTitle}>
                 <p>Cấu hình</p>
               </div>
-              <MenuListItem 
+              <MenuListItem
                 index='settings'
                 isHeader={true}
                 icon={userSettingIcon}
                 title="Nhân viên"
-                link='/admin/settings/users'
+                link='/admin/employees'
                 openedItem={sidebar.openedItem}
                 handleOpenedSidebarItemChange={(openedItem) => dispatch(changeOpenedSidebarItem(openedItem))}
                 activeItem={sidebar.activeItem}
