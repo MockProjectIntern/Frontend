@@ -2,12 +2,10 @@ import axiosInstance from "./axiosInstance";
 
 export const loginAccount = async (phone, password) => {
     try {
-        console.log(phone, password);
         const response = await axiosInstance.post(`/users/login.json`, {
             phone,
             password
         });
-        console.log(response.data);
         return response.data;
     } catch (error) {
         console.error(error);
