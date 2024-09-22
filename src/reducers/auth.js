@@ -13,29 +13,28 @@ const authReducer = (state = {
 }, action) => {
     switch (action.type) {
         case LOGIN_SUCCESS:
+            localStorage.setItem('isAuthenticated', true); // Cập nhật localStorage sau khi đăng nhập
             return {
                 ...state,
                 isAuthenticated: true
             };
         case LOGIN_FAIL:
+            localStorage.setItem('isAuthenticated', false); // Cập nhật lại nếu thất bại
             return {
                 ...state,
                 isAuthenticated: false,
                 errorMessage: action.payload
             };
         case LOGOUT_SUCCESS:
+            localStorage.removeItem('isAuthenticated'); // Xóa khi đăng xuất
             return {
                 ...state,
                 isAuthenticated: false
-            };
-        case LOGOUT_FAIL:
-            return {
-                ...state,
-                errorMessage: action.payload
             };
         default:
             return state;
     }
 }
+
 
 export default authReducer;
