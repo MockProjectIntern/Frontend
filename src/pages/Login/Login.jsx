@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { getInforDetails } from '../../service/UserAPI'
 import { login } from '../../actions/auth'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -26,7 +25,7 @@ const Login = () => {
   // Sử dụng useEffect để điều hướng sau khi đăng nhập thành công
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/admin/dashboard');
+      navigate('/');
     }
   }, [isAuthenticated, navigate]);
 
@@ -47,7 +46,7 @@ const Login = () => {
         type="password"
         name="password"
       />
-      <button onClick={doLogin}>Login</button>
+      <button onClick={() => doLogin()}>Login</button>
     </div>
   )
 }
