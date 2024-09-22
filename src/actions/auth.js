@@ -34,7 +34,6 @@ export const logoutFail = (error) => {
 export const login = (phone, password) => {
     return async (dispatch) => {
         const response = await loginAccount(phone, password);
-        console.log(response);
         
         localStorage.setItem('userId', response.data.user_id)
         localStorage.setItem('fullName', response.data.full_name)
@@ -43,7 +42,6 @@ export const login = (phone, password) => {
         localStorage.setItem("refreshToken", response.data.refresh_token);
         localStorage.setItem('tokenType', response.data.token_type)
         localStorage.setItem('role', response.data.role)
-        localStorage.setItem('isAuthenticated', true);
         dispatch(loginSuccess());
     }
 }

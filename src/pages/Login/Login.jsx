@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { getInforDetails } from '../../service/UserAPI'
 import { login } from '../../actions/auth'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
@@ -10,26 +10,43 @@ const Login = () => {
     password: ""
   })
   const dispatch = useDispatch()
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+
+  // Truy cập trạng thái xác thực từ Redux
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const handleChange = (e) => {
     setFormData({...formData, [e.target.name]: e.target.value})
   }
 
-  const handleDetail = async () => {
-    const response = await getInforDetails();
-    console.log(response);
-  }
-
   const doLogin = () => {
     dispatch(login(formData.phone, formData.password));
-    navigate('/')
   }
 
+  // Sử dụng useEffect để điều hướng sau khi đăng nhập thành công
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/admin/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+
   return (
-    <div>Login
-      <input style={{border: "1px solid #000"}} onChange={(e) => handleChange(e)} value={formData.phone} type="text" name="phone" id="" />
-      <input style={{border: "1px solid #000"}} onChange={(e) => handleChange(e)} value={formData.password} type="text" name="password" id="" />
+    <div>
+      <h1>Login</h1>
+      <input
+        style={{border: "1px solid #000"}}
+        onChange={(e) => handleChange(e)}
+        value={formData.phone}
+        type="text"
+        name="phone"
+      />
+      <input
+        style={{border: "1px solid #000"}}
+        onChange={(e) => handleChange(e)}
+        value={formData.password}
+        type="password"
+        name="password"
+      />
       <button onClick={doLogin}>Login</button>
     </div>
   )
