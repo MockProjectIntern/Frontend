@@ -5,7 +5,7 @@ import {
     LOGOUT_FAIL
 } from '../actions/auth.js'
 
-const isAuthenticated = localStorage.getItem('isAuthenticated');
+const isAuthenticated = JSON.parse(localStorage.getItem('isAuthenticated')); // Đảm bảo đọc đúng kiểu dữ liệu
 
 const authReducer = (state = {
     isAuthenticated: isAuthenticated,
