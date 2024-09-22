@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
-import exportIcon from '../../assets/icons/ExportIcon'
-import importIcon from '../../assets/icons/ImportIcon'
-import filterIcon from '../../assets/icons/FilterIcon'
-import col from '../../assets/colgroup/product-list.js'
+import exportIcon from '../../assets/icons/ExportIcon.jsx'
+import importIcon from '../../assets/icons/ImportIcon.jsx'
+import filterIcon from '../../assets/icons/FilterIcon.jsx'
+import col from '../../assets/colgroup/products-list.js'
 import cn from "classnames"
 import Cookies from 'js-cookie'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
-import Header from '../Header/Header'
+import Header from '../Header/Header.jsx'
 import { useNavigate } from 'react-router-dom'
 
 
@@ -17,7 +17,7 @@ const productsList = [
         name: "Sản phẩm 4",
         images:[
             {
-                url: "https://www.fahasa.com/tuyen-tap-nam-cao.html?p=2&web_ref=dore.vn&srsltid=AfmBOoo6dzj-e4CSuvi9JhjkEh-Xm2thx6cV5A7kycQ3i0TPAtiR1ngw#lg=1&slide=0",
+                url: "https://cdn0.fahasa.com/media/catalog/product/i/m/image_195509_1_25943.jpg",
                 alt: ""
             },
             {
@@ -112,12 +112,12 @@ const ProductList = () => {
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_products');
         return storedCols ? JSON.parse(storedCols) : {
+            images: true,
             name: true,
             status: true,
             category_name: true,
             brand_name: true,
             quantity: true,
-            images: false,
             created_at: true,
             updated_at: true
             // user_completed_name: false,
@@ -340,7 +340,7 @@ const ProductList = () => {
                                         })}
                                     </colgroup>
                                     <tbody>
-                                        {productsList.map((order, index) => {
+                                        {productsList.map((product, index) => {
                                             return (
                                                 <tr key={index} className="table-data-row">
                                                     <td rowSpan={1} className='table-icon'>
@@ -366,14 +366,23 @@ const ProductList = () => {
                                                                     >
                                                                         <div className={cn('box-status', {
                                                                             //'box-status--pending': order[key] === "Chưa nhập",
-                                                                            'box-status--partial': order[key] === "ACTIVE",
+                                                                            'box-status--partial': product[key] === "ACTIVE",
                                                                             //'box-status--completed': order[key] === "INACTIVE",
-                                                                            'box-status--cancelled': order[key] === "INACTIVE",
+                                                                            'box-status--cancelled': product[key] === "INACTIVE",
                                                                         })}>
                                                                             <span>
-                                                                            {order[key] === "ACTIVE" ? 'Đang hoạt động' : order[key] === "INACTIVE" ? 'Ngừng giao dịch' : order[key]}
+                                                                            {product[key] === "ACTIVE" ? 'Đang hoạt động' : product[key] === "INACTIVE" ? 'Ngừng giao dịch' : product[key]}
                                                                             </span>
                                                                         </div>
+                                                                    </td>
+                                                                )
+                                                            } else if (key === "images") {
+                                                                return (
+                                                                    <td
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        <img src={product.images[0].url} alt={product.images[0].alt} />
                                                                     </td>
                                                                 )
                                                             }
@@ -384,8 +393,8 @@ const ProductList = () => {
                                                                 >
                                                                     <p className='box-text'>
                                                                         {
-                                                                            key !== "id" ? order[key] :
-                                                                            <a className='box-id'>{order[key]}</a>
+                                                                            key !== "id" ? product[key] :
+                                                                            <a className='box-id'>{product[key]}</a>
                                                                         }
                                                                     </p>
                                                                 </td>
