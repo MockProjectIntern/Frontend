@@ -5,7 +5,7 @@ import {
     LOGOUT_FAIL
 } from '../actions/auth.js'
 
-const isAuthenticated = true;
+const isAuthenticated = localStorage.getItem('isAuthenticated');
 
 const authReducer = (state = {
     isAuthenticated: isAuthenticated,
