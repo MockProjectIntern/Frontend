@@ -15,54 +15,14 @@ import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { getSupplierList } from '../../service/SuppliersAPI.jsx'
+import { useNavigate } from 'react-router-dom'
 
-const suppliersList = [
-    {
-        id: "S001",
-        name: "MDC",
-        phone: "0987654321",
-        email: "mdc@supplier.com",
-        supplier_group_id: "G01",
-        status: "ACTIVE",
-    },
-]
-
-const ordersQuantity = 4;
 
 const SupplierList = () => {
-    const [page, setPage] = useState(1);
-    const [pageQuantiy, setPageQuantity] = useState(1);
-    const [limit, setLimit] = useState(20);
-
-    // Get list of columns that need redering from Cookies
-    const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('suppliersListCols');
-        return storedCols ? JSON.parse(storedCols) : {
-            id: true,
-            name: true,
-            phone: true,
-            email: true,
-            status: true,
-            address: false,
-            note: false,
-            tags: false,
-            supplier_group_id: false,
-            current_debt: false,
-            total_refund: false,
-            created_at: false,
-            updated_at: false
-
-        }
-    })
-
-    // Set required columns to Cookies
-    useEffect(() => {
-        Cookies.set('suppliersListCols', JSON.stringify(colsToRender));
-    }, [colsToRender])
-
+    const navigate = useNavigate();
     const headersRef = useRef(null);
     const contentRef = useRef(null);
-
     const handleScroll = (e, target) => {
         target.scrollLeft = e.target.scrollLeft;
     }
@@ -78,19 +38,62 @@ const SupplierList = () => {
             setPage(prev => prev + 1);
         }
     }
+    //Cookies.remove("ordersListCols")
+    const [colsToRender, setColsToRender] = useState(() => {
+        const storedCols = Cookies.get('filter_suppliers');
+        return storedCols ? JSON.parse(storedCols) : {
+            id: true,
+            name: true,
+            phone: false,
+            email: false,
+            address: false,
+            status: true,
+            tags: false,
+            note: false,
+            total_refund: false,
+            created_at: true,
+            updated_at: false
+        }
+    })
+    const [page, setPage] = useState(1);
+    const [pageQuantiy, setPageQuantity] = useState(1);
+    const [limit, setLimit] = useState(4);
+    const [suppliersList, setSuppliersList] = useState([]);
+    const [suppliersQuantity, setSuppliersQuantity] = useState();
 
-    const handleColsChange = (name) => {
-        setColsToRender({ ...colsToRender, [name]: !colsToRender[name] })
+    const fetchSupplierList = async () => {
+        try {
+            const suppliers = await getSupplierList(page, limit, "filter_suppliers", Cookies.get("filter_suppliers"));
+
+            if (suppliers.status_code === 200) {
+                setSuppliersList(suppliers.data.data);
+                setSuppliersQuantity(suppliers.data.total_items);
+                setPageQuantity(suppliers.data.total_page)
+            } else {
+                console.log("status code:", suppliers.status_code);
+            }
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
     }
 
+    useEffect(() => {
+        Cookies.set('filter_suppliers', JSON.stringify(colsToRender));
+    }, [colsToRender])
+    //console.log(col)
+
+    useEffect(() => {
+        fetchSupplierList();
+
+    }, [limit]);
     return (
         <>
-
+            <Header />
             <div className='right__listPage'>
-                <h2>Nhà cung cấp</h2>
                 <div className='right__toolbar'>
-                    <div className="btn-toolbar">
-                        <button className="btn btn-base btn-text">
+                    <div className='btn-toolbar'>
+                        <button className='btn btn-base btn-text'>
                             <span className="btn__label">
                                 <span className="btn__icon">
                                     {exportIcon}
@@ -106,40 +109,48 @@ const SupplierList = () => {
                                 Nhập file
                             </span>
                         </button>
+                        <button className="btn btn-base btn-text">
+                            <span className="btn__label">
+                                <span className="btn__icon">
+                                    {importIcon}
+                                </span>
+                                Loại sản phẩm
+                            </span>
+                        </button>
                     </div>
                     <div className="btn-toolbar">
-                        <button className="btn btn-primary">
+                        <button className="btn btn-primary" onClick={() => navigate('/admin/suppliers/create')}>
                             <span className="btn__icon">
                                 <FontAwesomeIcon icon={faPlus} />
                             </span>
-                            <span className="btn__title">Thêm nhà cung cấp<param name="" value="" /></span>
+                            <span className="btn__title">Thêm sản phẩm</span>
                         </button>
                     </div>
                 </div>
-                <div className="right__table">
+
+                <div className='right__table'>
                     <div className="right__table-scroller">
                         <div className="box-scroller">
                             <div className="group-scroller-btns">
-                                <button className="btn-scroller active">Tất cả đơn đặt hàng</button>
-                                <button className="btn-scroller">Đang giao dịch</button>
+                                <button className="btn-scroller active">Tất cả sản phẩm</button>
                             </div>
                         </div>
                     </div>
-                    <div className="right__table-search-filter">
-                        <div className="box-search-filter-btns">
+                    <div className='right__table-search-filter'>
+                        <div className='box-search-filter-btns'>
                             <div className="box-search">
                                 <div className="box-input">
                                     <div className="search-icon">
                                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                                     </div>
-                                    <input placeholder='Tìm theo mã nhà cung cấp, tên, SĐT' type="text" name="search" id="" autoComplete='on' />
+                                    <input placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode' type="text" name="search" id="" autoComplete='on' />
                                     <fieldset className='input-field' />
                                 </div>
                             </div>
-                            {/* <div className="btn-group group-filter-btns">
+                            <div className="btn-group group-filter-btns">
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
-                                        Trạng thái
+                                        Loại sản phẩm
                                         <span className="btn__icon">
                                             <FontAwesomeIcon icon={faCaretDown} />
                                         </span>
@@ -155,7 +166,7 @@ const SupplierList = () => {
                                 </button>
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
-                                        Sản phẩm
+                                        Nhãn hiệu
                                         <span className="btn__icon">
                                             <FontAwesomeIcon icon={faCaretDown} />
                                         </span>
@@ -169,10 +180,10 @@ const SupplierList = () => {
                                         </span>
                                     </span>
                                 </button>
-                            </div> */}
-                            {/* <button id='btn-save-filter' className="btn btn-primary">
+                            </div>
+                            <button id='btn-save-filter' className="btn btn-primary">
                                 <span className="btn__title">Lưu bộ lọc</span>
-                            </button> */}
+                            </button>
                         </div>
                     </div>
                     <div
@@ -275,7 +286,7 @@ const SupplierList = () => {
                                         })}
                                     </colgroup>
                                     <tbody>
-                                        {suppliersList.map((order, index) => {
+                                        {suppliersList.map((product, index) => {
                                             return (
                                                 <tr key={index} className="table-data-row">
                                                     <td rowSpan={1} className='table-icon'>
@@ -300,12 +311,24 @@ const SupplierList = () => {
                                                                         className={cn("table-data-item", col[key].align)}
                                                                     >
                                                                         <div className={cn('box-status', {
-                                                                            'box-status--pending': order[key] === "INACTIVE",
-                                                                            'box-status--completed': order[key] === 'ACTIVE',
-                                                                            'box-status--cancelled': order[key] === "DELETED",
+                                                                            //'box-status--pending': order[key] === "Chưa nhập",
+                                                                            'box-status--partial': product[key] === "ACTIVE",
+                                                                            //'box-status--completed': order[key] === "INACTIVE",
+                                                                            'box-status--cancelled': product[key] === "INACTIVE",
                                                                         })}>
-                                                                            <span>{order[key]}</span>
+                                                                            <span>
+                                                                                {product[key] === "ACTIVE" ? 'Đang hoạt động' : product[key] === "INACTIVE" ? 'Ngừng giao dịch' : product[key]}
+                                                                            </span>
                                                                         </div>
+                                                                    </td>
+                                                                )
+                                                            } else if (key === "images") {
+                                                                return (
+                                                                    <td
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        <img src={product.images[0]?.url} alt={product.images[0]?.alt} />
                                                                     </td>
                                                                 )
                                                             }
@@ -316,8 +339,8 @@ const SupplierList = () => {
                                                                 >
                                                                     <p className='box-text'>
                                                                         {
-                                                                            key !== "id" ? order[key] :
-                                                                                <a className='box-id'>{order[key]}</a>
+                                                                            key !== "id" ? product[key] :
+                                                                                <a className='box-id'>{product[key]}</a>
                                                                         }
                                                                     </p>
                                                                 </td>
@@ -343,7 +366,7 @@ const SupplierList = () => {
                                 </button>
                             </div>
                             <p>kết quả</p>
-                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + suppliersList.length} trên tổng {ordersQuantity}</p>
+                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + suppliersList.length} trên tổng {suppliersQuantity}</p>
                             <button
                                 className={cn('btn-icon', 'btn-page', { 'inactive': page === 1 })}
                                 onClick={handlePrevPage}
@@ -374,5 +397,4 @@ const SupplierList = () => {
         </>
     )
 }
-
 export default SupplierList;
