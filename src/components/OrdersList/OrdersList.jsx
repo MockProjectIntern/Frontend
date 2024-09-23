@@ -16,6 +16,7 @@ import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
+import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 
 const ordersList = [
     {
@@ -61,7 +62,9 @@ const ordersQuantity = 4;
 const OrdersList = () => {
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
-    const [limit, setLimit] = useState(20);
+    const [limit, setLimit] = useState(10);
+    const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
+    const limitBtnRef = useRef(null);
     const navigate = useNavigate()
 
     // Get list of columns that need redering from Cookies
@@ -371,12 +374,17 @@ const OrdersList = () => {
                     <div className="right__table-pagination">
                         <p>Hiển thị</p>
                         <div className="box-page-limit">
-                            <button className="btn-page-limit">
-                                20
+                            <button 
+                                ref={limitBtnRef} 
+                                onClick={() => setIsOpenLimitPopup(!isOpenLimitPopup)} 
+                                className={cn("btn-page-limit", {"selected": isOpenLimitPopup})}
+                            >
+                                {limit}
                                 <span>
                                     <FontAwesomeIcon icon={faCaretDown} />
                                 </span>
                             </button>
+                            {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => setLimit(limit)} />}
                         </div>
                         <p>kết quả</p>
                         <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + ordersList.length} trên tổng {ordersQuantity}</p>
