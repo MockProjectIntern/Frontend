@@ -3,13 +3,9 @@ import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { logout } from '../../actions/auth';
 
 const PrivateRoute = ({ isAuthenticated, dispatch }) => {
-  const navigate = useNavigate();
-
   useEffect(() => {
     if (!isAuthenticated) {
-      dispatch(logout());
-    } else {
-      navigate('/')
+      dispatch(logout())
     }
   }, [isAuthenticated, dispatch]);
 

@@ -24,6 +24,7 @@ const axiosInstance = axios.create({
         'Content-Type': 'application/json',
         'Accept-Language': 'vi',
     },
+    withCredentials: true // Thêm thuộc tính này để gửi cookie
 });
 
 axiosInstance.interceptors.request.use(
