@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { getSupplierList } from '../../service/SuppliersAPI.jsx'
 import { useNavigate } from 'react-router-dom'
+import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 
 
 const SupplierList = () => {
@@ -57,9 +58,11 @@ const SupplierList = () => {
     })
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
-    const [limit, setLimit] = useState(4);
+    const [limit, setLimit] = useState(10);
+    const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
     const [suppliersList, setSuppliersList] = useState([]);
     const [suppliersQuantity, setSuppliersQuantity] = useState();
+    const limitBtnRef = useRef(null);
 
     const fetchSupplierList = async () => {
         try {
@@ -86,7 +89,7 @@ const SupplierList = () => {
     useEffect(() => {
         fetchSupplierList();
 
-    }, [limit]);
+    }, [limit, page]);
     return (
         <>
             <Header />
@@ -358,12 +361,17 @@ const SupplierList = () => {
                         <div className="right__table-pagination">
                             <p>Hiển thị</p>
                             <div className="box-page-limit">
-                                <button className="btn-page-limit">
-                                    20
+                                <button
+                                    ref={limitBtnRef}
+                                    onClick={() => setIsOpenLimitPopup(!isOpenLimitPopup)}
+                                    className={cn("btn-page-limit", { "selected": isOpenLimitPopup })}
+                                >
+                                    {limit}
                                     <span>
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </span>
                                 </button>
+                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => setLimit(limit)} />}
                             </div>
                             <p>kết quả</p>
                             <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + suppliersList.length} trên tổng {suppliersQuantity}</p>
