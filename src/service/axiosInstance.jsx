@@ -67,12 +67,12 @@ axiosInstance.interceptors.response.use(
 
                 // Cập nhật token và refresh token vào localStorage
                 localStorage.setItem('token', token);
-                localStorage.setItem('refresh_token', refresh_token);
-                localStorage.setItem('full_name', full_name);
+                localStorage.setItem('refreshToken', refresh_token);
+                localStorage.setItem('fullName', full_name);
                 localStorage.setItem('phone', phone);
                 localStorage.setItem('role', role);
-                localStorage.setItem('token_type', token_type);
-                localStorage.setItem('user_id', user_id);
+                localStorage.setItem('tokenType', token_type);
+                localStorage.setItem('userId', user_id);
 
                 processQueue(null, newToken);
 

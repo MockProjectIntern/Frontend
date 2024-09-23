@@ -1,10 +1,15 @@
-import React from 'react'
-import { Navigate, Outlet } from 'react-router-dom';
+import React, { useEffect } from 'react'
+import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { logout } from '../../actions/auth';
 
 const PrivateRoute = ({ isAuthenticated, dispatch }) => {
+  useEffect(() => {
+    if (!isAuthenticated) {
+      dispatch(logout())
+    }
+  }, [isAuthenticated, dispatch]);
+
   if (!isAuthenticated) {
-    dispatch(logout());
     return <Navigate to='/login' />
   } else {
     return <Outlet />

@@ -1,22 +1,52 @@
-import React from 'react'
-import { getInforDetails, loginAccount } from '../../service/UserAPI'
+import React, { useState, useEffect } from 'react'
+import { login } from '../../actions/auth'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
-  const handleLogin = async () => {
-    const response = await loginAccount('0385427654', '123456');
-    localStorage.setItem('token', response.data.token);
-    localStorage.setItem("refreshToken", response.data.refresh_token);
+  const [formData, setFormData] = useState({
+    phone: "",
+    password: ""
+  })
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  // Truy cập trạng thái xác thực từ Redux
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.name]: e.target.value})
   }
 
-  const handleDetail = async () => {
-    const response = await getInforDetails();
-    console.log(response);
+  const doLogin = () => {
+    dispatch(login(formData.phone, formData.password));
   }
+
+  // Sử dụng useEffect để điều hướng sau khi đăng nhập thành công
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
-    <div>Login
-      <button onClick={handleLogin} >Login</button>
-      <button onClick={handleDetail}>Detail</button>
+    <div>
+      <h1>Login</h1>
+      <input
+        style={{border: "1px solid #000"}}
+        onChange={(e) => handleChange(e)}
+        value={formData.phone}
+        type="text"
+        name="phone"
+      />
+      <input
+        style={{border: "1px solid #000"}}
+        onChange={(e) => handleChange(e)}
+        value={formData.password}
+        type="password"
+        name="password"
+      />
+      <button onClick={() => doLogin()}>Login</button>
     </div>
   )
 }
