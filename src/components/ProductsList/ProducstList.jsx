@@ -140,7 +140,6 @@ const ProductList = () => {
     useEffect(() => {
         Cookies.set('filter_products', JSON.stringify(colsToRender));
     }, [colsToRender])
-    //console.log(col)
     return (
         <>  
             <Header />
