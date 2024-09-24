@@ -98,7 +98,7 @@ const ProductList = () => {
 
     }, [limit, page]);
     return (
-        <>  
+        <>
             <Header />
             <div className='right__listPage'>
                 <div className='right__toolbar'>
@@ -197,7 +197,7 @@ const ProductList = () => {
                         </div>
                     </div>
                     <div
-                        ref={headersRef} 
+                        ref={headersRef}
                         onScroll={(e) => handleScroll(e, contentRef.current)}
                         className="right__table-headers">
                         <table className="box-table-headers">
@@ -238,10 +238,10 @@ const ProductList = () => {
                                         if (value) {
                                             if (key === "created_at") {
                                                 return (
-                                                    <th 
+                                                    <th
                                                         key={key}
-                                                        colSpan={1} 
-                                                        rowSpan={1} 
+                                                        colSpan={1}
+                                                        rowSpan={1}
                                                         className={cn("table-header-item", col[key].align)}
                                                     >
                                                         <div className="box-sort-date">
@@ -254,10 +254,10 @@ const ProductList = () => {
                                                 )
                                             }
                                             return (
-                                                <th 
+                                                <th
                                                     key={key}
-                                                    colSpan={1} 
-                                                    rowSpan={1} 
+                                                    colSpan={1}
+                                                    rowSpan={1}
                                                     className={cn("table-header-item", col[key].align)}
                                                 >
                                                     {col[key].name}
@@ -273,8 +273,8 @@ const ProductList = () => {
                     <div className="right__table-content">
                         <div className="right__table-data">
                             <div
-                                ref={contentRef} 
-                                onScroll={(e) => handleScroll(e, headersRef.current)} 
+                                ref={contentRef}
+                                onScroll={(e) => handleScroll(e, headersRef.current)}
                                 className='table-data__container'
                             >
                                 <table className="box-table-data">
@@ -310,7 +310,7 @@ const ProductList = () => {
                                                                     <div className="btn-checkbox"></div>
                                                                 </div>
                                                             </div>
-                                                        </div> 
+                                                        </div>
                                                     </td>
                                                     {Object.entries(colsToRender).map(([key, value]) => {
                                                         if (value) {
@@ -327,7 +327,7 @@ const ProductList = () => {
                                                                             'box-status--cancelled': product[key] === "INACTIVE",
                                                                         })}>
                                                                             <span>
-                                                                            {product[key] === "ACTIVE" ? 'Đang hoạt động' : product[key] === "INACTIVE" ? 'Ngừng giao dịch' : product[key]}
+                                                                                {product[key] === "ACTIVE" ? 'Đang hoạt động' : product[key] === "INACTIVE" ? 'Ngừng giao dịch' : product[key]}
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -404,17 +404,17 @@ const ProductList = () => {
                             </button>
                             {
                                 Array(pageQuantiy).fill(null).map((_, index) => (
-                                    <div 
+                                    <div
                                         key={index}
-                                        className={cn("box-page", { 'active': page === index + 1})}
+                                        className={cn("box-page", { 'active': page === index + 1 })}
                                         onClick={() => setPage(index + 1)}
                                     >
                                         {index + 1}
                                     </div>
                                 ))
                             }
-                            <button 
-                                className={cn('btn-icon', 'btn-page', { 'inactive': page === pageQuantiy})}
+                            <button
+                                className={cn('btn-icon', 'btn-page', { 'inactive': page === pageQuantiy })}
                                 onClick={handleNextPage}
                             >
                                 <FontAwesomeIcon icon={faChevronRight} />
