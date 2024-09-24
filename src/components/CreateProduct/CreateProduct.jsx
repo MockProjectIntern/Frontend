@@ -109,11 +109,8 @@ const CreateProduct = () => {
             ...dataBody,
             images: uploadedImages
         });
-        
-        console.log(response);
     };
     
-
     const [isOpenEditor, setIsOpenEditor] = useState(false)
 
     const editorConfig = {
@@ -290,10 +287,6 @@ const CreateProduct = () => {
             contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
         }
     };
-
-    useEffect(() => {
-        console.log(dataBody)
-    }, [dataBody])
 
     const [images, setImages] = useState([]);
     const imagesInputRef = useRef(null);
@@ -484,25 +477,6 @@ const CreateProduct = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        {/* <div className="box-product-weight">
-                                            <div className="form-item">
-                                                <label htmlFor="weight" className="form-label">
-                                                    Khối lượng
-                                                </label>
-                                                <div className="box-form">
-                                                    <div className="form-textfield">
-                                                        <input className='text-end' type="text" name="weight" id="weight" />
-                                                        <fieldset className="input-field"></fieldset>
-                                                    </div>
-                                                    <div className="box-select">
-                                                        <button className="btn-select">
-                                                            g
-                                                            <FontAwesomeIcon icon={faCaretDown} />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div> */}
                                         <div className="box-product-unit">
                                             <div className="form-item">
                                                 <label htmlFor="unit" className="form-label">
@@ -531,12 +505,18 @@ const CreateProduct = () => {
                                             </button>
                                             <Collapse className='box-description' isOpen={isOpenEditor}>
                                                 <div className="box-description__container">
-                                                    <CKEditor editor={ClassicEditor} config={editorConfig} onChange={e => setDataBody(prevState => {
-                                                        return {
-                                                            ...prevState,
-                                                            description: e.target.value
-                                                        }
-                                                    })} />
+                                                    <CKEditor 
+                                                        editor={ClassicEditor} 
+                                                        config={editorConfig} 
+                                                        onChange={(event, editor) => {
+                                                            const data = editor.getData();
+                                                            setDataBody(prevState => {
+                                                            return {
+                                                                ...prevState,
+                                                                description: data
+                                                            }
+                                                        })}}
+                                                    />
                                                 </div>
                                             </Collapse>
                                         </div>
@@ -737,43 +717,6 @@ const CreateProduct = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="box-info-item box-stock">
-                                <div className="info-header">
-                                    <div className="box-header">
-                                        <h6>Khởi tạo kho hàng</h6>
-                                        <div className="box-switch">
-                                            <div className="btn-switch">
-                                                <input onChange={() => setIsInitialStock(!isInitialStock)} value={isInitialStock} type="checkbox" name="switch" className='switch-checkbox' id="" />
-                                                <span className="switch-bar"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="box-subtitle">
-                                        <p>Ghi nhận số lượng Tồn kho ban đầu tại Chi nhánh</p>
-                                    </div>
-                                </div>
-                                <Collapse className='info-panel' isOpen={isInitialStock}>
-                                    <div className="info-content">
-                                        <div className="grid-container stock-header">
-                                            <h6 className="box-branch">Chi nhánh</h6>
-                                            <h6 className="box-stock-value">Tồn kho ban đầu</h6>
-                                        </div>
-                                        <div className="grid-container stock-content">
-                                            <div className="box-branch">
-                                                <p>Chi nhánh mặc định</p>
-                                            </div>
-                                            <div className="box-stock-value">
-                                                <div className="form-item">
-                                                    <div className="form-textfield">
-                                                        <input className='text-end' type="text" name="stock" id="stock" />
-                                                        <fieldset className="input-field"></fieldset>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Collapse>
-                            </div>
                             <div className="box-info-item box-types">
                                 <div className="info-header">
                                     <div className="box-header">
@@ -793,7 +736,7 @@ const CreateProduct = () => {
                                         </UncontrolledTooltip>
                                         <div className="box-switch">
                                             <div className="btn-switch">
-                                                <input onChange={() => setIsTypes(!isTypes)} value={isInitialStock} type="checkbox" name="switch" className='switch-checkbox' id="" />
+                                                <input onChange={() => setIsTypes(!isTypes)} value={isTypes} type="checkbox" name="switch" className='switch-checkbox' id="" />
                                                 <span className="switch-bar"></span>
                                             </div>
                                         </div>
@@ -835,6 +778,17 @@ const CreateProduct = () => {
                                     </div>
                                 </div>
                                 <div className="info-content">
+                                    <div className="form-item">
+                                        <label htmlFor="category" className="form-label">
+                                            Loại sản phẩm
+                                        </label>
+                                        <div className="box-select">
+                                            <button id='category' className="btn-select">
+                                                Chọn loại sản phẩm
+                                                <FontAwesomeIcon icon={faCaretDown} />
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div className="form-item">
                                         <label htmlFor="brand" className="form-label">
                                             Nhãn hiệu

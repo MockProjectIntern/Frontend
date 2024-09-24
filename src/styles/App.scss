@@ -1243,8 +1243,7 @@ input:focus-within ~ .input-field {
                         grid-template-columns: 1fr 1fr;
                         grid-template-areas: 
                             'name name'
-                            'id weight'
-                            '. unit'
+                            'id unit'
                             'description description';
                         gap: 20px;
                         box-sizing: border-box;
@@ -1259,22 +1258,6 @@ input:focus-within ~ .input-field {
                             grid-area: id;
                             margin: 0;
                             box-sizing: border-box;
-                        }
-    
-                        .box-product-weight {
-                            grid-area: weight;
-                            margin: 0;
-                            box-sizing: border-box;
-    
-                            .box-form {
-                                display: flex;
-                                align-items: flex-end;
-                                width: 100%;
-
-                                .box-select {
-                                    width: 70px;
-                                }
-                            }
                         }
     
                         .box-product-unit {
