@@ -9,53 +9,53 @@ import { Collapse, UncontrolledTooltip } from 'reactstrap'
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import {
     ClassicEditor,
-	AccessibilityHelp,
-	Autoformat,
-	AutoImage,
-	Autosave,
-	BalloonToolbar,
-	BlockQuote,
-	Bold,
-	Essentials,
-	FullPage,
-	GeneralHtmlSupport,
-	Heading,
-	HtmlComment,
-	HtmlEmbed,
-	ImageBlock,
-	ImageCaption,
-	ImageInline,
-	ImageInsert,
-	ImageInsertViaUrl,
-	ImageResize,
-	ImageStyle,
-	ImageTextAlternative,
-	ImageToolbar,
-	ImageUpload,
-	Indent,
-	IndentBlock,
-	Italic,
-	Link as LinkURL,
-	LinkImage,
-	List,
-	ListProperties,
-	MediaEmbed,
-	Paragraph,
-	PasteFromOffice,
-	PictureEditing,
-	SelectAll,
-	ShowBlocks,
-	SourceEditing,
-	Table,
-	TableCaption,
-	TableCellProperties,
-	TableColumnResize,
-	TableProperties,
-	TableToolbar,
-	TextTransformation,
-	TodoList,
-	Underline,
-	Undo
+    AccessibilityHelp,
+    Autoformat,
+    AutoImage,
+    Autosave,
+    BalloonToolbar,
+    BlockQuote,
+    Bold,
+    Essentials,
+    FullPage,
+    GeneralHtmlSupport,
+    Heading,
+    HtmlComment,
+    HtmlEmbed,
+    ImageBlock,
+    ImageCaption,
+    ImageInline,
+    ImageInsert,
+    ImageInsertViaUrl,
+    ImageResize,
+    ImageStyle,
+    ImageTextAlternative,
+    ImageToolbar,
+    ImageUpload,
+    Indent,
+    IndentBlock,
+    Italic,
+    Link as LinkURL,
+    LinkImage,
+    List,
+    ListProperties,
+    MediaEmbed,
+    Paragraph,
+    PasteFromOffice,
+    PictureEditing,
+    SelectAll,
+    ShowBlocks,
+    SourceEditing,
+    Table,
+    TableCaption,
+    TableCellProperties,
+    TableColumnResize,
+    TableProperties,
+    TableToolbar,
+    TextTransformation,
+    TodoList,
+    Underline,
+    Undo
 } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
 
@@ -66,185 +66,235 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faChevronLeft, faPlus, faPlusCircle, faXmarkCircle } from '@fortawesome/free-solid-svg-icons'
 import infoIcon from '../../assets/icons/InfoIcon'
 import TypeItem from '../TypeItem/TypeItem';
+import { uploadImage } from '../Upload';
+import { createProduct } from '../../service/ProductAAPI';
 
 const CreateProduct = () => {
-    const [isOpenEditor, setIsOpenEditor] = useState(false)
+    const [dataBody, setDataBody] = useState({
+        sub_id: null,
+        name: null,
+        unit: null,
+        cost_price: null,
+        wholesale_price: null,
+        retail_price: null,
+        images: [],
+        types: [],
+        category_id: null,
+        brand_id: null,
+        tags: null,
+        description: null,
+        status: "INACTIVE"
+    });
+
+    const handleCreateProduct = async () => {
+        // Tải tất cả hình ảnh và chờ kết quả
+        const uploadedImages = await Promise.all(
+            images.map(async (image) => {
+                const response = await uploadImage(image.src);
+                return {
+                    url: response,
+                    alt: image.src.name
+                };
+            })
+        );
     
+        // Cập nhật `dataBody` với các hình ảnh đã được tải lên
+        setDataBody(prevState => ({
+            ...prevState,
+            images: uploadedImages
+        }));
+    
+        // Sau khi tất cả ảnh đã được tải lên, gọi API để tạo sản phẩm
+        const response = await createProduct({
+            ...dataBody,
+            images: uploadedImages
+        });
+        
+        console.log(response);
+    };
+    
+
+    const [isOpenEditor, setIsOpenEditor] = useState(false)
+
     const editorConfig = {
         language: 'vi',
-		toolbar: {
+        toolbar: {
             items: [
                 'undo',
-				'redo',
-				'|',
-				'sourceEditing',
-				'showBlocks',
-				'|',
-				'heading',
-				'|',
-				'bold',
-				'italic',
-				'underline',
-				'|',
-				'link',
-				'insertImage',
-				'mediaEmbed',
-				'insertTable',
-				'blockQuote',
-				'htmlEmbed',
-				'|',
-				'bulletedList',
-				'numberedList',
-				'todoList',
-				'outdent',
-				'indent'
-			],
-			shouldNotGroupWhenFull: false
-		},
-		plugins: [
+                'redo',
+                '|',
+                'sourceEditing',
+                'showBlocks',
+                '|',
+                'heading',
+                '|',
+                'bold',
+                'italic',
+                'underline',
+                '|',
+                'link',
+                'insertImage',
+                'mediaEmbed',
+                'insertTable',
+                'blockQuote',
+                'htmlEmbed',
+                '|',
+                'bulletedList',
+                'numberedList',
+                'todoList',
+                'outdent',
+                'indent'
+            ],
+            shouldNotGroupWhenFull: false
+        },
+        plugins: [
             AccessibilityHelp,
-			Autoformat,
-			AutoImage,
-			Autosave,
-			BalloonToolbar,
-			BlockQuote,
-			Bold,
-			Essentials,
-			FullPage,
-			GeneralHtmlSupport,
-			Heading,
-			HtmlComment,
-			HtmlEmbed,
-			ImageBlock,
-			ImageCaption,
-			ImageInline,
-			ImageInsert,
-			ImageInsertViaUrl,
-			ImageResize,
-			ImageStyle,
-			ImageTextAlternative,
-			ImageToolbar,
-			ImageUpload,
-			Indent,
-			IndentBlock,
-			Italic,
-			LinkURL,
-			LinkImage,
-			List,
-			ListProperties,
-			MediaEmbed,
-			Paragraph,
-			PasteFromOffice,
-			PictureEditing,
-			SelectAll,
-			ShowBlocks,
-			SourceEditing,
-			Table,
-			TableCaption,
-			TableCellProperties,
-			TableColumnResize,
-			TableProperties,
-			TableToolbar,
-			TextTransformation,
-			TodoList,
-			Underline,
-			Undo
-		],
-		balloonToolbar: ['bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList'],
-		heading: {
+            Autoformat,
+            AutoImage,
+            Autosave,
+            BalloonToolbar,
+            BlockQuote,
+            Bold,
+            Essentials,
+            FullPage,
+            GeneralHtmlSupport,
+            Heading,
+            HtmlComment,
+            HtmlEmbed,
+            ImageBlock,
+            ImageCaption,
+            ImageInline,
+            ImageInsert,
+            ImageInsertViaUrl,
+            ImageResize,
+            ImageStyle,
+            ImageTextAlternative,
+            ImageToolbar,
+            ImageUpload,
+            Indent,
+            IndentBlock,
+            Italic,
+            LinkURL,
+            LinkImage,
+            List,
+            ListProperties,
+            MediaEmbed,
+            Paragraph,
+            PasteFromOffice,
+            PictureEditing,
+            SelectAll,
+            ShowBlocks,
+            SourceEditing,
+            Table,
+            TableCaption,
+            TableCellProperties,
+            TableColumnResize,
+            TableProperties,
+            TableToolbar,
+            TextTransformation,
+            TodoList,
+            Underline,
+            Undo
+        ],
+        balloonToolbar: ['bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList'],
+        heading: {
             options: [
                 {
-					model: 'paragraph',
-					title: 'Paragraph',
-					class: 'ck-heading_paragraph'
-				},
-				{
-					model: 'heading1',
-					view: 'h1',
-					title: 'Heading 1',
-					class: 'ck-heading_heading1'
-				},
-				{
+                    model: 'paragraph',
+                    title: 'Paragraph',
+                    class: 'ck-heading_paragraph'
+                },
+                {
+                    model: 'heading1',
+                    view: 'h1',
+                    title: 'Heading 1',
+                    class: 'ck-heading_heading1'
+                },
+                {
                     model: 'heading2',
-					view: 'h2',
-					title: 'Heading 2',
-					class: 'ck-heading_heading2'
-				},
-				{
-					model: 'heading3',
-					view: 'h3',
-					title: 'Heading 3',
-					class: 'ck-heading_heading3'
-				},
-				{
+                    view: 'h2',
+                    title: 'Heading 2',
+                    class: 'ck-heading_heading2'
+                },
+                {
+                    model: 'heading3',
+                    view: 'h3',
+                    title: 'Heading 3',
+                    class: 'ck-heading_heading3'
+                },
+                {
                     model: 'heading4',
-					view: 'h4',
-					title: 'Heading 4',
-					class: 'ck-heading_heading4'
-				},
-				{
-					model: 'heading5',
-					view: 'h5',
-					title: 'Heading 5',
-					class: 'ck-heading_heading5'
-				},
-				{
-					model: 'heading6',
-					view: 'h6',
-					title: 'Heading 6',
-					class: 'ck-heading_heading6'
-				}
-			]
-		},
-		htmlSupport: {
-			allow: [
-				{
-					name: /^.*$/,
-					styles: true,
-					attributes: true,
-					classes: true
-				}
-			]
-		},
-		image: {
-			toolbar: [
+                    view: 'h4',
+                    title: 'Heading 4',
+                    class: 'ck-heading_heading4'
+                },
+                {
+                    model: 'heading5',
+                    view: 'h5',
+                    title: 'Heading 5',
+                    class: 'ck-heading_heading5'
+                },
+                {
+                    model: 'heading6',
+                    view: 'h6',
+                    title: 'Heading 6',
+                    class: 'ck-heading_heading6'
+                }
+            ]
+        },
+        htmlSupport: {
+            allow: [
+                {
+                    name: /^.*$/,
+                    styles: true,
+                    attributes: true,
+                    classes: true
+                }
+            ]
+        },
+        image: {
+            toolbar: [
                 'toggleImageCaption',
-				'imageTextAlternative',
-				'|',
-				'imageStyle:inline',
-				'imageStyle:wrapText',
-				'imageStyle:breakText',
-				'|',
-				'resizeImage',
-				'|',
-				'ckboxImageEdit'
-			]
-		},
-		link: {
+                'imageTextAlternative',
+                '|',
+                'imageStyle:inline',
+                'imageStyle:wrapText',
+                'imageStyle:breakText',
+                '|',
+                'resizeImage',
+                '|',
+                'ckboxImageEdit'
+            ]
+        },
+        link: {
             addTargetToExternalLinks: true,
-			defaultProtocol: 'https://',
-			decorators: {
+            defaultProtocol: 'https://',
+            decorators: {
                 toggleDownloadable: {
-					mode: 'manual',
-					label: 'Downloadable',
-					attributes: {
-						download: 'file'
-					}
-				}
-			}
-		},
-		list: {
+                    mode: 'manual',
+                    label: 'Downloadable',
+                    attributes: {
+                        download: 'file'
+                    }
+                }
+            }
+        },
+        list: {
             properties: {
                 styles: true,
-				startIndex: true,
-				reversed: true
-			}
-		},
-		table: {
+                startIndex: true,
+                reversed: true
+            }
+        },
+        table: {
             contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
-		}
-	};
-    
+        }
+    };
+
+    useEffect(() => {
+        console.log(dataBody)
+    }, [dataBody])
+
     const [images, setImages] = useState([]);
     const imagesInputRef = useRef(null);
 
@@ -267,7 +317,7 @@ const CreateProduct = () => {
     const deleteImage = (image) => {
         setImages(prev => prev.filter((value) => value !== image))
     }
-    
+
     const handleDragOver = (e) => {
         e.preventDefault();
     }
@@ -279,19 +329,19 @@ const CreateProduct = () => {
 
     const handleOnDragEnd = (result) => {
         const { destination, source } = result;
-        
+
         // Nếu không có đích đến hoặc vị trí không thay đổi, không cần làm gì
         if (!destination || destination.index === source.index) {
             return;
         }
-    
+
         // Tạo bản sao của danh sách ảnh
         const reorderedImages = Array.from(images);
-    
+
         // Cắt ảnh tại vị trí nguồn (nơi kéo đi) và chèn vào vị trí đích
         const [movedImage] = reorderedImages.splice(source.index, 1);
         reorderedImages.splice(destination.index, 0, movedImage);
-    
+
         // Cập nhật danh sách ảnh với vị trí mới
         setImages(reorderedImages);
     };
@@ -325,11 +375,17 @@ const CreateProduct = () => {
 
     const updateType = (index, name, value) => {
         const updatedTypes = [...types];
-        updatedTypes[index] = {...updatedTypes[index], [name]: value}
+        updatedTypes[index] = { ...updatedTypes[index], [name]: value }
 
+        setDataBody(prevState => {
+            return {
+                ...prevState,
+                types: updatedTypes
+            }
+        });
         setTypes(updatedTypes);
     }
-    
+
     return (
         <>
             <div className="right__navbar">
@@ -346,7 +402,7 @@ const CreateProduct = () => {
                         <button className="btn btn-outline-primary">
                             <span className="btn__title">Thoát</span>
                         </button>
-                        <button className="btn btn-primary">
+                        <button className="btn btn-primary" onClick={handleCreateProduct}>
                             <span className="btn__title">Lưu</span>
                         </button>
                     </div>
@@ -361,7 +417,7 @@ const CreateProduct = () => {
                                     <div className="box-header">
                                         <h6>Thông tin chung</h6>
                                     </div>
-                                </div>      
+                                </div>
                                 <div className="info-content">
                                     <div className="grid-container">
                                         <div className="box-product-name">
@@ -369,7 +425,7 @@ const CreateProduct = () => {
                                                 <label htmlFor="name" className="form-label">
                                                     Tên sản phẩm
                                                     <span
-                                                        id='nameCaption' 
+                                                        id='nameCaption'
                                                         className="caption-icon"
                                                     >
                                                         {infoIcon}
@@ -383,7 +439,16 @@ const CreateProduct = () => {
                                                     <span className="asterisk-icon">*</span>
                                                 </label>
                                                 <div className="form-textfield">
-                                                    <input type="text" name="name" id="name" placeholder='Nhập tên sản phẩm' />
+                                                    <input
+                                                        type="text"
+                                                        name="name"
+                                                        id="name"
+                                                        placeholder='Nhập tên sản phẩm'
+                                                        onChange={e => setDataBody(prevState => ({
+                                                            ...prevState,
+                                                            name: e.target.value
+                                                        }))}
+                                                    />
                                                     <fieldset className="input-field"></fieldset>
                                                 </div>
                                             </div>
@@ -393,7 +458,7 @@ const CreateProduct = () => {
                                                 <label htmlFor="id" className="form-label">
                                                     Mã sản phẩm
                                                     <span
-                                                        id='idCaption' 
+                                                        id='idCaption'
                                                         className="caption-icon"
                                                     >
                                                         {infoIcon}
@@ -407,12 +472,19 @@ const CreateProduct = () => {
                                                     </UncontrolledTooltip>
                                                 </label>
                                                 <div className="form-textfield">
-                                                    <input type="text" name="id" id="id" />
+                                                    <input
+                                                        type="text"
+                                                        name="id"
+                                                        id="id"
+                                                        onChange={e => setDataBody(prevState => ({
+                                                            ...prevState,
+                                                            sub_id: e.target.value
+                                                        }))} />
                                                     <fieldset className="input-field"></fieldset>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="box-product-weight">
+                                        {/* <div className="box-product-weight">
                                             <div className="form-item">
                                                 <label htmlFor="weight" className="form-label">
                                                     Khối lượng
@@ -430,14 +502,23 @@ const CreateProduct = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> */}
                                         <div className="box-product-unit">
                                             <div className="form-item">
                                                 <label htmlFor="unit" className="form-label">
                                                     Đơn vị tính
                                                 </label>
                                                 <div className="form-textfield">
-                                                    <input type="text" name="unit" id="unit" />
+                                                    <input
+                                                        type="text"
+                                                        name="unit"
+                                                        id="unit"
+                                                        onChange={e => setDataBody(prevState => {
+                                                            return {
+                                                                ...prevState,
+                                                                unit: e.target.value
+                                                            }
+                                                        })} />
                                                     <fieldset className="input-field"></fieldset>
                                                 </div>
                                             </div>
@@ -450,12 +531,17 @@ const CreateProduct = () => {
                                             </button>
                                             <Collapse className='box-description' isOpen={isOpenEditor}>
                                                 <div className="box-description__container">
-                                                    <CKEditor editor={ClassicEditor} config={editorConfig} />
+                                                    <CKEditor editor={ClassicEditor} config={editorConfig} onChange={e => setDataBody(prevState => {
+                                                        return {
+                                                            ...prevState,
+                                                            description: e.target.value
+                                                        }
+                                                    })} />
                                                 </div>
                                             </Collapse>
                                         </div>
                                     </div>
-                                </div>                      
+                                </div>
                             </div>
                             <div className="box-info-item box-price">
                                 <div className="info-header">
@@ -470,7 +556,7 @@ const CreateProduct = () => {
                                                 <label htmlFor="retail-price" className="form-label">
                                                     Giá bán lẻ
                                                     <span
-                                                        id='retailPriceCaption' 
+                                                        id='retailPriceCaption'
                                                         className="caption-icon"
                                                     >
                                                         {infoIcon}
@@ -483,7 +569,17 @@ const CreateProduct = () => {
                                                     </UncontrolledTooltip>
                                                 </label>
                                                 <div className="form-textfield">
-                                                    <input className='text-end' type="text" name="retail-price" id="retail-price" />
+                                                    <input
+                                                        className='text-end'
+                                                        type="text"
+                                                        name="retail-price"
+                                                        id="retail-price"
+                                                        onChange={e => setDataBody(prevState => {
+                                                            return {
+                                                                ...prevState,
+                                                                retail_price: e.target.value
+                                                            }
+                                                        })} />
                                                     <fieldset className="input-field"></fieldset>
                                                 </div>
                                             </div>
@@ -493,7 +589,7 @@ const CreateProduct = () => {
                                                 <label htmlFor="wholesale-price" className="form-label">
                                                     Giá bán buôn
                                                     <span
-                                                        id='wholesalePriceCaption' 
+                                                        id='wholesalePriceCaption'
                                                         className="caption-icon"
                                                     >
                                                         {infoIcon}
@@ -506,7 +602,18 @@ const CreateProduct = () => {
                                                     </UncontrolledTooltip>
                                                 </label>
                                                 <div className="form-textfield">
-                                                    <input className='text-end' type="text" name="wholesale-price" id="wholesale-price" />
+                                                    <input
+                                                        className='text-end'
+                                                        type="text"
+                                                        name="wholesale-price"
+                                                        id="wholesale-price"
+                                                        onChange={e => setDataBody(prevState => {
+                                                            return {
+                                                                ...prevState,
+                                                                wholesale_price: e.target.value
+                                                            }
+                                                        })}
+                                                    />
                                                     <fieldset className="input-field"></fieldset>
                                                 </div>
                                             </div>
@@ -517,7 +624,7 @@ const CreateProduct = () => {
                                                 <label htmlFor="cost-price" className="form-label">
                                                     Giá nhập
                                                     <span
-                                                        id='costPriceCaption' 
+                                                        id='costPriceCaption'
                                                         className="caption-icon"
                                                     >
                                                         {infoIcon}
@@ -530,7 +637,18 @@ const CreateProduct = () => {
                                                     </UncontrolledTooltip>
                                                 </label>
                                                 <div className="form-textfield">
-                                                    <input className='text-end' type="text" name="cost-price" id="cost-price" />
+                                                    <input
+                                                        className='text-end'
+                                                        type="text"
+                                                        name="cost-price"
+                                                        id="cost-price"
+                                                        onChange={e => setDataBody(prevState => {
+                                                            return {
+                                                                ...prevState,
+                                                                cost_price: e.target.value
+                                                            }
+                                                        })}
+                                                    />
                                                     <fieldset className="input-field"></fieldset>
                                                 </div>
                                             </div>
@@ -551,7 +669,7 @@ const CreateProduct = () => {
                                     {images.length > 0 && <DragDropContext onDragEnd={handleOnDragEnd}>
                                         <Droppable droppableId='images' direction='horizontal'>
                                             {(provided) => (
-                                                <div 
+                                                <div
                                                     {...provided.droppableProps}
                                                     ref={provided.innerRef}
                                                     onDragOver={handleDragOver}
@@ -591,7 +709,7 @@ const CreateProduct = () => {
                                             )}
                                         </Droppable>
                                     </DragDropContext>}
-                                    <div 
+                                    <div
                                         onClick={handleImageInputClick}
                                         onDragOver={handleDragOver}
                                         onDrop={handleDrop}
@@ -603,17 +721,17 @@ const CreateProduct = () => {
                                             <a>tải ảnh lên từ thiết bị</a>
                                         </p>
                                         <div className="images-input">
-                                            <input 
+                                            <input
                                                 ref={imagesInputRef}
                                                 onChange={(e) => handleImages(e)}
                                                 aria-invalid="false"
                                                 autoComplete='off'
-                                                type="file" 
+                                                type="file"
                                                 accept='image/gif, image/jpeg, image/jpg, image/png, image/bmp'
                                                 multiple
                                                 tabIndex={-1}
-                                                name="images" 
-                                                id="images-input" 
+                                                name="images"
+                                                id="images-input"
                                             />
                                         </div>
                                     </div>
@@ -661,7 +779,7 @@ const CreateProduct = () => {
                                     <div className="box-header">
                                         <h6>Thuộc tính</h6>
                                         <span
-                                            id='typesCaption' 
+                                            id='typesCaption'
                                             className="caption-icon"
                                         >
                                             {infoIcon}
@@ -692,12 +810,12 @@ const CreateProduct = () => {
                                         </div>
                                         {
                                             types?.map((type, index) => (
-                                                <TypeItem 
+                                                <TypeItem
                                                     key={index}
-                                                    index={index} 
-                                                    type={type} 
-                                                    handleUpdateType={(name, value) => updateType(index, name, value)} 
-                                                    handleDeleteType={() => deleteType(index)} 
+                                                    index={index}
+                                                    type={type}
+                                                    handleUpdateType={(name, value) => updateType(index, name, value)}
+                                                    handleDeleteType={() => deleteType(index)}
                                                 />
                                             ))
                                         }
@@ -732,7 +850,7 @@ const CreateProduct = () => {
                                         <label htmlFor="tags" className="form-label">
                                             Tags
                                             <span
-                                                id='tagsCaption' 
+                                                id='tagsCaption'
                                                 className="caption-icon"
                                             >
                                                 {infoIcon}
@@ -741,11 +859,22 @@ const CreateProduct = () => {
                                                 placement="top"
                                                 target="tagsCaption"
                                             >
-                                                Chọn hoặc thêm các thẻ cho sản phẩm, thẻ này phục vụ cho việc lọc sản phẩm
+                                                Thêm thẻ cho sản phẩm
                                             </UncontrolledTooltip>
                                         </label>
                                         <div className="form-textfield">
-                                            <input className='text-end' type="text" name="tags" id="tags" />
+                                            <input
+                                                className='text-end'
+                                                type="text"
+                                                name="tags"
+                                                id="tags"
+                                                onChange={e => setDataBody(prevState => {
+                                                    return {
+                                                        ...prevState,
+                                                        tags: e.target.value
+                                                    }
+                                                })}
+                                            />
                                             <fieldset className="input-field"></fieldset>
                                         </div>
                                     </div>
@@ -757,7 +886,7 @@ const CreateProduct = () => {
                                         <label htmlFor="status" className="form-label">
                                             Trạng thái
                                             <span
-                                                id='statusCaption' 
+                                                id='statusCaption'
                                                 className="caption-icon"
                                             >
                                                 {infoIcon}
@@ -773,7 +902,14 @@ const CreateProduct = () => {
                                             <p>Cho phép bán</p>
                                             <div className="box-switch">
                                                 <div className="btn-switch">
-                                                    <input type="checkbox" name="status" className='switch-checkbox' id="" />
+                                                    <input type="checkbox" name="status" className='switch-checkbox' id="" onChange={
+                                                        e => setDataBody(prevState => {
+                                                            return {
+                                                                ...prevState,
+                                                                status: e.target.checked ? "ACTIVE" : "INACTIVE"
+                                                            }
+                                                        })
+                                                    } />
                                                     <span className="switch-bar"></span>
                                                 </div>
                                             </div>
