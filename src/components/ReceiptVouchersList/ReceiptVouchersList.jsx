@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { getListTransaction } from '../../service/TransactionAPI.jsx'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
+import { useNavigate } from 'react-router-dom'
 
 const ReceiptVouchersList = () => {
     const [transactionList, setTransactionList] = useState([]);
@@ -29,6 +30,7 @@ const ReceiptVouchersList = () => {
         completed: false,
         cancelled: false
     });
+    const navigate = useNavigate();
 
     const handleChangeActive = (name) => {
         setActive({
@@ -148,7 +150,7 @@ const ReceiptVouchersList = () => {
                         </button>
                     </div>
                     <div className="btn-toolbar">
-                        <button className="btn btn-primary">
+                        <button onClick={() => navigate('/admin/receipt_vouchers/create')} className="btn btn-primary">
                             <span className="btn__icon">
                                 <FontAwesomeIcon icon={faPlus} />
                             </span>
