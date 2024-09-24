@@ -11,13 +11,35 @@ import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifying
 import Header from '../Header/Header.jsx'
 import { useNavigate } from 'react-router-dom'
 import { getProductList } from '../../service/ProductAPI.jsx'
+import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 
 
 
 const ProductList = () => {
-    const navigate = useNavigate();
-    const headersRef = useRef(null);
-    const contentRef = useRef(null);
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Tháng bắt đầu từ 0
+        const year = date.getFullYear();
+      
+        return `${day}/${month}/${year}`;
+    };
+
+    const [colsToRender, setColsToRender] = useState(() => {
+        const storedCols = Cookies.get('filter_products');
+        return storedCols ? JSON.parse(storedCols) : {
+            images: true,
+            name: true,
+            status: true,
+            category_name: true,
+            brand_name: true,
+            quantity: true,
+            created_at: true,
+            updated_at: true
+        }
+    })
+
     const handleScroll = (e, target) => {
         target.scrollLeft = e.target.scrollLeft;
     }
@@ -33,36 +55,21 @@ const ProductList = () => {
             setPage(prev => prev + 1);
         }
     }
-    //Cookies.remove("ordersListCols")
-    const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('filter_products');
-        return storedCols ? JSON.parse(storedCols) : {
-            images: true,
-            name: true,
-            status: true,
-            category_name: true,
-            brand_name: true,
-            quantity: true,
-            created_at: true,
-            updated_at: true
-            // user_completed_name: false,
-            // user_ended_name: false,
-            // supplier_phone: false,
-            // supplier_address: false,
-            // supplier_email: false,
-            // note: false,
-            // tags: false,
-            // expected_at: false,
-            // completed_at: false,
-            // ended_at: false,
-            // cancelled_at: false
-        }
-    })
+
+
+    const navigate = useNavigate();
+
+    const headersRef = useRef(null);
+    const contentRef = useRef(null);
+    const limitBtnRef = useRef(null);
+
+
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
-    const [limit, setLimit] = useState(4);
+    const [limit, setLimit] = useState(10);
     const [productsList, setProductsList] = useState([]);
     const [productsQuantity, setProductsQuantity] = useState();
+    const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
 
     const fetchProductList = async () => {
         try {
@@ -86,10 +93,10 @@ const ProductList = () => {
     }, [colsToRender])
     //console.log(col)
 
-    useEffect(() => {
+    useEffect(()=>{
         fetchProductList();
 
-    }, [limit]);
+    }, [limit, page]);
     return (
         <>
             <Header />
@@ -331,7 +338,21 @@ const ProductList = () => {
                                                                         key={key}
                                                                         className={cn("table-data-item", col[key].align)}
                                                                     >
-                                                                        <img src={product.images[0]?.url} alt={product.images[0]?.alt} />
+                                                                        <img src={product?.images[0]?.url} alt={product?.images[0]?.alt} />
+                                                                    </td>
+                                                                )
+                                                            } else if(key === "updated_at" || key === "created_at"){
+                                                                return(
+                                                                    <td
+                                                                    key={key}
+                                                                    className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        <p className='box-text'>
+                                                                            {
+                                                                                formatDate(product[key])
+                                                                            }
+                                                                        </p>
+
                                                                     </td>
                                                                 )
                                                             }
@@ -342,8 +363,8 @@ const ProductList = () => {
                                                                 >
                                                                     <p className='box-text'>
                                                                         {
-                                                                            key !== "id" ? product[key] :
-                                                                                <a className='box-id'>{product[key]}</a>
+                                                                            key !== "name" ? product[key] :
+                                                                            <a className='box-id'>{product[key]}</a>
                                                                         }
                                                                     </p>
                                                                 </td>
@@ -361,17 +382,22 @@ const ProductList = () => {
                         <div className="right__table-pagination">
                             <p>Hiển thị</p>
                             <div className="box-page-limit">
-                                <button className="btn-page-limit">
-                                    20
+                                <button
+                                    ref={limitBtnRef}
+                                    onClick={() => setIsOpenLimitPopup(!isOpenLimitPopup)} 
+                                    className={cn("btn-page-limit", {"selected": isOpenLimitPopup})}
+                                >
+                                    {limit}
                                     <span>
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </span>
                                 </button>
+                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() =>setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) =>{setLimit(limit)}}/>}
                             </div>
                             <p>kết quả</p>
-                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + productsList.length} trên tổng {productsQuantity}</p>
-                            <button
-                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1 })}
+                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + productsList.length} trên tổng {pageQuantiy}</p>
+                            <button 
+                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
                                 onClick={handlePrevPage}
                             >
                                 <FontAwesomeIcon icon={faChevronLeft} />
