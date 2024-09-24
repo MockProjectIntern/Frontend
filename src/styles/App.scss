@@ -1088,6 +1088,10 @@ input:focus-within ~ .input-field {
             'maininfo subinfo';
             width: 100%;
             box-sizing: border-box;
+
+            &.vouchers {
+                grid-template-columns: 3fr 1fr;
+            }
             
             .form-item {
                 border: 0;
@@ -1201,6 +1205,24 @@ input:focus-within ~ .input-field {
                         font-weight: $font-weight-base;
                         line-height: 20px;
                         margin: 0;
+                    }
+                }
+
+                textarea {
+                    color: $default;
+                    width: 100%;
+                    border: 1px solid;
+                    resize: none;
+                    padding: 10px;
+                    font-size: $font-size-base;
+                    font-family: var(--bs-font-sans-serif);
+                    border-color: #D3D5D7;
+                    border-radius: 3px;
+                    min-height: 72px !important;
+                    overflow: auto;
+
+                    &:focus {
+                        border-color: $violet;
                     }
                 }
             }
@@ -1772,6 +1794,78 @@ input:focus-within ~ .input-field {
                             cursor: pointer;
                             padding-left: 14px;
                         }
+                    }
+                }
+
+                .box-voucher {
+
+                    .grid-container {
+                        width: 100%;
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        grid-template-areas: 
+                            'group name'
+                            'type id';
+                        gap: 20px;
+                        box-sizing: border-box;
+
+                        .box-group {
+                            grid-area: group;
+                            margin: 0;
+                            box-sizing: border-box
+                        }
+
+                        .box-name {
+                            grid-area: name;
+                            margin: 0;
+                            box-sizing: border-box
+                        }
+
+                        .box-voucher-type {
+                            grid-area: type;
+                            margin: 0;
+                            box-sizing: border-box
+                        }
+
+                        .box-voucher-id {
+                            grid-area: id;
+                            margin: 0;
+                            box-sizing: border-box
+                        }
+
+                    }
+                }
+
+                .box-voucher-cost {
+
+                    .grid-container {
+                        width: 100%;
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        grid-template-areas: 
+                            'cost method'
+                            'reference .';
+                        gap: 20px;
+                        box-sizing: border-box;
+
+                        .box-cost {
+                            grid-area: cost;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-method {
+                            grid-area: method;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-reference {
+                            grid-area: reference;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
                     }
                 }
             }

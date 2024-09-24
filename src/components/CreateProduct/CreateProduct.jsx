@@ -818,7 +818,6 @@ const CreateProduct = () => {
                                         </label>
                                         <div className="form-textfield">
                                             <input
-                                                className='text-end'
                                                 type="text"
                                                 name="tags"
                                                 id="tags"

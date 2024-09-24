@@ -14,6 +14,7 @@ import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { useNavigate } from 'react-router-dom'
 
 const paymentVouchersList = [
     {
@@ -43,6 +44,7 @@ const PaymentVouchersList = () => {
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
+    const navigate = useNavigate();
 
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
@@ -116,14 +118,14 @@ const PaymentVouchersList = () => {
                         </span>
                     </button>
                 </div>
-            <div className="btn-toolbar">
-                <button className="btn btn-primary">
-                    <span className="btn__icon">
-                        <FontAwesomeIcon icon={faPlus} />
-                    </span>
-                    <span className="btn__title">Tạo phiếu chi</span>
-                </button>
-            </div>
+                <div className="btn-toolbar">
+                    <button onClick={() => navigate('/admin/payment_vouchers/create')} className="btn btn-primary">
+                        <span className="btn__icon">
+                            <FontAwesomeIcon icon={faPlus} />
+                        </span>
+                        <span className="btn__title">Tạo phiếu chi</span>
+                    </button>
+                </div>
             </div>
             <div className="right__table">
                 <div className="right__table-scroller">
