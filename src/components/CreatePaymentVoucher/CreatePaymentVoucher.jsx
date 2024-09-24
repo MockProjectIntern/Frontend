@@ -68,7 +68,7 @@ const CreatePaymentVoucher = () => {
                                     <div className="box-name">
                                         <div className="form-item">
                                             <label htmlFor="name" className="form-label">
-                                                Tên người nộp&nbsp;
+                                                Tên người nhận&nbsp;
                                                 <span className="asterisk-icon">*</span>
                                             </label>
                                             <div className="box-select">
