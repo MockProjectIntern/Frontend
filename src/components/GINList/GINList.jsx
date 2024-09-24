@@ -15,59 +15,69 @@ import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { useNavigate } from 'react-router-dom'
+import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
+import { getGINs } from '../../service/ginApi.js'
 
-const ginList = [
-    {
-        id: "OSN00004",
-        created_at: "13/09/2024 11:36",
-        balanced_at: "13/09/2024 11:36",
-        status: "Đang kiểm kho",
-        user_created: "Admin",
-        user_inspection: "Admin",
-        user_balanced: "Admin",
-        note: "Giao hàng",
-    },
-    {
-        id: "OSN00003",
-        created_at: "13/09/2024 11:36",
-        balanced_at: "13/09/2024 11:36",
-        status: "Đã cân bằng",
-        user_created: "Admin",
-        user_inspection: "Admin",
-        user_balanced: "Admin",
-        note: "Giao hàng",
-    },
-    {
-        id: "OSN00002",
-        created_at: "13/09/2024 11:36",
-        balanced_at: "13/09/2024 11:36",
-        status: "Đã xóa",
-        user_created: "Admin",
-        user_inspection: "Admin",
-        user_balanced: "Admin",
-        note: "Giao hàng",
-    }
+// const ginList = [
+//     {
+//         id: "OSN00004",
+//         created_at: "13/09/2024 11:36",
+//         balanced_at: "13/09/2024 11:36",
+//         status: "Đang kiểm kho",
+//         user_created: "Admin",
+//         user_inspection: "Admin",
+//         user_balanced: "Admin",
+//         note: "Giao hàng",
+//     },
+//     {
+//         id: "OSN00003",
+//         created_at: "13/09/2024 11:36",
+//         balanced_at: "13/09/2024 11:36",
+//         status: "Đã cân bằng",
+//         user_created: "Admin",
+//         user_inspection: "Admin",
+//         user_balanced: "Admin",
+//         note: "Giao hàng",
+//     },
+//     {
+//         id: "OSN00002",
+//         created_at: "13/09/2024 11:36",
+//         balanced_at: "13/09/2024 11:36",
+//         status: "Đã xóa",
+//         user_created: "Admin",
+//         user_inspection: "Admin",
+//         user_balanced: "Admin",
+//         note: "Giao hàng",
+//     }
     
   
-]
+// ]
 
-const grnsQuantity = 4;
 
 const GINList = () => {
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
-    const [limit, setLimit] = useState(20);
+    const [limit, setLimit] = useState(10);
+    const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
+    const limitBtnRef = useRef(null);
+    const navigate = useNavigate();
+    const [totalItems, setTotalItems] = useState(0);
 
+
+    const [ginList, setGinList] = useState([]);
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_gins');
         return storedCols ? JSON.parse(storedCols) : {
             id: true,
+            sub_id: true,
             created_at: true,
+            updated_at: true,
             status: true,
-            user_created: true,
-            user_inspection: true,
-            user_balanced: true,
+            user_created_name: true,
+            user_inspection_name: true,
+            user_balanced_name: true,
             note: true,
             balanced_at: true,
         }
@@ -78,6 +88,19 @@ const GINList = () => {
         Cookies.set('filter_gins', JSON.stringify(colsToRender));
     }, [colsToRender])
 
+    useEffect(() => {
+        const fetchGinList = async () => {
+            try {
+                const res = await getGINs(page, limit, "filter_gins", Cookies.get('filter_gins'));
+                setGinList(res.data.data);
+                setPageQuantity(Math.ceil(res.data.total_items / limit));
+                setTotalItems(res.data.total_items);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        fetchGinList();
+    }, [page, limit])
     const headersRef = useRef(null);
     const contentRef = useRef(null);
 
@@ -125,11 +148,11 @@ const GINList = () => {
                     </button>
                 </div>
             <div className="btn-toolbar">
-                <button className="btn btn-primary">
+                <button className="btn btn-primary" onClick={()=> navigate("/admin/gins/create")}>
                     <span className="btn__icon">
                         <FontAwesomeIcon icon={faPlus} />
                     </span>
-                    <span className="btn__title">Tạo phiếu nhập hàng</span>
+                    <span className="btn__title">Tạo phiếu kiểm hàng</span>
                 </button>
             </div>
             </div>
@@ -346,15 +369,20 @@ const GINList = () => {
                     <div className="right__table-pagination">
                         <p>Hiển thị</p>
                         <div className="box-page-limit">
-                            <button className="btn-page-limit">
-                                20
+                        <button 
+                                ref={limitBtnRef} 
+                                onClick={() => setIsOpenLimitPopup(!isOpenLimitPopup)} 
+                                className={cn("btn-page-limit", {"selected": isOpenLimitPopup})}
+                            >
+                                {limit}
                                 <span>
                                     <FontAwesomeIcon icon={faCaretDown} />
                                 </span>
                             </button>
+                            {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => setLimit(limit)} />}
                         </div>
                         <p>kết quả</p>
-                        <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + ginList.length} trên tổng {grnsQuantity}</p>
+                        <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + ginList.length} trên tổng {totalItems}</p>
                         <button 
                             className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
                             onClick={handlePrevPage}

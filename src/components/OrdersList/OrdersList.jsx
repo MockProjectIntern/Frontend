@@ -16,6 +16,7 @@ import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
+import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 
 const ordersList = [
     {
@@ -410,6 +411,7 @@ const OrdersList = () => {
                             >
                                 <FontAwesomeIcon icon={faChevronRight} />
                             </button>
+                            {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => setLimit(limit)} />}
                         </div>
                     </div>
                 </div>

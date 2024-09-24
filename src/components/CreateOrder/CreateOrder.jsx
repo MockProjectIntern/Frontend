@@ -106,9 +106,9 @@ const CreateOrder = () => {
                 </div>
             </div>
         </div>
-        <div className="right__createPage">
-            <div className="right__createPage-wrapper">
-                <div className="right__createPage-container">
+        <div className="right__createPaperPage">
+            <div className="right__createPaperPage-wrapper">
+                <div className="right__createPaperPage-container">
                     <div className="box-supplier">
                         <div className="box-paper">
                             <div className="paper-header">
