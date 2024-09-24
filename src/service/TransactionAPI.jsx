@@ -16,3 +16,13 @@ export const getListTransaction = async (page, size, sort, sortField, filterName
         throw err;
     }
 }
+
+export const createTransaction = async (transaction) => {
+    try {
+        const response = await axiosInstance.post(`transactions/create.json`, transaction);
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}

@@ -9,7 +9,7 @@ const receiptVouchersListColgroup = {
         width: "100px",
         align: "text-start"
     },
-    type: {
+    transaction_category_name: {
         name: "Loại phiếu",
         width: "200px",
         align: "text-start"

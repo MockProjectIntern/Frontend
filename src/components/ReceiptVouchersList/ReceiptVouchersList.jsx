@@ -51,7 +51,7 @@ const ReceiptVouchersList = () => {
         return storedCols ? JSON.parse(storedCols) : {
             id: true,
             sub_id: true,
-            type: true,
+            transaction_category_name: true,
             status: true,
             amount: true,
             recipient_group: true,
@@ -100,7 +100,7 @@ const ReceiptVouchersList = () => {
 
         const timeoutId = setTimeout(() => {
             fetchTransactionList();
-        }, 50); // 500ms delay
+        }, 300); // 500ms delay
 
         // Cleanup function: Clears the timeout if dependencies change before the timeout finishes
         return () => clearTimeout(timeoutId);
@@ -350,6 +350,15 @@ const ReceiptVouchersList = () => {
                                                                         </div>
                                                                     </td>
                                                                 )
+                                                            } else if (key.includes("recipient_group")) {
+                                                                return (
+                                                                    <td
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        <p className='box-text'>{order[key] === "SUP" ? "Nhà cung cấp" : "Khách hàng"}</p>
+                                                                    </td>
+                                                                )
                                                             }
                                                             return (
                                                                 <td
@@ -358,7 +367,7 @@ const ReceiptVouchersList = () => {
                                                                 >
                                                                     <p className='box-text'>
                                                                         {
-                                                                            !Array("id", "original_document", "payer_name").includes(key) ?
+                                                                            !Array("sub_id", "original_document", "payer_name", "recipient_id").includes(key) ?
                                                                                 order[key] :
                                                                                 <a className='box-id'>{order[key]}</a>
                                                                         }
