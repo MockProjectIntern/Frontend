@@ -21,21 +21,50 @@ import calendarIcon from "../../assets/icons/CalendarIcon.jsx";
 import infoIcon from "../../assets/icons/InfoIcon.jsx";
 import importIcon from "../../assets/icons/ImportIcon.jsx";
 import GINProductsTable from "../GINProductsTable/GINProductsTable.jsx";
+import { createNewGIN } from "../../service/ginApi.js";
 
 const CreateGIN = () => {
-	const [supplier, setSupplier] = useState({
-		name: "Test",
-		phone: "0123456789",
-		address: "Hà Nội, Phường Bách Khoa, Quận Hai Bà Trưng, Hà Nội, Việt Nam",
-		debt: "4,000,000",
-		grn_quantity: 0,
-		grn_total: 0,
-		return: 0,
-	});
-	const [order, setOrder] = useState({
-		discount: 0,
-		total: 350000,
-	});
+
+	    const [productRequest,setProductRequest] = useState({
+        
+            sub_id: null,
+            note: "",
+            tags: "",
+            user_inspection_id: "USR00002",
+            isBalance: false,
+            products: [
+                {
+                    product_id: "PRD00007",
+                    actual_stock: 30,
+                    discrepancy_quantity: 5,
+                    reason: "Hư hỏng",
+                    note: "Ghi chú",
+                    unit: "Chiếc"
+                }
+            ]
+        
+});
+
+	const handleProductRequestChange = (e) => {
+		const { name, value } = e.target;
+		setProductRequest({ ...productRequest, [name]: value });
+	};
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		try {
+			console.log("Tao gin moi")
+			const res = await createNewGIN(productRequest);
+			console.log(res);
+			if(res.status_code == 201){
+				alert(res.message);
+			}
+
+		}	catch (error) {
+			console.log(error);
+		}
+	};
+
 	const [productsList, setProductsList] = useState([
 		{
 			id: "PVN05",
@@ -124,7 +153,7 @@ const CreateGIN = () => {
 						<button className="btn btn-outline-primary">
 							<span className="btn__title">Thoát</span>
 						</button>
-						<button className="btn btn-primary">
+						<button className="btn btn-primary" onClick={handleSubmit}>
 							<span className="btn__title">Tạo phiếu kiểm</span>
 						</button>
 						<button
@@ -139,20 +168,23 @@ const CreateGIN = () => {
 			<div className="right__createPage">
 				<div className="right__createPage-wrapper">
 					<div className="right__createPage-container">
-						<div className="box-supplier">
+					
+						<div className="box-info">
 							<div className="box-paper">
 								<div className="paper-header">
 									<p>Thông tin phiếu</p>
 								</div>
 								<div className="paper-content">
-									<div className="group-info" style={{ maxWidth: "55%" }}>
-										<div className="info-item">
+									<div className="group-info">
+									<div className="info-item">
 											<p className="info-title">Mã phiếu</p>
 											<div className="info-field">
 												<div className="box-input">
 													<input
 														placeholder="Nhập mã phiếu"
-														name="user_created_name"
+														name="sub_id"
+														value={productRequest.sub_id}
+														onChange={handleProductRequestChange}
 														type="text"
 														className="text-field"
 													/>
@@ -160,24 +192,16 @@ const CreateGIN = () => {
 												</div>
 											</div>
 										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div className="box-info">
-							<div className="box-paper">
-								<div className="paper-header">
-									<p>Thông tin bổ sung</p>
-								</div>
-								<div className="paper-content">
-									<div className="group-info">
+
 										<div className="info-item">
 											<p className="info-title">Ghi chú</p>
 											<div className="info-field">
 												<div className="box-input">
 													<input
 														placeholder="Kiểm hàng ngày 13/9/2024"
-														name="user_created_name"
+														name="note"
+														value={productRequest.note}
+														onChange={handleProductRequestChange}
 														type="text"
 														className="text-field"
 													/>
@@ -192,7 +216,9 @@ const CreateGIN = () => {
 												<div className="box-input">
 													<input
 														placeholder="Nhập Ký tự và enter"
-														name="id"
+														name="tags"
+														value={productRequest.tags}
+														onChange={handleProductRequestChange}
 														type="text"
 														className="text-field"
 													/>

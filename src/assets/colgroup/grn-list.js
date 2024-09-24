@@ -7,12 +7,12 @@ const grn_list_colgroup = {
     status: {
         name: "Trạng thái",
         width: "180px",
-        align: "text-center"
+        align: "text-start"
     },
     received_status: {
         name: "Trạng thái nhận hàng",
         width: "180px",
-        align: "text-center"
+        align: "text-start"
     },
     created_at: {
         name: "Ngày tạo",

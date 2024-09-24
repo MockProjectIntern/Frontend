@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // Add useState
+import React, { useState , useRef} from 'react'; // Add useState
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 
@@ -12,11 +12,11 @@ import productsTableColgroup from '../../assets/colgroup/gin-products-table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleMinus, faCirclePlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import dropdownicon from '../../assets/icons/TriangleDropdown'; // Adjust path as needed
+import ReasonSelectPopup from '../ReasonSelectPopup/ReasonSelectPopup';
+import ReasonTableCell from '../ReasonTableCell/ReasonTableCell';
 
 const GINProductsTable = ({ productsList }) => {
-  // Options for the "reason" field
-  const reasonOptions = ["Khác", "Trả hàng", "Hư hỏng", "Hao mòn"];
-
+  
   return (
     <div className={s.container}>
       <table className={s.table}>
@@ -87,18 +87,7 @@ const GINProductsTable = ({ productsList }) => {
                   );
                 } else if (key === "reason") {
                   return (
-                    <td key={key} className={cn(s.tableCell, s.tableCellBody, col.align)}>
-                      <div className= {cn(s.boxReason, col.align)}>
-                        <select>
-                          {reasonOptions.map(option => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
-                         {dropdownicon}
-                      </div>
-                    </td>
+                <ReasonTableCell />
                   );
                 } else if (key === "note") {
                   return (
