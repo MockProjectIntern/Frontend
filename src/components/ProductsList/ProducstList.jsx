@@ -15,6 +15,7 @@ import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 
 
 
+
 const ProductList = () => {
 
     const formatDate = (dateString) => {
@@ -70,10 +71,20 @@ const ProductList = () => {
     const [productsList, setProductsList] = useState([]);
     const [productsQuantity, setProductsQuantity] = useState();
     const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
+    const [dataBody, setDataBody] = useState(
+        {
+            "keyword": null,
+            "category_ids": null,
+            "created_date_from": null,
+            "created_date_to": null,
+            "brand_ids": null,
+            "supplier_ids": null
+        }
+    );
 
     const fetchProductList = async () => {
         try {
-            const products = await getProductList(page, limit, "filter_products", Cookies.get("filter_products"));
+            const products = await getProductList(page, limit, "filter_products", Cookies.get("filter_products"), dataBody);
 
             if (products.status_code === 200) {
                 setProductsList(products.data.data);

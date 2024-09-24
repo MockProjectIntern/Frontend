@@ -9,12 +9,12 @@ import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faL, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import Header from '../Header/Header.jsx'
-import { getVariantList } from '../../service/VariantAPI.jsx'
+
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import { useNavigate } from 'react-router-dom'
+import { getVariantList } from '../../service/VariantAPI.jsx'
 
 const VariantList = () => {
-
 
     // ham format ngay tra ve tu backend
     const formatDate = (dateString) => {
@@ -72,10 +72,20 @@ const VariantList = () => {
     const [variantsList, setVariantsList] = useState([]);
     const [variantsQuantity, setVariansQuantity] = useState();
     const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
+    const [dataBody, setDataBody] = useState(
+        {
+            "keyword": null,
+            "category_ids": null,
+            "created_date_from": null,
+            "created_date_to": null,
+            "brand_ids": null,
+            "supplier_ids": null
+        }
+    );
 
     const fetchVariantList = async () => {
         try {
-            const variants = await getVariantList(page, limit,"filter_products_manage", Cookies.get("filter_products_manage") )
+            const variants = await getVariantList(page, limit,"filter_products_manage", Cookies.get("filter_products_manage"), dataBody)
 
             if (variants.status_code === 200) {
                 setVariantsList(variants.data.data);
