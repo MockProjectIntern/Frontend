@@ -126,7 +126,7 @@ const SupplierList = () => {
                             <span className="btn__icon">
                                 <FontAwesomeIcon icon={faPlus} />
                             </span>
-                            <span className="btn__title">Thêm sản phẩm</span>
+                            <span className="btn__title">Thêm nhà cung cấp</span>
                         </button>
                     </div>
                 </div>

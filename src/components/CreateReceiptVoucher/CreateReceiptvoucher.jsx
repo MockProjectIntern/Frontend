@@ -110,7 +110,7 @@ const CreateReceiptVoucher = () => {
                         <Link to='/admin/receipt_vouchers' className='btn-back'>
                             <FontAwesomeIcon icon={faChevronLeft} />
                             <h6 className="btn-back__title">
-                                Quay lại danh sách sản phẩm
+                                Quay lại danh sách phiếu thu
                             </h6>
                         </Link>
                     </div>

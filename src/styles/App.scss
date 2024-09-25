@@ -1868,6 +1868,89 @@ input:focus-within ~ .input-field {
 
                     }
                 }
+
+                .box-supplier-general {
+
+                    .grid-container {
+                        width: 100%;
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        grid-template-areas: 
+                            'name name'
+                            'id group'
+                            'phone email';
+                        gap: 20px;
+                        box-sizing: border-box;
+
+                        .box-supplier-name {
+                            grid-area: name;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-supplier-id {
+                            grid-area: id;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-supplier-group {
+                            grid-area: group;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-supplier-phone {
+                            grid-area: phone;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-supplier-email {
+                            grid-area: email;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+                    }
+                }
+
+                .box-supplier-address {
+
+                    .grid-container {
+                        width: 100%;
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        grid-template-areas: 
+                            'province district'
+                            'ward street';
+                        gap: 20px;
+                        box-sizing: border-box;
+
+                        .box-province {
+                            grid-area: province;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-district {
+                            grid-area: district;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-ward {
+                            grid-area: ward;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-street {
+                            grid-area: street;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+                    }
+                }
             }
             
             .box-subinfo {

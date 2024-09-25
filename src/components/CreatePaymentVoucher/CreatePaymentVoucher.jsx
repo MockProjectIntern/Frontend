@@ -106,7 +106,7 @@ const CreatePaymentVoucher = () => {
                         <Link to='/admin/payment_vouchers' className='btn-back'>
                             <FontAwesomeIcon icon={faChevronLeft} />
                             <h6 className="btn-back__title">
-                                Quay lại danh sách sản phẩm
+                                Quay lại danh sách phiếu chi
                             </h6>
                         </Link>
                     </div>
