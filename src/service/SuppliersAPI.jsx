@@ -16,3 +16,15 @@ export const getSupplierList = async (page, size, filterName, filterJson, bodyJs
         throw err;
     }
 }
+
+export const createSupplier = async (dataBody) => {
+    try {
+        const response = await axiosInstance.post(`suppliers/create.json`,
+            dataBody
+        );
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}

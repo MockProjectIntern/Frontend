@@ -68,6 +68,8 @@ import infoIcon from '../../assets/icons/InfoIcon'
 import TypeItem from '../TypeItem/TypeItem';
 import { uploadImage } from '../Upload';
 import { createProduct } from '../../service/ProductAAPI';
+import { createSupplier } from '../../service/SuppliersAPI';
+import { toast } from 'react-toastify';
 
 const CreateSupplier = () => {
     // const [dataBody, setDataBody] = useState({
@@ -92,35 +94,31 @@ const CreateSupplier = () => {
         "phone": null,
         "email": null,
         "address": null,
-        "supplier_group_id": "SUPGR00004",
+        "supplier_group_id": null,
         "tags": null,
-        "note": null,
         status: "INACTIVE"
     });
 
     const hanleCreateSupplier = async () => {
-        // Tải tất cả hình ảnh và chờ kết quả
-        const uploadedImages = await Promise.all(
-            images.map(async (image) => {
-                const response = await uploadImage(image.src);
-                return {
-                    url: response,
-                    alt: image.src.name
-                };
-            })
-        );
 
+        console.log(">> check data: ", dataBody)
         // Cập nhật `dataBody` với các hình ảnh đã được tải lên
         setDataBody(prevState => ({
             ...prevState,
-            images: uploadedImages
         }));
 
         // Sau khi tất cả ảnh đã được tải lên, gọi API để tạo sản phẩm
-        const response = await createProduct({
+        const response = await createSupplier({
             ...dataBody,
-            images: uploadedImages
         });
+
+        if (response.status_code === +201) {
+            console.log("success!!!")
+            toast.success("tạo mới supplier thành công")
+        }
+        console.log("success!!!")
+        toast.success("tạo mới supplier thành công")
+
     };
 
     const [isOpenEditor, setIsOpenEditor] = useState(false)
@@ -300,29 +298,6 @@ const CreateSupplier = () => {
         }
     };
 
-    const [images, setImages] = useState([]);
-    const imagesInputRef = useRef(null);
-
-    const handleImageInputClick = () => {
-        imagesInputRef.current.click();
-    }
-
-    const handleImages = (e) => {
-        const files = e.target.files || e.dataTransfer.files;
-
-        const fileArray = Array.from(files);
-        const newImages = fileArray.map((file, index) => ({
-            id: images.length + index, // Đảm bảo id là duy nhất cho mỗi ảnh
-            src: file
-        }));
-
-        setImages(prevImages => [...prevImages, ...newImages]);
-    };
-
-    const deleteImage = (image) => {
-        setImages(prev => prev.filter((value) => value !== image))
-    }
-
     const handleDragOver = (e) => {
         e.preventDefault();
     }
@@ -330,25 +305,6 @@ const CreateSupplier = () => {
     const handleDrop = (e) => {
         e.preventDefault();
         handleImages(e);
-    };
-
-    const handleOnDragEnd = (result) => {
-        const { destination, source } = result;
-
-        // Nếu không có đích đến hoặc vị trí không thay đổi, không cần làm gì
-        if (!destination || destination.index === source.index) {
-            return;
-        }
-
-        // Tạo bản sao của danh sách ảnh
-        const reorderedImages = Array.from(images);
-
-        // Cắt ảnh tại vị trí nguồn (nơi kéo đi) và chèn vào vị trí đích
-        const [movedImage] = reorderedImages.splice(source.index, 1);
-        reorderedImages.splice(destination.index, 0, movedImage);
-
-        // Cập nhật danh sách ảnh với vị trí mới
-        setImages(reorderedImages);
     };
 
     const [isInitialStock, setIsInitialStock] = useState(false)
@@ -430,16 +386,16 @@ const CreateSupplier = () => {
                                                 <label htmlFor="name" className="form-label">
                                                     Tên nhà cung cấp
                                                     <span
-                                                        id='nameCaption'
+                                                        id='name'
                                                         className="caption-icon"
                                                     >
                                                         {infoIcon}
                                                     </span>
                                                     <UncontrolledTooltip
                                                         placement="top"
-                                                        target="nameCaption"
+                                                        target="name"
                                                     >
-                                                        Tên nhà cung cấp không bao gồm các giá trị số, kỹ tự đặc biệt
+                                                        Tên nhà cung cấp
                                                     </UncontrolledTooltip>
                                                     <span className="asterisk-icon">*</span>
                                                 </label>
@@ -461,16 +417,16 @@ const CreateSupplier = () => {
                                         <div className="box-product-id">
                                             <div className="form-item">
                                                 <label htmlFor="id" className="form-label">
-                                                    Mã sản phẩm
+                                                    Mã nhà cung cấp
                                                     <span
-                                                        id='idCaption'
+                                                        id='sub_id'
                                                         className="caption-icon"
                                                     >
                                                         {infoIcon}
                                                     </span>
                                                     <UncontrolledTooltip
                                                         placement="top"
-                                                        target="idCaption"
+                                                        target="sub_id"
                                                     >
                                                         Mã <strong>không trùng lặp</strong> để định danh giữa các sản phẩm.<br />
                                                         Nếu để trống trường này, mã sản phẩm sẽ được tự sinh với <strong>tiền tố PVN</strong>
@@ -479,8 +435,8 @@ const CreateSupplier = () => {
                                                 <div className="form-textfield">
                                                     <input
                                                         type="text"
-                                                        name="id"
-                                                        id="id"
+                                                        name="sub_id"
+                                                        id="sub_id"
                                                         onChange={e => setDataBody(prevState => ({
                                                             ...prevState,
                                                             sub_id: e.target.value
@@ -491,303 +447,93 @@ const CreateSupplier = () => {
                                         </div>
                                         <div className="box-product-unit">
                                             <div className="form-item">
-                                                <label htmlFor="unit" className="form-label">
-                                                    Đơn vị tính
+                                                <label htmlFor="supplier_group_id" className="form-label">
+                                                    Nhóm nhà cung cấp
                                                 </label>
                                                 <div className="form-textfield">
                                                     <input
                                                         type="text"
-                                                        name="unit"
-                                                        id="unit"
+                                                        name="supplier_group_id"
+                                                        id="supplier_group_id"
                                                         onChange={e => setDataBody(prevState => {
                                                             return {
                                                                 ...prevState,
-                                                                unit: e.target.value
+                                                                supplier_group_id: e.target.value
                                                             }
                                                         })} />
                                                     <fieldset className="input-field"></fieldset>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="box-product-description">
-                                            <button onClick={() => setIsOpenEditor(!isOpenEditor)} className="btn-base btn-add-description">
-                                                <span className='btn__label'>
-                                                    <p>{isOpenEditor ? "Ẩn mô tả sản phẩm" : "Mô tả sản phẩm"}</p>
-                                                </span>
-                                            </button>
-                                            <Collapse className='box-description' isOpen={isOpenEditor}>
-                                                <div className="box-description__container">
-                                                    <CKEditor
-                                                        editor={ClassicEditor}
-                                                        config={editorConfig}
-                                                        onChange={(event, editor) => {
-                                                            const data = editor.getData();
-                                                            setDataBody(prevState => {
-                                                                return {
-                                                                    ...prevState,
-                                                                    description: data
-                                                                }
-                                                            })
-                                                        }}
-                                                    />
-                                                </div>
-                                            </Collapse>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="box-info-item box-price">
-                                <div className="info-header">
-                                    <div className="box-header">
-                                        <h6>Giá sản phẩm</h6>
-                                    </div>
-                                </div>
-                                <div className="info-content">
-                                    <div className="grid-container">
-                                        <div className="box-retail-price">
+                                        <div className="box-product-phone">
                                             <div className="form-item">
-                                                <label htmlFor="retail-price" className="form-label">
-                                                    Giá bán lẻ
-                                                    <span
-                                                        id='retailPriceCaption'
-                                                        className="caption-icon"
-                                                    >
-                                                        {infoIcon}
-                                                    </span>
-                                                    <UncontrolledTooltip
-                                                        placement="top"
-                                                        target="retailPriceCaption"
-                                                    >
-                                                        Giá bán cho các khách hàng mua lẻ
-                                                    </UncontrolledTooltip>
+                                                <label htmlFor="phone" className="form-label">
+                                                    Số điện thoại
                                                 </label>
                                                 <div className="form-textfield">
                                                     <input
-                                                        className='text-end'
                                                         type="text"
-                                                        name="retail-price"
-                                                        id="retail-price"
+                                                        name="phone"
+                                                        id="phone"
                                                         onChange={e => setDataBody(prevState => {
                                                             return {
                                                                 ...prevState,
-                                                                retail_price: e.target.value
+                                                                phone: e.target.value
                                                             }
                                                         })} />
                                                     <fieldset className="input-field"></fieldset>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="box-wholesale-price">
+                                        <div className="box-product-email">
                                             <div className="form-item">
-                                                <label htmlFor="wholesale-price" className="form-label">
-                                                    Giá bán buôn
-                                                    <span
-                                                        id='wholesalePriceCaption'
-                                                        className="caption-icon"
-                                                    >
-                                                        {infoIcon}
-                                                    </span>
-                                                    <UncontrolledTooltip
-                                                        placement="top"
-                                                        target="wholesalePriceCaption"
-                                                    >
-                                                        Giá bán cho các khách hàng mua với số lượng lớn
-                                                    </UncontrolledTooltip>
+                                                <label htmlFor="email" className="form-label">
+                                                    Email
                                                 </label>
                                                 <div className="form-textfield">
                                                     <input
-                                                        className='text-end'
                                                         type="text"
-                                                        name="wholesale-price"
-                                                        id="wholesale-price"
+                                                        name="email"
+                                                        id="email"
                                                         onChange={e => setDataBody(prevState => {
                                                             return {
                                                                 ...prevState,
-                                                                wholesale_price: e.target.value
+                                                                email: e.target.value
                                                             }
-                                                        })}
-                                                    />
+                                                        })} />
                                                     <fieldset className="input-field"></fieldset>
                                                 </div>
                                             </div>
                                         </div>
-                                        <hr />
-                                        <div className="box-cost-price">
+                                        <div className="box-product-address">
                                             <div className="form-item">
-                                                <label htmlFor="cost-price" className="form-label">
-                                                    Giá nhập
-                                                    <span
-                                                        id='costPriceCaption'
-                                                        className="caption-icon"
-                                                    >
-                                                        {infoIcon}
-                                                    </span>
-                                                    <UncontrolledTooltip
-                                                        placement="top"
-                                                        target="costPriceCaption"
-                                                    >
-                                                        Giá <strong>tự động gợi ý</strong> khi bạn <strong>tạo đơn nhập hàng</strong> từ nhà cung cấp. Bạn có thể thay đổi tùy theo giá nhập hàng thực tế
-                                                    </UncontrolledTooltip>
+                                                <label htmlFor="address" className="form-label">
+                                                    Địa chỉ
                                                 </label>
                                                 <div className="form-textfield">
                                                     <input
-                                                        className='text-end'
                                                         type="text"
-                                                        name="cost-price"
-                                                        id="cost-price"
+                                                        name="address"
+                                                        id="address"
                                                         onChange={e => setDataBody(prevState => {
                                                             return {
                                                                 ...prevState,
-                                                                cost_price: e.target.value
+                                                                address: e.target.value
                                                             }
-                                                        })}
-                                                    />
+                                                        })} />
                                                     <fieldset className="input-field"></fieldset>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="box-info-item box-images">
-                                <div className="info-header">
-                                    <div className="box-header">
-                                        <h6>Ảnh sản phẩm {`${images.length > 0 ? `(${images.length})` : ''}`}</h6>
-                                    </div>
-                                    {images.length > 0 && <div className="btn-delete-all">
-                                        <p>Xóa tất cả</p>
-                                    </div>}
-                                </div>
-                                <div className="info-content">
-                                    {images.length > 0 && <DragDropContext onDragEnd={handleOnDragEnd}>
-                                        <Droppable droppableId='images' direction='horizontal'>
-                                            {(provided) => (
-                                                <div
-                                                    {...provided.droppableProps}
-                                                    ref={provided.innerRef}
-                                                    onDragOver={handleDragOver}
-                                                    onDrop={handleDrop}
-                                                    className="box-show-images"
-                                                >
-                                                    <div id='uploadArea' onClick={handleImageInputClick} className="upload-area">
-                                                        <FontAwesomeIcon icon={faPlus} />
-                                                    </div>
-                                                    <UncontrolledTooltip
-                                                        placement="bottom"
-                                                        target="uploadArea"
-                                                    >
-                                                        Kéo thả hoặc tải ảnh
-                                                    </UncontrolledTooltip>
-                                                    {images?.map((image, index) => (
-                                                        <Draggable key={image.id} draggableId={image.id.toString()} index={index}>
-                                                            {(provided) => (
-                                                                <div
-                                                                    className="image-item"
-                                                                    ref={provided.innerRef}
-                                                                    {...provided.draggableProps}
-                                                                    {...provided.dragHandleProps}
-                                                                >
-                                                                    <span onClick={() => deleteImage(image)} className="delete-icon">
-                                                                        <FontAwesomeIcon icon={faXmarkCircle} />
-                                                                    </span>
-                                                                    <div className="box-image">
-                                                                        <img src={URL.createObjectURL(image.src)} alt={`Preview ${index}`} />
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                        </Draggable>
-                                                    ))}
-                                                    {provided.placeholder}
-                                                </div>
-                                            )}
-                                        </Droppable>
-                                    </DragDropContext>}
-                                    <div
-                                        onClick={handleImageInputClick}
-                                        onDragOver={handleDragOver}
-                                        onDrop={handleDrop}
-                                        className={cn("box-add-images", { "d-none": images.length > 0 })}
-                                    >
-                                        <FontAwesomeIcon icon={faPlus} />
-                                        <p>
-                                            Kéo thả hoặc&nbsp;
-                                            <a>tải ảnh lên từ thiết bị</a>
-                                        </p>
-                                        <div className="images-input">
-                                            <input
-                                                ref={imagesInputRef}
-                                                onChange={(e) => handleImages(e)}
-                                                aria-invalid="false"
-                                                autoComplete='off'
-                                                type="file"
-                                                accept='image/gif, image/jpeg, image/jpg, image/png, image/bmp'
-                                                multiple
-                                                tabIndex={-1}
-                                                name="images"
-                                                id="images-input"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="box-info-item box-types">
-                                <div className="info-header">
-                                    <div className="box-header">
-                                        <h6>Thuộc tính</h6>
-                                        <span
-                                            id='typesCaption'
-                                            className="caption-icon"
-                                        >
-                                            {infoIcon}
-                                        </span>
-                                        <UncontrolledTooltip
-                                            placement="top"
-                                            target="typesCaption"
-                                        >
-                                            Tạo các thuộc tính để phân biệt các mẫu khác nhau của sản phẩm <br />
-                                            <strong>Ví dụ:</strong> Kích thước, Màu sắc, Chất liệu,...
-                                        </UncontrolledTooltip>
-                                        <div className="box-switch">
-                                            <div className="btn-switch">
-                                                <input onChange={() => setIsTypes(!isTypes)} value={isTypes} type="checkbox" name="switch" className='switch-checkbox' id="" />
-                                                <span className="switch-bar"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="box-subtitle">
-                                        <p>Thêm mới thuộc tính giúp sản phẩm có nhiều lựa chọn, như kích cỡ hay màu sắc</p>
-                                    </div>
-                                </div>
-                                <Collapse className='info-panel' isOpen={isTypes}>
-                                    <div className="info-content">
-                                        <div className="grid-container types-header">
-                                            <h6 className="box-type-name">Tên thuộc tính</h6>
-                                            <h6 className="box-type-value">Giá trị</h6>
-                                        </div>
-                                        {
-                                            types?.map((type, index) => (
-                                                <TypeItem
-                                                    key={index}
-                                                    index={index}
-                                                    type={type}
-                                                    handleUpdateType={(name, value) => updateType(index, name, value)}
-                                                    handleDeleteType={() => deleteType(index)}
-                                                />
-                                            ))
-                                        }
-                                        <div onClick={addType} className="type-item btn-add-type">
-                                            <FontAwesomeIcon icon={faPlusCircle} />
-                                            <p>Thêm thuộc tính khác</p>
-                                        </div>
-                                    </div>
-                                </Collapse>
                             </div>
                         </div>
                         <div className="box-subinfo">
                             <div className="box-info-item">
                                 <div className="info-header">
                                     <div className="box-header">
-                                        <h6>Thông tin bổ sung</h6>
+                                        <h6>Thông tin khác</h6>
                                     </div>
                                 </div>
                                 <div className="info-content">
@@ -803,14 +549,35 @@ const CreateSupplier = () => {
                                         </div>
                                     </div>
                                     <div className="form-item">
-                                        <label htmlFor="brand" className="form-label">
-                                            Nhãn hiệu
+                                        <label htmlFor="tags" className="form-label">
+                                            Mô tả
+                                            <span
+                                                id='tagsCaption'
+                                                className="caption-icon"
+                                            >
+                                                {infoIcon}
+                                            </span>
+                                            <UncontrolledTooltip
+                                                placement="top"
+                                                target="tagsCaption"
+                                            >
+                                                Thêm thẻ cho sản phẩm
+                                            </UncontrolledTooltip>
                                         </label>
-                                        <div className="box-select">
-                                            <button id='brand' className="btn-select">
-                                                Chọn nhãn hiệu
-                                                <FontAwesomeIcon icon={faCaretDown} />
-                                            </button>
+                                        <div className="form-textfield">
+                                            <input
+                                                className='text-end'
+                                                type="text"
+                                                name="tags"
+                                                id="tags"
+                                                onChange={e => setDataBody(prevState => {
+                                                    return {
+                                                        ...prevState,
+                                                        tags: e.target.value
+                                                    }
+                                                })}
+                                            />
+                                            <fieldset className="input-field"></fieldset>
                                         </div>
                                     </div>
                                     <div className="form-item">
@@ -843,37 +610,6 @@ const CreateSupplier = () => {
                                                 })}
                                             />
                                             <fieldset className="input-field"></fieldset>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="box-info-item">
-                                <div className="info-header">
-                                    <div className="box-header">
-                                        <h6>Cài đặt nâng cao</h6>
-                                    </div>
-                                </div>
-                                <div className="info-content">
-                                    <div className="form-item">
-                                        <label htmlFor="category" className="form-label">
-                                            Giá mặc định
-                                        </label>
-                                        <div className="box-select">
-                                            <button id='category' className="btn-select">
-                                                Hãy chọn giá mặc định
-                                                <FontAwesomeIcon icon={faCaretDown} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="form-item">
-                                        <label htmlFor="brand" className="form-label">
-                                            Hình thức thanh toán
-                                        </label>
-                                        <div className="box-select">
-                                            <button id='brand' className="btn-select">
-                                                Chọn hình thức
-                                                <FontAwesomeIcon icon={faCaretDown} />
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
