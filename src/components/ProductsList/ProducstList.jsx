@@ -10,84 +10,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import Header from '../Header/Header.jsx'
 import { useNavigate } from 'react-router-dom'
+import { getProductList } from '../../service/ProductAPI.jsx'
+import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 
 
-const productsList = [
-    {
-        name: "Sản phẩm 4",
-        images: [
-            {
-                url: "https://cdn0.fahasa.com/media/catalog/product/i/m/image_195509_1_25943.jpg",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "ACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024"
-    },
-    {
-        name: "Sản phẩm 3",
-        images: [
-            {
-                url: "abc",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "INACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024"
-    },
-    {
-        name: "Sản phẩm 2",
-        images: [
-            {
-                url: "abc",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "ACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024"
-    },
-    {
-        name: "Sản phẩm 1",
-        images: [
-            {
-                url: "abc",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "ACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024"
-    }
-]
-
-const ordersQuantity = 4;
 
 const ProductList = () => {
 
@@ -140,12 +66,37 @@ const ProductList = () => {
 
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
-    const [limit, setLimit] = useState(20);
+    const [limit, setLimit] = useState(10);
+    const [productsList, setProductsList] = useState([]);
+    const [productsQuantity, setProductsQuantity] = useState();
+    const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
+
+    const fetchProductList = async () => {
+        try {
+            const products = await getProductList(page, limit, "filter_products", Cookies.get("filter_products"));
+
+            if (products.status_code === 200) {
+                setProductsList(products.data.data);
+                setProductsQuantity(products.data.total_items);
+                setPageQuantity(products.data.total_page)
+            } else {
+                console.log("status code:", products.status_code);
+            }
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
 
     useEffect(() => {
         Cookies.set('filter_products', JSON.stringify(colsToRender));
     }, [colsToRender])
     //console.log(col)
+
+    useEffect(() => {
+        fetchProductList();
+
+    }, [limit, page]);
     return (
         <>
             <Header />
@@ -387,7 +338,21 @@ const ProductList = () => {
                                                                         key={key}
                                                                         className={cn("table-data-item", col[key].align)}
                                                                     >
-                                                                        <img src={product.images[0].url} alt={product.images[0].alt} />
+                                                                        <img src={product?.images[0]?.url} alt={product?.images[0]?.alt} />
+                                                                    </td>
+                                                                )
+                                                            } else if (key === "updated_at" || key === "created_at") {
+                                                                return (
+                                                                    <td
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        <p className='box-text'>
+                                                                            {
+                                                                                formatDate(product[key])
+                                                                            }
+                                                                        </p>
+
                                                                     </td>
                                                                 )
                                                             }
@@ -398,7 +363,7 @@ const ProductList = () => {
                                                                 >
                                                                     <p className='box-text'>
                                                                         {
-                                                                            key !== "id" ? product[key] :
+                                                                            key !== "name" ? product[key] :
                                                                                 <a className='box-id'>{product[key]}</a>
                                                                         }
                                                                     </p>
@@ -430,7 +395,7 @@ const ProductList = () => {
                                 {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => { setLimit(limit) }} />}
                             </div>
                             <p>kết quả</p>
-                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + productsList.length} trên tổng {ordersQuantity}</p>
+                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + productsList.length} trên tổng {pageQuantiy}</p>
                             <button
                                 className={cn('btn-icon', 'btn-page', { 'inactive': page === 1 })}
                                 onClick={handlePrevPage}

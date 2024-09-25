@@ -22,7 +22,7 @@ const VariantList = () => {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Tháng bắt đầu từ 0
         const year = date.getFullYear();
-      
+
         return `${day}/${month}/${year}`;
     };
 
@@ -37,9 +37,9 @@ const VariantList = () => {
             quantity: true,
             created_at: true,
             updated_at: true,
-            cost_price : true,
-            wholesale_price : true, 
-            retail_price : true        
+            cost_price: true,
+            wholesale_price: true,
+            retail_price: true
         }
     })
 
@@ -75,7 +75,7 @@ const VariantList = () => {
 
     const fetchVariantList = async () => {
         try {
-            const variants = await getVariantList(page, limit,"filter_products_manage", Cookies.get("filter_products_manage") )
+            const variants = await getVariantList(page, limit, "filter_products_manage", Cookies.get("filter_products_manage"))
 
             if (variants.status_code === 200) {
                 setVariantsList(variants.data.data);
@@ -94,333 +94,333 @@ const VariantList = () => {
         Cookies.set('filter_products_manage', JSON.stringify(colsToRender))
     }, [colsToRender])
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchVariantList();
 
     }, [limit, page]);
     return (
         <>
-        <Header />
-        <div className='right__listPage'>
-            <div className='right__toolbar'>
-                <div className='btn-toolbar'>
-                    <button className='btn btn-base btn-text'>
-                        <span className="btn__label">
-                            <span className="btn__icon">
-                                {exportIcon}
+            <Header />
+            <div className='right__listPage'>
+                <div className='right__toolbar'>
+                    <div className='btn-toolbar'>
+                        <button className='btn btn-base btn-text'>
+                            <span className="btn__label">
+                                <span className="btn__icon">
+                                    {exportIcon}
+                                </span>
+                                Xuất file
                             </span>
-                            Xuất file
-                        </span>
-                    </button>
-                    <button className="btn btn-base btn-text">
-                        <span className="btn__label">
-                            <span className="btn__icon">
-                                {importIcon}
-                            </span>
+                        </button>
+                        <button className="btn btn-base btn-text">
+                            <span className="btn__label">
+                                <span className="btn__icon">
+                                    {importIcon}
+                                </span>
                                 Nhập file
                             </span>
-                    </button>
-                    <button className="btn btn-base btn-text">
-                        <span className="btn__label">
-                            <span className="btn__icon">
-                                {importIcon}
-                            </span>
+                        </button>
+                        <button className="btn btn-base btn-text">
+                            <span className="btn__label">
+                                <span className="btn__icon">
+                                    {importIcon}
+                                </span>
                                 Loại sản phẩm
                             </span>
-                    </button>
-                </div>
-                <div className="btn-toolbar">
-                    <button className="btn btn-primary" onClick={() => navigate("/admin/products")}>
-                        <span className="btn__title">Xem danh sách sản phẩm</span>
-                    </button>
-                </div>
-            </div>
-
-            <div className='right__table'>
-                <div className="right__table-scroller">
-                    <div className="box-scroller">
-                        <div className="group-scroller-btns">
-                            <button className="btn-scroller active">Tất cả sản phẩm</button>
-                        </div>
+                        </button>
                     </div>
-                </div>
-                <div className='right__table-search-filter'>
-                    <div className='box-search-filter-btns'>
-                        <div className="box-search">
-                            <div className="box-input">
-                                <div className="search-icon">
-                                    <FontAwesomeIcon icon={faMagnifyingGlass} />
-                                </div>
-                                <input placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode' type="text" name="search" id="" autoComplete='on' />
-                                <fieldset className='input-field' />
-                            </div>
-                        </div>
-                        <div className="btn-group group-filter-btns">
-                            <button className="btn btn-base btn-filter">
-                                <span className="btn__label">
-                                    Loại sản phẩm
-                                    <span className="btn__icon">
-                                        <FontAwesomeIcon icon={faCaretDown} />
-                                    </span>
-                                </span>
-                            </button>
-                            <button className="btn btn-base btn-filter">
-                                <span className="btn__label">
-                                    Ngày tạo
-                                    <span className="btn__icon">
-                                        <FontAwesomeIcon icon={faCaretDown} />
-                                    </span>
-                                </span>
-                            </button>
-                            <button className="btn btn-base btn-filter">
-                                <span className="btn__label">
-                                    Nhãn hiệu
-                                    <span className="btn__icon">
-                                        <FontAwesomeIcon icon={faCaretDown} />
-                                    </span>
-                                </span>
-                            </button>
-                            <button className="btn btn-base btn-filter">
-                                <span className="btn__label">
-                                    Bộ lọc khác
-                                    <span className="btn__icon">
-                                        {filterIcon}
-                                    </span>
-                                </span>
-                            </button>
-                        </div>
-                        <button id='btn-save-filter' className="btn btn-primary">
-                            <span className="btn__title">Lưu bộ lọc</span>
+                    <div className="btn-toolbar">
+                        <button className="btn btn-primary" onClick={() => navigate("/admin/products")}>
+                            <span className="btn__title">Xem danh sách sản phẩm</span>
                         </button>
                     </div>
                 </div>
-                <div
-                    ref={headersRef} 
-                    onScroll={(e) => handleScroll(e, contentRef.current)}
-                    className="right__table-headers">
-                    <table className="box-table-headers">
-                        <colgroup>
-                            <col style={{ width: "80px" }} />
-                            {/* Render the <colgroup> only for the columns that are in colsToRender */}
-                            {Object.entries(colsToRender).map(([key, value]) => {
-                                if (value) {
-                                    return (
-                                        <col
-                                            key={key}
-                                            style={{
-                                                width: col[key].width
-                                            }}
-                                        />
-                                    )
-                                }
-                                return null;
-                            })}
-                        </colgroup>
-                        <thead>
-                            <tr className="group-table-headers">
-                                <th rowSpan={1} className='table-icon'>
-                                    <div className="group-icons">
-                                        <button className="btn-icon">
-                                            {settingFilterIcon}
-                                        </button>
-                                        <div className="checkbox__container">
-                                            <div className="checkbox__wrapper">
-                                                <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                <div className="btn-checkbox"></div>
-                                            </div>
-                                        </div>
+
+                <div className='right__table'>
+                    <div className="right__table-scroller">
+                        <div className="box-scroller">
+                            <div className="group-scroller-btns">
+                                <button className="btn-scroller active">Tất cả sản phẩm</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='right__table-search-filter'>
+                        <div className='box-search-filter-btns'>
+                            <div className="box-search">
+                                <div className="box-input">
+                                    <div className="search-icon">
+                                        <FontAwesomeIcon icon={faMagnifyingGlass} />
                                     </div>
-                                </th>
-                                {/* Render table headers for columns that exist in variantsList */}
+                                    <input placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode' type="text" name="search" id="" autoComplete='on' />
+                                    <fieldset className='input-field' />
+                                </div>
+                            </div>
+                            <div className="btn-group group-filter-btns">
+                                <button className="btn btn-base btn-filter">
+                                    <span className="btn__label">
+                                        Loại sản phẩm
+                                        <span className="btn__icon">
+                                            <FontAwesomeIcon icon={faCaretDown} />
+                                        </span>
+                                    </span>
+                                </button>
+                                <button className="btn btn-base btn-filter">
+                                    <span className="btn__label">
+                                        Ngày tạo
+                                        <span className="btn__icon">
+                                            <FontAwesomeIcon icon={faCaretDown} />
+                                        </span>
+                                    </span>
+                                </button>
+                                <button className="btn btn-base btn-filter">
+                                    <span className="btn__label">
+                                        Nhãn hiệu
+                                        <span className="btn__icon">
+                                            <FontAwesomeIcon icon={faCaretDown} />
+                                        </span>
+                                    </span>
+                                </button>
+                                <button className="btn btn-base btn-filter">
+                                    <span className="btn__label">
+                                        Bộ lọc khác
+                                        <span className="btn__icon">
+                                            {filterIcon}
+                                        </span>
+                                    </span>
+                                </button>
+                            </div>
+                            <button id='btn-save-filter' className="btn btn-primary">
+                                <span className="btn__title">Lưu bộ lọc</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div
+                        ref={headersRef}
+                        onScroll={(e) => handleScroll(e, contentRef.current)}
+                        className="right__table-headers">
+                        <table className="box-table-headers">
+                            <colgroup>
+                                <col style={{ width: "80px" }} />
+                                {/* Render the <colgroup> only for the columns that are in colsToRender */}
                                 {Object.entries(colsToRender).map(([key, value]) => {
                                     if (value) {
-                                        if (key === "created_at") {
-                                            return (
-                                                <th 
-                                                    key={key}
-                                                    colSpan={1} 
-                                                    rowSpan={1} 
-                                                    className={cn("table-header-item", col[key].align)}
-                                                >
-                                                    <div className="box-sort-date">
-                                                        {col[key].name}
-                                                        <span className='box-icon'>
-                                                        <FontAwesomeIcon icon={faCaretDown} />
-                                                        </span>
-                                                    </div>
-                                                </th>
-                                            )
-                                        }
                                         return (
-                                            <th 
+                                            <col
                                                 key={key}
-                                                colSpan={1} 
-                                                rowSpan={1} 
-                                                className={cn("table-header-item", col[key].align)}
-                                            >
-                                                {col[key].name}
-                                            </th>
+                                                style={{
+                                                    width: col[key].width
+                                                }}
+                                            />
                                         )
                                     }
                                     return null;
                                 })}
-                        </tr>
-                    </thead>
-                    </table>
-                </div>
-                <div className="right__table-content">
-                    <div className="right__table-data">
-                        <div
-                                ref={contentRef} 
-                                onScroll={(e) => handleScroll(e, headersRef.current)} 
-                                className='table-data__container'
-                        >
-                            <table className="box-table-data">
-                                <colgroup>
-                                    <col style={{ width: "80px" }} />
-                                    {/* Render the <colgroup> only for the columns that are in colsToRender */}
+                            </colgroup>
+                            <thead>
+                                <tr className="group-table-headers">
+                                    <th rowSpan={1} className='table-icon'>
+                                        <div className="group-icons">
+                                            <button className="btn-icon">
+                                                {settingFilterIcon}
+                                            </button>
+                                            <div className="checkbox__container">
+                                                <div className="checkbox__wrapper">
+                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
+                                                    <div className="btn-checkbox"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    {/* Render table headers for columns that exist in variantsList */}
                                     {Object.entries(colsToRender).map(([key, value]) => {
                                         if (value) {
-                                             return (
-                                                <col
+                                            if (key === "created_at") {
+                                                return (
+                                                    <th
+                                                        key={key}
+                                                        colSpan={1}
+                                                        rowSpan={1}
+                                                        className={cn("table-header-item", col[key].align)}
+                                                    >
+                                                        <div className="box-sort-date">
+                                                            {col[key].name}
+                                                            <span className='box-icon'>
+                                                                <FontAwesomeIcon icon={faCaretDown} />
+                                                            </span>
+                                                        </div>
+                                                    </th>
+                                                )
+                                            }
+                                            return (
+                                                <th
                                                     key={key}
-                                                    style={{
-                                                         width: col[key].width
-                                                    }}
-                                                />
+                                                    colSpan={1}
+                                                    rowSpan={1}
+                                                    className={cn("table-header-item", col[key].align)}
+                                                >
+                                                    {col[key].name}
+                                                </th>
                                             )
                                         }
                                         return null;
                                     })}
-                                </colgroup>
-                                <tbody>
-                                    {variantsList.map((variant, index) => {
-                                        return (
-                                            <tr key={index} className="table-data-row">
-                                                <td rowSpan={1} className='table-icon'>
-                                                    <div className="group-icons">
-                                                        <button className="btn-icon">
-                                                            <FontAwesomeIcon icon={faAnglesRight} />
-                                                        </button>
-                                                        <div className="checkbox__container">
-                                                            <div className="checkbox__wrapper">
-                                                                <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                                <div className="btn-checkbox"></div>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div className="right__table-content">
+                        <div className="right__table-data">
+                            <div
+                                ref={contentRef}
+                                onScroll={(e) => handleScroll(e, headersRef.current)}
+                                className='table-data__container'
+                            >
+                                <table className="box-table-data">
+                                    <colgroup>
+                                        <col style={{ width: "80px" }} />
+                                        {/* Render the <colgroup> only for the columns that are in colsToRender */}
+                                        {Object.entries(colsToRender).map(([key, value]) => {
+                                            if (value) {
+                                                return (
+                                                    <col
+                                                        key={key}
+                                                        style={{
+                                                            width: col[key].width
+                                                        }}
+                                                    />
+                                                )
+                                            }
+                                            return null;
+                                        })}
+                                    </colgroup>
+                                    <tbody>
+                                        {variantsList.map((variant, index) => {
+                                            return (
+                                                <tr key={index} className="table-data-row">
+                                                    <td rowSpan={1} className='table-icon'>
+                                                        <div className="group-icons">
+                                                            <button className="btn-icon">
+                                                                <FontAwesomeIcon icon={faAnglesRight} />
+                                                            </button>
+                                                            <div className="checkbox__container">
+                                                                <div className="checkbox__wrapper">
+                                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
+                                                                    <div className="btn-checkbox"></div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div> 
-                                                </td>
-                                                {Object.entries(colsToRender).map(([key, value]) => {
-                                                    if (value) {
-                                                        if (key.includes("status")) {
+                                                    </td>
+                                                    {Object.entries(colsToRender).map(([key, value]) => {
+                                                        if (value) {
+                                                            if (key.includes("status")) {
+                                                                return (
+                                                                    <td
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        <div className={cn('box-status', {
+                                                                            //'box-status--pending': order[key] === "Chưa nhập",
+                                                                            'box-status--partial': variant[key] === "ACTIVE",
+                                                                            //'box-status--completed': order[key] === "INACTIVE",
+                                                                            'box-status--cancelled': variant[key] === "INACTIVE",
+                                                                        })}>
+                                                                            <span>
+                                                                                {variant[key] === "ACTIVE" ? 'Đang giao dịch' : 'Ngừng giao dịch'}
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                )
+                                                            } else if (key === "images") {
+                                                                return (
+                                                                    <td
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        <img src={variant?.images[0]?.url} alt={variant.images[0]?.alt} />
+                                                                    </td>
+                                                                )
+                                                            } else if (key === "updated_at" || key === "created_at") {
+                                                                return (
+                                                                    <td
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        <p className='box-text'>
+                                                                            {
+                                                                                formatDate(variant[key])
+                                                                            }
+                                                                        </p>
+
+                                                                    </td>
+                                                                )
+                                                            }
                                                             return (
                                                                 <td
                                                                     key={key}
                                                                     className={cn("table-data-item", col[key].align)}
-                                                                >
-                                                                    <div className={cn('box-status', {
-                                                                        //'box-status--pending': order[key] === "Chưa nhập",
-                                                                        'box-status--partial': variant[key] === "ACTIVE",
-                                                                        //'box-status--completed': order[key] === "INACTIVE",
-                                                                        'box-status--cancelled': variant[key] === "INACTIVE",
-                                                                    })}>
-                                                                        <span>
-                                                                            {variant[key] === "ACTIVE" ? 'Đang giao dịch' : 'Ngừng giao dịch'}
-                                                                        </span>
-                                                                    </div>
-                                                                </td>
-                                                            )
-                                                        } else if (key === "images") {
-                                                            return (
-                                                                <td
-                                                                    key={key}
-                                                                    className={cn("table-data-item", col[key].align)}
-                                                                >
-                                                                    <img src={variant?.images[0]?.url} alt={variant.images[0]?.alt} />
-                                                                </td>
-                                                            )
-                                                        } else if(key === "updated_at" || key === "created_at"){
-                                                            return(
-                                                                <td
-                                                                key={key}
-                                                                className={cn("table-data-item", col[key].align)}
                                                                 >
                                                                     <p className='box-text'>
                                                                         {
-                                                                            formatDate(variant[key])
+                                                                            key !== "name" ? variant[key] :
+                                                                                <a className='box-id'>{variant[key]}</a>
                                                                         }
                                                                     </p>
-
                                                                 </td>
                                                             )
                                                         }
-                                                        return (
-                                                            <td
-                                                                key={key}
-                                                                className={cn("table-data-item", col[key].align)}
-                                                            >
-                                                                <p className='box-text'>
-                                                                    {
-                                                                        key !== "name" ? variant[key] :
-                                                                        <a className='box-id'>{variant[key]}</a>
-                                                                    }
-                                                                </p>
-                                                            </td>
-                                                        )
-                                                    }
-                                                    return null;
-                                                })}
-                                            </tr>
-                                        )
-                                    })}
-                                </tbody>
-                            </table>
+                                                        return null;
+                                                    })}
+                                                </tr>
+                                            )
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div className="right__table-pagination">
-                        <p>Hiển thị</p>
-                        <div className="box-page-limit">
-                            <button
-                                ref={limitBtnRef}
-                                onClick={() => setIsOpenLimitPopup(!isOpenLimitPopup)} 
-                                className={cn("btn-page-limit", {"selected": isOpenLimitPopup})}
-                            >
-                                {limit}
-                                <span>
-                                    <FontAwesomeIcon icon={faCaretDown} />
-                                </span>
-                            </button>
-                            {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={()=> setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => setLimit(limit)}/>}
-                        </div>
-                        <p>kết quả</p>
-                        <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + variantsList.length} trên tổng {variantsQuantity}</p>
-                        <button 
-                            className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
-                            onClick={handlePrevPage}
-                        >
-                            <FontAwesomeIcon icon={faChevronLeft} />
-                        </button>
-                        {
-                            Array(pageQuantiy).fill(null).map((_, index) => (
-                                <div 
-                                    key={index}
-                                    className={cn("box-page", { 'active': page === index + 1})}
-                                    onClick={() => setPage(index + 1)}
+                        <div className="right__table-pagination">
+                            <p>Hiển thị</p>
+                            <div className="box-page-limit">
+                                <button
+                                    ref={limitBtnRef}
+                                    onClick={() => setIsOpenLimitPopup(!isOpenLimitPopup)}
+                                    className={cn("btn-page-limit", { "selected": isOpenLimitPopup })}
                                 >
-                                    {index + 1}
-                                </div>
-                            ))
-                        }
-                        <button 
-                            className={cn('btn-icon', 'btn-page', { 'inactive': page === pageQuantiy})}
-                            onClick={handleNextPage}
-                        >
-                            <FontAwesomeIcon icon={faChevronRight} />
-                        </button>
+                                    {limit}
+                                    <span>
+                                        <FontAwesomeIcon icon={faCaretDown} />
+                                    </span>
+                                </button>
+                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => setLimit(limit)} />}
+                            </div>
+                            <p>kết quả</p>
+                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + variantsList.length} trên tổng {variantsQuantity}</p>
+                            <button
+                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1 })}
+                                onClick={handlePrevPage}
+                            >
+                                <FontAwesomeIcon icon={faChevronLeft} />
+                            </button>
+                            {
+                                Array(pageQuantiy).fill(null).map((_, index) => (
+                                    <div
+                                        key={index}
+                                        className={cn("box-page", { 'active': page === index + 1 })}
+                                        onClick={() => setPage(index + 1)}
+                                    >
+                                        {index + 1}
+                                    </div>
+                                ))
+                            }
+                            <button
+                                className={cn('btn-icon', 'btn-page', { 'inactive': page === pageQuantiy })}
+                                onClick={handleNextPage}
+                            >
+                                <FontAwesomeIcon icon={faChevronRight} />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
         </>
     )
