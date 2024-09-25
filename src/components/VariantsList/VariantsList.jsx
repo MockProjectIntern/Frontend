@@ -7,118 +7,27 @@ import cn from "classnames"
 import Cookies from 'js-cookie'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faL, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import Header from '../Header/Header.jsx'
+import { getVariantList } from '../../service/VariantAPI.jsx'
+import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
+import { useNavigate } from 'react-router-dom'
 
-
-const variantsList = [
-    {
-        name: "Sản phẩm 4",
-        images:[
-            {
-                url: "https://cdn0.fahasa.com/media/catalog/product/i/m/image_195509_1_25943.jpg",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "ACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024",
-        cost_price : 500.000,
-        wholesale_price : 550.000, 
-        retail_price : 700.000 
-    },
-    {
-        name: "Sản phẩm 3",
-        images:[
-            {
-                url: "abc",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "INACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024",
-        cost_price : 500.000,
-        wholesale_price : 550.000, 
-        retail_price : 700.000 
-    },
-    {
-        name: "Sản phẩm 2",
-        images:[
-            {
-                url: "abc",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "ACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024",
-        cost_price : 500.000,
-        wholesale_price : 550.000, 
-        retail_price : 700.000 
-    },
-    {
-        name: "Sản phẩm 1",
-        images:[
-            {
-                url: "abc",
-                alt: ""
-            },
-            {
-
-            }
-        ],
-        category_name: "MDC",
-        brand_name: "Admin",
-        quantity: 7,
-        status: "ACTIVE",
-        created_at: "18/09/2024",
-        updated_at: "18/10/2024",
-        cost_price : 500.000,
-        wholesale_price : 550.000, 
-        retail_price : 700.000 
-    }
-]
-
-const ordersQuantity = 4;
 const VariantList = () => {
-    const headersRef = useRef(null);
-    const contentRef = useRef(null);
-    const handleScroll = (e, target) => {
-        target.scrollLeft = e.target.scrollLeft;
-    }
 
-    const handlePrevPage = () => {
-        if (page > 1) {
-            setPage(prev => prev - 1);
-        }
-    }
 
-    const handleNextPage = () => {
-        if (page < pageQuantiy) {
-            setPage(prev => prev + 1);
-        }
-    }
+    // ham format ngay tra ve tu backend
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Tháng bắt đầu từ 0
+        const year = date.getFullYear();
+      
+        return `${day}/${month}/${year}`;
+    };
+
     const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('filter_variants');
+        const storedCols = Cookies.get('filter_products_manage');
         return storedCols ? JSON.parse(storedCols) : {
             images: true,
             name: true,
@@ -134,14 +43,61 @@ const VariantList = () => {
         }
     })
 
+
+    const handleScroll = (e, target) => {
+        target.scrollLeft = e.target.scrollLeft;
+    }
+
+    const handlePrevPage = () => {
+        if (page > 1) {
+            setPage(prev => prev - 1);
+        }
+    }
+
+    const handleNextPage = () => {
+        if (page < pageQuantiy) {
+            setPage(prev => prev + 1);
+        }
+    }
+
+    const navigate = useNavigate();
+
+    const headersRef = useRef(null);
+    const contentRef = useRef(null);
+    const limitBtnRef = useRef(null);
+
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
-    const [limit, setLimit] = useState(20);
+    const [limit, setLimit] = useState(10);
+    const [variantsList, setVariantsList] = useState([]);
+    const [variantsQuantity, setVariansQuantity] = useState();
+    const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
+
+    const fetchVariantList = async () => {
+        try {
+            const variants = await getVariantList(page, limit,"filter_products_manage", Cookies.get("filter_products_manage") )
+
+            if (variants.status_code === 200) {
+                setVariantsList(variants.data.data);
+                setVariansQuantity(variants.data.total_items);
+                setPageQuantity(variants.data.total_page)
+            } else {
+                console.log("status code:", variants.status_code);
+            }
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
 
     useEffect(() => {
-        Cookies.set('filter_variants', JSON.stringify(colsToRender))
+        Cookies.set('filter_products_manage', JSON.stringify(colsToRender))
     }, [colsToRender])
 
+    useEffect(()=>{
+        fetchVariantList();
+
+    }, [limit, page]);
     return (
         <>
         <Header />
@@ -174,7 +130,7 @@ const VariantList = () => {
                     </button>
                 </div>
                 <div className="btn-toolbar">
-                    <button className="btn btn-primary">
+                    <button className="btn btn-primary" onClick={() => navigate("/admin/products")}>
                         <span className="btn__title">Xem danh sách sản phẩm</span>
                     </button>
                 </div>
@@ -380,7 +336,21 @@ const VariantList = () => {
                                                                     key={key}
                                                                     className={cn("table-data-item", col[key].align)}
                                                                 >
-                                                                    <img src={variant.images[0].url} alt={variant.images[0].alt} />
+                                                                    <img src={variant?.images[0]?.url} alt={variant.images[0]?.alt} />
+                                                                </td>
+                                                            )
+                                                        } else if(key === "updated_at" || key === "created_at"){
+                                                            return(
+                                                                <td
+                                                                key={key}
+                                                                className={cn("table-data-item", col[key].align)}
+                                                                >
+                                                                    <p className='box-text'>
+                                                                        {
+                                                                            formatDate(variant[key])
+                                                                        }
+                                                                    </p>
+
                                                                 </td>
                                                             )
                                                         }
@@ -391,7 +361,7 @@ const VariantList = () => {
                                                             >
                                                                 <p className='box-text'>
                                                                     {
-                                                                        key !== "id" ? variant[key] :
+                                                                        key !== "name" ? variant[key] :
                                                                         <a className='box-id'>{variant[key]}</a>
                                                                     }
                                                                 </p>
@@ -410,15 +380,20 @@ const VariantList = () => {
                     <div className="right__table-pagination">
                         <p>Hiển thị</p>
                         <div className="box-page-limit">
-                            <button className="btn-page-limit">
-                                20
+                            <button
+                                ref={limitBtnRef}
+                                onClick={() => setIsOpenLimitPopup(!isOpenLimitPopup)} 
+                                className={cn("btn-page-limit", {"selected": isOpenLimitPopup})}
+                            >
+                                {limit}
                                 <span>
                                     <FontAwesomeIcon icon={faCaretDown} />
                                 </span>
                             </button>
+                            {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={()=> setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => setLimit(limit)}/>}
                         </div>
                         <p>kết quả</p>
-                        <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + variantsList.length} trên tổng {ordersQuantity}</p>
+                        <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + variantsList.length} trên tổng {variantsQuantity}</p>
                         <button 
                             className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
                             onClick={handlePrevPage}

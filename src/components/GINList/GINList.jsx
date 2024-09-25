@@ -71,6 +71,7 @@ const GINList = () => {
         const storedCols = Cookies.get('filter_gins');
         return storedCols ? JSON.parse(storedCols) : {
             id: true,
+            keyword:true,
             sub_id: true,
             created_at: true,
             updated_at: true,

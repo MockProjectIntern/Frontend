@@ -1,15 +1,15 @@
 const receiptVouchersListColgroup = {
-    created_at: {
-        name: "Ngày tạo",
-        width: "150px",
-        align: "text-start"
-    },
     id: {
         name: "Mã phiếu",
         width: "100px",
         align: "text-start"
     },
-    type: {
+    sub_id: {
+        name: "Mã phiếu",
+        width: "100px",
+        align: "text-start"
+    },
+    transaction_category_name: {
         name: "Loại phiếu",
         width: "200px",
         align: "text-start"
@@ -19,24 +19,34 @@ const receiptVouchersListColgroup = {
         width: "135px",
         align: "text-start"
     },
-    money_received: {
+    amount: {
         name: "Số tiền thu",
         width: "120px",
         align: "text-end"
     },
-    payer_group: {
+    recipient_group: {
         name: "Nhóm người nộp",
         width: "150px",
         align: "text-start"
     },
-    original_document: {
+    recipient_id: {
         name: "Chứng từ gốc",
         width: "120px",
         align: "text-start"
     },
-    payer_name: {
+    recipient_name: {
         name: "Tên người nộp",
         width: "180px",
+        align: "text-start"
+    },
+    reference_code: {
+        name: "Mã tham chiếu",
+        width: "120px",
+        align: "text-start"
+    },
+    reference_id: {
+        name: "Mã tham chiếu",
+        width: "120px",
         align: "text-start"
     },
     payment_method: {
@@ -44,7 +54,7 @@ const receiptVouchersListColgroup = {
         width: "180px",
         align: "text-start"
     },
-    description: {
+    note: {
         name: "Mô tả",
         width: "180px",
         align: "text-start"
@@ -54,23 +64,8 @@ const receiptVouchersListColgroup = {
         width: "100px",
         align: "text-start"
     },
-    recorded_at: {
-        name: "Ngày ghi nhận",
-        width: "150px",
-        align: "text-start"
-    },
-    business_result_accounting: {
-        name: "Hạch toán kết quả kinh doanh",
-        width: "230px",
-        align: "text-start"
-    },
-    reference: {
-        name: "Tham chiếu",
-        width: "120px",
-        align: "text-start"
-    },
-    payer_id: {
-        name: "Mã người nộp",
+    created_at: {
+        name: "Ngày tạo",
         width: "150px",
         align: "text-start"
     },
@@ -79,11 +74,6 @@ const receiptVouchersListColgroup = {
         width: "150px",
         align: "text-start"
     },
-    cancelled_at: {
-        name: "Ngày hủy",
-        width: "150px",
-        align: "text-start"
-    }
 }
 
 export default receiptVouchersListColgroup;
