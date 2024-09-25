@@ -68,6 +68,8 @@ import infoIcon from '../../assets/icons/InfoIcon'
 import TypeItem from '../TypeItem/TypeItem';
 import { uploadImage } from '../Upload';
 import { createProduct } from '../../service/ProductAAPI';
+import ListSelectPopup from '../ListSelectPopup/ListSelectPopup';
+import { getListCategory } from '../../service/CategoryAPI';
 
 const CreateProduct = () => {
     const [dataBody, setDataBody] = useState({
@@ -339,8 +341,6 @@ const CreateProduct = () => {
         setImages(reorderedImages);
     };
 
-    const [isInitialStock, setIsInitialStock] = useState(false)
-
     const [isTypes, setIsTypes] = useState(false);
     const [types, setTypes] = useState([]);
 
@@ -378,6 +378,49 @@ const CreateProduct = () => {
         });
         setTypes(updatedTypes);
     }
+
+    const [categoryList, setCategoryList] = useState([]);
+    const [category, setCategory] = useState("");
+    const [isCategoryPopup, setIsCategoryPopup] = useState(false);
+    const categoryBtnRef = useRef(null);
+    const [categoryDataFilter, setCategoryDataFilter] = useState({
+        keyword: null
+    });
+
+    const fetchCategoryList = async () => {
+        const response = await getListCategory(1, 999, categoryDataFilter);
+        if (response.status_code === 200) {
+            setCategoryList(response.data);
+        } else {
+            console.log("Status code: ", response.status_code);
+        }
+    }
+
+    useEffect(() => {
+        if (isCategoryPopup) {
+            fetchCategoryList();
+        } else {
+            setCategoryList([]);
+            setCategoryDataFilter((prev) => {
+                return (
+                    {
+                        ...prev,
+                        keyword: ""
+                    }
+                )
+            })
+        }
+    }, [isCategoryPopup, categoryDataFilter.keyword])
+
+    useEffect(() => {
+        const selectedCategory = categoryList.find(category => category.id === dataBody.category_id);
+
+        setCategory(selectedCategory);
+    }, [dataBody.category_id])
+
+    const brandList = [];
+    const [isBrandPopup, setIsBrandPopup] = useState(false);
+    const brandBtnRef = useRef(null);
 
     return (
         <>
@@ -783,10 +826,33 @@ const CreateProduct = () => {
                                             Loại sản phẩm
                                         </label>
                                         <div className="box-select">
-                                            <button id='category' className="btn-select">
-                                                Chọn loại sản phẩm
+                                            <button ref={categoryBtnRef} onClick={() => setIsCategoryPopup(!isCategoryPopup)} id='category' className="btn-select">
+                                                {category?.name || 'Chọn loại sản phẩm'}
                                                 <FontAwesomeIcon icon={faCaretDown} />
                                             </button>
+                                            {
+                                                isCategoryPopup &&
+                                                <ListSelectPopup 
+                                                    title={"loại sản phẩm"} 
+                                                    isLarge={false}
+                                                    isSearch={true}
+                                                    keyword={categoryDataFilter.keyword}
+                                                    handleChangeKeyword={(e) => {
+                                                        setCategoryDataFilter({
+                                                            ...categoryDataFilter,
+                                                            keyword: e.target.value
+                                                        })
+                                                    }}
+                                                    isFastCreate={true}
+                                                    dataList={categoryList}
+                                                    handleSelect={(id) => setDataBody({
+                                                        ...dataBody,
+                                                        category_id: id
+                                                    })}
+                                                    btnRef={categoryBtnRef}
+                                                    closePopup={() => setIsCategoryPopup(false)}
+                                                />
+                                            }
                                         </div>
                                     </div>
                                     <div className="form-item">
@@ -794,10 +860,22 @@ const CreateProduct = () => {
                                             Nhãn hiệu
                                         </label>
                                         <div className="box-select">
-                                            <button id='brand' className="btn-select">
+                                            <button ref={brandBtnRef} onClick={() => setIsBrandPopup(!isBrandPopup)} id='brand' className="btn-select">
                                                 Chọn nhãn hiệu
                                                 <FontAwesomeIcon icon={faCaretDown} />
                                             </button>
+                                            {
+                                                isBrandPopup &&
+                                                <ListSelectPopup 
+                                                    title={"nhãn hiệu"} 
+                                                    isLarge={false}
+                                                    isSearch={true}
+                                                    isFastCreate={true}
+                                                    dataList={brandList} 
+                                                    btnRef={brandBtnRef}
+                                                    closePopup={() => setIsBrandPopup(false)}
+                                                />
+                                            }
                                         </div>
                                     </div>
                                     <div className="form-item">

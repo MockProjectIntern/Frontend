@@ -487,6 +487,7 @@ input::placeholder {
     display: flex;
     width: 100%;    
     flex: 1 1 0%;
+    position: relative;
 
     .box-input {
         width: 100%;
@@ -2173,7 +2174,7 @@ input:focus-within ~ .input-field {
                 padding: 0;
 
                 .box-search {
-                    :first-child {
+                    > :first-child {
                         margin-right: -1px;
                         z-index: 2;
                     }
