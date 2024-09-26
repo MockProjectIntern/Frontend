@@ -21,7 +21,7 @@ import calendarIcon from "../../assets/icons/CalendarIcon.jsx";
 import infoIcon from "../../assets/icons/InfoIcon.jsx";
 import importIcon from "../../assets/icons/ImportIcon.jsx";
 import GINProductsTable from "../GINProductsTable/GINProductsTable.jsx";
-import { createNewGIN } from "../../service/ginApi.js";
+import { createNewGIN } from "../../service/GINApi.jsx";
 
 const CreateGIN = () => {
 

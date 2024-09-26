@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { login } from '../../actions/auth'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+
+import { Button, Col, Container, FormGroup, FormText, Input, Row } from 'reactstrap'
+import Widget from '../../components/Widget/Widget'
+
+// Import Icons
+import sapoLogo from '../../assets/logo-sapo.webp'
+import loginImage from '../../assets/login-image.svg'
+import GoogleIcon from '../../assets/icons/GoogleIcon'
+import TwitterIcon from '../../assets/icons/TwitterIcon'
+import FacebookIcon from '../../assets/icons/FacebookIcon'
+import GithubIcon from '../../assets/icons/GithubIcon'
+import LinkedinIcon from '../../assets/icons/LinkedinIcon'
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -18,7 +30,8 @@ const Login = () => {
     setFormData({...formData, [e.target.name]: e.target.value})
   }
 
-  const doLogin = () => {
+  const doLogin = (e) => {
+    e.preventDefault();
     dispatch(login(formData.phone, formData.password));
   }
 
@@ -30,23 +43,74 @@ const Login = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div>
-      <h1>Login</h1>
-      <input
-        style={{border: "1px solid #000"}}
-        onChange={(e) => handleChange(e)}
-        value={formData.phone}
-        type="text"
-        name="phone"
-      />
-      <input
-        style={{border: "1px solid #000"}}
-        onChange={(e) => handleChange(e)}
-        value={formData.password}
-        type="password"
-        name="password"
-      />
-      <button onClick={() => doLogin()}>Login</button>
+    <div className="auth-page">
+      <Container className='col-12'>
+        <Row className='d-flex align-items-center'>
+          <Col xs={12} lg={6} className="left-column">
+            <Widget className="widget-auth widget-p-lg">
+              <div className="d-flex align-items-center justify-content-between py-3">
+                <p className="auth-header mb-0">Đăng nhập</p>
+                <div className="logo-block">
+                  <img src={sapoLogo} alt="" />
+                </div>
+              </div>
+              <div className="auth-info my-2">
+                <p>Quản lý kiểm soát giao dịch nhập kho</p>
+              </div>
+              <form onSubmit={(e) => doLogin(e)}>
+                <FormGroup className="my-3">
+                  <FormText>Email</FormText>
+                  <Input
+                    id="phone"
+                    className="input-transparent pl-3 mt-2"
+                    value={formData.phone}
+                    onChange={(e) => handleChange(e)}
+                    type="tel"
+                    required
+                    name="phone"
+                    placeholder="Nhập số điện thoại"
+                  />
+                </FormGroup>
+                <FormGroup className="my-3">
+                  <div className="d-flex justify-content-between">
+                    <FormText>Mật khẩu</FormText>
+                  </div>
+                  <Input
+                    id="password"
+                    className="input-transparent pl-3 mt-2"
+                    value={formData.password}
+                    onChange={(e) => handleChange(e)}
+                    type="password"
+                    required
+                    name="password"
+                    placeholder="Nhập mật khẩu"
+                  />
+                </FormGroup>
+                <div className="bg-widget d-flex justify-content-center">
+                  <Button className="rounded-pill my-3" type="submit" color="secondary-red">Đăng nhập</Button>
+                </div>
+                <p className="dividing-line my-3">&#8195;Or&#8195;</p>
+                <div className="d-flex align-items-center my-3">
+                  <p className="social-label mb-0">Đăng nhập với</p>
+                  <div className="socials">
+                    <a><GoogleIcon /></a>
+                    <a><TwitterIcon /></a>
+                    <a><FacebookIcon /></a>
+                    <a><GithubIcon /></a>
+                    <a><LinkedinIcon /></a>
+                  </div>
+                </div>
+                <Link to="/register">Không có tài khoản ? Đăng ký tại đây</Link>
+              </form>
+            </Widget>
+          </Col>
+          <Col xs={0} lg={6} className="right-column">
+            <div>
+              <img src={loginImage} alt="Error page" />
+            </div>
+          </Col>
+        </Row>
+      </Container>
     </div>
   )
 }

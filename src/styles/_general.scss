@@ -25,6 +25,10 @@ body {
     line-height: 1.43;
 }
 
+p {
+  margin-bottom: 0;
+}
+
 .dropdown-item {
     cursor: pointer;
     transition: color 0.1s ease-in-out, background-color 0.1s ease-in-out, border-color 0.1s ease-in-out;

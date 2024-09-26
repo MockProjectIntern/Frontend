@@ -57,7 +57,8 @@ $cyan:              #41D5E2 !default;
 $default:           #0F1824 !default;
 $base-dark-gray:    #6b859e !default;
 $base-middle-gray:  #C7D0D9 !default;
-$base-light-gray:   #F0F1F1 !default;
+$base-light-gray:   #F7F8FB !default;
+$light-gray:        #F0F1F1 !default;
 
 $theme-colors: (
   primary:          $violet,
@@ -74,7 +75,7 @@ $theme-colors: (
   default:          $default,
   dark-gray:        $base-dark-gray,
   middle-gray:      $base-middle-gray,
-  light-gray:       $base-light-gray,
+  light-gray:       $light-gray,
   white:            $white,
 );
 
