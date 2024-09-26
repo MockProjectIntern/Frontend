@@ -59,7 +59,7 @@ const Login = () => {
               </div>
               <form onSubmit={(e) => doLogin(e)}>
                 <FormGroup className="my-3">
-                  <FormText>Email</FormText>
+                  <FormText>Số điện thoại</FormText>
                   <Input
                     id="phone"
                     className="input-transparent pl-3 mt-2"
@@ -100,13 +100,13 @@ const Login = () => {
                     <a><LinkedinIcon /></a>
                   </div>
                 </div>
-                <Link to="/register">Không có tài khoản ? Đăng ký tại đây</Link>
+                Không có tài khoản? <Link to="/register">Đăng ký tại đây</Link>
               </form>
             </Widget>
           </Col>
           <Col xs={0} lg={6} className="right-column">
             <div>
-              <img src={loginImage} alt="Error page" />
+              <img src={loginImage} />
             </div>
           </Col>
         </Row>
