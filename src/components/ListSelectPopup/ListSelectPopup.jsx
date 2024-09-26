@@ -7,7 +7,6 @@ import s from './ListSelectPopup.module.scss';
 // Import Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { faImage } from '@fortawesome/free-regular-svg-icons';
 
 const ListSelectPopup = ({
     title,

@@ -20,7 +20,7 @@ export const getSupplierList = async (page, size, filterName, filterJson, bodyJs
 export const getAllSupplierByName = async (page, size, name) => {
     try {
         const response = await axiosInstance.get(`suppliers/list-name.json?page=${page}&size=${size}&name=${name}`);
-     } catch (err) {
+    } catch (err) {
         console.log(err);
         throw err;
     }
@@ -31,6 +31,16 @@ export const createSupplier = async (dataBody) => {
         const response = await axiosInstance.post(`suppliers/create.json`,
             dataBody
         );
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
+export const getAllSupplierGroup = async (page, size, dataBody) => {
+    try {
+        const response = await axiosInstance.post(`supplier-groups/all.json?page=${page}&size=${size}`, dataBody);
         return response.data;
     } catch (err) {
         console.log(err);

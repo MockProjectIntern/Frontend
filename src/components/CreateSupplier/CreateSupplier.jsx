@@ -1,351 +1,110 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
-import cn from 'classnames';
-
+import { Link, useNavigate } from 'react-router-dom'
+import ListSelectPopup from '../ListSelectPopup/ListSelectPopup'
 // Bootstrap
-import { Collapse, UncontrolledTooltip } from 'reactstrap'
-
-// CKEditor
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import {
-    ClassicEditor,
-    AccessibilityHelp,
-    Autoformat,
-    AutoImage,
-    Autosave,
-    BalloonToolbar,
-    BlockQuote,
-    Bold,
-    Essentials,
-    FullPage,
-    GeneralHtmlSupport,
-    Heading,
-    HtmlComment,
-    HtmlEmbed,
-    ImageBlock,
-    ImageCaption,
-    ImageInline,
-    ImageInsert,
-    ImageInsertViaUrl,
-    ImageResize,
-    ImageStyle,
-    ImageTextAlternative,
-    ImageToolbar,
-    ImageUpload,
-    Indent,
-    IndentBlock,
-    Italic,
-    Link as LinkURL,
-    LinkImage,
-    List,
-    ListProperties,
-    MediaEmbed,
-    Paragraph,
-    PasteFromOffice,
-    PictureEditing,
-    SelectAll,
-    ShowBlocks,
-    SourceEditing,
-    Table,
-    TableCaption,
-    TableCellProperties,
-    TableColumnResize,
-    TableProperties,
-    TableToolbar,
-    TextTransformation,
-    TodoList,
-    Underline,
-    Undo
-} from 'ckeditor5';
-import 'ckeditor5/ckeditor5.css';
-
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { UncontrolledTooltip } from 'reactstrap'
 
 // Import Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCaretDown, faChevronLeft, faPlus, faPlusCircle, faXmarkCircle } from '@fortawesome/free-solid-svg-icons'
+import { faCaretDown, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import infoIcon from '../../assets/icons/InfoIcon'
-import TypeItem from '../TypeItem/TypeItem';
-import { uploadImage } from '../Upload';
-import { createProduct } from '../../service/ProductAAPI';
-import { createSupplier } from '../../service/SuppliersAPI';
-import { toast } from 'react-toastify';
+import { createSupplier, getAllSupplierGroup } from '../../service/SuppliersAPI';
 
 const CreateSupplier = () => {
-    // const [dataBody, setDataBody] = useState({
-    //     sub_id: null,
-    //     name: null,
-    //     unit: null,
-    //     cost_price: null,
-    //     wholesale_price: null,
-    //     retail_price: null,
-    //     images: [],
-    //     types: [],
-    //     category_id: null,
-    //     brand_id: null,
-    //     tags: null,
-    //     description: null,
-    //     status: "INACTIVE"
-    // });
+    const navigate = useNavigate();
 
-    const [dataBody, setDataBody] = useState({
-        "sub_id": null,
-        "name": null,
-        "phone": null,
-        "email": null,
-        "address": null,
-        "supplier_group_id": null,
-        "tags": null,
-        status: "INACTIVE"
+    const [dataGroup, setDataGroup] = useState({
+        keyword: null,
+        status: "ACTIVE",
+        pageCurrent: 1,
+        pageSize: 10,
+        totalPage: 1,
     });
 
-    const hanleCreateSupplier = async () => {
+    const [dataBody, setDataBody] = useState({
+        sub_id: null,
+        name: null,
+        phone: null,
+        email: null,
+        address: null,
+        supplier_group_id: null,
+        tags: null,
+        status: "INACTIVE",
+        supplier_group_name: null, // Không cần truyền vào API
+    });
 
-        console.log(">> check data: ", dataBody)
-        // Cập nhật `dataBody` với các hình ảnh đã được tải lên
+    const handleCreateSupplier = async () => {
         setDataBody(prevState => ({
             ...prevState,
         }));
 
-        // Sau khi tất cả ảnh đã được tải lên, gọi API để tạo sản phẩm
         const response = await createSupplier({
             ...dataBody,
         });
 
         if (response.status_code === +201) {
-            console.log("success!!!")
-            toast.success("tạo mới supplier thành công")
-        }
-        console.log("success!!!")
-        toast.success("tạo mới supplier thành công")
-
-    };
-
-    const [isOpenEditor, setIsOpenEditor] = useState(false)
-
-    const editorConfig = {
-        language: 'vi',
-        toolbar: {
-            items: [
-                'undo',
-                'redo',
-                '|',
-                'sourceEditing',
-                'showBlocks',
-                '|',
-                'heading',
-                '|',
-                'bold',
-                'italic',
-                'underline',
-                '|',
-                'link',
-                'insertImage',
-                'mediaEmbed',
-                'insertTable',
-                'blockQuote',
-                'htmlEmbed',
-                '|',
-                'bulletedList',
-                'numberedList',
-                'todoList',
-                'outdent',
-                'indent'
-            ],
-            shouldNotGroupWhenFull: false
-        },
-        plugins: [
-            AccessibilityHelp,
-            Autoformat,
-            AutoImage,
-            Autosave,
-            BalloonToolbar,
-            BlockQuote,
-            Bold,
-            Essentials,
-            FullPage,
-            GeneralHtmlSupport,
-            Heading,
-            HtmlComment,
-            HtmlEmbed,
-            ImageBlock,
-            ImageCaption,
-            ImageInline,
-            ImageInsert,
-            ImageInsertViaUrl,
-            ImageResize,
-            ImageStyle,
-            ImageTextAlternative,
-            ImageToolbar,
-            ImageUpload,
-            Indent,
-            IndentBlock,
-            Italic,
-            LinkURL,
-            LinkImage,
-            List,
-            ListProperties,
-            MediaEmbed,
-            Paragraph,
-            PasteFromOffice,
-            PictureEditing,
-            SelectAll,
-            ShowBlocks,
-            SourceEditing,
-            Table,
-            TableCaption,
-            TableCellProperties,
-            TableColumnResize,
-            TableProperties,
-            TableToolbar,
-            TextTransformation,
-            TodoList,
-            Underline,
-            Undo
-        ],
-        balloonToolbar: ['bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList'],
-        heading: {
-            options: [
-                {
-                    model: 'paragraph',
-                    title: 'Paragraph',
-                    class: 'ck-heading_paragraph'
-                },
-                {
-                    model: 'heading1',
-                    view: 'h1',
-                    title: 'Heading 1',
-                    class: 'ck-heading_heading1'
-                },
-                {
-                    model: 'heading2',
-                    view: 'h2',
-                    title: 'Heading 2',
-                    class: 'ck-heading_heading2'
-                },
-                {
-                    model: 'heading3',
-                    view: 'h3',
-                    title: 'Heading 3',
-                    class: 'ck-heading_heading3'
-                },
-                {
-                    model: 'heading4',
-                    view: 'h4',
-                    title: 'Heading 4',
-                    class: 'ck-heading_heading4'
-                },
-                {
-                    model: 'heading5',
-                    view: 'h5',
-                    title: 'Heading 5',
-                    class: 'ck-heading_heading5'
-                },
-                {
-                    model: 'heading6',
-                    view: 'h6',
-                    title: 'Heading 6',
-                    class: 'ck-heading_heading6'
-                }
-            ]
-        },
-        htmlSupport: {
-            allow: [
-                {
-                    name: /^.*$/,
-                    styles: true,
-                    attributes: true,
-                    classes: true
-                }
-            ]
-        },
-        image: {
-            toolbar: [
-                'toggleImageCaption',
-                'imageTextAlternative',
-                '|',
-                'imageStyle:inline',
-                'imageStyle:wrapText',
-                'imageStyle:breakText',
-                '|',
-                'resizeImage',
-                '|',
-                'ckboxImageEdit'
-            ]
-        },
-        link: {
-            addTargetToExternalLinks: true,
-            defaultProtocol: 'https://',
-            decorators: {
-                toggleDownloadable: {
-                    mode: 'manual',
-                    label: 'Downloadable',
-                    attributes: {
-                        download: 'file'
-                    }
-                }
-            }
-        },
-        list: {
-            properties: {
-                styles: true,
-                startIndex: true,
-                reversed: true
-            }
-        },
-        table: {
-            contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
+            alert("Tạo mới nhà cung cấp thành công")
+            navigate('/admin/suppliers')
         }
     };
 
-    const handleDragOver = (e) => {
-        e.preventDefault();
-    }
-
-    const handleDrop = (e) => {
-        e.preventDefault();
-        handleImages(e);
-    };
-
-    const [isInitialStock, setIsInitialStock] = useState(false)
-
-    const [isTypes, setIsTypes] = useState(false);
-    const [types, setTypes] = useState([]);
-
-    useEffect(() => {
-        if (isTypes) {
-            setTypes([{
-                name: "",
-                value: ""
-            }])
-        } else {
-            setTypes([]);
-        }
-    }, [isTypes])
-
-    const addType = () => {
-        setTypes([...types, {
-            name: "",
-            value: ""
-        }])
-    }
-
-    const deleteType = (index) => {
-        setTypes(prev => prev.filter((_, i) => i !== index));
-    }
-
-    const updateType = (index, name, value) => {
-        const updatedTypes = [...types];
-        updatedTypes[index] = { ...updatedTypes[index], [name]: value }
-
-        setDataBody(prevState => {
-            return {
-                ...prevState,
-                types: updatedTypes
-            }
+    const groupBtnRef = useRef(null);
+    const [isShowGroupPopup, setIsShowGroupPopup] = useState(false);
+    const [listGroup, setListGroup] = useState([]);
+    const fetchSupplierGroup = async () => {
+        const response = await getAllSupplierGroup(dataGroup.pageCurrent, dataGroup.pageSize, {
+            keyword: dataGroup.keyword,
+            status: dataGroup.status
         });
-        setTypes(updatedTypes);
+
+        if (response.status_code === 200) {
+            setListGroup(response.data.data);
+            setDataGroup(prevState => ({
+                ...prevState,
+                totalPage: response.data.total_page
+            }));
+        }
     }
+    const fetchMoreSupplierGroup = async () => {
+        if (dataGroup.pageCurrent < dataGroup.totalPage) {
+            const response = await getAllSupplierGroup(dataGroup.pageCurrent + 1, dataGroup.pageSize, {
+                keyword: dataGroup.keyword,
+                status: dataGroup.status
+            });
+
+            if (response.status_code === 200) {
+                setListGroup(prevState => ([...prevState, ...response.data.data]));
+                setDataGroup(prevState => ({
+                    ...prevState,
+                    pageCurrent: prevState.pageCurrent + 1,
+                    totalPage: response.data.total_page
+                }));
+            }
+        }
+    }
+    const handleFetchGroup = () => {
+        if (isShowGroupPopup) {
+            fetchSupplierGroup();
+        } else {
+            setListGroup([]);
+            setDataGroup(prevState => ({
+                ...prevState,
+                keyword: null,
+                pageCurrent: 1,
+                totalPage: 1
+            }));
+        }
+    }
+    useEffect(() => {
+        handleFetchGroup();
+    }, [isShowGroupPopup]);
+    useEffect(() => {
+        setDataGroup(prevState => ({
+            ...prevState,
+            pageCurrent: 1,
+        }));
+        handleFetchGroup();
+    }, [dataGroup.keyword]);
 
     return (
         <>
@@ -363,7 +122,7 @@ const CreateSupplier = () => {
                         <button className="btn btn-outline-primary">
                             <span className="btn__title">Thoát</span>
                         </button>
-                        <button className="btn btn-primary" onClick={hanleCreateSupplier}>
+                        <button className="btn btn-primary" onClick={handleCreateSupplier}>
                             <span className="btn__title">Lưu</span>
                         </button>
                     </div>
@@ -385,6 +144,7 @@ const CreateSupplier = () => {
                                             <div className="form-item">
                                                 <label htmlFor="name" className="form-label">
                                                     Tên nhà cung cấp
+                                                    <span className="asterisk-icon">*</span>
                                                     <span
                                                         id='name'
                                                         className="caption-icon"
@@ -397,7 +157,6 @@ const CreateSupplier = () => {
                                                     >
                                                         Tên nhà cung cấp
                                                     </UncontrolledTooltip>
-                                                    <span className="asterisk-icon">*</span>
                                                 </label>
                                                 <div className="form-textfield">
                                                     <input
@@ -539,13 +298,37 @@ const CreateSupplier = () => {
                                 <div className="info-content">
                                     <div className="form-item">
                                         <label htmlFor="category" className="form-label">
-                                            Loại sản phẩm
+                                            Nhóm nhà cung cấp
                                         </label>
                                         <div className="box-select">
-                                            <button id='category' className="btn-select">
-                                                Chọn loại sản phẩm
+                                            <button
+                                                ref={groupBtnRef}
+                                                id='category'
+                                                className="btn-select"
+                                                onClick={() => setIsShowGroupPopup(!isShowGroupPopup)}
+                                            >
+                                                {dataBody.supplier_group_id ? dataBody.supplier_group_name : 'Chọn nhóm nhà cung cấp'}
                                                 <FontAwesomeIcon icon={faCaretDown} />
                                             </button>
+                                            {isShowGroupPopup && <ListSelectPopup
+                                                isLarge={true}
+                                                isSearch={true}
+                                                keyword={dataGroup.keyword}
+                                                handleChangeKeyword={(e) => setDataGroup(prevState => ({
+                                                    ...prevState,
+                                                    keyword: e.target.value
+                                                }))}
+                                                handleSelect={(id) => setDataBody(prevState => ({
+                                                    ...prevState,
+                                                    supplier_group_id: id,
+                                                    supplier_group_name: listGroup.find(item => item.id === id)?.name
+                                                }))}
+                                                dataList={listGroup}
+                                                btnRef={groupBtnRef}
+                                                closePopup={() => setIsShowGroupPopup(false)}
+                                                fetchMoreData={fetchMoreSupplierGroup}
+                                            />}
+
                                         </div>
                                     </div>
                                     <div className="form-item">

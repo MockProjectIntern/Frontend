@@ -106,7 +106,6 @@ const CreateReceiptVoucher = () => {
 
     const handleCreateTransaction = async () => {
         const response = await createTransaction(dataBody);
-        console.log(response);
         if (response.status_code == 201) {
             alert("Tạo phiếu thu thành công");
             navigate('/admin/receipt_vouchers');
@@ -166,10 +165,6 @@ const CreateReceiptVoucher = () => {
         });
         handleFetchCategory();
     }, [dataBodyCategory.keyword])
-
-    useEffect(() => {
-        console.log(dataBody);
-    }, [dataBody])
 
     return (
         <>
