@@ -19,7 +19,8 @@ export const getSupplierList = async (page, size, filterName, filterJson, bodyJs
 
 export const getAllSupplierByName = async (page, size, name) => {
     try {
-        const response = await axiosInstance.get(`suppliers/list-name.json?page=${page}&size=${size}&name=${name}`);
+        const response = await axiosInstance.get(`suppliers/list-name.json?page=${page}&size=${size}&name=${name}&keyword=${name}`);
+        return response.data;
     } catch (err) {
         console.log(err);
         throw err;

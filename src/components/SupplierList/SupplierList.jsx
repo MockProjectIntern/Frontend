@@ -15,9 +15,10 @@ import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
-import { getSupplierList } from '../../service/SuppliersAPI.jsx'
+import { getAllSupplierByName, getSupplierList } from '../../service/SuppliersAPI.jsx'
 import { useNavigate } from 'react-router-dom'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
+import s from './SupplierFilter.module.scss'
 
 
 const SupplierList = () => {
@@ -97,6 +98,44 @@ const SupplierList = () => {
         fetchSupplierList();
 
     }, [limit, page]);
+
+
+    const [pageFilter, setPageFilter] = useState(1);
+    const [limitFilter, setLimitFilter] = useState(10);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(false); // Trạng thái loading
+    const [supplierList, setSupplierList] = useState([]); // Trạng thái lưu danh sách kết quả tìm kiếm
+
+    // Hàm tìm kiếm nhà cung cấp bằng tên
+    const fetchSuppliersByName = async () => {
+        try {
+            setLoading(true); // Bắt đầu quá trình loading
+            const response = await getAllSupplierByName(pageFilter, limitFilter, searchTerm); // Gọi API với từ khóa tìm kiếm
+            if (response && response.data) {
+                setSupplierList(response.data.data); // Cập nhật danh sách nhà cung cấp
+            } else {
+                setSupplierList([]); // Trường hợp không có kết quả
+            }
+            setLoading(false); // Kết thúc loading
+        } catch (err) {
+            console.log(err);
+            setLoading(false); // Kết thúc loading nếu xảy ra lỗi
+        }
+    };
+
+    // Xử lý tìm kiếm khi người dùng nhập từ khóa
+    const handleSearch = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value); // Cập nhật giá trị tìm kiếm
+    };
+
+    // useEffect để gọi hàm tìm kiếm khi searchTerm thay đổi
+    useEffect(() => {
+        if (searchTerm) {
+            fetchSuppliersByName(); // Gọi hàm tìm kiếm khi searchTerm có giá trị
+        }
+    }, [searchTerm, pageFilter, limitFilter]); // Gọi lại khi searchTerm, page hoặc limit thay đổi
+
     return (
         <>
             <Header />
@@ -148,15 +187,42 @@ const SupplierList = () => {
                     </div>
                     <div className='right__table-search-filter'>
                         <div className='box-search-filter-btns'>
-                            <div className="box-search">
-                                <div className="box-input">
-                                    <div className="search-icon">
+                            <div className={s["box-search"]}>
+                                <div className={s["box-input"]}>
+                                    <div className={s["search-icon"]}>
                                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                                     </div>
-                                    <input placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode' type="text" name="search" id="" autoComplete='on' />
-                                    <fieldset className='input-field' />
+                                    <input
+                                        placeholder="Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode"
+                                        type="text"
+                                        name="search"
+                                        autoComplete="on"
+                                        value={searchTerm}
+                                        onChange={handleSearch} // Bắt sự kiện nhập từ khóa
+                                    />
+                                    <fieldset className={s['input-field']} />
                                 </div>
+
+                                {/* Hiển thị trạng thái loading */}
+                                {loading && <p className={s["loading-text"]}>Đang tìm kiếm...</p>}
+
+                                {/* Hiển thị kết quả tìm kiếm */}
+                                {!loading && supplierList.length > 0 && (
+                                    <div className={s["search-results"]}>
+                                        {supplierList.map((supplier) => (
+                                            <div key={supplier.id} className={s["search-result-item"]}>
+                                                <p>{supplier.name}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Thông báo khi không tìm thấy kết quả */}
+                                {!loading && supplierList.length === 0 && searchTerm && (
+                                    <p className={s["no-results"]}>Không tìm thấy nhà cung cấp nào.</p>
+                                )}
                             </div>
+
                             <div className="btn-group group-filter-btns">
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
