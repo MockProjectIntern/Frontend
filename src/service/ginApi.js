@@ -15,7 +15,6 @@ export const getGINs = async (page, size, filterName, filterJson) => {
     try {
    
         const response = await axiosInstance.post(`/gins/filter.json?page=${page}&size=${size}`,{
-            keyword: null,
             status: null,
             created_date_from: null,
             created_date_to: null,

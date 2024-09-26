@@ -28,9 +28,9 @@ const LimitSelectPopup = ({ btnRef, limit, handleChangeLimit, closePopup, }) => 
   return (
     <div ref={popupRef} className={s.container}>
         <div className={s.wrapper}>
-            <button onClick={() => handleChange(1)} className={cn(s.selectItem, { [s.selected]: limit === 1 })}>1</button>
-            <button onClick={() => handleChange(2)} className={cn(s.selectItem, { [s.selected]: limit === 2 })}>2</button>
-            <button onClick={() => handleChange(4)} className={cn(s.selectItem, { [s.selected]: limit === 4 })}>4</button>
+            <button onClick={() => handleChange(5)} className={cn(s.selectItem, { [s.selected]: limit === 5 })}>5</button>
+            <button onClick={() => handleChange(10)} className={cn(s.selectItem, { [s.selected]: limit === 10 })}>10</button>
+            <button onClick={() => handleChange(15)} className={cn(s.selectItem, { [s.selected]: limit === 15 })}>15</button>
         </div>
     </div>
   )

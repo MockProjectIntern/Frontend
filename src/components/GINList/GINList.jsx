@@ -18,6 +18,8 @@ import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifying
 import { useNavigate } from 'react-router-dom'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import { getGINs } from '../../service/ginApi.js'
+import GINStatusFilter from './FiltersPopup/GINStatusFilter.jsx'
+import CreatedAtFilter from './FiltersPopup/CreatedAtFilter.jsx'
 
 // const ginList = [
 //     {
@@ -63,6 +65,13 @@ const GINList = () => {
     const limitBtnRef = useRef(null);
     const navigate = useNavigate();
     const [totalItems, setTotalItems] = useState(0);
+    
+
+    const [isOpenStatusPopup, setIsOpenStatusPopup] = useState(false);
+    const [statusListFilter, setStatusListFilter] = useState([]);
+    const [isOpenCreatedAtPopup, setIsOpenCreatedAtPopup] = useState(false);
+    const [createdMin, setCreatedMin] = useState(null);
+    const [createdMax, setCreatedMax] = useState(null);
 
 
     const [ginList, setGinList] = useState([]);
@@ -71,7 +80,6 @@ const GINList = () => {
         const storedCols = Cookies.get('filter_gins');
         return storedCols ? JSON.parse(storedCols) : {
             id: true,
-            keyword:true,
             sub_id: true,
             created_at: true,
             updated_at: true,
@@ -104,6 +112,8 @@ const GINList = () => {
     }, [page, limit])
     const headersRef = useRef(null);
     const contentRef = useRef(null);
+    const ginStatusRef = useRef(null);
+    const createdAtRef = useRef(null);
 
     const handleScroll = (e, target) => {
         target.scrollLeft = e.target.scrollLeft;
@@ -179,7 +189,7 @@ const GINList = () => {
                             </div>
                         </div>
                         <div className="btn-group group-filter-btns">
-                            <button className="btn btn-base btn-filter">
+                            <button ref={ginStatusRef} className="btn btn-base btn-filter" onClick={()=> setIsOpenStatusPopup(!isOpenStatusPopup)}>
                                 <span className="btn__label">
                                     Trạng thái
                                     <span className="btn__icon">
@@ -187,7 +197,8 @@ const GINList = () => {
                                     </span>
                                 </span>
                             </button>
-                            <button className="btn btn-base btn-filter">
+                            {isOpenStatusPopup && <GINStatusFilter ginStatusRef={ginStatusRef} closePopup={() => setIsOpenStatusPopup(false)} statusList = {statusListFilter} setStatusList={setStatusListFilter}/>}
+                            <button ref={createdAtRef} onClick={()=>setIsOpenCreatedAtPopup(!isOpenCreatedAtPopup)} className="btn btn-base btn-filter">
                                 <span className="btn__label">
                                     Ngày tạo
                                     <span className="btn__icon">
@@ -195,6 +206,7 @@ const GINList = () => {
                                     </span>
                                 </span>
                             </button>
+                            {isOpenCreatedAtPopup && <CreatedAtFilter createdRef={createdAtRef} closePopup={() => setIsOpenCreatedAtPopup(false)} setCreatedMin={setCreatedMin} setCreatedMax={setCreatedMax} />}
                         
                             <button className="btn btn-base btn-filter">
                                 <span className="btn__label">
@@ -335,11 +347,11 @@ const GINList = () => {
                                                                     className={cn("table-data-item", col[key].align)}
                                                                 >
                                                                     <div className={cn('box-status', {
-                                                                        'box-status--pending': gin[key] === "Đang kiểm kho",
-                                                                        'box-status--balanced': gin[key] === "Đã cân bằng",
-                                                                        'box-status--deleted': gin[key] === "Đã xóa",
+                                                                        'box-status--pending': gin[key] === "CHECKING",
+                                                                        'box-status--balanced': gin[key] === "BALANCED",
+                                                                        'box-status--deleted': gin[key] === "DELETED",
                                                                     })}>
-                                                                        <span>{gin[key]}</span>
+                                                                        <span>{gin[key] == "CHECKING" ? "Đang kiểm kho" : (gin[key]== "BALANCED" ? "Đã cân bằng" : "Đã xóa") }</span>
                                                                     </div>
                                                                 </td>
                                                             )

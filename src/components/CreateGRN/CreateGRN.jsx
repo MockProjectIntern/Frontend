@@ -11,6 +11,9 @@ import SearchSupplier from '../SearchSupplier/SearchSupplier'
 import { useState, useEffect, useRef } from 'react'
 import ProductsTable from '../ProductsTable/ProductsTable.jsx'
 import DiscountPopup from '../DiscountPopup/DiscountPopup.jsx'
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import '../../styles/_overrides.scss'
 const CreateGRN = () => {
     // const [supplier, setSupplier] = useState({
     //     name: "Test",
@@ -165,11 +168,14 @@ const CreateGRN = () => {
                                             <p className="info-title">Ngày hẹn giao</p>
                                             <div className="info-field">
                                                 <div className="box-input">
-                                                    <input placeholder='Chọn ngày hẹn giao' name='expected_at' type="text" className="text-field" />
+                                                    {/* <input placeholder='Chọn ngày hẹn giao' name='expected_at' type="text" className="text-field" />
                                                     <fieldset className='input-field'></fieldset>
                                                     <div className="calendar-icon">
                                                         {calendarIcon}
-                                                    </div>
+                                                    </div> */}
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}> <DateTimePicker/></LocalizationProvider>
+                                                 
+                                                  
                                                 </div>               
                                             </div>
                                         </div>
