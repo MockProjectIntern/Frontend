@@ -12,6 +12,8 @@ import Header from '../Header/Header.jsx'
 import { useNavigate } from 'react-router-dom'
 import { getProductList } from '../../service/ProductAPI.jsx'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
+import SelectFilterCategory from '../SelectFilterBrand/SelectFilterCategory.jsx'
+import { getListCategory } from '../../service/CategoryAPI.jsx'
 
 
 
@@ -30,14 +32,13 @@ const ProductList = () => {
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_products');
         return storedCols ? JSON.parse(storedCols) : {
-            images: true,
-            name: true,
-            status: true,
-            category_name: true,
-            brand_name: true,
-            quantity: true,
-            created_at: true,
-            updated_at: true
+            keyword: null,
+            category_ids: null,
+            created_date_from: null,
+            created_date_to: null,
+            brand_ids: null,
+            statuses: null,
+            tags: null
         }
     })
 
@@ -78,20 +79,72 @@ const ProductList = () => {
             "created_date_from": null,
             "created_date_to": null,
             "brand_ids": null,
-            "supplier_ids": null
+            "supplier_ids": null,
         }
     );
+
+
+    // phan quan ly filter loai san pham
+
+    const [listCategories, setListCategories,] = useState([]);
+    const [isOpenFilterCategoryPopup, setIsOpenFilterCategoryPopup] = useState(false);
+
+    const [dataFilterCategory, setDataFilterCategory] = useState(
+        {
+            "keyword": null,
+        }
+    );
+
+    const [currentPageFilterCategory, setCurrentPageFilterCategory] = useState(1);
+    const [totalPageFilterCategory, setTotalPageFilterCategory] = useState();
+
+
+    const filterCategoryBtnRef = useRef(null);
+
+    const [selectedCategories, setSelectedCategories] = useState([]);
+
+    const handleSelectionChange = (selected) => {
+        setSelectedCategories(selected);
+        setDataBody((prevDataBody) => ({
+            ...prevDataBody, // Giữ nguyên các thuộc tính khác của prevDataBody
+            category_ids: selected // Cập nhật danh sách brand_ids
+        }));
+    };
+
+    const handleClickButtonFilterCategory = () =>{
+        fetchProductList();
+        setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup)
+    }
+
+
 
     const fetchProductList = async () => {
         try {
             const products = await getProductList(page, limit, "filter_products", Cookies.get("filter_products"), dataBody);
 
             if (products.status_code === 200) {
+                console.log("data")
                 setProductsList(products.data.data);
                 setProductsQuantity(products.data.total_items);
                 setPageQuantity(products.data.total_page)
             } else {
                 console.log("status code:", products.status_code);
+            }
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
+
+    const fetchCategoryList = async () => {
+        try {
+            const categories = await getListCategory(currentPageFilterCategory,5,dataFilterCategory )
+            if(categories.status_code === 200){
+                setListCategories(categories.data.data);
+                setTotalPageFilterCategory(categories.data.total_page)
+            }
+            else {
+                console.log("status code:", categories.status_code);
             }
         } catch (err) {
             console.log(err);
@@ -108,6 +161,25 @@ const ProductList = () => {
         fetchProductList();
 
     }, [limit, page]);
+
+    useEffect(()=>{
+        if(isOpenFilterCategoryPopup){
+            fetchCategoryList();
+        }
+        else{
+            setListCategories([]);
+            setDataFilterCategory({keyword: null});
+        }
+
+    }, [isOpenFilterCategoryPopup, dataFilterCategory.keyword, currentPageFilterCategory]);
+
+    useEffect(() => {
+        console.log("Sản phẩm đã thay đổi:", productsList);
+        // Bạn có thể thực hiện các hành động khác nếu cần khi sản phẩm thay đổi
+    }, [productsList]);
+
+    console.log("selected:", selectedCategories);
+
     return (
         <>
             <Header />
@@ -169,7 +241,7 @@ const ProductList = () => {
                                 </div>
                             </div>
                             <div className="btn-group group-filter-btns">
-                                <button className="btn btn-base btn-filter">
+                                <button className="btn btn-base btn-filter" onClick={() => {setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup);  }} ref={filterCategoryBtnRef}>
                                     <span className="btn__label">
                                         Loại sản phẩm
                                         <span className="btn__icon">
@@ -177,6 +249,19 @@ const ProductList = () => {
                                         </span>
                                     </span>
                                 </button>
+                                {
+                                    isOpenFilterCategoryPopup && 
+
+                                    <SelectFilterCategory 
+                                        btnRef={filterCategoryBtnRef} 
+                                        closePopup={() =>setIsOpenFilterCategoryPopup(false)} 
+                                        listCategories={listCategories} 
+                                        currentPage={currentPageFilterCategory} 
+                                        totalPage={totalPageFilterCategory}
+                                        onSelectionChange={handleSelectionChange}
+                                        handleOnClickButton={handleClickButtonFilterCategory}
+                                    />
+                                }
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
                                         Ngày tạo
@@ -206,6 +291,7 @@ const ProductList = () => {
                                 <span className="btn__title">Lưu bộ lọc</span>
                             </button>
                         </div>
+
                     </div>
                     <div
                         ref={headersRef}
@@ -406,7 +492,7 @@ const ProductList = () => {
                                 {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() =>setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) =>{setLimit(limit)}}/>}
                             </div>
                             <p>kết quả</p>
-                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + productsList.length} trên tổng {pageQuantiy}</p>
+                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + productsList.length} trên tổng {productsQuantity}</p>
                             <button 
                                 className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
                                 onClick={handlePrevPage}
