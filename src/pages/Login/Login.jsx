@@ -44,18 +44,15 @@ const Login = () => {
 
   return (
     <div className="auth-page">
-      <Container className='col-12'>
-        <Row className='d-flex align-items-center'>
-          <Col xs={12} lg={6} className="left-column">
+      <Container className='col-12 h-100'>
+        <Row className='d-flex align-items-center h-100'>
+          <Col xs={12} lg={6} className="left-column h-100">
             <Widget className="widget-auth widget-p-lg">
               <div className="d-flex align-items-center justify-content-between py-3">
                 <p className="auth-header mb-0">Đăng nhập</p>
                 <div className="logo-block">
                   <img src={sapoLogo} alt="" />
                 </div>
-              </div>
-              <div className="auth-info my-2">
-                <p>Quản lý kiểm soát giao dịch nhập kho</p>
               </div>
               <form onSubmit={(e) => doLogin(e)}>
                 <FormGroup className="my-3">

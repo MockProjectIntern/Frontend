@@ -1,5 +1,14 @@
 .auth-page {
   height: 100vh;
+  
+  @media ((min-width: 1400px)) {
+    .container {
+      max-width: 100%;
+    }
+  }
+  .container {
+    max-width: 100%;
+  }
 
   .left-column {
     display: flex;
