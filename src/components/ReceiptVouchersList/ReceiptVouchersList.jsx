@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { getListTransaction } from '../../service/TransactionAPI.jsx'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
+import { useNavigate } from 'react-router-dom'
 
 const ReceiptVouchersList = () => {
     const [transactionList, setTransactionList] = useState([]);
@@ -29,6 +30,7 @@ const ReceiptVouchersList = () => {
         completed: false,
         cancelled: false
     });
+    const navigate = useNavigate();
 
     const handleChangeActive = (name) => {
         setActive({
@@ -49,7 +51,7 @@ const ReceiptVouchersList = () => {
         return storedCols ? JSON.parse(storedCols) : {
             id: true,
             sub_id: true,
-            type: true,
+            transaction_category_name: true,
             status: true,
             amount: true,
             recipient_group: true,
@@ -82,7 +84,7 @@ const ReceiptVouchersList = () => {
     });
 
     const fetchTransactionList = async () => {
-        const response = await getListTransaction(page, limit, "ASC", "createdAt", "filter_transactions", Cookies.get("filter_transactions"), dataFilter);
+        const response = await getListTransaction(page, limit, "DESC", "createdAt", "filter_transactions", Cookies.get("filter_transactions"), dataFilter);
         if (response.status_code === 200) {
             setTransactionList(response.data.data);
             setPageQuantity(response.data.total_page);
@@ -98,7 +100,7 @@ const ReceiptVouchersList = () => {
 
         const timeoutId = setTimeout(() => {
             fetchTransactionList();
-        }, 50); // 500ms delay
+        }, 300); // 500ms delay
 
         // Cleanup function: Clears the timeout if dependencies change before the timeout finishes
         return () => clearTimeout(timeoutId);
@@ -148,7 +150,7 @@ const ReceiptVouchersList = () => {
                         </button>
                     </div>
                     <div className="btn-toolbar">
-                        <button className="btn btn-primary">
+                        <button onClick={() => navigate('/admin/receipt_vouchers/create')} className="btn btn-primary">
                             <span className="btn__icon">
                                 <FontAwesomeIcon icon={faPlus} />
                             </span>
@@ -348,6 +350,15 @@ const ReceiptVouchersList = () => {
                                                                         </div>
                                                                     </td>
                                                                 )
+                                                            } else if (key.includes("recipient_group")) {
+                                                                return (
+                                                                    <td
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        <p className='box-text'>{order[key] === "SUP" ? "Nhà cung cấp" : "Khách hàng"}</p>
+                                                                    </td>
+                                                                )
                                                             }
                                                             return (
                                                                 <td
@@ -356,7 +367,7 @@ const ReceiptVouchersList = () => {
                                                                 >
                                                                     <p className='box-text'>
                                                                         {
-                                                                            !Array("id", "original_document", "payer_name").includes(key) ?
+                                                                            !Array("sub_id", "original_document", "payer_name", "recipient_id").includes(key) ?
                                                                                 order[key] :
                                                                                 <a className='box-id'>{order[key]}</a>
                                                                         }

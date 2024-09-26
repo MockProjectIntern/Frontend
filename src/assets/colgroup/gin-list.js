@@ -4,10 +4,15 @@ const gin_list_colgroup = {
         width: "160px",
         align: "text-start"
     },
+    sub_id: {
+        name: "Mã phiếu con",
+        width: "160px",
+        align: "text-start"
+    },
     status: {
         name: "Trạng thái",
         width: "180px",
-        align: "text-center"
+        align: "text-start"
     },
     created_at: {
         name: "Ngày tạo",
@@ -19,23 +24,28 @@ const gin_list_colgroup = {
         width: "160px",
         align: "text-start"
     },
-    user_created: {
+    user_created_name: {
         name: "Nhân viên tạo",
         width: "160px",
         align: "text-start"
     },
-    user_balanced: {
+    user_balanced_name: {
         name: "Nhân viên cân bằng",
         width: "160px",
         align: "text-start"
     },
-    user_inspection: {
+    user_inspection_name: {
         name: "Nhân viên kiểm",
         width: "160px",
         align: "text-start"
     },
     note: {
         name: "Ghi chú",
+        width: "160px",
+        align: "text-start"
+    },
+    updated_at: {
+        name: "Ngày cập nhật",
         width: "160px",
         align: "text-start"
     }

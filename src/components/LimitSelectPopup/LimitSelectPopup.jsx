@@ -11,10 +11,10 @@ const LimitSelectPopup = ({ btnRef, limit, handleChangeLimit, closePopup, }) => 
             closePopup();
         }
     }
-    
+
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
-    
+
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
@@ -25,15 +25,15 @@ const LimitSelectPopup = ({ btnRef, limit, handleChangeLimit, closePopup, }) => 
         closePopup();
     }
 
-  return (
-    <div ref={popupRef} className={s.container}>
-        <div className={s.wrapper}>
-            <button onClick={() => handleChange(10)} className={cn(s.selectItem, { [s.selected]: limit === 10 })}>10</button>
-            <button onClick={() => handleChange(20)} className={cn(s.selectItem, { [s.selected]: limit === 20 })}>20</button>
-            <button onClick={() => handleChange(50)} className={cn(s.selectItem, { [s.selected]: limit === 50 })}>50</button>
+    return (
+        <div ref={popupRef} className={s.container}>
+            <div className={s.wrapper}>
+                <button onClick={() => handleChange(10)} className={cn(s.selectItem, { [s.selected]: limit === 10 })}>10</button>
+                <button onClick={() => handleChange(20)} className={cn(s.selectItem, { [s.selected]: limit === 20 })}>20</button>
+                <button onClick={() => handleChange(50)} className={cn(s.selectItem, { [s.selected]: limit === 50 })}>50</button>
+            </div>
         </div>
-    </div>
-  )
+    )
 }
 
 export default LimitSelectPopup

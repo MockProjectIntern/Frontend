@@ -107,6 +107,33 @@ $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
     }
 }
 
+body {
+    font-family: $font-family-base;
+    background-color: rgba(9, 55, 148, 0.1);
+}
+
+.auth-page .btn {
+    //max-width: 320px;
+    height: 40px;
+    background-color: $c-02;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    box-shadow: 0px 5px 10px rgba(116, 116, 156, 0.35);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    //margin: 0 auto;
+    margin-top: 8px;
+    padding: 8px 32px;
+
+    &:hover {
+        box-shadow: 0px 0px 0px rgba(33, 33, 107, 0.35);
+        color: #e4e2ef !important;
+        background-color: var(--bs-btn-hover-bg);
+        border-color: var(--bs-btn-hover-border-color);
+    }
+}
+
 input::placeholder {
     color: #A3A8AF;
 }
@@ -309,6 +336,56 @@ input::placeholder {
     flex-wrap: nowrap;
 }
 
+.btn-tab {
+    display: inline-flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    position: relative;
+    -webkit-box-align: center;
+    align-items: center;
+    padding: 0px;
+    outline: 0px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: $font-family-base;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.42857rem;
+    margin: 0px;
+        > button {
+            display: inline-block;
+            -webkit-box-pack: center;
+            justify-content: center;
+            position: relative;
+            padding: 0.428571rem 1.14286rem;
+            box-sizing: border-box;
+            -webkit-box-align: center;
+            align-items: center;
+            border-top: none;
+            border-right: none;
+            border-left: none;
+            border-image: initial;
+            background-color: transparent;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: left;
+            cursor: pointer;
+            font-family: $font-family-base;
+            font-size: 1rem;
+            line-height: 1.42857rem;
+            margin: 0px;
+            height: 3.42857rem;
+            max-width: 17.1429rem;
+            color: $default;
+            font-weight: 500;
+        }
+        button.active {
+            color: rgb(0, 136, 255);
+            border-bottom: 2px solid rgb(0, 136, 255);
+        }
+}
+
 .btn-group {
     > .btn:not(:last-child) {
         border-right-color: transparent;
@@ -437,6 +514,7 @@ input::placeholder {
     display: flex;
     width: 100%;    
     flex: 1 1 0%;
+    position: relative;
 
     .box-input {
         width: 100%;
@@ -1038,6 +1116,10 @@ input:focus-within ~ .input-field {
             'maininfo subinfo';
             width: 100%;
             box-sizing: border-box;
+
+            &.vouchers {
+                grid-template-columns: 3fr 1fr;
+            }
             
             .form-item {
                 border: 0;
@@ -1151,6 +1233,24 @@ input:focus-within ~ .input-field {
                         font-weight: $font-weight-base;
                         line-height: 20px;
                         margin: 0;
+                    }
+                }
+
+                textarea {
+                    color: $default;
+                    width: 100%;
+                    border: 1px solid;
+                    resize: none;
+                    padding: 10px;
+                    font-size: $font-size-base;
+                    font-family: var(--bs-font-sans-serif);
+                    border-color: #D3D5D7;
+                    border-radius: 3px;
+                    min-height: 72px !important;
+                    overflow: auto;
+
+                    &:focus {
+                        border-color: $violet;
                     }
                 }
             }
@@ -1724,6 +1824,161 @@ input:focus-within ~ .input-field {
                         }
                     }
                 }
+
+                .box-voucher {
+
+                    .grid-container {
+                        width: 100%;
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        grid-template-areas: 
+                            'group name'
+                            'type id';
+                        gap: 20px;
+                        box-sizing: border-box;
+
+                        .box-group {
+                            grid-area: group;
+                            margin: 0;
+                            box-sizing: border-box
+                        }
+
+                        .box-name {
+                            grid-area: name;
+                            margin: 0;
+                            box-sizing: border-box
+                        }
+
+                        .box-voucher-type {
+                            grid-area: type;
+                            margin: 0;
+                            box-sizing: border-box
+                        }
+
+                        .box-voucher-id {
+                            grid-area: id;
+                            margin: 0;
+                            box-sizing: border-box
+                        }
+
+                    }
+                }
+
+                .box-voucher-cost {
+
+                    .grid-container {
+                        width: 100%;
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        grid-template-areas: 
+                            'cost method'
+                            'reference .';
+                        gap: 20px;
+                        box-sizing: border-box;
+
+                        .box-cost {
+                            grid-area: cost;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-method {
+                            grid-area: method;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-reference {
+                            grid-area: reference;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                    }
+                }
+
+                .box-supplier-general {
+
+                    .grid-container {
+                        width: 100%;
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        grid-template-areas: 
+                            'name name'
+                            'id group'
+                            'phone email';
+                        gap: 20px;
+                        box-sizing: border-box;
+
+                        .box-supplier-name {
+                            grid-area: name;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-supplier-id {
+                            grid-area: id;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-supplier-group {
+                            grid-area: group;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-supplier-phone {
+                            grid-area: phone;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-supplier-email {
+                            grid-area: email;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+                    }
+                }
+
+                .box-supplier-address {
+
+                    .grid-container {
+                        width: 100%;
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        grid-template-areas: 
+                            'province district'
+                            'ward street';
+                        gap: 20px;
+                        box-sizing: border-box;
+
+                        .box-province {
+                            grid-area: province;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-district {
+                            grid-area: district;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-ward {
+                            grid-area: ward;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+
+                        .box-street {
+                            grid-area: street;
+                            margin: 0;
+                            box-sizing: border-box;
+                        }
+                    }
+                }
             }
             
             .box-subinfo {
@@ -1946,7 +2201,7 @@ input:focus-within ~ .input-field {
                 padding: 0;
 
                 .box-search {
-                    :first-child {
+                    > :first-child {
                         margin-right: -1px;
                         z-index: 2;
                     }
