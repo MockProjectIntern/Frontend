@@ -99,7 +99,7 @@ const SupplierList = () => {
     }, [limit, page]);
     return (
         <>
-            <Header />
+            <Header title={"Danh sách nhà cung cấp"} />
             <div className='right__listPage'>
                 <div className='right__toolbar'>
                     <div className='btn-toolbar'>
