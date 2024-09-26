@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import cn from 'classnames';
 
 // Bootstrap
@@ -70,8 +70,11 @@ import { uploadImage } from '../Upload';
 import { createProduct } from '../../service/ProductAAPI';
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup';
 import { getListCategory } from '../../service/CategoryAPI';
+import { getListBrand } from '../../service/BrandAPI';
 
 const CreateProduct = () => {
+    const navigate = useNavigate();
+
     const [dataBody, setDataBody] = useState({
         sub_id: null,
         name: null,
@@ -85,7 +88,7 @@ const CreateProduct = () => {
         brand_id: null,
         tags: null,
         description: null,
-        status: "INACTIVE"
+        status: "ACTIVE"
     });
 
     const handleCreateProduct = async () => {
@@ -99,20 +102,24 @@ const CreateProduct = () => {
                 };
             })
         );
-    
+
         // Cập nhật `dataBody` với các hình ảnh đã được tải lên
         setDataBody(prevState => ({
             ...prevState,
             images: uploadedImages
         }));
-    
+
         // Sau khi tất cả ảnh đã được tải lên, gọi API để tạo sản phẩm
         const response = await createProduct({
             ...dataBody,
             images: uploadedImages
         });
+        if (response.status === 201) {
+            alert("Tạo sản phẩm thành công!");
+            navigate('/admin/products');
+        }
     };
-    
+
     const [isOpenEditor, setIsOpenEditor] = useState(false)
 
     const editorConfig = {
@@ -383,20 +390,41 @@ const CreateProduct = () => {
     const [category, setCategory] = useState("");
     const [isCategoryPopup, setIsCategoryPopup] = useState(false);
     const categoryBtnRef = useRef(null);
+
     const [categoryDataFilter, setCategoryDataFilter] = useState({
         keyword: null
     });
+    const [dataPageCategory, setDataPageCategory] = useState({
+        currentPage: 1,
+        totalPage: 1,
+        currentSize: 10,
+    });
 
     const fetchCategoryList = async () => {
-        const response = await getListCategory(1, 999, categoryDataFilter);
-        if (response.status_code === 200) {
-            setCategoryList(response.data);
-        } else {
-            console.log("Status code: ", response.status_code);
+        const response = await getListCategory(dataPageCategory.currentPage, dataPageCategory.currentSize, categoryDataFilter);
+        setCategoryList(response.data.data);
+        setDataPageCategory(prevState => {
+            return {
+                ...prevState,
+                totalPage: response.data.total_page
+            }
+        });
+    }
+    const fetchMoreCategory = async () => {
+        if (dataPageCategory.currentPage < dataPageCategory.totalPage) {
+            const response = await getListCategory(dataPageCategory.currentPage + 1, dataPageCategory.currentSize, categoryDataFilter);
+            setCategoryList(prevList => [...prevList, ...response.data.data]);
+            setDataPageCategory(prevState => {
+                return {
+                    ...prevState,
+                    currentPage: prevState.currentPage + 1,
+                    totalPage: response.data.total_page
+                }
+            });
         }
     }
 
-    useEffect(() => {
+    const handleFetchMoreCategory = () => {
         if (isCategoryPopup) {
             fetchCategoryList();
         } else {
@@ -409,8 +437,27 @@ const CreateProduct = () => {
                     }
                 )
             })
+            setDataPageCategory(prevState => {
+                return {
+                    ...prevState,
+                    currentPage: 1,
+                    totalPage: 1
+                }
+            });
         }
-    }, [isCategoryPopup, categoryDataFilter.keyword])
+    }
+    useEffect(() => {
+        handleFetchMoreCategory();
+    }, [isCategoryPopup])
+    useEffect(() => {
+        setDataPageCategory(prevState => {
+            return {
+                ...prevState,
+                currentPage: 1
+            }
+        });
+        handleFetchMoreCategory();
+    }, [categoryDataFilter.keyword])
 
     useEffect(() => {
         const selectedCategory = categoryList.find(category => category.id === dataBody.category_id);
@@ -418,9 +465,80 @@ const CreateProduct = () => {
         setCategory(selectedCategory);
     }, [dataBody.category_id])
 
-    const brandList = [];
+    const [brandList, setBrandList] = useState([]);
     const [isBrandPopup, setIsBrandPopup] = useState(false);
     const brandBtnRef = useRef(null);
+    const [brandDataFilter, setBrandDataFilter] = useState({
+        name: null
+    });
+    const [dataPageBrand, setDataPageBrand] = useState({
+        currentPage: 1,
+        totalPage: 1,
+        currentSize: 10,
+    });
+
+    const fetchBrandList = async () => {
+        const response = await getListBrand(dataPageBrand.currentPage, dataPageBrand.currentSize, brandDataFilter);
+        setBrandList(response.data.data);
+        setDataPageBrand(prevState => {
+            return {
+                ...prevState,
+                totalPage: response.data.total_page
+            }
+        });
+    }
+    const fetchMoreBrand = async () => {
+        if (dataPageBrand.currentPage < dataPageBrand.totalPage) {
+            const response = await getListBrand(dataPageBrand.currentPage + 1, dataPageBrand.currentSize, brandDataFilter);
+            setBrandList(prevList => [...prevList, ...response.data.data]);
+            setDataPageBrand(prevState => {
+                return {
+                    ...prevState,
+                    currentPage: prevState.currentPage + 1,
+                    totalPage: response.data.total_page
+                }
+            });
+        }
+    }
+
+    const handleFetchMoreBrand = () => {
+        if (isBrandPopup) {
+            fetchBrandList();
+        } else {
+            setBrandList([]);
+            setBrandDataFilter((prev) => {
+                return (
+                    {
+                        ...prev,
+                        name: ""
+                    }
+                )
+            })
+            setDataPageBrand(prevState => {
+                return {
+                    ...prevState,
+                    currentPage: 1,
+                    totalPage: 1
+                }
+            });
+        }
+    }
+    useEffect(() => {
+        handleFetchMoreBrand();
+    }, [isBrandPopup])
+    useEffect(() => {
+        setDataPageBrand(prevState => {
+            return {
+                ...prevState,
+                currentPage: 1
+            }
+        });
+        handleFetchMoreBrand();
+    }, [brandDataFilter.name])
+
+    useEffect(() => {
+        console.log(dataBody)
+    }, [dataBody])
 
     return (
         <>
@@ -548,17 +666,18 @@ const CreateProduct = () => {
                                             </button>
                                             <Collapse className='box-description' isOpen={isOpenEditor}>
                                                 <div className="box-description__container">
-                                                    <CKEditor 
-                                                        editor={ClassicEditor} 
-                                                        config={editorConfig} 
+                                                    <CKEditor
+                                                        editor={ClassicEditor}
+                                                        config={editorConfig}
                                                         onChange={(event, editor) => {
                                                             const data = editor.getData();
                                                             setDataBody(prevState => {
-                                                            return {
-                                                                ...prevState,
-                                                                description: data
-                                                            }
-                                                        })}}
+                                                                return {
+                                                                    ...prevState,
+                                                                    description: data
+                                                                }
+                                                            })
+                                                        }}
                                                     />
                                                 </div>
                                             </Collapse>
@@ -832,8 +951,8 @@ const CreateProduct = () => {
                                             </button>
                                             {
                                                 isCategoryPopup &&
-                                                <ListSelectPopup 
-                                                    title={"loại sản phẩm"} 
+                                                <ListSelectPopup
+                                                    title={"loại sản phẩm"}
                                                     isLarge={false}
                                                     isSearch={true}
                                                     keyword={categoryDataFilter.keyword}
@@ -851,6 +970,7 @@ const CreateProduct = () => {
                                                     })}
                                                     btnRef={categoryBtnRef}
                                                     closePopup={() => setIsCategoryPopup(false)}
+                                                    fetchMoreData={fetchMoreCategory}
                                                 />
                                             }
                                         </div>
@@ -866,14 +986,26 @@ const CreateProduct = () => {
                                             </button>
                                             {
                                                 isBrandPopup &&
-                                                <ListSelectPopup 
-                                                    title={"nhãn hiệu"} 
+                                                <ListSelectPopup
+                                                    title={"nhãn hiệu"}
                                                     isLarge={false}
                                                     isSearch={true}
+                                                    keyword={brandDataFilter.name}
+                                                    handleChangeKeyword={(e) => {
+                                                        setBrandDataFilter({
+                                                            ...brandDataFilter,
+                                                            name: e.target.value
+                                                        })
+                                                    }}
                                                     isFastCreate={true}
-                                                    dataList={brandList} 
+                                                    dataList={brandList}
                                                     btnRef={brandBtnRef}
+                                                    handleSelect={(id) => setDataBody({
+                                                        ...dataBody,
+                                                        brand_id: id
+                                                    })}
                                                     closePopup={() => setIsBrandPopup(false)}
+                                                    fetchMoreData={fetchMoreBrand}
                                                 />
                                             }
                                         </div>
@@ -933,16 +1065,22 @@ const CreateProduct = () => {
                                             <p>Cho phép bán</p>
                                             <div className="box-switch">
                                                 <div className="btn-switch">
-                                                    <input type="checkbox" name="status" className='switch-checkbox' id="" onChange={
-                                                        e => setDataBody(prevState => {
+                                                    <input
+                                                        type="checkbox"
+                                                        name="status"
+                                                        className='switch-checkbox'
+                                                        id=""
+                                                        defaultChecked={true}
+                                                        onChange={e => setDataBody(prevState => {
                                                             return {
                                                                 ...prevState,
                                                                 status: e.target.checked ? "ACTIVE" : "INACTIVE"
                                                             }
-                                                        })
-                                                    } />
-                                                    <span className="switch-bar"></span>
+                                                        })}
+                                                    />
+                                                    <span className="switch-bar" ></span>
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>

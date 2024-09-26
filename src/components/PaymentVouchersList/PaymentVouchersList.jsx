@@ -83,7 +83,7 @@ const PaymentVouchersList = () => {
     });
 
     const fetchTransactionList = async () => {
-        const response = await getListTransaction(page, limit, "ASC", "createdAt", "filter_transactions", Cookies.get("filter_transaction_payment"), dataFilter);
+        const response = await getListTransaction(page, limit, "DESC", "createdAt", "filter_transactions", Cookies.get("filter_transaction_payment"), dataFilter);
         if (response.status_code === 200) {
             setTransactionList(response.data.data);
             setPageQuantity(response.data.total_page);
@@ -363,7 +363,7 @@ const PaymentVouchersList = () => {
                                                                 >
                                                                     <p className='box-text'>
                                                                         {
-                                                                            !Array("id", "original_document", "receiver_name", "recipient_id").includes(key) ?
+                                                                            !Array("sub_id", "original_document", "receiver_name", "recipient_id").includes(key) ?
                                                                                 order[key] :
                                                                                 <a className='box-id'>{order[key]}</a>
                                                                         }

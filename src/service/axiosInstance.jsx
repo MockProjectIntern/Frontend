@@ -30,7 +30,6 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
-        console.log(token);
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -81,14 +80,15 @@ axiosInstance.interceptors.response.use(
                 return axiosInstance(originalRequest); // Thực hiện lại request ban đầu
             } catch (refreshError) {
                 processQueue(refreshError, null);
+                alert('Phiên đăng nhập hết hạn, vui lòng đăng nhập lại');
+                logout();
                 return Promise.reject(refreshError);
             } finally {
                 isRefreshing = false;
             }
         }
         
-        alert("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại");
-        logout();
+        alert(error.response.data.message);
         return Promise.reject(error); // Nếu là lỗi khác, trả về lỗi
     }
 );
