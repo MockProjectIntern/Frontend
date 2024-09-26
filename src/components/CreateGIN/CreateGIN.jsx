@@ -168,13 +168,13 @@ const CreateGIN = () => {
 			<div className="right__createPaperPage">
 				<div className="right__createPaperPage-wrapper">
 					<div className="right__createPaperPage-container">
-					
-						<div className="box-info">
-							<div className="box-paper">
-								<div className="paper-header">
-									<p>Thông tin phiếu</p>
-								</div>
-								<div className="paper-content">
+
+					<div className="box-supplier">
+                        <div className="box-paper">
+                            <div className="paper-header">
+                                <p>Thông tin phiếu</p>
+                            </div>
+							<div className="paper-content">
 									<div className="group-info">
 									<div className="info-item">
 											<p className="info-title">Mã phiếu</p>
@@ -192,6 +192,19 @@ const CreateGIN = () => {
 												</div>
 											</div>
 										</div>
+
+									</div>
+									</div>
+                        </div>
+                    </div>
+					
+						<div className="box-info">
+							<div className="box-paper">
+								<div className="paper-header">
+									<p>Thông tin bổ sung</p>
+								</div>
+								<div className="paper-content">
+									<div className="group-info">
 
 										<div className="info-item">
 											<p className="info-title">Ghi chú</p>

@@ -15,6 +15,8 @@ import calendarIcon from '../../assets/icons/CalendarIcon.jsx'
 import infoIcon from '../../assets/icons/InfoIcon.jsx'
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup.jsx'
 
+import { LocalizationProvider,DateTimePicker } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 const CreateOrder = () => {
     const [supplier, setSupplier] = useState(null);
     const [order, setOrder] = useState({
@@ -165,11 +167,13 @@ const CreateOrder = () => {
                                         <p className="info-title">Ngày nhập</p>
                                         <div className="info-field">
                                             <div className="box-input">
-                                                <input placeholder='Chọn ngày nhập dự kiến' name='expected_at' type="text" className="text-field" />
+                                                {/* <input placeholder='Chọn ngày nhập dự kiến' name='expected_at' type="text" className="text-field" />
                                                 <fieldset className='input-field'></fieldset>
                                                 <div className="calendar-icon">
                                                     {calendarIcon}
-                                                </div>
+                                                </div> */}
+
+<LocalizationProvider dateAdapter={AdapterDayjs}> <DateTimePicker/></LocalizationProvider>
                                             </div>               
                                         </div>
                                     </div>

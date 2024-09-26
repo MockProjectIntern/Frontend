@@ -16,6 +16,7 @@ import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
+import StatusFilter from './FiltersPopup/StatusFilter.jsx'
 
 const grnList = [
     {
@@ -67,6 +68,9 @@ const GRNList = () => {
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
 
+    const [isOpenStatusPopup, setIsOpenStatusPopup] = useState(false);
+    const [statusListFilter, setStatusListFilter] = useState([]);
+
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_grns');
@@ -97,6 +101,7 @@ const GRNList = () => {
 
     const headersRef = useRef(null);
     const contentRef = useRef(null);
+    const statusBtnRef = useRef(null);
 
     const handleScroll = (e, target) => {
         target.scrollLeft = e.target.scrollLeft;
@@ -177,7 +182,7 @@ const GRNList = () => {
                             </div>
                         </div>
                         <div className="btn-group group-filter-btns">
-                            <button className="btn btn-base btn-filter">
+                            <button ref={statusBtnRef} className="btn btn-base btn-filter" onClick={()=> setIsOpenStatusPopup(!isOpenStatusPopup)}>
                                 <span className="btn__label">
                                     Trạng thái
                                     <span className="btn__icon">
@@ -185,6 +190,7 @@ const GRNList = () => {
                                     </span>
                                 </span>
                             </button>
+                            {isOpenStatusPopup && <StatusFilter statusBtnRef = {statusBtnRef} closePopup={() => setIsOpenStatusPopup(false)} type={"GRN"} setStatusList={setStatusListFilter}/>}
                             <button className="btn btn-base btn-filter">
                                 <span className="btn__label">
                                     Ngày tạo

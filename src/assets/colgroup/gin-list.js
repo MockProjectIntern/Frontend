@@ -9,6 +9,11 @@ const gin_list_colgroup = {
         width: "160px",
         align: "text-start"
     },
+    // keyword: {
+    //     name: "Từ khóa",
+    //     width: "160px",
+    //     align: "text-start"
+    // },
     status: {
         name: "Trạng thái",
         width: "180px",
