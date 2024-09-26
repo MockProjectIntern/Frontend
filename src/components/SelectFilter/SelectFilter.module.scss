@@ -9,13 +9,11 @@
     box-sizing: border-box;
     position: absolute;
     inset: auto auto 0px 0px;
-    transform: translate3d(-130px, 310px, 0px);
+    transform: translate3d(0px, calc(100% + 5px), 0px);
 }
 
 .wrapper {
-    height: 300px;
     width: 400px;
-    overflow: hidden auto;
     border-radius: 3px;
     padding: 4px 4px;
     box-sizing: border-box;
@@ -45,6 +43,23 @@
 .wrapper_select{
     display: flex;
     flex-direction: column;
+    max-height: 270px;
+    overflow: auto;
+
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    /* Phần của thanh cuộn */
+    &::-webkit-scrollbar-thumb {
+        background-color: #A0A5AC; /* Màu xám của thanh cuộn */
+        border-radius: 10px; /* Bo tròn góc */
+    }
+
+    /* Nền của thanh cuộn */
+    &::-webkit-scrollbar-track {
+        background-color: transparent; /* Nền trong suốt hoặc có thể đổi màu theo ý bạn */
+    }
 }
 
 
@@ -73,7 +88,7 @@
     gap: 10px;
     padding: 4px 4px;
     border-radius: 3px;
-    height: 35px;
+    min-height: 35px;
     align-items: center;
     padding-left: 10px;
     

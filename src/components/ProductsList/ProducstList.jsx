@@ -12,8 +12,9 @@ import Header from '../Header/Header.jsx'
 import { useNavigate } from 'react-router-dom'
 import { getProductList } from '../../service/ProductAPI.jsx'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
-import SelectFilterCategory from '../SelectFilterBrand/SelectFilterCategory.jsx'
+import SelectFilter from '../SelectFilter/SelectFilter.jsx'
 import { getListCategory } from '../../service/CategoryAPI.jsx'
+import { getListBrand } from '../../service/BrandAPI.jsx'
 
 
 
@@ -32,13 +33,14 @@ const ProductList = () => {
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_products');
         return storedCols ? JSON.parse(storedCols) : {
-            keyword: null,
-            category_ids: null,
-            created_date_from: null,
-            created_date_to: null,
-            brand_ids: null,
-            statuses: null,
-            tags: null
+            images: true,
+            name: true,
+            status: true,
+            category_name: true,
+            brand_name: true,
+            quantity: true,
+            created_at: true,
+            updated_at: true
         }
     })
 
@@ -64,6 +66,8 @@ const ProductList = () => {
     const headersRef = useRef(null);
     const contentRef = useRef(null);
     const limitBtnRef = useRef(null);
+    const filterCategoryBtnRef = useRef(null);
+    const filterBrandBtnRef = useRef(null);
 
 
     const [page, setPage] = useState(1);
@@ -74,40 +78,52 @@ const ProductList = () => {
     const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
     const [dataBody, setDataBody] = useState(
         {
-            "keyword": null,
-            "category_ids": null,
-            "created_date_from": null,
-            "created_date_to": null,
-            "brand_ids": null,
-            "supplier_ids": null,
+            keyword: null,
+            category_ids: null,
+            created_date_from: null,
+            created_date_to: null,
+            brand_ids: null,
+            statuses: null,
+            tags: null
         }
     );
-
-
-    // phan quan ly filter loai san pham
-
+    // phan useState quan ly filter loai san pham
+    const [selectedCategories, setSelectedCategories] = useState([]);
     const [listCategories, setListCategories,] = useState([]);
     const [isOpenFilterCategoryPopup, setIsOpenFilterCategoryPopup] = useState(false);
-
     const [dataFilterCategory, setDataFilterCategory] = useState(
         {
             "keyword": null,
         }
     );
-
+    const [categoryKeyword, setCategoryKeyword] = useState("");
     const [currentPageFilterCategory, setCurrentPageFilterCategory] = useState(1);
     const [totalPageFilterCategory, setTotalPageFilterCategory] = useState();
+    //phan useState quan ly filter nhan hieu
+    const [selectedBrands, setSelectedBrands] = useState([]);
+    const [listBrands, setListBrands,] = useState([]);
+    const [isOpenFilterBrandPopup, setIsOpenFilterBrandPopup] = useState(false);
+    const [dataFilterBrand, setDataFilterBrand] = useState(
+        {
+            "keyword": null,
+        }
+    );
+    const [brandKeyword, setBrandKeyword] = useState("");
+    const [currentPageFilterBrand, setCurrentPageFilterBrand] = useState(1);
+    const [totalPageFilterBrand, setTotalPageFilterBrand] = useState();
 
-
-    const filterCategoryBtnRef = useRef(null);
-
-    const [selectedCategories, setSelectedCategories] = useState([]);
-
-    const handleSelectionChange = (selected) => {
+    const handleSelectionChangeCategories = (selected) => {
         setSelectedCategories(selected);
         setDataBody((prevDataBody) => ({
             ...prevDataBody, // Giữ nguyên các thuộc tính khác của prevDataBody
             category_ids: selected // Cập nhật danh sách brand_ids
+        }));
+    };
+    const handleSelectionChangeBrands = (selected) => {
+        setSelectedBrands(selected);
+        setDataBody((prevDataBody) => ({
+            ...prevDataBody, // Giữ nguyên các thuộc tính khác của prevDataBody
+            brand_ids: selected // Cập nhật danh sách brand_ids
         }));
     };
 
@@ -116,7 +132,10 @@ const ProductList = () => {
         setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup)
     }
 
-
+    const handleClickButtonFilterBrand = () =>{
+        fetchProductList();
+        setIsOpenFilterBrandPopup(!isOpenFilterBrandPopup)
+    }
 
     const fetchProductList = async () => {
         try {
@@ -138,7 +157,7 @@ const ProductList = () => {
 
     const fetchCategoryList = async () => {
         try {
-            const categories = await getListCategory(currentPageFilterCategory,5,dataFilterCategory )
+            const categories = await getListCategory(currentPageFilterCategory,10,dataFilterCategory )
             if(categories.status_code === 200){
                 setListCategories(categories.data.data);
                 setTotalPageFilterCategory(categories.data.total_page)
@@ -151,6 +170,89 @@ const ProductList = () => {
             throw err;
         }
     }
+
+    const fetchBrandList = async () => {
+        try {
+            const brands = await getListBrand(currentPageFilterCategory,10,dataFilterCategory )
+            if(brands.status_code === 200){
+                setListBrands(brands.data.data);
+                setTotalPageFilterBrand(brands.data.total_page)
+            }
+            else {
+                console.log("status code:", brands.status_code);
+            }
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
+
+
+    const fetchMoreCategoryList = async() =>{
+        if(currentPageFilterCategory < totalPageFilterCategory){
+            const categories = await getListCategory(currentPageFilterCategory + 1,10,dataFilterCategory )
+            setListCategories(prev => [
+                ...prev,
+                ...categories.data.data,
+            ]);
+            setCurrentPageFilterCategory(currentPageFilterCategory + 1);
+            setTotalPageFilterCategory(categories.data.total_page);
+        }
+    }
+
+    const fetchMoreBrandsList = async() =>{
+        if(currentPageFilterBrand < totalPageFilterBrand){
+            const brands = await getListCategory(currentPageFilterBrand + 1,10,dataFilterBrand )
+            setListBrands(prev => [
+                ...prev,
+                ...brands.data.data,
+            ]);
+            setCurrentPageFilterBrand(currentPageFilterBrand + 1);
+            setTotalPageFilterBrand(brands.data.total_page);
+        }
+    }
+
+    const handleFetchMoreCategoryList = () =>{
+        if(isOpenFilterCategoryPopup){
+            fetchCategoryList();
+        }
+        else{
+            setListCategories([]);
+            setCategoryKeyword("");
+            setCurrentPageFilterCategory(1);
+            setTotalPageFilterCategory(1);
+        }
+    }
+
+    const handleFetchMoreBrandList = () =>{
+        if(isOpenFilterBrandPopup){
+            fetchBrandList();
+        }
+        else{
+            setListBrands([]);
+            setBrandKeyword("");
+            setCurrentPageFilterBrand(1);
+            setTotalPageFilterBrand(1);
+        }
+    }
+
+    useEffect(() =>{
+        handleFetchMoreCategoryList();
+    },[isOpenFilterCategoryPopup])
+
+    useEffect(() =>{
+        setCurrentPageFilterCategory(1);
+        handleFetchMoreCategoryList();
+    },[categoryKeyword])
+
+    useEffect(() =>{
+        handleFetchMoreBrandList();
+    },[isOpenFilterBrandPopup])
+
+    useEffect(() =>{
+        setCurrentPageFilterBrand(1);
+        handleFetchMoreBrandList();
+    },[brandKeyword])
 
     useEffect(() => {
         Cookies.set('filter_products', JSON.stringify(colsToRender));
@@ -173,12 +275,23 @@ const ProductList = () => {
 
     }, [isOpenFilterCategoryPopup, dataFilterCategory.keyword, currentPageFilterCategory]);
 
+    useEffect(()=>{
+        if(isOpenFilterBrandPopup){
+            fetchBrandList();
+        }
+        else{
+            setListBrands([]);
+            setDataFilterBrand({keyword: null});
+        }
+
+    }, [isOpenFilterBrandPopup, dataFilterBrand.keyword, currentPageFilterBrand]);
+
     useEffect(() => {
         console.log("Sản phẩm đã thay đổi:", productsList);
         // Bạn có thể thực hiện các hành động khác nếu cần khi sản phẩm thay đổi
     }, [productsList]);
 
-    console.log("selected:", selectedCategories);
+    console.log(selectedBrands)
 
     return (
         <>
@@ -251,15 +364,19 @@ const ProductList = () => {
                                 </button>
                                 {
                                     isOpenFilterCategoryPopup && 
-
-                                    <SelectFilterCategory 
+                                    <SelectFilter
                                         btnRef={filterCategoryBtnRef} 
                                         closePopup={() =>setIsOpenFilterCategoryPopup(false)} 
-                                        listCategories={listCategories} 
+                                        listObject={listCategories} 
                                         currentPage={currentPageFilterCategory} 
                                         totalPage={totalPageFilterCategory}
-                                        onSelectionChange={handleSelectionChange}
+                                        onSelectionChange={handleSelectionChangeCategories}
                                         handleOnClickButton={handleClickButtonFilterCategory}
+                                        keyword={categoryKeyword}
+                                        handleChangeKeyword={(e) => {
+                                            setCategoryKeyword(e.target.value);
+                                        }}
+                                        loadMoreData={fetchMoreCategoryList}
                                     />
                                 }
                                 <button className="btn btn-base btn-filter">
@@ -270,7 +387,7 @@ const ProductList = () => {
                                         </span>
                                     </span>
                                 </button>
-                                <button className="btn btn-base btn-filter">
+                                <button className="btn btn-base btn-filter" onClick={() => {setIsOpenFilterBrandPopup(!isOpenFilterBrandPopup);  }} ref={filterBrandBtnRef}>
                                     <span className="btn__label">
                                         Nhãn hiệu
                                         <span className="btn__icon">
@@ -278,6 +395,23 @@ const ProductList = () => {
                                         </span>
                                     </span>
                                 </button>
+                                {
+                                    isOpenFilterBrandPopup && 
+                                    <SelectFilter
+                                        btnRef={filterBrandBtnRef} 
+                                        closePopup={() =>setIsOpenFilterBrandPopup(false)} 
+                                        listObject={listBrands} 
+                                        currentPage={currentPageFilterBrand} 
+                                        totalPage={totalPageFilterBrand}
+                                        onSelectionChange={handleSelectionChangeBrands}
+                                        handleOnClickButton={handleClickButtonFilterBrand}
+                                        keyword={brandKeyword}
+                                        handleChangeKeyword={(e) => {
+                                            setBrandKeyword(e.target.value);
+                                        }}
+                                        loadMoreData={fetchMoreBrandsList}
+                                    />
+                                }
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
                                         Bộ lọc khác

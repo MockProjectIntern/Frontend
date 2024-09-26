@@ -9,10 +9,12 @@ import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faL, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import Header from '../Header/Header.jsx'
-
+import SelectFilter from '../SelectFilter/SelectFilter.jsx'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import { useNavigate } from 'react-router-dom'
 import { getVariantList } from '../../service/VariantAPI.jsx'
+import { getListCategory } from '../../service/CategoryAPI.jsx'
+import { getListBrand } from '../../service/BrandAPI.jsx'
 
 const VariantList = () => {
 
@@ -65,6 +67,8 @@ const VariantList = () => {
     const headersRef = useRef(null);
     const contentRef = useRef(null);
     const limitBtnRef = useRef(null);
+    const filterCategoryBtnRef = useRef(null);
+    const filterBrandBtnRef = useRef(null);
 
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
@@ -74,14 +78,53 @@ const VariantList = () => {
     const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
     const [dataBody, setDataBody] = useState(
         {
+            keyword: null,
+            category_ids: null,
+            created_date_from: null,
+            created_date_to: null,
+            brand_ids: null,
+            statues: null
+        } 
+    );
+
+    // useState quan li filter loai san pham
+    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [listCategories, setListCategories,] = useState([]);
+    const [isOpenFilterCategoryPopup, setIsOpenFilterCategoryPopup] = useState(false);
+    const [dataFilterCategory, setDataFilterCategory] = useState(
+        {
             "keyword": null,
-            "category_ids": null,
-            "created_date_from": null,
-            "created_date_to": null,
-            "brand_ids": null,
-            "supplier_ids": null
         }
     );
+    const [categoryKeyword, setCategoryKeyword] = useState("");
+    const [currentPageFilterCategory, setCurrentPageFilterCategory] = useState(1);
+    const [totalPageFilterCategory, setTotalPageFilterCategory] = useState();
+
+    // useState quan li filter nhan hieu
+    const [selectedBrands, setSelectedBrands] = useState([]);
+    const [listBrands, setListBrands,] = useState([]);
+    const [isOpenFilterBrandPopup, setIsOpenFilterBrandPopup] = useState(false);
+    const [dataFilterBrand, setDataFilterBrand] = useState(
+        {
+            "keyword": null,
+        }
+    );
+    const [brandKeyword, setBrandKeyword] = useState("");
+    const [currentPageFilterBrand, setCurrentPageFilterBrand] = useState(1);
+    const [totalPageFilterBrand, setTotalPageFilterBrand] = useState();
+
+    const handleSelectionChangeCategories = (selected) => {
+        setSelectedCategories(selected);
+        setDataBody((prevDataBody) => ({
+            ...prevDataBody, // Giữ nguyên các thuộc tính khác của prevDataBody
+            category_ids: selected // Cập nhật danh sách brand_ids
+        }));
+    };
+
+    const handleClickButtonFilterCategory = () =>{
+        fetchVariantList();
+        setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup)
+    }
 
     const fetchVariantList = async () => {
         try {
@@ -100,6 +143,140 @@ const VariantList = () => {
         }
     }
 
+    const fetchCategoryList = async () => {
+        try {
+            const categories = await getListCategory(currentPageFilterCategory,10,dataFilterCategory )
+            if(categories.status_code === 200){
+                setListCategories(categories.data.data);
+                setTotalPageFilterCategory(categories.data.total_page)
+            }
+            else {
+                console.log("status code:", categories.status_code);
+            }
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
+
+    const fetchMoreCategoryList = async() =>{
+        if(currentPageFilterCategory < totalPageFilterCategory){
+            const categories = await getListCategory(currentPageFilterCategory + 1,10,dataFilterCategory )
+            setListCategories(prev => [
+                ...prev,
+                ...categories.data.data,
+            ]);
+            setCurrentPageFilterCategory(currentPageFilterCategory + 1);
+            setTotalPageFilterCategory(categories.data.total_page);
+        }
+    }
+
+    const handleFetchMoreCategoryList = () =>{
+        if(isOpenFilterCategoryPopup){
+            fetchCategoryList();
+        }
+        else{
+            setListCategories([]);
+            setCategoryKeyword("");
+            setCurrentPageFilterCategory(1);
+            setTotalPageFilterCategory(1);
+        }
+    }
+
+    const handleSelectionChangeBrands = (selected) => {
+        setSelectedBrands(selected);
+        setDataBody((prevDataBody) => ({
+            ...prevDataBody, // Giữ nguyên các thuộc tính khác của prevDataBody
+            brand_ids: selected // Cập nhật danh sách brand_ids
+        }));
+    };
+
+    const handleClickButtonFilterBrand = () =>{
+        fetchVariantList();
+        setIsOpenFilterBrandPopup(!isOpenFilterBrandPopup)
+    }
+
+    const fetchBrandList = async () => {
+        try {
+            const brands = await getListBrand(currentPageFilterCategory,10,dataFilterCategory )
+            if(brands.status_code === 200){
+                setListBrands(brands.data.data);
+                setTotalPageFilterBrand(brands.data.total_page)
+            }
+            else {
+                console.log("status code:", brands.status_code);
+            }
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
+
+    const fetchMoreBrandsList = async() =>{
+        if(currentPageFilterBrand < totalPageFilterBrand){
+            const brands = await getListCategory(currentPageFilterBrand + 1,10,dataFilterBrand )
+            setListBrands(prev => [
+                ...prev,
+                ...brands.data.data,
+            ]);
+            setCurrentPageFilterBrand(currentPageFilterBrand + 1);
+            setTotalPageFilterBrand(brands.data.total_page);
+        }
+    }
+
+    const handleFetchMoreBrandList = () =>{
+        if(isOpenFilterBrandPopup){
+            fetchBrandList();
+        }
+        else{
+            setListBrands([]);
+            setBrandKeyword("");
+            setCurrentPageFilterBrand(1);
+            setTotalPageFilterBrand(1);
+        }
+    }
+
+
+    useEffect(() =>{
+        handleFetchMoreCategoryList();
+    },[isOpenFilterCategoryPopup])
+
+    useEffect(() =>{
+        setCurrentPageFilterCategory(1);
+        handleFetchMoreCategoryList();
+    },[categoryKeyword])
+
+    useEffect(()=>{
+        if(isOpenFilterCategoryPopup){
+            fetchCategoryList();
+        }
+        else{
+            setListCategories([]);
+            setDataFilterCategory({keyword: null});
+        }
+
+    }, [isOpenFilterCategoryPopup, dataFilterCategory.keyword, currentPageFilterCategory]);
+
+    useEffect(() =>{
+        handleFetchMoreBrandList();
+    },[isOpenFilterBrandPopup])
+
+    useEffect(() =>{
+        setCurrentPageFilterBrand(1);
+        handleFetchMoreBrandList();
+    },[brandKeyword])
+
+    useEffect(()=>{
+        if(isOpenFilterBrandPopup){
+            fetchBrandList();
+        }
+        else{
+            setListBrands([]);
+            setDataFilterBrand({keyword: null});
+        }
+
+    }, [isOpenFilterBrandPopup, dataFilterBrand.keyword, currentPageFilterBrand]);
+
     useEffect(() => {
         Cookies.set('filter_products_manage', JSON.stringify(colsToRender))
     }, [colsToRender])
@@ -108,6 +285,10 @@ const VariantList = () => {
         fetchVariantList();
 
     }, [limit, page]);
+
+    useEffect(() => {
+        console.log("Sản phẩm đã thay đổi:", variantsList);// Bạn có thể thực hiện các hành động khác nếu cần khi sản phẩm thay đổi
+    }, [variantsList]);
     return (
         <>
             <Header />
@@ -166,7 +347,7 @@ const VariantList = () => {
                                 </div>
                             </div>
                             <div className="btn-group group-filter-btns">
-                                <button className="btn btn-base btn-filter">
+                                <button className="btn btn-base btn-filter" onClick={() => {setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup);  }} ref={filterCategoryBtnRef}>
                                     <span className="btn__label">
                                         Loại sản phẩm
                                         <span className="btn__icon">
@@ -174,6 +355,23 @@ const VariantList = () => {
                                         </span>
                                     </span>
                                 </button>
+                                {
+                                    isOpenFilterCategoryPopup && 
+                                    <SelectFilter
+                                        btnRef={filterCategoryBtnRef} 
+                                        closePopup={() =>setIsOpenFilterCategoryPopup(false)} 
+                                        listObject={listCategories} 
+                                        currentPage={currentPageFilterCategory} 
+                                        totalPage={totalPageFilterCategory}
+                                        onSelectionChange={handleSelectionChangeCategories}
+                                        handleOnClickButton={handleClickButtonFilterCategory}
+                                        keyword={categoryKeyword}
+                                        handleChangeKeyword={(e) => {
+                                            setCategoryKeyword(e.target.value);
+                                        }}
+                                        loadMoreData={fetchMoreCategoryList}
+                                    />
+                                }
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
                                         Ngày tạo
@@ -182,7 +380,7 @@ const VariantList = () => {
                                         </span>
                                     </span>
                                 </button>
-                                <button className="btn btn-base btn-filter">
+                                <button className="btn btn-base btn-filter" onClick={() => {setIsOpenFilterBrandPopup(!isOpenFilterBrandPopup);  }} ref={filterBrandBtnRef}>
                                     <span className="btn__label">
                                         Nhãn hiệu
                                         <span className="btn__icon">
@@ -190,6 +388,23 @@ const VariantList = () => {
                                         </span>
                                     </span>
                                 </button>
+                                {
+                                    isOpenFilterBrandPopup && 
+                                    <SelectFilter
+                                        btnRef={filterBrandBtnRef} 
+                                        closePopup={() =>setIsOpenFilterBrandPopup(false)} 
+                                        listObject={listBrands} 
+                                        currentPage={currentPageFilterBrand} 
+                                        totalPage={totalPageFilterBrand}
+                                        onSelectionChange={handleSelectionChangeBrands}
+                                        handleOnClickButton={handleClickButtonFilterBrand}
+                                        keyword={brandKeyword}
+                                        handleChangeKeyword={(e) => {
+                                            setBrandKeyword(e.target.value);
+                                        }}
+                                        loadMoreData={fetchMoreBrandsList}
+                                    />
+                                }
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
                                         Bộ lọc khác
