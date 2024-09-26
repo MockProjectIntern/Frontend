@@ -103,38 +103,53 @@ const SupplierList = () => {
     const [pageFilter, setPageFilter] = useState(1);
     const [limitFilter, setLimitFilter] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
-    const [loading, setLoading] = useState(false); // Trạng thái loading
-    const [supplierList, setSupplierList] = useState([]); // Trạng thái lưu danh sách kết quả tìm kiếm
+    const [loading, setLoading] = useState(false);
+    const [supplierList, setSupplierList] = useState([]);
+    const [isPopupVisible, setIsPopupVisible] = useState(false); // State to control visibility of the popup
+    const popupRef = useRef(null);
 
-    // Hàm tìm kiếm nhà cung cấp bằng tên
     const fetchSuppliersByName = async () => {
         try {
-            setLoading(true); // Bắt đầu quá trình loading
-            const response = await getAllSupplierByName(pageFilter, limitFilter, searchTerm); // Gọi API với từ khóa tìm kiếm
+            setLoading(true);
+            const response = await getAllSupplierByName(pageFilter, limitFilter, searchTerm);
             if (response && response.data) {
-                setSupplierList(response.data.data); // Cập nhật danh sách nhà cung cấp
+                setSupplierList(response.data.data);
             } else {
-                setSupplierList([]); // Trường hợp không có kết quả
+                setSupplierList([]);
             }
-            setLoading(false); // Kết thúc loading
+            setLoading(false);
         } catch (err) {
             console.log(err);
-            setLoading(false); // Kết thúc loading nếu xảy ra lỗi
+            setLoading(false);
         }
     };
 
-    // Xử lý tìm kiếm khi người dùng nhập từ khóa
     const handleSearch = (e) => {
         const value = e.target.value;
-        setSearchTerm(value); // Cập nhật giá trị tìm kiếm
+        setSearchTerm(value);
+        setIsPopupVisible(true); // Show popup when typing
     };
 
-    // useEffect để gọi hàm tìm kiếm khi searchTerm thay đổi
     useEffect(() => {
         if (searchTerm) {
-            fetchSuppliersByName(); // Gọi hàm tìm kiếm khi searchTerm có giá trị
+            fetchSuppliersByName();
         }
-    }, [searchTerm, pageFilter, limitFilter]); // Gọi lại khi searchTerm, page hoặc limit thay đổi
+    }, [searchTerm, pageFilter, limitFilter]);
+
+    // Handle clicks outside the popup
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (popupRef.current && !popupRef.current.contains(event.target)) {
+                setIsPopupVisible(false); // Hide popup if click is outside
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [popupRef]);
 
     return (
         <>
@@ -198,7 +213,7 @@ const SupplierList = () => {
                                         name="search"
                                         autoComplete="on"
                                         value={searchTerm}
-                                        onChange={handleSearch} // Bắt sự kiện nhập từ khóa
+                                        onChange={handleSearch}
                                     />
                                     <fieldset className={s['input-field']} />
                                 </div>
@@ -207,8 +222,8 @@ const SupplierList = () => {
                                 {loading && <p className={s["loading-text"]}>Đang tìm kiếm...</p>}
 
                                 {/* Hiển thị kết quả tìm kiếm */}
-                                {!loading && supplierList.length > 0 && (
-                                    <div className={s["search-results"]}>
+                                {!loading && supplierList.length > 0 && isPopupVisible && (
+                                    <div ref={popupRef} className={s["search-results"]}>
                                         {supplierList.map((supplier) => (
                                             <div key={supplier.id} className={s["search-result-item"]}>
                                                 <p>{supplier.name}</p>
@@ -218,7 +233,7 @@ const SupplierList = () => {
                                 )}
 
                                 {/* Thông báo khi không tìm thấy kết quả */}
-                                {!loading && supplierList.length === 0 && searchTerm && (
+                                {!loading && supplierList.length === 0 && searchTerm && isPopupVisible && (
                                     <p className={s["no-results"]}>Không tìm thấy nhà cung cấp nào.</p>
                                 )}
                             </div>
