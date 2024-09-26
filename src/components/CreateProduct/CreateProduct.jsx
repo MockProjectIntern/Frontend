@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import cn from 'classnames';
 
 // Bootstrap
@@ -66,10 +66,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faChevronLeft, faPlus, faPlusCircle, faXmarkCircle } from '@fortawesome/free-solid-svg-icons'
 import infoIcon from '../../assets/icons/InfoIcon'
 import TypeItem from '../TypeItem/TypeItem';
-import { uploadImage } from '../Upload';
+import { uploadImage } from '../../service/UploadAPI';
 import { createProduct } from '../../service/ProductAAPI';
+import ListSelectPopup from '../ListSelectPopup/ListSelectPopup';
+import { getListCategory } from '../../service/CategoryAPI';
+import { getListBrand } from '../../service/BrandAPI';
 
 const CreateProduct = () => {
+    const navigate = useNavigate();
+
     const [dataBody, setDataBody] = useState({
         sub_id: null,
         name: null,
@@ -83,7 +88,7 @@ const CreateProduct = () => {
         brand_id: null,
         tags: null,
         description: null,
-        status: "INACTIVE"
+        status: "ACTIVE"
     });
 
     const handleCreateProduct = async () => {
@@ -97,20 +102,24 @@ const CreateProduct = () => {
                 };
             })
         );
-    
+
         // Cập nhật `dataBody` với các hình ảnh đã được tải lên
         setDataBody(prevState => ({
             ...prevState,
             images: uploadedImages
         }));
-    
+
         // Sau khi tất cả ảnh đã được tải lên, gọi API để tạo sản phẩm
         const response = await createProduct({
             ...dataBody,
             images: uploadedImages
         });
+        if (response.status === 201) {
+            alert("Tạo sản phẩm thành công!");
+            navigate('/admin/products');
+        }
     };
-    
+
     const [isOpenEditor, setIsOpenEditor] = useState(false)
 
     const editorConfig = {
@@ -339,8 +348,6 @@ const CreateProduct = () => {
         setImages(reorderedImages);
     };
 
-    const [isInitialStock, setIsInitialStock] = useState(false)
-
     const [isTypes, setIsTypes] = useState(false);
     const [types, setTypes] = useState([]);
 
@@ -378,6 +385,160 @@ const CreateProduct = () => {
         });
         setTypes(updatedTypes);
     }
+
+    const [categoryList, setCategoryList] = useState([]);
+    const [category, setCategory] = useState("");
+    const [isCategoryPopup, setIsCategoryPopup] = useState(false);
+    const categoryBtnRef = useRef(null);
+
+    const [categoryDataFilter, setCategoryDataFilter] = useState({
+        keyword: null
+    });
+    const [dataPageCategory, setDataPageCategory] = useState({
+        currentPage: 1,
+        totalPage: 1,
+        currentSize: 10,
+    });
+
+    const fetchCategoryList = async () => {
+        const response = await getListCategory(dataPageCategory.currentPage, dataPageCategory.currentSize, categoryDataFilter);
+        setCategoryList(response.data.data);
+        setDataPageCategory(prevState => {
+            return {
+                ...prevState,
+                totalPage: response.data.total_page
+            }
+        });
+    }
+    const fetchMoreCategory = async () => {
+        if (dataPageCategory.currentPage < dataPageCategory.totalPage) {
+            const response = await getListCategory(dataPageCategory.currentPage + 1, dataPageCategory.currentSize, categoryDataFilter);
+            setCategoryList(prevList => [...prevList, ...response.data.data]);
+            setDataPageCategory(prevState => {
+                return {
+                    ...prevState,
+                    currentPage: prevState.currentPage + 1,
+                    totalPage: response.data.total_page
+                }
+            });
+        }
+    }
+
+    const handleFetchMoreCategory = () => {
+        if (isCategoryPopup) {
+            fetchCategoryList();
+        } else {
+            setCategoryList([]);
+            setCategoryDataFilter((prev) => {
+                return (
+                    {
+                        ...prev,
+                        keyword: ""
+                    }
+                )
+            })
+            setDataPageCategory(prevState => {
+                return {
+                    ...prevState,
+                    currentPage: 1,
+                    totalPage: 1
+                }
+            });
+        }
+    }
+    useEffect(() => {
+        handleFetchMoreCategory();
+    }, [isCategoryPopup])
+    useEffect(() => {
+        setDataPageCategory(prevState => {
+            return {
+                ...prevState,
+                currentPage: 1
+            }
+        });
+        handleFetchMoreCategory();
+    }, [categoryDataFilter.keyword])
+
+    useEffect(() => {
+        const selectedCategory = categoryList.find(category => category.id === dataBody.category_id);
+
+        setCategory(selectedCategory);
+    }, [dataBody.category_id])
+
+    const [brandList, setBrandList] = useState([]);
+    const [isBrandPopup, setIsBrandPopup] = useState(false);
+    const brandBtnRef = useRef(null);
+    const [brandDataFilter, setBrandDataFilter] = useState({
+        name: null
+    });
+    const [dataPageBrand, setDataPageBrand] = useState({
+        currentPage: 1,
+        totalPage: 1,
+        currentSize: 10,
+    });
+
+    const fetchBrandList = async () => {
+        const response = await getListBrand(dataPageBrand.currentPage, dataPageBrand.currentSize, brandDataFilter);
+        setBrandList(response.data.data);
+        setDataPageBrand(prevState => {
+            return {
+                ...prevState,
+                totalPage: response.data.total_page
+            }
+        });
+    }
+    const fetchMoreBrand = async () => {
+        if (dataPageBrand.currentPage < dataPageBrand.totalPage) {
+            const response = await getListBrand(dataPageBrand.currentPage + 1, dataPageBrand.currentSize, brandDataFilter);
+            setBrandList(prevList => [...prevList, ...response.data.data]);
+            setDataPageBrand(prevState => {
+                return {
+                    ...prevState,
+                    currentPage: prevState.currentPage + 1,
+                    totalPage: response.data.total_page
+                }
+            });
+        }
+    }
+
+    const handleFetchMoreBrand = () => {
+        if (isBrandPopup) {
+            fetchBrandList();
+        } else {
+            setBrandList([]);
+            setBrandDataFilter((prev) => {
+                return (
+                    {
+                        ...prev,
+                        name: ""
+                    }
+                )
+            })
+            setDataPageBrand(prevState => {
+                return {
+                    ...prevState,
+                    currentPage: 1,
+                    totalPage: 1
+                }
+            });
+        }
+    }
+    useEffect(() => {
+        handleFetchMoreBrand();
+    }, [isBrandPopup])
+    useEffect(() => {
+        setDataPageBrand(prevState => {
+            return {
+                ...prevState,
+                currentPage: 1
+            }
+        });
+        handleFetchMoreBrand();
+    }, [brandDataFilter.name])
+
+    useEffect(() => {
+        console.log(dataBody)
+    }, [dataBody])
 
     return (
         <>
@@ -505,17 +666,18 @@ const CreateProduct = () => {
                                             </button>
                                             <Collapse className='box-description' isOpen={isOpenEditor}>
                                                 <div className="box-description__container">
-                                                    <CKEditor 
-                                                        editor={ClassicEditor} 
-                                                        config={editorConfig} 
+                                                    <CKEditor
+                                                        editor={ClassicEditor}
+                                                        config={editorConfig}
                                                         onChange={(event, editor) => {
                                                             const data = editor.getData();
                                                             setDataBody(prevState => {
-                                                            return {
-                                                                ...prevState,
-                                                                description: data
-                                                            }
-                                                        })}}
+                                                                return {
+                                                                    ...prevState,
+                                                                    description: data
+                                                                }
+                                                            })
+                                                        }}
                                                     />
                                                 </div>
                                             </Collapse>
@@ -783,10 +945,34 @@ const CreateProduct = () => {
                                             Loại sản phẩm
                                         </label>
                                         <div className="box-select">
-                                            <button id='category' className="btn-select">
-                                                Chọn loại sản phẩm
+                                            <button ref={categoryBtnRef} onClick={() => setIsCategoryPopup(!isCategoryPopup)} id='category' className="btn-select">
+                                                {category?.name || 'Chọn loại sản phẩm'}
                                                 <FontAwesomeIcon icon={faCaretDown} />
                                             </button>
+                                            {
+                                                isCategoryPopup &&
+                                                <ListSelectPopup
+                                                    title={"loại sản phẩm"}
+                                                    isLarge={false}
+                                                    isSearch={true}
+                                                    keyword={categoryDataFilter.keyword}
+                                                    handleChangeKeyword={(e) => {
+                                                        setCategoryDataFilter({
+                                                            ...categoryDataFilter,
+                                                            keyword: e.target.value
+                                                        })
+                                                    }}
+                                                    isFastCreate={true}
+                                                    dataList={categoryList}
+                                                    handleSelect={(id) => setDataBody({
+                                                        ...dataBody,
+                                                        category_id: id
+                                                    })}
+                                                    btnRef={categoryBtnRef}
+                                                    closePopup={() => setIsCategoryPopup(false)}
+                                                    fetchMoreData={fetchMoreCategory}
+                                                />
+                                            }
                                         </div>
                                     </div>
                                     <div className="form-item">
@@ -794,10 +980,34 @@ const CreateProduct = () => {
                                             Nhãn hiệu
                                         </label>
                                         <div className="box-select">
-                                            <button id='brand' className="btn-select">
+                                            <button ref={brandBtnRef} onClick={() => setIsBrandPopup(!isBrandPopup)} id='brand' className="btn-select">
                                                 Chọn nhãn hiệu
                                                 <FontAwesomeIcon icon={faCaretDown} />
                                             </button>
+                                            {
+                                                isBrandPopup &&
+                                                <ListSelectPopup
+                                                    title={"nhãn hiệu"}
+                                                    isLarge={false}
+                                                    isSearch={true}
+                                                    keyword={brandDataFilter.name}
+                                                    handleChangeKeyword={(e) => {
+                                                        setBrandDataFilter({
+                                                            ...brandDataFilter,
+                                                            name: e.target.value
+                                                        })
+                                                    }}
+                                                    isFastCreate={true}
+                                                    dataList={brandList}
+                                                    btnRef={brandBtnRef}
+                                                    handleSelect={(id) => setDataBody({
+                                                        ...dataBody,
+                                                        brand_id: id
+                                                    })}
+                                                    closePopup={() => setIsBrandPopup(false)}
+                                                    fetchMoreData={fetchMoreBrand}
+                                                />
+                                            }
                                         </div>
                                     </div>
                                     <div className="form-item">
@@ -855,16 +1065,22 @@ const CreateProduct = () => {
                                             <p>Cho phép bán</p>
                                             <div className="box-switch">
                                                 <div className="btn-switch">
-                                                    <input type="checkbox" name="status" className='switch-checkbox' id="" onChange={
-                                                        e => setDataBody(prevState => {
+                                                    <input
+                                                        type="checkbox"
+                                                        name="status"
+                                                        className='switch-checkbox'
+                                                        id=""
+                                                        defaultChecked={true}
+                                                        onChange={e => setDataBody(prevState => {
                                                             return {
                                                                 ...prevState,
                                                                 status: e.target.checked ? "ACTIVE" : "INACTIVE"
                                                             }
-                                                        })
-                                                    } />
-                                                    <span className="switch-bar"></span>
+                                                        })}
+                                                    />
+                                                    <span className="switch-bar" ></span>
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>

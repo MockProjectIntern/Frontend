@@ -13,6 +13,21 @@ export const loginAccount = async (phone, password) => {
     }
 };
 
+export const registerAccount = async (full_name, phone, password, role) => {
+    try {
+        const response = await axiosInstance.post(`/users/register.json`, {
+            full_name,
+            phone,
+            password,
+            role
+        });
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
 export const getInforDetails = async () => {
     try {
         const response = await axiosInstance.get(`/users/detail.json`);

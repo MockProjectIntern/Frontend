@@ -64,9 +64,16 @@ const SupplierList = () => {
     const [suppliersQuantity, setSuppliersQuantity] = useState();
     const limitBtnRef = useRef(null);
 
+    const [dataBody, setDataBody] = useState(
+        {
+            "keyword": null,
+            "status": null
+        }
+    );
+
     const fetchSupplierList = async () => {
         try {
-            const suppliers = await getSupplierList(page, limit, "filter_suppliers", Cookies.get("filter_suppliers"));
+            const suppliers = await getSupplierList(page, limit, "filter_suppliers", Cookies.get("filter_suppliers"), dataBody);
 
             if (suppliers.status_code === 200) {
                 setSuppliersList(suppliers.data.data);
@@ -289,7 +296,7 @@ const SupplierList = () => {
                                         })}
                                     </colgroup>
                                     <tbody>
-                                        {suppliersList.map((product, index) => {
+                                        {suppliersList.map((supplier, index) => {
                                             return (
                                                 <tr key={index} className="table-data-row">
                                                     <td rowSpan={1} className='table-icon'>
@@ -314,13 +321,11 @@ const SupplierList = () => {
                                                                         className={cn("table-data-item", col[key].align)}
                                                                     >
                                                                         <div className={cn('box-status', {
-                                                                            //'box-status--pending': order[key] === "Chưa nhập",
-                                                                            'box-status--partial': product[key] === "ACTIVE",
-                                                                            //'box-status--completed': order[key] === "INACTIVE",
-                                                                            'box-status--cancelled': product[key] === "INACTIVE",
+                                                                            'box-status--completed': supplier[key] === "ACTIVE",
+                                                                            'box-status--cancelled': supplier[key] === "INACTIVE",
                                                                         })}>
                                                                             <span>
-                                                                                {product[key] === "ACTIVE" ? 'Đang hoạt động' : product[key] === "INACTIVE" ? 'Ngừng giao dịch' : product[key]}
+                                                                                {supplier[key] === "ACTIVE" ? 'Đang hoạt động' : supplier[key] === "INACTIVE" ? 'Ngừng giao dịch' : supplier[key]}
                                                                             </span>
                                                                         </div>
                                                                     </td>
@@ -331,7 +336,7 @@ const SupplierList = () => {
                                                                         key={key}
                                                                         className={cn("table-data-item", col[key].align)}
                                                                     >
-                                                                        <img src={product.images[0]?.url} alt={product.images[0]?.alt} />
+                                                                        <img src={supplier.images[0]?.url} alt={supplier.images[0]?.alt} />
                                                                     </td>
                                                                 )
                                                             }
@@ -342,8 +347,8 @@ const SupplierList = () => {
                                                                 >
                                                                     <p className='box-text'>
                                                                         {
-                                                                            key !== "id" ? product[key] :
-                                                                                <a className='box-id'>{product[key]}</a>
+                                                                            key !== "id" ? supplier[key] :
+                                                                                <a className='box-id'>{supplier[key]}</a>
                                                                         }
                                                                     </p>
                                                                 </td>

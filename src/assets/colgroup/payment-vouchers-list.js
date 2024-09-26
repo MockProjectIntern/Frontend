@@ -30,8 +30,8 @@ const paymentVouchersListColgroup = {
         align: "text-start"
     },
     recipient_id: {
-        name: "Chứng từ gốc",
-        width: "120px",
+        name: "Mã người nhận",
+        width: "130px",
         align: "text-start"
     },
     recipient_name: {
@@ -40,12 +40,12 @@ const paymentVouchersListColgroup = {
         align: "text-start"
     },
     reference_code: {
-        name: "Mã tham chiếu",
+        name: "Mã chứng từ",
         width: "120px",
         align: "text-start"
     },
     reference_id: {
-        name: "Mã tham chiếu",
+        name: "Chứng từ gốc",
         width: "120px",
         align: "text-start"
     },

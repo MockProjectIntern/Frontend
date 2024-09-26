@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { UncontrolledTooltip } from 'reactstrap'
 
@@ -8,13 +8,31 @@ import infoIcon from '../../assets/icons/InfoIcon'
 import { createTransaction } from '../../service/TransactionAPI'
 import { getCategoryTransactionList } from '../../service/CategoryTransaction'
 import { getAllSupplierByName } from '../../service/SuppliersAPI'
+import ListSelectPopup from '../ListSelectPopup/ListSelectPopup'
 
 const CreateReceiptVoucher = () => {
     const [keywordRecipient, setKeywordRecipient] = useState("");
+
+    const [dataPageRecipient, setDataPageRecipient] = useState({
+        currentPage: 1,
+        totalPage: 1,
+        currentSize: 10,
+    });
+    const [dataPageCategory, setDataPageCategory] = useState({
+        currentPage: 1,
+        totalPage: 1,
+        currentSize: 10,
+    });
+
+    const [isSelectRecipientGroup, setIsSelectRecipientGroup] = useState(false);
     const [isSelectRecipient, setIsSelectRecipient] = useState(false);
     const [isSelectCategory, setIsSelectCategory] = useState(false);
-    const [pageRecipient, setPageRecipient] = useState(1);
-    const [sizeRecipient, setSizeRecipient] = useState(10);
+    const [isSelectPaymentMethod, setIsSelectPaymentMethod] = useState(false);
+
+    const recipientGroupBtnRef = useRef(null);
+    const recipientBtnRef = useRef(null);
+    const categoryBtnRef = useRef(null);
+    const paymentMethodBtnRef = useRef(null);
 
     const navigate = useNavigate();
 
@@ -37,58 +55,96 @@ const CreateReceiptVoucher = () => {
         type: "INCOME",
     })
 
-    const listSupplier = [
-        {
-            id: "SUP",
-            name: "Nhà cung cấp"
-        },
-        {
-            id: "CUS",
-            name: "Supplier 2"
-        },
-        {
-            id: "CUS",
-            name: "Supplier 3"
-        },
-    ];
+    const listRecipientGroup = [{ id: "SUP", name: "Nhà cung cấp" }, { id: "USR", name: "Khách hàng" }, { id: "EMP", name: "Nhân viên" }];
+    const listPaymentMethod = [{ id: "CASH", name: "Tiền mặt" }, { id: "BANK_TRANSFER", name: "Chuyển khoản" }, { id: "CARD", name: "Quẹt thẻ" }];
 
     const [listRecipient, setListRecipient] = useState([]);
     const fetchRecipient = async () => {
         if (dataBody.recipient_group === "SUP") {
-            const response = await getAllSupplierByName(pageRecipient, sizeRecipient, keywordRecipient);
-            setListRecipient(response.data);
+            const response = await getAllSupplierByName(dataPageRecipient.currentPage, dataPageRecipient.currentSize, keywordRecipient);
+            setListRecipient(response.data.data);
+            setDataPageRecipient(prevState => {
+                return {
+                    ...prevState,
+                    totalPage: response.data.total_page
+                }
+            });
+        }
+    }
+    const fetchMoreRecipient = async () => {
+        if (dataPageRecipient.currentPage < dataPageRecipient.totalPage) {
+            const response = await getAllSupplierByName(dataPageRecipient.currentPage + 1, dataPageRecipient.currentSize, keywordRecipient);
+            setListRecipient(prevList => [...prevList, ...response.data.data]);
+            setDataPageRecipient(prevState => {
+                return {
+                    ...prevState,
+                    currentPage: prevState.currentPage + 1,
+                    totalPage: response.data.total_page
+                }
+            });
         }
     }
 
     const [listCategory, setListCategory] = useState([]);
     const fetchCategory = async () => {
-        const response = await getCategoryTransactionList(pageRecipient, sizeRecipient, dataBodyCategory.keyword, dataBodyCategory.type);
+        const response = await getCategoryTransactionList(dataPageCategory.currentPage, dataPageCategory.currentSize, dataBodyCategory.keyword, dataBodyCategory.type);
         setListCategory(response.data.data);
+    }
+    const fetchMoreCategory = async () => {
+        if (dataPageCategory.currentPage < dataPageCategory.totalPage) {
+            const response = await getCategoryTransactionList(dataPageCategory.currentPage + 1, dataPageCategory.currentSize, dataBodyCategory.keyword, dataBodyCategory.type);
+            setListCategory(prevList => [...prevList, ...response.data.data]);
+            setDataPageCategory(prevState => {
+                return {
+                    ...prevState,
+                    currentPage: prevState.currentPage + 1,
+                    totalPage: response.data.total_page
+                }
+            });
+        }
     }
 
     const handleCreateTransaction = async () => {
         const response = await createTransaction(dataBody);
-        console.log(response);
         if (response.status_code == 201) {
-            alert("Tạo phiếu chi thành công");
+            alert("Tạo phiếu thu thành công");
             navigate('/admin/receipt_vouchers');
         }
     }
 
-    useEffect(() => {
+    const handleFetchRecipient = () => {
         if (isSelectRecipient) {
             fetchRecipient();
         } else {
             setListRecipient([]);
             setKeywordRecipient("");
+            setDataPageRecipient(prevState => {
+                return {
+                    ...prevState,
+                    currentPage: 1,
+                    totalPage: 1,
+                }
+            });
         }
-    }, [isSelectRecipient, keywordRecipient])
-
+    }
     useEffect(() => {
+        handleFetchRecipient();
+    }, [isSelectRecipient])
+    useEffect(() => {
+        setDataPageRecipient(prevState => {
+            return {
+                ...prevState,
+                currentPage: 1
+            }
+        });
+        handleFetchRecipient();
+    }, [keywordRecipient])
+
+    const handleFetchCategory = () => {
         if (isSelectCategory) {
             fetchCategory();
         } else {
-            setListRecipient([]);
+            setListCategory([]);
             setDataBodyCategory(prevState => {
                 return {
                     ...prevState,
@@ -96,11 +152,19 @@ const CreateReceiptVoucher = () => {
                 }
             });
         }
-    }, [isSelectCategory, dataBodyCategory.name])
-
+    }
     useEffect(() => {
-        console.log(dataBody);
-    }, [dataBody])
+        handleFetchCategory();
+    }, [isSelectCategory])
+    useEffect(() => {
+        setDataPageCategory(prevState => {
+            return {
+                ...prevState,
+                currentPage: 1
+            }
+        });
+        handleFetchCategory();
+    }, [dataBodyCategory.keyword])
 
     return (
         <>
@@ -139,24 +203,28 @@ const CreateReceiptVoucher = () => {
                                         <div className="box-group">
                                             <div className="form-item">
                                                 <label htmlFor="group" className="form-label">
-                                                    Nhóm người nộp&nbsp;
+                                                    Nhóm người nhận
                                                     <span className="asterisk-icon">*</span>
                                                 </label>
                                                 <div className="box-select">
-                                                    <button id='group' className="btn-select">
-                                                        Khách hàng
+                                                    <button ref={recipientGroupBtnRef} id='group' className="btn-select" onClick={() => setIsSelectRecipientGroup(!isSelectRecipientGroup)}>
+                                                        {dataBody.recipient_group === "SUP" ? "Nhà cung cấp" : dataBody.recipient_group === "USR" ? "Khách hàng" : "Nhân viên"}
                                                         <FontAwesomeIcon icon={faCaretDown} />
                                                     </button>
-                                                    <select name="group" id="group" onChange={e => setDataBody(prevState => {
-                                                        return {
-                                                            ...prevState,
-                                                            recipient_group: e.target.value
-                                                        }
-                                                    })}>
-                                                        {listSupplier?.map((item, index) => (
-                                                            <option key={index} value={item.id}>{item.name}</option>
-                                                        ))}
-                                                    </select>
+                                                    {isSelectRecipientGroup && (
+                                                        <ListSelectPopup
+                                                            title="nhóm người nhận"
+                                                            dataList={listRecipientGroup}
+                                                            handleSelect={id => setDataBody(prevState => {
+                                                                return {
+                                                                    ...prevState,
+                                                                    recipient_group: id,
+                                                                };
+                                                            })}
+                                                            closePopup={() => setIsSelectRecipientGroup(false)}
+                                                            btnRef={recipientGroupBtnRef}
+                                                        />
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -167,39 +235,36 @@ const CreateReceiptVoucher = () => {
                                                     <span className="asterisk-icon">*</span>
                                                 </label>
                                                 <div className="box-select">
-                                                    <button id='name' className="btn-select" onClick={() => setIsSelectRecipient(!isSelectRecipient)}>
-                                                        {dataBody.recipient_name === "" ? "Chọn người nhận" : dataBody.recipient_name}
-                                                        <FontAwesomeIcon icon={faCaretDown} />
+                                                    <button ref={recipientBtnRef} id='name' className="btn-select" onClick={() => setIsSelectRecipient(!isSelectRecipient)}>
+                                                        {dataBody.recipient_name === ""
+                                                            ? dataBody.recipient_group === "SUP"
+                                                                ? "Chọn nhà cung cấp" : dataBody.recipient_group === "USR"
+                                                                    ? "Chọn khách hàng" : "Chọn nhân viên" : dataBody.recipient_name}                                                        <FontAwesomeIcon icon={faCaretDown} />
                                                     </button>
-                                                    {isSelectRecipient &&
-                                                        <>
-                                                            <input
-                                                                type="text"
-                                                                name="name"
-                                                                id="name"
-                                                                onChange={e => setKeywordRecipient(e.target.value)}
-                                                                placeholder='Nhập từ khóa' />
-                                                            <select name="group" id="group" onChange={e => {
-                                                                setDataBody(prevState => {
-                                                                    return {
-                                                                        ...prevState,
-                                                                        recipient_id: e.target.value
-                                                                    }
-                                                                });
-                                                                setDataBody(prevState => {
-                                                                    return {
-                                                                        ...prevState,
-                                                                        recipient_name: listRecipient.find(item => item.id === e.target.value).name
-                                                                    }
-                                                                });
-                                                                setIsSelectRecipient(false);
-                                                            }}>
-                                                                {listRecipient?.map((item, index) => (
-                                                                    <option key={index} value={item.id}>{item.name}</option>
-                                                                ))}
-                                                            </select>
-                                                        </>
-                                                    }
+                                                    {isSelectRecipient && <ListSelectPopup
+                                                        title={"nhà cung cấp"}
+                                                        isSearch={true}
+                                                        dataList={listRecipient}
+                                                        keyword={keywordRecipient}
+                                                        handleChangeKeyword={e => setKeywordRecipient(e.target.value)}
+                                                        handleSelect={id => {
+                                                            setDataBody(prevState => {
+                                                                return {
+                                                                    ...prevState,
+                                                                    recipient_id: id
+                                                                }
+                                                            });
+                                                            setDataBody(prevState => {
+                                                                return {
+                                                                    ...prevState,
+                                                                    recipient_name: listRecipient.find(item => item.id === id).name
+                                                                }
+                                                            });
+                                                        }}
+                                                        btnRef={recipientBtnRef}
+                                                        closePopup={() => setIsSelectRecipient(false)}
+                                                        fetchMoreData={fetchMoreRecipient}
+                                                    />}
                                                 </div>
                                             </div>
                                         </div>
@@ -210,43 +275,39 @@ const CreateReceiptVoucher = () => {
                                                     <span className="asterisk-icon">*</span>
                                                 </label>
                                                 <div className="box-select">
-                                                    <button id='type' className="btn-select" onClick={() => setIsSelectCategory(!isSelectCategory)}>
+                                                    <button ref={categoryBtnRef} id='type' className="btn-select" onClick={() => setIsSelectCategory(!isSelectCategory)}>
                                                         {dataBodyCategory.name === "" ? "Chọn loại phiếu chi" : dataBodyCategory.name}
                                                         <FontAwesomeIcon icon={faCaretDown} />
                                                     </button>
                                                     {isSelectCategory &&
-                                                        <>
-                                                            <input
-                                                                type="text"
-                                                                name="name"
-                                                                id="name"
-                                                                onChange={e => setDataBodyCategory(prevState => {
-                                                                    return {
-                                                                        ...prevState,
-                                                                        name: e.target.value
-                                                                    }
-                                                                })}
-                                                                placeholder='Nhập từ khóa' />
-                                                            <select name="group" id="group" onChange={e => {
-                                                                setDataBodyCategory(prevState => {
-                                                                    return {
-                                                                        ...prevState,
-                                                                        name: listCategory.find(item => item.id === e.target.value).name
-                                                                    }
-                                                                });
+                                                        <ListSelectPopup
+                                                            dataList={listCategory}
+                                                            isSearch={true}
+                                                            keyword={dataBodyCategory.keyword}
+                                                            handleChangeKeyword={e => setDataBodyCategory(prevState => {
+                                                                return {
+                                                                    ...prevState,
+                                                                    keyword: e.target.value
+                                                                }
+                                                            })}
+                                                            handleSelect={id => {
                                                                 setDataBody(prevState => {
                                                                     return {
                                                                         ...prevState,
-                                                                        transaction_category_id: e.target.value
+                                                                        transaction_category_id: id
                                                                     }
                                                                 });
-                                                                setIsSelectCategory(false);
-                                                            }}>
-                                                                {listCategory?.map((item, index) => (
-                                                                    <option key={index} value={item.id}>{item.name}</option>
-                                                                ))}
-                                                            </select>
-                                                        </>
+                                                                setDataBodyCategory(prevState => {
+                                                                    return {
+                                                                        ...prevState,
+                                                                        name: listCategory.find(item => item.id === id).name
+                                                                    }
+                                                                });
+                                                            }}
+                                                            btnRef={categoryBtnRef}
+                                                            closePopup={() => setIsSelectCategory(false)}
+                                                            fetchMoreData={fetchMoreCategory}
+                                                        />
                                                     }
                                                 </div>
                                             </div>
@@ -320,44 +381,27 @@ const CreateReceiptVoucher = () => {
                                                     Hình thức thanh toán&nbsp;
                                                 </label>
                                                 <div className="box-select">
-                                                    <button id='method' className="btn-select">
-                                                    {dataBody.payment_method === "CASH"
+                                                    <button ref={paymentMethodBtnRef} id='method' className="btn-select" onClick={() => setIsSelectPaymentMethod(!isSelectPaymentMethod)}>
+                                                        {dataBody.payment_method === "CASH"
                                                             ? "Tiền mặt" : dataBody.payment_method === "BANK_TRANSFER"
                                                                 ? "Chuyển khoản" : "Quẹt thẻ"}
                                                         <FontAwesomeIcon icon={faCaretDown} />
                                                     </button>
-                                                    <select name="method" id="method" onChange={e => setDataBody(prevState => {
-                                                        return {
-                                                            ...prevState,
-                                                            payment_method: e.target.value
-                                                        }
-                                                    })}>
-                                                        <option value="CASH">Tiền mặt</option>
-                                                        <option value="BANK_TRANSFER">Chuyển khoản</option>
-                                                        <option value="CREDIT_CARD">Quẹt thẻ</option>
-                                                    </select>
+                                                    {isSelectPaymentMethod &&
+                                                        <ListSelectPopup
+                                                            dataList={listPaymentMethod}
+                                                            handleSelect={id => setDataBody(prevState => {
+                                                                return {
+                                                                    ...prevState,
+                                                                    payment_method: id
+                                                                }
+                                                            })}
+                                                            btnRef={paymentMethodBtnRef}
+                                                            closePopup={() => setIsSelectPaymentMethod(false)}
+                                                        />}
                                                 </div>
                                             </div>
                                         </div>
-                                        {/* <div className="box-reference">
-                                            <div className="form-item">
-                                                <label htmlFor="reference" className="form-label">
-                                                    Tham chiếu&nbsp;
-                                                </label>
-                                                <div className="form-textfield">
-                                                    <input
-                                                        type="text"
-                                                        name="reference"
-                                                        id="reference"
-                                                        onChange={e => setDataBody(prevState => ({
-                                                            ...prevState,
-                                                            reference: e.target.value
-                                                        }))}
-                                                    />
-                                                    <fieldset className="input-field"></fieldset>
-                                                </div>
-                                            </div>
-                                        </div> */}
                                     </div>
                                 </div>
                             </div>
@@ -374,13 +418,23 @@ const CreateReceiptVoucher = () => {
                                         <label htmlFor="description" className="form-label">
                                             Mô tả
                                         </label>
-                                        <textarea name="description" id="description"></textarea>
+                                        <textarea name="description" id="description" onChange={e => setDataBody(prevState => {
+                                            return {
+                                                ...prevState,
+                                                note: e.target.value
+                                            }
+                                        })}></textarea>
                                     </div>
                                     <div className="form-item">
                                         <label htmlFor="tags" className="form-label">
                                             Tags
                                         </label>
-                                        <textarea name="tags" id="tags"></textarea>
+                                        <textarea name="tags" id="tags" onChange={e => setDataBody(prevState => {
+                                            return {
+                                                ...prevState,
+                                                tags: e.target.value
+                                            }
+                                        })}></textarea>
                                     </div>
                                 </div>
                             </div>

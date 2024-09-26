@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 import Cookies from 'js-cookie'
@@ -17,7 +18,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router-dom'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
-import { getGINs } from '../../service/ginApi.js'
+import { getGINs } from '../../service/GINApi.jsx'
 import GINStatusFilter from './FiltersPopup/GINStatusFilter.jsx'
 import CreatedAtFilter from './FiltersPopup/CreatedAtFilter.jsx'
 
@@ -52,8 +53,8 @@ import CreatedAtFilter from './FiltersPopup/CreatedAtFilter.jsx'
 //         user_balanced: "Admin",
 //         note: "Giao hàng",
 //     }
-    
-  
+
+
 // ]
 
 
@@ -132,7 +133,7 @@ const GINList = () => {
     }
 
     const handleColsChange = (name) => {
-        setColsToRender({...colsToRender, [name]: !colsToRender[name]})
+        setColsToRender({ ...colsToRender, [name]: !colsToRender[name] })
     }
 
   return (

@@ -84,7 +84,7 @@ const ReceiptVouchersList = () => {
     });
 
     const fetchTransactionList = async () => {
-        const response = await getListTransaction(page, limit, "ASC", "createdAt", "filter_transactions", Cookies.get("filter_transactions"), dataFilter);
+        const response = await getListTransaction(page, limit, "DESC", "createdAt", "filter_transactions", Cookies.get("filter_transactions"), dataFilter);
         if (response.status_code === 200) {
             setTransactionList(response.data.data);
             setPageQuantity(response.data.total_page);

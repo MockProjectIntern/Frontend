@@ -15,16 +15,10 @@ import calendarIcon from '../../assets/icons/CalendarIcon.jsx'
 import infoIcon from '../../assets/icons/InfoIcon.jsx'
 import { LocalizationProvider,DateTimePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import ListSelectPopup from '../ListSelectPopup/ListSelectPopup.jsx'
+
 const CreateOrder = () => {
-    const [supplier, setSupplier] = useState({
-        name: "Test",
-        phone: "0123456789",
-        address: "Hà Nội, Phường Bách Khoa, Quận Hai Bà Trưng, Hà Nội, Việt Nam",
-        debt: "4,000,000",
-        grn_quantity: 0,
-        grn_total: 0,
-        return: 0,
-    });
+    const [supplier, setSupplier] = useState(null);
     const [order, setOrder] = useState({
         discount: 0,
         total: 350000,
@@ -84,6 +78,35 @@ const CreateOrder = () => {
     const closeDiscountPopup = () => {
         setIsDiscountPopup(false);
     }
+
+    const [isProductSelectPopup, setIsProductSelectPopup] = useState(false)
+    const productSelectBtnRef = useRef(null);
+    const productSelectList = [
+        {
+            images: [
+                {
+                    src: "https://sapo.dktcdn.net/100/806/928/variants/1abe9da6-729b-4bc6-b0f3-df59da5fcfe2-1727140510946.jpg",
+                    alt: ""
+                }
+            ],
+            name: "Áo khoác Chino thời thượng SID56708",
+            id: "PVN05",
+            types : [
+                    {
+                    name: "Màu sắc",
+                    value: "Trắng"
+                }
+            ],
+            quantity: 100,
+            cost_price: 350000
+        },
+        {
+            name: "Áo khoác đầm dáng xòe nút bọc 2in1 SID55675",
+            id: "PVN04",
+            quantity: 0,
+            cost_price: 350000
+        }
+    ]
 
   return (
     <>
@@ -191,13 +214,25 @@ const CreateOrder = () => {
                                     <div className="right__table-search-filter">
                                         <div className="box-search-filter-btns">
                                             <div className="box-search">
-                                                <div className="box-input">
+                                                <div ref={productSelectBtnRef} onClick={() => setIsProductSelectPopup(true)} className="box-input">
                                                     <div className="search-icon">
                                                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                                                     </div>
                                                     <input placeholder='Tìm theo tên, mã SKU, hoặc quét mã Barcode...(F3)' type="text" name="search" id="" autoComplete='on' />
                                                     <fieldset className='input-field' />
                                                 </div>
+                                                {
+                                                    isProductSelectPopup && 
+                                                    <ListSelectPopup 
+                                                        title={"sản phẩm"}
+                                                        isLarge={true}
+                                                        isSearch={false}
+                                                        isFastCreate={true}
+                                                        dataList={productSelectList}
+                                                        btnRef={productSelectBtnRef}
+                                                        closePopup={() => setIsProductSelectPopup(false)}
+                                                    />
+                                                }
                                                 <button className="btn btn-base">
                                                     <span className="btn__label">
                                                         <p>Chọn nhanh</p>

@@ -1,245 +1,408 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import ListSelectPopup from '../ListSelectPopup/ListSelectPopup'
+// Bootstrap
+import { UncontrolledTooltip } from 'reactstrap'
 
 // Import Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import infoIcon from '../../assets/icons/InfoIcon'
+import { createSupplier, getAllSupplierGroup } from '../../service/SuppliersAPI';
 
 const CreateSupplier = () => {
-  return (
-    <>
-        <div className="right__navbar">
-            <div className="box-navbar">
-                <div className="btn-toolbar">
-                    <Link to='/admin/suppliers' className='btn-back'>
-                        <FontAwesomeIcon icon={faChevronLeft} />
-                        <h6 className="btn-back__title">
-                            Quay lại danh sách nhà cung cấp
-                        </h6>
-                    </Link>
-                </div>
-                <div className="btn-toolbar">
-                    <button className="btn btn-outline-primary">
-                        <span className="btn__title">Hủy</span>
-                    </button>
-                    <button className="btn btn-primary">
-                        <span className="btn__title">Lưu</span>
-                    </button>
+    const navigate = useNavigate();
+
+    const [dataGroup, setDataGroup] = useState({
+        keyword: null,
+        status: "ACTIVE",
+        pageCurrent: 1,
+        pageSize: 10,
+        totalPage: 1,
+    });
+
+    const [dataBody, setDataBody] = useState({
+        sub_id: null,
+        name: null,
+        phone: null,
+        email: null,
+        address: null,
+        supplier_group_id: null,
+        tags: null,
+        status: "INACTIVE",
+        supplier_group_name: null, // Không cần truyền vào API
+    });
+
+    const handleCreateSupplier = async () => {
+        setDataBody(prevState => ({
+            ...prevState,
+        }));
+
+        const response = await createSupplier({
+            ...dataBody,
+        });
+
+        if (response.status_code === +201) {
+            alert("Tạo mới nhà cung cấp thành công")
+            navigate('/admin/suppliers')
+        }
+    };
+
+    const groupBtnRef = useRef(null);
+    const [isShowGroupPopup, setIsShowGroupPopup] = useState(false);
+    const [listGroup, setListGroup] = useState([]);
+    const fetchSupplierGroup = async () => {
+        const response = await getAllSupplierGroup(dataGroup.pageCurrent, dataGroup.pageSize, {
+            keyword: dataGroup.keyword,
+            status: dataGroup.status
+        });
+
+        if (response.status_code === 200) {
+            setListGroup(response.data.data);
+            setDataGroup(prevState => ({
+                ...prevState,
+                totalPage: response.data.total_page
+            }));
+        }
+    }
+    const fetchMoreSupplierGroup = async () => {
+        if (dataGroup.pageCurrent < dataGroup.totalPage) {
+            const response = await getAllSupplierGroup(dataGroup.pageCurrent + 1, dataGroup.pageSize, {
+                keyword: dataGroup.keyword,
+                status: dataGroup.status
+            });
+
+            if (response.status_code === 200) {
+                setListGroup(prevState => ([...prevState, ...response.data.data]));
+                setDataGroup(prevState => ({
+                    ...prevState,
+                    pageCurrent: prevState.pageCurrent + 1,
+                    totalPage: response.data.total_page
+                }));
+            }
+        }
+    }
+    const handleFetchGroup = () => {
+        if (isShowGroupPopup) {
+            fetchSupplierGroup();
+        } else {
+            setListGroup([]);
+            setDataGroup(prevState => ({
+                ...prevState,
+                keyword: null,
+                pageCurrent: 1,
+                totalPage: 1
+            }));
+        }
+    }
+    useEffect(() => {
+        handleFetchGroup();
+    }, [isShowGroupPopup]);
+    useEffect(() => {
+        setDataGroup(prevState => ({
+            ...prevState,
+            pageCurrent: 1,
+        }));
+        handleFetchGroup();
+    }, [dataGroup.keyword]);
+
+    return (
+        <>
+            <div className="right__navbar">
+                <div className="box-navbar">
+                    <div className="btn-toolbar">
+                        <Link to='/admin/suppliers' className='btn-back'>
+                            <FontAwesomeIcon icon={faChevronLeft} />
+                            <h6 className="btn-back__title">
+                                Quay lại danh sách nhà cung cấp
+                            </h6>
+                        </Link>
+                    </div>
+                    <div className="btn-toolbar">
+                        <button className="btn btn-outline-primary">
+                            <span className="btn__title">Thoát</span>
+                        </button>
+                        <button className="btn btn-primary" onClick={handleCreateSupplier}>
+                            <span className="btn__title">Lưu</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div className="right__createObjectPage">
-            <div className="right__createObjectPage-wrapper">
-                <div className="right__createObjectPage-container">
-                    <div className="box-maininfo">
-                        <div className="box-info-item box-supplier-general">
-                            <div className="info-header">
-                                <div className="box-header">
-                                    <h6>Thông tin chung</h6>
+            <div className="right__createObjectPage">
+                <div className="right__createObjectPage-wrapper">
+                    <div className="right__createObjectPage-container">
+                        <div className="box-maininfo">
+                            <div className="box-info-item box-general">
+                                <div className="info-header">
+                                    <div className="box-header">
+                                        <h6>Thông tin chung</h6>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="info-content">
-                                <div className="grid-container">
-                                    <div className="box-supplier-name">
-                                        <div className="form-item">
-                                            <label htmlFor="name" className="form-label">
-                                                Tên nhà cung cấp&nbsp;
-                                                <span className="asterisk-icon">*</span>
-                                            </label>
-                                            <div className="form-textfield">
-                                                <input
-                                                    type="text"
-                                                    name="name"
-                                                    id="name"
-                                                    placeholder='Nhập tên nhà cung cấp'
-                                                    onChange={e => setDataBody(prevState => ({
-                                                        ...prevState,
-                                                        name: e.target.value
-                                                    }))}
-                                                />
-                                                <fieldset className="input-field"></fieldset>
+                                <div className="info-content">
+                                    <div className="grid-container">
+                                        <div className="box-product-name">
+                                            <div className="form-item">
+                                                <label htmlFor="name" className="form-label">
+                                                    Tên nhà cung cấp
+                                                    <span className="asterisk-icon">*</span>
+                                                    <span
+                                                        id='name'
+                                                        className="caption-icon"
+                                                    >
+                                                        {infoIcon}
+                                                    </span>
+                                                    <UncontrolledTooltip
+                                                        placement="top"
+                                                        target="name"
+                                                    >
+                                                        Tên nhà cung cấp
+                                                    </UncontrolledTooltip>
+                                                </label>
+                                                <div className="form-textfield">
+                                                    <input
+                                                        type="text"
+                                                        name="name"
+                                                        id="name"
+                                                        placeholder='Nhập tên sản phẩm'
+                                                        onChange={e => setDataBody(prevState => ({
+                                                            ...prevState,
+                                                            name: e.target.value
+                                                        }))}
+                                                    />
+                                                    <fieldset className="input-field"></fieldset>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="box-supplier-id">
-                                        <div className="form-item">
-                                            <label htmlFor="id" className="form-label">
-                                                Mã nhà cung cấp
-                                            </label>
-                                            <div className="form-textfield">
-                                                <input
-                                                    type="text"
-                                                    name="id"
-                                                    id="id"
-                                                    onChange={e => setDataBody(prevState => ({
-                                                        ...prevState,
-                                                        sub_id: e.target.value
-                                                    }))} />
-                                                <fieldset className="input-field"></fieldset>
+                                        <div className="box-product-id">
+                                            <div className="form-item">
+                                                <label htmlFor="id" className="form-label">
+                                                    Mã nhà cung cấp
+                                                    <span
+                                                        id='sub_id'
+                                                        className="caption-icon"
+                                                    >
+                                                        {infoIcon}
+                                                    </span>
+                                                    <UncontrolledTooltip
+                                                        placement="top"
+                                                        target="sub_id"
+                                                    >
+                                                        Mã <strong>không trùng lặp</strong> để định danh giữa các sản phẩm.<br />
+                                                        Nếu để trống trường này, mã sản phẩm sẽ được tự sinh với <strong>tiền tố PVN</strong>
+                                                    </UncontrolledTooltip>
+                                                </label>
+                                                <div className="form-textfield">
+                                                    <input
+                                                        type="text"
+                                                        name="sub_id"
+                                                        id="sub_id"
+                                                        onChange={e => setDataBody(prevState => ({
+                                                            ...prevState,
+                                                            sub_id: e.target.value
+                                                        }))} />
+                                                    <fieldset className="input-field"></fieldset>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="box-supplier-group">
-                                        <div className="form-item">
-                                            <label htmlFor="group" className="form-label">
-                                                Nhóm nhà cung cấp
-                                            </label>
-                                            <div className="box-select">
-                                                <button id='group' className="btn-select">
-                                                    Chọn nhóm nhà cung cấp
-                                                    <FontAwesomeIcon icon={faCaretDown} />
-                                                </button>
+                                        <div className="box-product-unit">
+                                            <div className="form-item">
+                                                <label htmlFor="supplier_group_id" className="form-label">
+                                                    Nhóm nhà cung cấp
+                                                </label>
+                                                <div className="form-textfield">
+                                                    <input
+                                                        type="text"
+                                                        name="supplier_group_id"
+                                                        id="supplier_group_id"
+                                                        onChange={e => setDataBody(prevState => {
+                                                            return {
+                                                                ...prevState,
+                                                                supplier_group_id: e.target.value
+                                                            }
+                                                        })} />
+                                                    <fieldset className="input-field"></fieldset>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="box-supplier-phone">
-                                        <div className="form-item">
-                                            <label htmlFor="phone" className="form-label">
-                                                Số điện thoại
-                                            </label>
-                                            <div className="form-textfield">
-                                                <input
-                                                    type="text"
-                                                    name="phone"
-                                                    id="phone"
-                                                    onChange={e => setDataBody(prevState => ({
-                                                        ...prevState,
-                                                        phone: e.target.value
-                                                    }))} />
-                                                <fieldset className="input-field"></fieldset>
+                                        <div className="box-product-phone">
+                                            <div className="form-item">
+                                                <label htmlFor="phone" className="form-label">
+                                                    Số điện thoại
+                                                </label>
+                                                <div className="form-textfield">
+                                                    <input
+                                                        type="text"
+                                                        name="phone"
+                                                        id="phone"
+                                                        onChange={e => setDataBody(prevState => {
+                                                            return {
+                                                                ...prevState,
+                                                                phone: e.target.value
+                                                            }
+                                                        })} />
+                                                    <fieldset className="input-field"></fieldset>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="box-supplier-email">
-                                        <div className="form-item">
-                                            <label htmlFor="email" className="form-label">
-                                                Email
-                                            </label>
-                                            <div className="form-textfield">
-                                                <input
-                                                    type="email"
-                                                    name="email"
-                                                    id="email"
-                                                    onChange={e => setDataBody(prevState => ({
-                                                        ...prevState,
-                                                        email: e.target.value
-                                                    }))} />
-                                                <fieldset className="input-field"></fieldset>
+                                        <div className="box-product-email">
+                                            <div className="form-item">
+                                                <label htmlFor="email" className="form-label">
+                                                    Email
+                                                </label>
+                                                <div className="form-textfield">
+                                                    <input
+                                                        type="text"
+                                                        name="email"
+                                                        id="email"
+                                                        onChange={e => setDataBody(prevState => {
+                                                            return {
+                                                                ...prevState,
+                                                                email: e.target.value
+                                                            }
+                                                        })} />
+                                                    <fieldset className="input-field"></fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="box-product-address">
+                                            <div className="form-item">
+                                                <label htmlFor="address" className="form-label">
+                                                    Địa chỉ
+                                                </label>
+                                                <div className="form-textfield">
+                                                    <input
+                                                        type="text"
+                                                        name="address"
+                                                        id="address"
+                                                        onChange={e => setDataBody(prevState => {
+                                                            return {
+                                                                ...prevState,
+                                                                address: e.target.value
+                                                            }
+                                                        })} />
+                                                    <fieldset className="input-field"></fieldset>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="box-info-item box-supplier-address">
-                            <div className="info-header">
-                                <div className="box-header">
-                                    <h6>Thông tin địa chỉ</h6>
+                        <div className="box-subinfo">
+                            <div className="box-info-item">
+                                <div className="info-header">
+                                    <div className="box-header">
+                                        <h6>Thông tin khác</h6>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="info-content">
-                                <div className="grid-container">
-                                    <div className="box-province">
-                                        <div className="form-item">
-                                            <label htmlFor="province" className="form-label">
-                                                Tỉnh / Thành phố
-                                            </label>
-                                            <div className="box-select">
-                                                <button id='province' className="btn-select">
-                                                    Chọn tỉnh/thành phố
-                                                    <FontAwesomeIcon icon={faCaretDown} />
-                                                </button>
-                                            </div>
+                                <div className="info-content">
+                                    <div className="form-item">
+                                        <label htmlFor="category" className="form-label">
+                                            Nhóm nhà cung cấp
+                                        </label>
+                                        <div className="box-select">
+                                            <button
+                                                ref={groupBtnRef}
+                                                id='category'
+                                                className="btn-select"
+                                                onClick={() => setIsShowGroupPopup(!isShowGroupPopup)}
+                                            >
+                                                {dataBody.supplier_group_id ? dataBody.supplier_group_name : 'Chọn nhóm nhà cung cấp'}
+                                                <FontAwesomeIcon icon={faCaretDown} />
+                                            </button>
+                                            {isShowGroupPopup && <ListSelectPopup
+                                                isLarge={true}
+                                                isSearch={true}
+                                                keyword={dataGroup.keyword}
+                                                handleChangeKeyword={(e) => setDataGroup(prevState => ({
+                                                    ...prevState,
+                                                    keyword: e.target.value
+                                                }))}
+                                                handleSelect={(id) => setDataBody(prevState => ({
+                                                    ...prevState,
+                                                    supplier_group_id: id,
+                                                    supplier_group_name: listGroup.find(item => item.id === id)?.name
+                                                }))}
+                                                dataList={listGroup}
+                                                btnRef={groupBtnRef}
+                                                closePopup={() => setIsShowGroupPopup(false)}
+                                                fetchMoreData={fetchMoreSupplierGroup}
+                                            />}
+
                                         </div>
                                     </div>
-                                    <div className="box-district">
-                                        <div className="form-item">
-                                            <label htmlFor="district" className="form-label">
-                                                Quận / Huyện
-                                            </label>
-                                            <div className="box-select">
-                                                <button id='district' className="btn-select">
-                                                    Chọn quận/huyện
-                                                    <FontAwesomeIcon icon={faCaretDown} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="box-ward">
-                                        <div className="form-item">
-                                            <label htmlFor="ward" className="form-label">
-                                                Phường / Xã
-                                            </label>
-                                            <div className="box-select">
-                                                <button id='ward' className="btn-select">
-                                                    Chọn phường xã
-                                                    <FontAwesomeIcon icon={faCaretDown} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="box-street">
-                                        <div className="form-item">
-                                            <label htmlFor="street" className="form-label">
-                                                Địa chỉ&nbsp;
-                                                <span className="asterisk-icon">*</span>
-                                            </label>
-                                            <div className="form-textfield">
-                                                <input
-                                                    type="text"
-                                                    name="street"
-                                                    id="street"
-                                                    onChange={e => setDataBody(prevState => ({
+                                    <div className="form-item">
+                                        <label htmlFor="tags" className="form-label">
+                                            Mô tả
+                                            <span
+                                                id='tagsCaption'
+                                                className="caption-icon"
+                                            >
+                                                {infoIcon}
+                                            </span>
+                                            <UncontrolledTooltip
+                                                placement="top"
+                                                target="tagsCaption"
+                                            >
+                                                Thêm thẻ cho sản phẩm
+                                            </UncontrolledTooltip>
+                                        </label>
+                                        <div className="form-textfield">
+                                            <input
+                                                className='text-end'
+                                                type="text"
+                                                name="tags"
+                                                id="tags"
+                                                onChange={e => setDataBody(prevState => {
+                                                    return {
                                                         ...prevState,
-                                                        street: e.target.value
-                                                    }))} />
-                                                <fieldset className="input-field"></fieldset>
-                                            </div>
+                                                        tags: e.target.value
+                                                    }
+                                                })}
+                                            />
+                                            <fieldset className="input-field"></fieldset>
+                                        </div>
+                                    </div>
+                                    <div className="form-item">
+                                        <label htmlFor="tags" className="form-label">
+                                            Tags
+                                            <span
+                                                id='tagsCaption'
+                                                className="caption-icon"
+                                            >
+                                                {infoIcon}
+                                            </span>
+                                            <UncontrolledTooltip
+                                                placement="top"
+                                                target="tagsCaption"
+                                            >
+                                                Thêm thẻ cho sản phẩm
+                                            </UncontrolledTooltip>
+                                        </label>
+                                        <div className="form-textfield">
+                                            <input
+                                                className='text-end'
+                                                type="text"
+                                                name="tags"
+                                                id="tags"
+                                                onChange={e => setDataBody(prevState => {
+                                                    return {
+                                                        ...prevState,
+                                                        tags: e.target.value
+                                                    }
+                                                })}
+                                            />
+                                            <fieldset className="input-field"></fieldset>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="box-subinfo">
-                        <div className="box-info-item">
-                            <div className="info-header">
-                                <div className="box-header">
-                                    <h6>Thông tin khác</h6>
-                                </div>
-                            </div>
-                            <div className="info-content">
-                                <div className="form-item">
-                                    <label htmlFor="description" className="form-label">
-                                        Mô tả
-                                    </label>
-                                    <textarea name="description" id="description" onChange={e => setDataBody(prevState => {
-                                        return {
-                                            ...prevState,
-                                            note: e.target.value
-                                        }
-                                    })}></textarea>
-                                </div>
-                                <div className="form-item">
-                                    <label htmlFor="tags" className="form-label">
-                                        Tags
-                                    </label>
-                                    <textarea name="tags" id="tags" onChange={e => setDataBody(prevState => {
-                                        return {
-                                            ...prevState,
-                                            tags: e.target.value
-                                        }
-                                    })}></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
-        </div>
-    </>
-  )
+        </>
+    )
 }
 
 export default CreateSupplier

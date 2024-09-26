@@ -22,7 +22,7 @@ const ProductList = () => {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Tháng bắt đầu từ 0
         const year = date.getFullYear();
-      
+
         return `${day}/${month}/${year}`;
     };
 
@@ -93,7 +93,7 @@ const ProductList = () => {
     }, [colsToRender])
     //console.log(col)
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchProductList();
 
     }, [limit, page]);
@@ -341,11 +341,11 @@ const ProductList = () => {
                                                                         <img src={product?.images[0]?.url} alt={product?.images[0]?.alt} />
                                                                     </td>
                                                                 )
-                                                            } else if(key === "updated_at" || key === "created_at"){
-                                                                return(
+                                                            } else if (key === "updated_at" || key === "created_at") {
+                                                                return (
                                                                     <td
-                                                                    key={key}
-                                                                    className={cn("table-data-item", col[key].align)}
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
                                                                     >
                                                                         <p className='box-text'>
                                                                             {
@@ -364,7 +364,7 @@ const ProductList = () => {
                                                                     <p className='box-text'>
                                                                         {
                                                                             key !== "name" ? product[key] :
-                                                                            <a className='box-id'>{product[key]}</a>
+                                                                                <a className='box-id'>{product[key]}</a>
                                                                         }
                                                                     </p>
                                                                 </td>
@@ -384,20 +384,20 @@ const ProductList = () => {
                             <div className="box-page-limit">
                                 <button
                                     ref={limitBtnRef}
-                                    onClick={() => setIsOpenLimitPopup(!isOpenLimitPopup)} 
-                                    className={cn("btn-page-limit", {"selected": isOpenLimitPopup})}
+                                    onClick={() => setIsOpenLimitPopup(!isOpenLimitPopup)}
+                                    className={cn("btn-page-limit", { "selected": isOpenLimitPopup })}
                                 >
                                     {limit}
                                     <span>
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </span>
                                 </button>
-                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() =>setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) =>{setLimit(limit)}}/>}
+                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => { setLimit(limit) }} />}
                             </div>
                             <p>kết quả</p>
                             <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + productsList.length} trên tổng {pageQuantiy}</p>
-                            <button 
-                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
+                            <button
+                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1 })}
                                 onClick={handlePrevPage}
                             >
                                 <FontAwesomeIcon icon={faChevronLeft} />
