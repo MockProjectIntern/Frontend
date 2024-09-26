@@ -100,8 +100,8 @@ const CreatedAtFilter = ({
 
 	return (
 		<div ref={popupRef} className={s.container}>
-			<div>
-				<div className={s.wrapper}>
+			<div className={s.wrapper}>
+				<div className={s.selectWrapper}>
 					{Object.keys(dateRanges).map((range) => (
 						<button
 							key={range}
@@ -110,7 +110,7 @@ const CreatedAtFilter = ({
 							})}
 							onClick={() => handleDateRange(range)}
 							style={
-								range === "custom" ? { width: "calc(100% - 0.571429rem)" } : {}
+								range === "custom" ? { width: "calc(100% - 8px)" } : {}
 							}
 						>
 							<span>{dateRanges[range]}</span>
@@ -120,7 +120,7 @@ const CreatedAtFilter = ({
 
 				{isSelectCustom && (
 					<div className={s.customContainer}>
-						<div width="100%">
+						<div className="w-100">
 							<div className={s.customAt}>
 								<LocalizationProvider dateAdapter={AdapterDayjs}>
 									<DatePicker
@@ -142,7 +142,7 @@ const CreatedAtFilter = ({
 							}}
 						></div>
 
-						<div width="100%">
+						<div className="w-100">
 							<div className={s.customAt}>
 								<LocalizationProvider dateAdapter={AdapterDayjs}>
 									<DatePicker

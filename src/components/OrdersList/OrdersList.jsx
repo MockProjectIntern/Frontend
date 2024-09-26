@@ -127,7 +127,7 @@ const OrdersList = () => {
 
     return (
         <>
-            <Header />
+            <Header title={"Danh sách đơn đặt hàng nhập"} />
             <div className='right__listPage'>
                 <div className='right__toolbar'>
                     <div className="btn-toolbar">

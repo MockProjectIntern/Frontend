@@ -2,21 +2,15 @@
 
 .container {
     z-index: 1000;
-    width: 540px;
-    display: flex;
-    padding: 10px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     border: 1px solid rgb(211, 213, 215);
     box-shadow: rgba(168, 168, 168, 0.25) 0px 0.571429rem 1.14286rem;
     border-radius: 3px;
     background: rgb(255, 255, 255);
     box-sizing: border-box;
+    width: 26rem;
     position: absolute;
-    top : 210%;
-    left: -30%;
-    transform: translate3d(0px, -35px, 0px);
+    inset: 0px auto auto 0px;
+    transform: translate3d(0, 40px, 0px);
 
     & .filter {
         display: inline-flex;
@@ -36,21 +30,21 @@
         position: relative;
         height: 2.57143rem;
         padding: 0px 1.14286rem;
-        min-width: 100%;
         width: 100%;
         color: rgb(255, 255, 255);
         background: $violet;
         border: none;
     }
 
-    & .customContainer {
+    .customContainer {
         display: flex;
         -webkit-box-align: center;
         align-items: center;
         padding: 1.14286rem 0px 0px;
         margin: 0px;
+        width: 100%;
 
-        & .customAt {
+        .customAt {
             height: 2.85714rem;
             position: relative;
         
@@ -59,33 +53,37 @@
 }
 
 .wrapper {
+    padding: 16px;
+}
+
+.selectWrapper {
     display: flex;
     padding: 0px;
     box-sizing: border-box;
-    margin: -0.285714rem;
+    margin: -4px;
     flex-wrap: wrap;
 
-    & .createdBtn {
-      display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    outline: 0px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-family: $font-family-base;
-    font-weight: 400; /* Giá trị mới nhất */
-    font-size: 1rem;
-    line-height: 1.42857rem;
-    margin: 0.285714rem; /* Giá trị mới nhất */
-    overflow: hidden;
-    position: relative;
-    height: 2.57143rem;
-    padding: 0px 1.14286rem;
-    min-width: 4.57143rem;
-    color: rgb(15, 24, 36); /* Giá trị mới nhất */
-    border: .5px solid rgb(211, 213, 215); /* Giá trị mới nhất */
-    background: transparent; /* Giá trị mới nhất */
-    width: calc(50% - 0.571429rem);
+    .createdBtn {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        outline: 0px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-family: $font-family-base;
+        font-weight: 400; /* Giá trị mới nhất */
+        font-size: 1rem;
+        line-height: 1.42857rem;
+        margin: 0.285714rem; /* Giá trị mới nhất */
+        overflow: hidden;
+        position: relative;
+        height: 2.57143rem;
+        padding: 0px 1.14286rem;
+        min-width: 4.57143rem;
+        color: rgb(15, 24, 36); /* Giá trị mới nhất */
+        border: .5px solid rgb(211, 213, 215); /* Giá trị mới nhất */
+        background: transparent; /* Giá trị mới nhất */
+        width: calc(50% - 0.571429rem);
 
     &:hover {
         background: rgb(243, 244, 245);
@@ -98,7 +96,8 @@
         color: $violet;
         background: #f6f3ff;      
     }
-    & span {
+    
+    span {
         display: flex;
         -webkit-box-pack: center;
         justify-content: center;
@@ -114,22 +113,28 @@
 
 .selectItem {
     font-family: $font-family-base;
-    font-weight: $font-weight-base;
-    font-size: $font-size-base;
+    font-weight: 400;
+    font-size: 1rem;
     line-height: 20px;
-    width: 49%;
+    color: $default;
+    width: calc(50% - 8px);
+    margin: 4px;
+    border: 1px solid rgb(211, 213, 215);
+    background: transparent;
+    display: inline-flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    flex: 0 0 auto;
     -webkit-box-align: center;
     align-items: center;
-    min-height: 32px;
-    cursor: pointer;
-    border: 0.5px solid $base-dark-gray !important;
-    padding: 0px 8px;
+    outline: 0px;
     border-radius: 3px;
-    outline: none;
-    box-sizing: border-box;
-    text-align: center;
-    margin: 4px 0px;
-    background: transparent;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    height: 36px;
+    padding: 0px 16px;
+    min-width: 64px;
 
     &.selected {
         color: $violet;

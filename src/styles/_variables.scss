@@ -105,6 +105,7 @@ $navbar-margin: 24px;
 $navbar-bg: $body-bg !default;
 $navbar-height: 45px !default;
 $navbar-padding: 24px 24px 8px;
+$nav-tabs-border-width: 1px;
 
 //== Sidebar
 $sidebar-width-open: 230px;
@@ -125,4 +126,10 @@ $widget-border-radius: 8px;
 //== Forms
 $input-focus-box-shadow: none;
 
-
+//== Pagination
+$pagination-border-width: 1px;
+$pagination-border-color: $base-light-gray;
+$pagination-hover-border-color: $base-light-gray;
+$pagination-disabled-color: $base-dark-gray;
+$pagination-disabled-bg: $base-middle-gray;
+$pagination-disabled-border-color: $base-light-gray;
