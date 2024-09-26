@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import PrivateRoute from './components/PrivateRoute/PrivateRoute'
 import Layout from './layout/Layout'
 import Login from './pages/Login/Login'
+import Register from './pages/Register/Register'
 
 // CSS
 import './styles/App.scss'
@@ -25,7 +26,8 @@ const App = () => {
           <Route element={<PrivateRoute isAuthenticated={isAuthenticated} dispatch={dispatch} />}>
             <Route path='/admin/*' element={<Layout />} />
           </Route>
-          <Route path='login' element={<Login />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register />} />
         </Routes>
       </BrowserRouter>
     </>

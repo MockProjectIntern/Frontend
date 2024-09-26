@@ -1,8 +1,7 @@
 import {
     LOGIN_SUCCESS,
     LOGIN_FAIL,
-    LOGOUT_SUCCESS,
-    LOGOUT_FAIL
+    LOGOUT_SUCCESS
 } from '../actions/auth.js'
 
 const isAuthenticated = JSON.parse(localStorage.getItem('isAuthenticated')); // Đảm bảo đọc đúng kiểu dữ liệu

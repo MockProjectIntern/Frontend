@@ -66,7 +66,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faChevronLeft, faPlus, faPlusCircle, faXmarkCircle } from '@fortawesome/free-solid-svg-icons'
 import infoIcon from '../../assets/icons/InfoIcon'
 import TypeItem from '../TypeItem/TypeItem';
-import { uploadImage } from '../Upload';
+import { uploadImage } from '../../service/UploadAPI';
 import { createProduct } from '../../service/ProductAAPI';
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup';
 import { getListCategory } from '../../service/CategoryAPI';
