@@ -128,7 +128,7 @@ const PaymentVouchersList = () => {
 
     return (
         <>
-            <Header title={"Phiếu thu"} />
+            <Header title={"Phiếu chi"} />
             <div className='right__listPage'>
                 <div className='right__toolbar'>
                     <div className="btn-toolbar">
