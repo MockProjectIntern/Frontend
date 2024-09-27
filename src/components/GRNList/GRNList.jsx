@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
@@ -17,48 +17,52 @@ import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import StatusFilter from './FiltersPopup/StatusFilter.jsx'
+import CreatedAtFilter from '../GINList/FiltersPopup/CreatedAtFilter.jsx'
+import { getGRNs } from '../../service/GRNApi.jsx'
 
-const grnList = [
-    {
-        id: "OSN00004",
-        created_at: "13/09/2024 11:36",
-        status: "Đang giao dịch",
-        received_status: "Chưa nhập",
-        supplier_name: "MDC",
-        user_created: "Admin",
-        total_value: "2,448,000"
-    },
-    {
-        id: "OSN00003",
-        created_at: "13/09/2024 11:36",
-        status: "Đã hủy",
-        received_status: "Đã nhập",
-        supplier_name: "MDC",
-        user_created: "Admin",
-        total_value: "2,448,000"
+// const grnList = [
+//     {
+//         id: "OSN00004",
+//         created_at: "13/09/2024 11:36",
+//         status: "Đang giao dịch",
+//         received_status: "Chưa nhập",
+//         supplier_name: "MDC",
+//         user_created: "Admin",
+//         total_value: "2,448,000"
+//     },
+//     {
+//         id: "OSN00003",
+//         created_at: "13/09/2024 11:36",
+//         status: "Đã hủy",
+//         received_status: "Đã nhập",
+//         supplier_name: "MDC",
+//         user_created: "Admin",
+//         total_value: "2,448,000"
         
-    },
-    {
-        id: "OSN00002",
-        created_at: "13/09/2024 11:36",
-        status: "Hoàn thành",
-        received_status: "Đã nhập",
-        supplier_name: "MDC",
-        user_created: "Admin",
-        total_value: "2,448,000"
-    },
-    {
-        id: "OSN00001",
-        created_at: "13/09/2024 11:36",
-        status: "Đang giao dịch",
-        received_status: "Chưa nhập",
-        supplier_name: "MDC",
-        user_created: "Admin",
-        total_value: "2,448,000"
-    }
+//     },
+//     {
+//         id: "OSN00002",
+//         created_at: "13/09/2024 11:36",
+//         status: "Hoàn thành",
+//         received_status: "Đã nhập",
+//         supplier_name: "MDC",
+//         user_created: "Admin",
+//         total_value: "2,448,000"
+//     },
+//     {
+//         id: "OSN00001",
+//         created_at: "13/09/2024 11:36",
+//         status: "Đang giao dịch",
+//         received_status: "Chưa nhập",
+//         supplier_name: "MDC",
+//         user_created: "Admin",
+//         total_value: "2,448,000"
+//     }
 
   
-]
+// ]
+
+
 
 const grnsQuantity = 4;
 
@@ -70,28 +74,77 @@ const GRNList = () => {
 
     const [isOpenStatusPopup, setIsOpenStatusPopup] = useState(false);
     const [statusListFilter, setStatusListFilter] = useState([]);
+    const [totalItems, setTotalItems] = useState(0);
 
+    const [isOpenCreatedAtPopup,setIsOpenCreatedAtPopup] = useState(false);
+    const [createdMin,setCreatedMin] = useState(null);
+    const [createdMax,setCreatedMax] = useState(null)
+
+    const [grnList,setGrnList]= useState([])
+
+    const defaultFilter = {
+        keyword: null,
+        statuses: null,
+        received_statuses: null,
+        supplier_ids: null,
+        start_created_at: null,
+        end_created_at: null,
+        start_expected_at: null,
+        end_expected_at: null,
+        product_ids: null,
+        user_created_ids: null,
+        user_completed_ids: null,
+        user_cancelled_ids: null
+      }
+    const [filterBody,setFilterBody] = useState(defaultFilter)
+
+    const fetchGrnList = useCallback(async () => {
+        try {
+            const res = await getGRNs(page, limit, "filter_grns", Cookies.get('filter_grns'), {
+                ...filterBody, start_date_at: createdMin, end_created_at: createdMax, statuses: statusListFilter
+            });
+            setGrnList(res.data.data);
+            console.log(res.data.data)
+            setPageQuantity(Math.ceil(res.data.total_items / limit));
+            setTotalItems(res.data.total_items);
+        } catch (error) {
+            console.error(error);
+        }
+    }, [page, limit, createdMin, createdMax, statusListFilter]); 
+
+    useEffect(()=> {
+        fetchGrnList();
+    },[fetchGrnList])
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_grns');
-        return storedCols ? JSON.parse(storedCols) : {
-            id: true,
-            created_at: true,
-            status: true,
-            received_status: true,
-            supplier_name: true,
-            user_created: true,
-            total_received_quantity: false,
-            total_value: true,
-            user_cancelled: false,
-            user_imported: false,
-            user_ended: false,
-            note: false,
-            tags: false,
-            expected_delivery_at: false,
-            ended_at: false,
-            cancelled_at: false
-        }
+        return storedCols ? JSON.parse(storedCols) : 
+            {
+                grn_status: "true",
+                grn_receive_status: "true",
+                grn_payment_status: "true",
+                grn_return_status: "true",
+                grn_refund_status: "true",
+                grn_received_at: "true",
+                grn_expected_at: "true",
+                grn_cancelled_at: "true",
+                grn_payment_at: "true",
+                grn_total_received_quantity: "true",
+                grn_total_value: "true",
+                grn_supplier_name: "true",
+                grn_supplier_sub_id: "true",
+                grn_supplier_phone: "true",
+                grn_supplier_email: "true",
+                grn_user_created_name: "true",
+                grn_user_completed_name: "true",
+                grn_user_cancelled_name: "true",
+                grn_note: "true",
+                grn_tags: "true",
+                grn_created_at: "true",
+                grn_updated_at: "true",
+                grn_order_sub_id: "true"
+              }
+        
     })
 
     // Set required columns to Cookies
@@ -102,6 +155,7 @@ const GRNList = () => {
     const headersRef = useRef(null);
     const contentRef = useRef(null);
     const statusBtnRef = useRef(null);
+    const createdAtRef = useRef(null)
 
     const handleScroll = (e, target) => {
         target.scrollLeft = e.target.scrollLeft;
@@ -191,7 +245,7 @@ const GRNList = () => {
                                 </span>
                             </button>
                             {isOpenStatusPopup && <StatusFilter statusBtnRef = {statusBtnRef} closePopup={() => setIsOpenStatusPopup(false)} type={"GRN"} setStatusList={setStatusListFilter}/>}
-                            <button className="btn btn-base btn-filter">
+                            <button onClick={()=> setIsOpenCreatedAtPopup(!isOpenCreatedAtPopup)} className="btn btn-base btn-filter">
                                 <span className="btn__label">
                                     Ngày tạo
                                     <span className="btn__icon">
@@ -199,14 +253,8 @@ const GRNList = () => {
                                     </span>
                                 </span>
                             </button>
-                            <button className="btn btn-base btn-filter">
-                                <span className="btn__label">
-                                    Sản phẩm
-                                    <span className="btn__icon">
-                                        <FontAwesomeIcon icon={faCaretDown} />
-                                    </span>
-                                </span>
-                            </button>
+                            {isOpenCreatedAtPopup && <CreatedAtFilter createdRef={createdAtRef} closePopup={() => setIsOpenCreatedAtPopup(false)} setCreatedMin={setCreatedMin} setCreatedMax={setCreatedMax} />}
+                         
                             <button className="btn btn-base btn-filter">
                                 <span className="btn__label">
                                     Bộ lọc khác
@@ -231,7 +279,6 @@ const GRNList = () => {
                             {/* Render the <colgroup> only for the columns that are in colsToRender */}
                             {Object.entries(colsToRender).map(([key, value]) => {
                                 if (value) {
-                                    
                                     return (
                                         <col
                                             key={key}
@@ -347,13 +394,13 @@ const GRNList = () => {
                                                                     className={cn("table-data-item", col[key].align)}
                                                                 >
                                                                     <div className={cn('box-status', {
-                                                                        'box-status--pending': grn[key] === "Chưa nhập",
-                                                                        'box-status--partial': grn[key] === "Đang giao dịch",
-                                                                        'box-status--completed': grn[key] === "Hoàn thành",
-                                                                        'box-status--cancelled': grn[key] === "Đã hủy",
-                                                                        'box-status--imported': grn[key] === "Đã nhập",
+                                                                        'box-status--pending': grn[key.substring(4)] === "PENDING",
+                                                                        'box-status--partial': grn[key.substring(4)] === "ORDERING",
+                                                                        'box-status--completed': grn[key.substring(4)] === "COMPLETED",
+                                                                        'box-status--cancelled': grn[key.substring(4)] === "CANCELED",
+                                                                        'box-status--imported': grn[key.substring(4)] === "IMPORTED",
                                                                     })}>
-                                                                        <span>{grn[key]}</span>
+                                                                        <span>{(grn[key.substring(4)])}</span>
                                                                     </div>
                                                                 </td>
                                                             )
@@ -365,8 +412,8 @@ const GRNList = () => {
                                                             >
                                                                 <p className='box-text'>
                                                                     {
-                                                                        key !== "id" ? grn[key] :
-                                                                        <a className='box-id'>{grn[key]}</a>
+                                                                        key !== "id" ? grn[key.substring(4)] :
+                                                                        <a className='box-id'>{grn[key.substring(4)]}</a>
                                                                     }
                                                                 </p>
                                                             </td>

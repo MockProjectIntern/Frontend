@@ -1,110 +1,115 @@
 const grn_list_colgroup = {
-    id: {
+    grn_supplier_sub_id: {
         name: "Mã phiếu",
         width: "160px",
         align: "text-start"
     },
-    status: {
+    grn_status: {
         name: "Trạng thái",
         width: "180px",
         align: "text-start"
     },
-    received_status: {
+    grn_receive_status: {
         name: "Trạng thái nhận hàng",
         width: "180px",
         align: "text-start"
     },
-    created_at: {
+    grn_created_at: {
         name: "Ngày tạo",
         width: "160px",
         align: "text-start"
     },
-    expected_delivery_at: {
+    grn_expected_at: {
         name: "Ngày giao dự kiến",
         width: "160px",
         align: "text-start"
     },
-    received_at: {
+    grn_received_at: {
         name: "Ngày nhận hàng",
         width: "160px",
         align: "text-start"
     },
-    ended_at: {
+    grn_updated_at: {
         name: "Ngày kết thúc",
         width: "160px",
         align: "text-start"
     },
-    cancelled_at: {
+    grn_cancelled_at: {
         name: "Ngày hủy",
         width: "160px",
         align: "text-start"
     },
-    payment_at: {
+    grn_payment_at: {
         name: "Ngày thanh toán",
         width: "160px",
         align: "text-start"
     },
-    total_received_quantity: {
+    grn_total_received_quantity: {
         name: "Số lượng đã nhận",
         width: "160px",
         align: "text-center"
     },
-    total_value: {
+    grn_total_value: {
         name: "Tổng giá trị",
         width: "160px",
         align: "text-start"
     },
-    payment_status: {
+    grn_payment_status: {
         name: "Trạng thái thanh toán",
         width: "180px",
         align: "text-start"
     },
-    return_status: {
+    grn_return_status: {
         name: "Trạng thái hoàn trả",
         width: "180px",
         align: "text-start"
     },
-    refund_status: {
+    grn_refund_status: {
         name: "Trạng thái hoàn tiền",
         width: "180px",
         align: "text-start"
     },
-    note: {
+    grn_note: {
         name: "Ghi chú",
         width: "160px",
         align: "text-start"
     },
-    tags: {
+    grn_tags: {
         name: "Tags",
         width: "160px",
         align: "text-start"
     },
-    user_created: {
+    grn_user_created_name: {
         name: "Nhân viên tạo",
         width: "160px",
         align: "text-start"
     },
-    user_imported: {
+    grn_user_completed_name: {
         name: "Nhân viên nhập",
         width: "160px",
         align: "text-start"
     },
-    user_cancelled: {
+    grn_user_cancelled_name: {
         name: "Nhân viên hủy",
         width: "160px",
         align: "text-start"
     },
-    user_ended: {
-        name: "Nhân viên kết thúc",
-        width: "160px",
-        align: "text-start"
-    },
-    supplier_name: {
+    grn_supplier_name: {
         name: "Nhà cung cấp",
         width: "160px",
         align: "text-start"
     },
-    order: {
+    grn_supplier_phone: {
+        name: "Số điện thoại nhà cung cấp",
+        width: "160px",
+        align: "text-start"
+    },
+    grn_supplier_email: {
+        name: "Email nhà cung cấp",
+        width: "160px",
+        align: "text-start"
+    },
+    grn_order_sub_id: {
         name: "Đơn hàng liên quan",
         width: "160px",
         align: "text-start"
