@@ -131,7 +131,7 @@ const ReceiptVouchersList = () => {
 
     return (
         <>
-            <Header />
+            <Header title={"Phiếu thu"} />
             <div className='right__listPage'>
                 <div className='right__toolbar'>
                     <div className="btn-toolbar">

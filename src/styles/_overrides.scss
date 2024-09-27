@@ -1,3 +1,5 @@
+@import "variables";
+
 ///////// Navbar //////////
 .navbar {
   padding: $navbar-padding;
@@ -154,7 +156,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 48px;
+    margin-top: 10px;
     padding: 8px 16px;
   }
 }

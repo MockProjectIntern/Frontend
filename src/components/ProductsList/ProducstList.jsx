@@ -295,7 +295,7 @@ const ProductList = () => {
 
     return (
         <>
-            <Header />
+            <Header title={"Danh sách sản phẩm"} />
             <div className='right__listPage'>
                 <div className='right__toolbar'>
                     <div className='btn-toolbar'>

@@ -17,6 +17,7 @@ import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
+import StatusFilter from '../GRNList/FiltersPopup/StatusFilter.jsx'
 
 const ordersList = [
     {
@@ -67,6 +68,9 @@ const OrdersList = () => {
     const limitBtnRef = useRef(null);
     const navigate = useNavigate()
 
+    const [isOpenStatusPopup, setIsOpenStatusPopup] = useState(false);
+    const [statusListFilter, setStatusListFilter] = useState([]);
+
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_orders');
@@ -99,6 +103,7 @@ const OrdersList = () => {
 
     const headersRef = useRef(null);
     const contentRef = useRef(null);
+    const orderStatusRef = useRef(null);
 
     const handleScroll = (e, target) => {
         target.scrollLeft = e.target.scrollLeft;
@@ -122,7 +127,7 @@ const OrdersList = () => {
 
     return (
         <>
-            <Header />
+            <Header title={"Danh sách đơn đặt hàng nhập"} />
             <div className='right__listPage'>
                 <div className='right__toolbar'>
                     <div className="btn-toolbar">
@@ -175,7 +180,7 @@ const OrdersList = () => {
                                 </div>
                             </div>
                             <div className="btn-group group-filter-btns">
-                                <button className="btn btn-base btn-filter">
+                                <button ref={orderStatusRef} onClick={()=>setIsOpenStatusPopup(!isOpenStatusPopup)} className="btn btn-base btn-filter">
                                     <span className="btn__label">
                                         Trạng thái
                                         <span className="btn__icon">
@@ -183,6 +188,7 @@ const OrdersList = () => {
                                         </span>
                                     </span>
                                 </button>
+                                {isOpenStatusPopup && <StatusFilter statusBtnRef = {orderStatusRef} closePopup={() => setIsOpenStatusPopup(false)} type={"Order"} setStatusList={setStatusListFilter}/>}
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
                                         Ngày tạo
