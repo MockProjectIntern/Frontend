@@ -18,6 +18,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import StatusFilter from '../GRNList/FiltersPopup/StatusFilter.jsx'
+import { getAllOrders } from '../../service/OrderAPI.jsx'
 
 const ordersList = [
     {
@@ -80,8 +81,8 @@ const OrdersList = () => {
             status: true,
             supplier_name: true,
             user_created_name: true,
-            total_quantity: true,
-            total_price: true,
+            quantity: true,
+            price: true,
             supplier_id: false,
             user_cancelled_name: false,
             user_completed_name: false,
@@ -124,6 +125,47 @@ const OrdersList = () => {
     const handleColsChange = (name) => {
         setColsToRender({ ...colsToRender, [name]: !colsToRender[name] })
     }
+
+    const status = {
+        PENDING: "Chưa nhập",
+        PARTIAL: "Nhập một phần",
+        COMPLETED: "Hoàn thành",
+        CANCELLED: "Đã hủy"
+    }
+
+    const [ordersList, setOrdersList] = useState([]);
+    const [dataFilter, setDataFilter] = useState({
+        keyword: null,
+        statuses: null,
+        supplier_ids: null,
+        start_created_at: null,
+        end_created_at: null,
+        start_expected_at: null,
+        end_expected_at: null,
+        product_ids: null,
+        user_created_ids: null,
+        user_completed_ids: null,
+        user_cancelled_ids: null
+    })
+    const [dataPage, setDataPage] = useState({
+        page: 1,
+        size: 10,
+        totalPage: 1,
+        totalItem: 0
+    })
+    const fetchOrderList = async () => {
+        const response = await getAllOrders(dataPage.page, dataPage.size, "filter_orders", JSON.stringify(colsToRender), dataFilter);
+        setOrdersList(response.data.data);
+        setDataPage({
+            ...dataPage,
+            totalPage: response.data.total_page,
+            totalItem: response.data.total_items
+        })
+    }
+
+    useEffect(() => {
+        fetchOrderList();
+    }, [])
 
     return (
         <>
@@ -344,12 +386,12 @@ const OrdersList = () => {
                                                                         className={cn("table-data-item", col[key].align)}
                                                                     >
                                                                         <div className={cn('box-status', {
-                                                                            'box-status--pending': order[key] === "Chưa nhập",
-                                                                            'box-status--partial': order[key] === "Nhập một phần",
-                                                                            'box-status--completed': order[key] === "Hoàn thành",
-                                                                            'box-status--cancelled': order[key] === "Đã hủy",
+                                                                            'box-status--pending': order[key] === "PENDING",
+                                                                            'box-status--partial': order[key] === "PARTIAL",
+                                                                            'box-status--completed': order[key] === "COMPLETED",
+                                                                            'box-status--cancelled': order[key] === "CANCELLED",
                                                                         })}>
-                                                                            <span>{order[key]}</span>
+                                                                            <span>{status[order[key]]}</span>
                                                                         </div>
                                                                     </td>
                                                                 )

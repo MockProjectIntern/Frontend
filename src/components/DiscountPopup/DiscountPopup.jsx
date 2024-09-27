@@ -22,7 +22,7 @@ const DiscountPopup = ({ price, discount, btnRef, handleChangeDiscount, closePop
     return parseFloat(string.replace(/,/g, ''))
   }
 
-  const handeleChangeValue = (e) => {
+  const handleChangeValue = (e) => {
     const value = e.target.value.replace(/[^0-9.]/g, '');
     if (isValue) {
       if (value.trim() === '' || value.trim() === '.') {
@@ -43,6 +43,14 @@ const DiscountPopup = ({ price, discount, btnRef, handleChangeDiscount, closePop
     }
   }
   
+  useEffect(() => {
+    if (isValue) {
+      handleChangeDiscount(convertNumber(textValue))
+    } else {
+      handleChangeDiscount(convertNumber(textValue) / 100 * price)
+    }
+  }, [textValue])
+
   useEffect(() => {
     setTextValue("0");
   }, [isValue])
@@ -75,20 +83,20 @@ const DiscountPopup = ({ price, discount, btnRef, handleChangeDiscount, closePop
       <div className={s.container}>
         <div className={s.toggleBtnGroup} role='group'>
           <button
-            onClick={() => setIsValue(true)} 
+            onClick={() => setIsValue(true)}
             className={cn(s.toggleBtn, { [s.selected]: isValue })}
           >
             <span className={s.toggleBtnLabel}>Giá trị</span>
           </button>
           <button
-            onClick={() => setIsValue(false)} 
+            onClick={() => setIsValue(false)}
             className={cn(s.toggleBtn, { [s.selected]: !isValue })}
           >
             <span className={s.toggleBtnLabel}>%</span>
           </button>
         </div>
         <div className={s.boxValue}>
-          <input onChange={handeleChangeValue} className={s.inputField} type="text" value={textValue} />
+          <input onChange={handleChangeValue} className={s.inputField} type="text" value={textValue} />
           <fieldset></fieldset>
         </div>
       </div>
