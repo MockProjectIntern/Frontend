@@ -18,6 +18,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCircleMinus, faCirclePlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 
 const ProductsTable = ({ productsList, colsToRender }) => {
+    const [discount, setDiscount] = useState(0);
+    
   return (
     <div className={s.container}>
         <table className={s.table}>
@@ -140,7 +142,14 @@ const ProductsTable = ({ productsList, colsToRender }) => {
                                         )
                                     } else if (key === "discount") {
                                         return (
-                                            <DiscountTableCell key={key} price={product.price} discount={product.discount} />
+                                            <DiscountTableCell 
+                                                key={key} 
+                                                price={product.price} 
+                                                discount={discount} 
+                                                handleChangeDiscount={(value) => {
+                                                    setDiscount(value);
+                                                }} 
+                                            />
                                         )
                                     } else if (key === "tax") {
                                         return (

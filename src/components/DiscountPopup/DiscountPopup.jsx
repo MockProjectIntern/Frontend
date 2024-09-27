@@ -4,7 +4,7 @@ import cn from 'classnames'
 // Import CSS
 import s from './DiscountPopup.module.scss'
 
-const DiscountPopup = ({ price, discount, btnRef, closePopup }) => {
+const DiscountPopup = ({ price, discount, btnRef, handleChangeDiscount, closePopup }) => {
   const [textValue, setTextValue] = useState("0");
   const [isValue, setIsValue] = useState(true);
   const popupRef = useRef(null);
@@ -42,13 +42,22 @@ const DiscountPopup = ({ price, discount, btnRef, closePopup }) => {
       }
     }
   }
-
+  
   useEffect(() => {
     setTextValue("0");
   }, [isValue])
 
+  useEffect(() => {
+    setTextValue(formatNumber(discount));
+  }, [])
+
   const handleClickOutside = (e) => {
     if (popupRef.current && !popupRef.current.contains(e.target) && btnRef.current && !btnRef.current.contains(e.target)) {
+      if (isValue) {
+        handleChangeDiscount(convertNumber(textValue))
+      } else {
+        handleChangeDiscount(price * convertNumber(textValue) / 100);
+      }
       closePopup();
     }
   }
@@ -59,7 +68,7 @@ const DiscountPopup = ({ price, discount, btnRef, closePopup }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [])
+  }, [textValue])
 
   return (
     <div ref={popupRef} className="discount-popup">
