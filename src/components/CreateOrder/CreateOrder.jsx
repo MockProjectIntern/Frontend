@@ -11,7 +11,6 @@ import DiscountPopup from '../DiscountPopup/DiscountPopup.jsx'
 // Import Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faChevronLeft, faGear, faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons'
-import calendarIcon from '../../assets/icons/CalendarIcon.jsx'
 import infoIcon from '../../assets/icons/InfoIcon.jsx'
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup.jsx'
 
@@ -38,15 +37,21 @@ const CreateOrder = () => {
             index: true,
             image: true,
             name: true,
-            barcode: false,
             unit: true,
-            quantity: true,
-            costPrice: true,
+            ordered_quantity: true,
+            price: true,
             discount: true,
             tax: true,
             total: true
         }
     })
+
+    useEffect(() => {
+        setColsToRender((prev) => {
+            const { imported_quantity, ...rest } = prev; // Tách imported_quantity khỏi state
+            return rest; // Trả về state mới mà không có imported_quantity
+        });
+    }, [])
 
     // Set required columns to Cookies
     useEffect(() => {
@@ -122,17 +127,19 @@ const CreateOrder = () => {
                 products: listProductDetail.map(product => {
                     return {
                         product_id: product.id,
-                        quantity: product.quantity,
-                        cost_price: product.costPrice,
+                        quantity: product.ordered_quantity,
+                        price: product.price,
                         discount: product.discount,
                         tax: product.tax,
-                        total: (product.costPrice - product.discount + product.tax) * product.quantity
+                        total: (product.price - product.discount + product.tax) * product.ordered_quantity
                     }
                 })
             }
         })
     }, [listProductDetail])
-
+    console.log(listProductDetail);
+    console.log(dataBody);
+    
 
     return (
         <>
@@ -156,9 +163,9 @@ const CreateOrder = () => {
                     </div>
                 </div>
             </div>
-            <div className="right__createPaperPage">
-                <div className="right__createPaperPage-wrapper">
-                    <div className="right__createPaperPage-container">
+            <div className="right__paperPage">
+                <div className="right__paperPage-wrapper">
+                    <div className="right__paperPage-container">
                         <div className="box-supplier">
                             <div className="box-paper">
                                 <div className="paper-header">
@@ -287,8 +294,8 @@ const CreateOrder = () => {
                                                                     name: productSelectList.find(product => product.id === id)?.name,
                                                                     image: productSelectList.find(product => product.id === id)?.images?.[0],
                                                                     unit: productSelectList.find(product => product.id === id)?.unit || "------",
-                                                                    quantity: 0,
-                                                                    costPrice: productSelectList.find(product => product.id === id)?.cost_price,
+                                                                    ordered_quantity: 0,
+                                                                    price: productSelectList.find(product => product.id === id)?.cost_price,
                                                                     discount: 0,
                                                                     tax: 0,
                                                                     total: 0
@@ -351,11 +358,11 @@ const CreateOrder = () => {
                                             <div className="box-price-info">
                                                 <div className="info-item">
                                                     <p>Số lượng</p>
-                                                    <p>{listProductDetail.map(prod => prod.quantity).reduce((acc, curr) => acc + curr, 0)}</p>
+                                                    <p>{listProductDetail.map(prod => !isNaN(prod.ordered_quantity) ? prod.ordered_quantity : prod.imported_quantity).reduce((acc, curr) => acc + curr, 0)}</p>
                                                 </div>
                                                 <div className="info-item">
                                                     <p>Tổng tiền</p>
-                                                    <p>{listProductDetail.map(prod => (Number(prod.costPrice) - Number(prod.discount) + Number(prod.tax)) * Number(prod.quantity)).reduce((acc, curr) => acc + curr, 0)}</p>
+                                                    <p>{listProductDetail.map(prod => (Number(prod.price) - Number(prod.discount) + Number(prod.tax)) * Number(!isNaN(prod.ordered_quantity) ? prod.ordered_quantity : prod.imported_quantity)).reduce((acc, curr) => acc + curr, 0)}</p>
                                                 </div>
                                                 <div className="info-item">
                                                     <button onClick={() => setIsDiscountPopup(true)} ref={discountBtnRef} className="btn-base">
@@ -388,7 +395,7 @@ const CreateOrder = () => {
                                                 </div>
                                                 <div className="info-item">
                                                     <p className='total-price'>Tiền cần trả</p>
-                                                    <p className='total-price'>{listProductDetail.map(prod => (Number(prod.costPrice) - Number(prod.discount) + Number(prod.tax)) * Number(prod.quantity)).reduce((acc, curr) => acc + curr, 0) - Number(dataBody.discount)}</p>
+                                                    <p className='total-price'>{listProductDetail.map(prod => (Number(prod.price) - Number(prod.discount) + Number(prod.tax)) * Number(!isNaN(prod.ordered_quantity) ? prod.ordered_quantity : prod.imported_quantity)).reduce((acc, curr) => acc + curr, 0) - Number(dataBody.discount)}</p>
                                                 </div>
                                             </div>
                                         </div>
