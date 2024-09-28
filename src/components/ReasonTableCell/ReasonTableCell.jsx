@@ -7,37 +7,41 @@ import cn from 'classnames'
 import s from '../GINProductsTable/GINProductsTable.module.scss'
 import ReasonSelectPopup from '../ReasonSelectPopup/ReasonSelectPopup';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
-const ReasonTableCell = ({}) => {
-    const [isOpenReasonPopup, setIsOpenReasonPopup] = useState(false);
-    const reasonBtnRef = useRef(null);
-    const [reason, setReason] = useState("Khác");
-    const closeReasonPopup = () => {
-        setIsOpenReasonPopup(false);
-    }
+// ReasonTableCell.js
+const ReasonTableCell = ({ reason, setReason }) => {
+  const [isOpenReasonPopup, setIsOpenReasonPopup] = useState(false);
+  const reasonBtnRef = useRef(null);
 
-    const handleChangeReason = (reason) => {
-        setReason(reason);
-        closeReasonPopup();
-    } 
+  const closeReasonPopup = () => {
+    setIsOpenReasonPopup(false);
+  }
+
+  const handleChangeReason = (newReason) => {
+    setReason(newReason);
+    closeReasonPopup();
+  }
 
   return (
     <td className={cn(s.tableCell, s.tableCellBody, "text-end", "table-cell")}>
-                      <div className= {cn(s.boxReason)}>
-                      <button 
-                                ref={reasonBtnRef} 
-                                onClick={() => setIsOpenReasonPopup(!isOpenReasonPopup)} 
-                                className={cn(s.btnReason, {"selected": isOpenReasonPopup})}
-                            >
-                                {reason}
-                                <span>
-                                  
-                                </span>
-                            </button>
-                            {isOpenReasonPopup && <ReasonSelectPopup btnRef={reasonBtnRef} closePopup={() => setIsOpenReasonPopup(false)} reason={reason} handleChangeReason={handleChangeReason} />}
-                      </div>
-                     
-                    </td>
+      <div className={cn(s.boxReason)}>
+        <button
+          ref={reasonBtnRef}
+          onClick={() => { setIsOpenReasonPopup(!isOpenReasonPopup) }}
+          className={cn(s.btnReason, { "selected": isOpenReasonPopup })}
+        >
+          {reason}
+        </button>
+        {isOpenReasonPopup && (
+          <ReasonSelectPopup 
+            btnRef={reasonBtnRef} 
+            reason={reason} 
+            handleChangeReason={handleChangeReason} 
+            closePopup={closeReasonPopup} 
+          />
+        )}
+      </div>
+    </td>
   )
 }
 
-export default ReasonTableCell
+export default ReasonTableCell;

@@ -82,6 +82,22 @@ const GRNList = () => {
 
     const [grnList,setGrnList]= useState([])
 
+    const status = {
+        COMPLETED: "Hoàn thành",
+        PENDING: "Chưa nhập",
+        RETURNED: "Đã hoàn hàng",
+        NOT_RETURNED: "Chưa hoàn hàng",
+        REFUNDED:"Đã hoàn tiền",
+        NOT_REFUNDED: "Chưa hoàn tiền",
+        PARTIAL: "Nhập một phần",
+        CANCELLED: "Đã hủy",
+        ENTERED: "Đã nhập",
+        NOT_ENTERED: "Chưa nhập",
+        UNPAID: "Chưa thanh toán",
+        PAID: "Đã thanh toán",
+        PARTIAL_PAID: "Thanh toán một phần"
+    }
+
     const defaultFilter = {
         keyword: null,
         statuses: null,
@@ -393,14 +409,11 @@ const GRNList = () => {
                                                                     key={key}
                                                                     className={cn("table-data-item", col[key].align)}
                                                                 >
-                                                                    <div className={cn('box-status', {
-                                                                        'box-status--pending': grn[key.substring(4)] === "PENDING",
-                                                                        'box-status--partial': grn[key.substring(4)] === "ORDERING",
-                                                                        'box-status--completed': grn[key.substring(4)] === "COMPLETED",
-                                                                        'box-status--cancelled': grn[key.substring(4)] === "CANCELED",
-                                                                        'box-status--imported': grn[key.substring(4)] === "IMPORTED",
-                                                                    })}>
-                                                                        <span>{(grn[key.substring(4)])}</span>
+                                                                    <div className={cn('box-status', 
+                                                                        `box-status--${grn[key.substring(4)].toLowerCase()}`
+                                                                      
+                                                                    )}>
+                                                                        <span>{(status[grn[key.substring(4)]])}</span>
                                                                     </div>
                                                                 </td>
                                                             )

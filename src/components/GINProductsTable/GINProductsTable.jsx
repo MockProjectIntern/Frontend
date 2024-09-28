@@ -1,4 +1,4 @@
-import React, { useState , useRef} from 'react'; // Add useState
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 
@@ -15,8 +15,27 @@ import dropdownicon from '../../assets/icons/TriangleDropdown'; // Adjust path a
 import ReasonSelectPopup from '../ReasonSelectPopup/ReasonSelectPopup';
 import ReasonTableCell from '../ReasonTableCell/ReasonTableCell';
 
-const GINProductsTable = ({ productsList }) => {
-  
+const GINProductsTable = ({ productsList, setProductList, colsToRender, isView }) => {
+  const handleChangeData = (index, key, value) => {
+    const newValue = (key === 'reason' || key==='note') ? value : parseFloat(value);
+
+    setProductList(prevProductsList =>
+        prevProductsList.map((product, i) => {
+            if (i === index) {
+                const updatedProduct = { ...product, [key]: newValue };
+
+                // Tự động cập nhật discrepancy_quantity nếu key là actual_stock
+                if (key === 'actual_stock') {
+                    updatedProduct.discrepancy_quantity =newValue - updatedProduct.quantity ;
+                }
+
+                return updatedProduct;
+            }
+            return product;
+        })
+    );
+};
+
   return (
     <div className={s.container}>
       <table className={s.table}>
@@ -31,7 +50,7 @@ const GINProductsTable = ({ productsList }) => {
           <tr className={s.tableRow}>
             {/* Render table headers based on productsTableColgroup */}
             {Object.entries(productsTableColgroup).map(([key, col]) => (
-              <th key={key} scope='col' className={cn(s.tableCell, s.tableCellHeader, col.align)}>
+              <th key={key} scope="col" className={cn(s.tableCell, s.tableCellHeader, col.align)}>
                 <p>{col.name}</p>
               </th>
             ))}
@@ -64,20 +83,38 @@ const GINProductsTable = ({ productsList }) => {
                     </td>
                   );
                 } else if (key.includes("actual_stock")) {
+                  if (isView) {
+                    return (
+                      <td key={key} className={cn(s.tableCell, s.tableCellBody, col.align)}>
+                        <p>{product[key]}</p>
+                      </td>
+                    );
+                  }
                   return (
                     <td key={key} className={cn(s.tableCell, s.tableCellBody, col.align)}>
                       <div className={s.boxQuantity}>
-                        <button className={s.btnIcon}>
+                        <button
+                          className={s.btnIcon}
+                          onClick={() => handleChangeData(index, key, product.actual_stock - 1)}
+                        >
                           <span className={s.btnIconLabel}>
                             <FontAwesomeIcon icon={faCircleMinus} />
                           </span>
                         </button>
                         <div className={s.boxFormControl}>
                           <div className={s.boxInput}>
-                            <input className={cn(s.inputField, col.align)} type="text" value={product[key]} />
+                            <input
+                              className={cn(s.inputField, col.align)}
+                              type="text"
+                              value={product[key]}
+                              onChange={(e) => handleChangeData(index, key, e.target.value)}
+                            />
                           </div>
                         </div>
-                        <button className={s.btnIcon}>
+                        <button
+                          className={s.btnIcon}
+                          onClick={() => handleChangeData(index, key, product.actual_stock + 1)}
+                        >
                           <span className={s.btnIconLabel}>
                             <FontAwesomeIcon icon={faCirclePlus} />
                           </span>
@@ -86,13 +123,25 @@ const GINProductsTable = ({ productsList }) => {
                     </td>
                   );
                 } else if (key === "reason") {
-                  return (
-                <ReasonTableCell />
-                  );
+                  return <ReasonTableCell key={key} 
+                  reason={product.reason} 
+                  setReason={(newReason) => handleChangeData(index, 'reason', newReason)} />;
                 } else if (key === "note") {
                   return (
                     <td key={key} className={cn(s.tableCell, s.tableCellBody, col.align)}>
-                      <input className={s.boxNote} type="text" placeholder="Nhập ghi chú" />
+                      <input name = "note" value={product.note} onChange={(e)=>handleChangeData(index,'note',e.target.value)} className={s.boxNote} type="text" placeholder="Nhập ghi chú" />
+                    </td>
+                  );
+                } else if (key === "quantity") {
+                  return (
+                    <td key={key} className={cn(s.tableCell, s.tableCellBody, col.align)}>
+                      <p>{product[key]}</p>
+                    </td>
+                  );
+                } else if (key === "discrepancy_quantity") {
+                  return (
+                    <td key={key} className={cn(s.tableCell, s.tableCellBody, col.align)}>
+                      <p>{product[key]}</p>
                     </td>
                   );
                 }
@@ -102,11 +151,17 @@ const GINProductsTable = ({ productsList }) => {
                   </td>
                 );
               })}
-              <td className={cn(s.tableCell, s.tableCellBody, "text-center")}>
-                <button className="btn-icon">
-                  <FontAwesomeIcon icon={faXmark} />
-                </button>
-              </td>
+
+              {!isView && (
+                <td className={cn(s.tableCell, s.tableCellBody, "text-center")}>
+                  <button
+                    className="btn-icon"
+                    onClick={() => setProductList((prev) => prev.filter((_, i) => i !== index))}
+                  >
+                    <FontAwesomeIcon icon={faXmark} />
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
@@ -121,6 +176,6 @@ const GINProductsTable = ({ productsList }) => {
       )}
     </div>
   );
-}
+};
 
 export default GINProductsTable;
