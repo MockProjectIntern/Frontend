@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import cn from 'classnames'
 import Cookies from 'js-cookie'
 
@@ -362,7 +362,7 @@ const OrdersList = () => {
                                                                     <p className='box-text'>
                                                                         {
                                                                             key !== "id" ? order[key] :
-                                                                                <a className='box-id'>{order[key]}</a>
+                                                                                <Link to={`/admin/order_suppliers/ORD/${order[key]}`} className='box-id'>{order[key]}</Link>
                                                                         }
                                                                     </p>
                                                                 </td>

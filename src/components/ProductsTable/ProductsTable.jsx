@@ -17,7 +17,7 @@ import boxOpenIcon from '../../assets/icons/BoxOpenIcon'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCircleMinus, faCirclePlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 
-const ProductsTable = ({ productsList, colsToRender }) => {
+const ProductsTable = ({ productsList, colsToRender, isView }) => {
   return (
     <div className={s.container}>
         <table className={s.table}>
@@ -37,7 +37,7 @@ const ProductsTable = ({ productsList, colsToRender }) => {
                     }
                     return null;
                 })}
-                <col style={{ width: "40px" }} />
+                {!isView && <col style={{ width: "40px" }} />}
             </colgroup>
             <thead className={s.tableHeader}>
                 <tr className={s.tableRow}>
@@ -56,7 +56,7 @@ const ProductsTable = ({ productsList, colsToRender }) => {
                         }
                         return null;
                     })}
-                    <th className={cn(s.tableCell, s.tableCellHeader, "text-center")}></th>
+                    {!isView && <th className={cn(s.tableCell, s.tableCellHeader, "text-center")}></th>}
                 </tr>
             </thead>
             <tbody className={s.tableBody}>
@@ -101,6 +101,16 @@ const ProductsTable = ({ productsList, colsToRender }) => {
                                             </td>
                                         )
                                     } else if (key.includes("quantity")) {
+                                        if (isView) {
+                                            return (
+                                                <td
+                                                key={key} 
+                                                className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                >
+                                                    <p>{product[key]}</p>
+                                                </td>
+                                            )
+                                        }
                                         return (
                                             <td
                                                 key={key} 
@@ -126,6 +136,16 @@ const ProductsTable = ({ productsList, colsToRender }) => {
                                             </td>
                                         )
                                     } else if (key === "price") {
+                                        if (isView) {
+                                            return (
+                                                <td
+                                                key={key} 
+                                                className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                >
+                                                    <p>{product[key]}</p>
+                                                </td>
+                                            )
+                                        }
                                         return (
                                             <td
                                                 key={key} 
@@ -139,10 +159,30 @@ const ProductsTable = ({ productsList, colsToRender }) => {
                                             </td>
                                         )
                                     } else if (key === "discount") {
+                                        if (isView) {
+                                            return (
+                                                <td
+                                                key={key} 
+                                                className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                >
+                                                    <p>{product[key]}</p>
+                                                </td>
+                                            )
+                                        }
                                         return (
                                             <DiscountTableCell key={key} price={product.price} discount={product.discount} />
                                         )
                                     } else if (key === "tax") {
+                                        if (isView) {
+                                            return (
+                                                <td
+                                                key={key} 
+                                                className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                >
+                                                    <p>{product[key]}</p>
+                                                </td>
+                                            )
+                                        }
                                         return (
                                             <td
                                                 key={key} 
@@ -168,11 +208,14 @@ const ProductsTable = ({ productsList, colsToRender }) => {
                                 }
                                 return null;
                             })}
-                            <td className={cn(s.tableCell, s.tableCellBody, "text-center")}>
-                                <button className="btn-icon">
-                                    <FontAwesomeIcon icon={faXmark} />
-                                </button>
-                            </td>
+                            {
+                                !isView && 
+                                <td className={cn(s.tableCell, s.tableCellBody, "text-center")}>
+                                    <button className="btn-icon">
+                                        <FontAwesomeIcon icon={faXmark} />
+                                    </button>
+                                </td>
+                            }
                         </tr>
                     )
                 })}

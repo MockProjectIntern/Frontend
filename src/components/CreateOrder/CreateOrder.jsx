@@ -11,7 +11,6 @@ import DiscountPopup from '../DiscountPopup/DiscountPopup.jsx'
 // Import Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faChevronLeft, faGear, faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons'
-import calendarIcon from '../../assets/icons/CalendarIcon.jsx'
 import infoIcon from '../../assets/icons/InfoIcon.jsx'
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup.jsx'
 
@@ -52,6 +51,7 @@ const CreateOrder = () => {
             barcode: true,
             unit: true,
             ordered_quantity: true,
+            imported_quantity: true,
             price: true,
             discount: true,
             tax: true,
@@ -130,9 +130,9 @@ const CreateOrder = () => {
                 </div>
             </div>
         </div>
-        <div className="right__createPaperPage">
-            <div className="right__createPaperPage-wrapper">
-                <div className="right__createPaperPage-container">
+        <div className="right__paperPage">
+            <div className="right__paperPage-wrapper">
+                <div className="right__paperPage-container">
                     <div className="box-supplier">
                         <div className="box-paper">
                             <div className="paper-header">
@@ -172,8 +172,9 @@ const CreateOrder = () => {
                                                 <div className="calendar-icon">
                                                     {calendarIcon}
                                                 </div> */}
-
-<LocalizationProvider dateAdapter={AdapterDayjs}> <DateTimePicker/></LocalizationProvider>
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}> 
+                                                    <DateTimePicker/>
+                                                </LocalizationProvider>
                                             </div>               
                                         </div>
                                     </div>

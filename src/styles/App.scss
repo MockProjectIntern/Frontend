@@ -1121,7 +1121,7 @@ input:focus-within ~ .input-field {
         }
     }
 
-    &__createPaperPage {
+    &__paperPage {
         width: 100%;
 
         &-wrapper {
@@ -2046,6 +2046,55 @@ input:focus-within ~ .input-field {
     }
 }
 
+.box-title {
+    grid-area: title;
+    margin: 0;
+    box-sizing: border-box;
+    margin-bottom: 24px;
+
+    .group-details {
+        display: flex;
+        align-items: flex-end;
+
+        h4.box-code {
+            font-size: 1.4rem;
+            font-family: var(--bs-font-sans-serif);
+            font-weight: $font-weight-semibold;
+            line-height: 24px;
+            margin: 0;
+        }
+
+        h6.box-date {
+            font-size: $font-size-sm;
+            font-family: var(--bs-font-sans-serif);
+            font-weight: $font-weight-semibold;
+            line-height: 15px;
+            margin: 0;
+            margin-left: 4px;
+            margin-right: 12px;
+            color: rgb(163, 168, 175);
+        }
+    }
+
+    .btn-toolbar {
+        margin-top: 12px;
+        gap: 16px;
+
+        .btn-text {
+            background-color: #fff;
+            border-radius: 3px;
+            padding: 0 16px;
+            min-width: 64px;
+            border: 1px solid rgb(211, 213, 215);
+
+            &:hover {
+                color: $default;
+                background-color: #efe9ff;
+            }
+        }
+    }
+}
+
 .box-supplier {
     grid-area: supplier;
     margin: 0;
@@ -2062,6 +2111,10 @@ input:focus-within ~ .input-field {
     margin: 0;
     box-sizing: border-box;
     height: 100%;
+
+    .box-paper {
+        height: 100%;
+    }
 
     .paper-content {
         padding-right: 0 !important;
@@ -2234,6 +2287,18 @@ input:focus-within ~ .input-field {
                         }
                     }
                 }
+                
+                .info-value {
+                    font-size: $font-size-base;
+                    font-family: var(--bs-font-sans-serif);
+                    font-weight: $font-weight-base;
+                    line-height: 20px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    margin: 0;
+                    width: 65%;
+                }
             } 
         }
 
@@ -2341,10 +2406,34 @@ input:focus-within ~ .input-field {
 
                 .box-note {
                     width: 100%;
+
+                    .box-label {
+                        box-sizing: border-box;
+                        font-family: $font-family-base;
+                        font-weight: $font-weight-semibold;
+                        font-size: $font-size-base;
+                        line-height: 20px;
+                        margin: 0px;
+                        color: $default;
+                        text-align: inherit;
+                        padding-bottom: 10px;
+                    }
                 }
                 
                 .box-tags {
                     padding-top: 16px;
+
+                    .box-label {
+                        box-sizing: border-box;
+                        font-family: $font-family-base;
+                        font-weight: $font-weight-semibold;
+                        font-size: $font-size-base;
+                        line-height: 20px;
+                        margin: 0px;
+                        color: $default;
+                        text-align: inherit;
+                        padding-bottom: 10px;
+                    }
                     
                     .tags-field {
                         border: 0;
@@ -2659,7 +2748,7 @@ input:focus-within ~ .input-field {
         margin: 0px;
     }
 
-    &--pending {
+    &--pending, &--unpaid, &--not_entered {
         border: 1px solid rgb(207, 209, 211);
         background-color: rgb(243, 244, 245);
 
@@ -2668,7 +2757,7 @@ input:focus-within ~ .input-field {
         }
     }
 
-    &--partial {
+    &--partial, &--partial_paid {
         border: 1px solid rgb(255, 223, 155);
         background-color: rgb(255, 247, 231);
 
@@ -2677,7 +2766,7 @@ input:focus-within ~ .input-field {
         }
     }
 
-    &--completed, &--imported, &--balanced {
+    &--completed, &--imported, &--balanced, &--entered, &--paid {
         border: 1px solid rgb(159, 237, 207);
         background-color: rgb(243, 252, 249);
 
