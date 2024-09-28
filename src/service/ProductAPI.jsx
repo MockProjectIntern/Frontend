@@ -16,3 +16,14 @@ export const getProductList = async (page, size, filterName, filterJson, bodyJso
         throw err;
     }
 }
+
+export const quickGetProductList = async (page, size, keyword) => {
+    try {
+        const response = await axiosInstance.get(`products/quick-get-list.json?page=${page}&size=${size}&keyword=${keyword}`);
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+
+}

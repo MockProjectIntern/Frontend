@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 
 
+
 const SupplierList = () => {
     const navigate = useNavigate();
     const headersRef = useRef(null);
@@ -119,12 +120,12 @@ const SupplierList = () => {
                                 Nhập file
                             </span>
                         </button>
-                        <button className="btn btn-base btn-text">
+                        <button className="btn btn-base btn-text" onClick={() => navigate("/admin/supplier_groups")}>
                             <span className="btn__label">
                                 <span className="btn__icon">
                                     {importIcon}
                                 </span>
-                                Loại sản phẩm
+                                Nhóm nhà cung cấp
                             </span>
                         </button>
                     </div>

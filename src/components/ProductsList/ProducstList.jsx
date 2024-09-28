@@ -315,7 +315,7 @@ const ProductList = () => {
                                 Nhập file
                             </span>
                         </button>
-                        <button className="btn btn-base btn-text">
+                        <button className="btn btn-base btn-text" onClick={() => navigate('/admin/categories')}>
                             <span className="btn__label">
                                 <span className="btn__icon">
                                     {importIcon}
