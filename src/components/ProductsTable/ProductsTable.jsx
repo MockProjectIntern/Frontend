@@ -35,8 +35,8 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) =
                                 <col
                                     key={key}
                                     style={{
-                                        width: col[key].width,
-                                        minWidth: col[key].minWidth || "unset"
+                                        width: col[key]?.width,
+                                        minWidth: col[key]?.minWidth || "unset"
                                     }}
                                 />
                             )
@@ -54,9 +54,9 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) =
                                     <th
                                         key={key}
                                         scope='col'
-                                        className={cn(s.tableCell, s.tableCellHeader, col[key].align)}
+                                        className={cn(s.tableCell, s.tableCellHeader, col[key]?.align)}
                                     >
-                                        <p>{col[key].name}</p>
+                                        <p>{col[key]?.name}</p>
                                     </th>
                                 )
                             }
@@ -200,7 +200,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) =
                                             return (
                                                 <td
                                                     key={key}
-                                                    className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                    className={cn(s.tableCell, s.tableCellBody, col[key]?.align)}
                                                 >
                                                     <div className={s.boxQuantity}>
                                                         <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.ordered_quantity - 1)}>
@@ -211,7 +211,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) =
                                                         <div className={s.boxFormControl}>
                                                             <div className={s.boxInput}>
                                                                 <input
-                                                                    className={cn(s.inputField, col[key].align)}
+                                                                    className={cn(s.inputField, col[key]?.align)}
                                                                     type="text"
                                                                     value={product[key]}
                                                                     onChange={(e) => handleChangeData(index, key, e.target.value)}
@@ -240,11 +240,11 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) =
                                             return (
                                                 <td
                                                     key={key}
-                                                    className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                    className={cn(s.tableCell, s.tableCellBody, col[key]?.align)}
                                                 >
                                                     <div className={s.boxPrice}>
                                                         <div className={s.boxInput}>
-                                                            <input className={cn(s.inputField, col[key].align)} type="text" value={product[key]} onChange={e => handleChangeData(index, key, e.target.value)} />
+                                                            <input className={cn(s.inputField, col[key]?.align)} type="text" value={product[key]} onChange={e => handleChangeData(index, key, e.target.value)} />
                                                         </div>
                                                     </div>
                                                 </td>
