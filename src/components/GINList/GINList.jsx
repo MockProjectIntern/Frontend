@@ -365,7 +365,7 @@ const GINList = () => {
                                                                 <p className='box-text'>
                                                                     {
                                                                         key !== "id" ? gin[key] :
-                                                                        <a className='box-id'>{gin[key]}</a>
+                                                                        <a onClick={(e)=>navigate(`/admin/gins/GIN/${gin[key]}`)} className='box-id'>{gin[key]}</a>
                                                                     }
                                                                 </p>
                                                             </td>

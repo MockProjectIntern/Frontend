@@ -24,14 +24,12 @@ import GINProductsTable from "../GINProductsTable/GINProductsTable.jsx";
 import { createNewGIN } from "../../service/GINApi.jsx";
 import { quickGetProductList } from "../../service/ProductAPI.jsx";
 const CreateGIN = () => {
-
-
-
 	const handleProductRequestChange = (e) => {
 		const { name, value } = e.target;
 		setDataBody({ ...dataBody, [name]: value });
 	};
 
+	const [listProductDetail, setListProductDetail] = useState([]);
 	const [activeTab, setActiveTab] = useState("all");
 
 	// Get list of columns that need redering from Cookies
@@ -58,6 +56,14 @@ const CreateGIN = () => {
 		Cookies.set("filter_products_table", JSON.stringify(colsToRender));
 	}, [colsToRender]);
 
+	const [filteredProducts, setFilteredProducts] = useState([]);
+
+	// Khi tab thay đổi, áp dụng bộ lọc
+	useEffect(() => {
+		setFilteredProducts(filterProducts(listProductDetail));
+	}, [activeTab, listProductDetail]);
+
+
 	const filterProducts = (products) => {
 		switch (activeTab) {
 			case "unchecked":
@@ -75,82 +81,83 @@ const CreateGIN = () => {
 		}
 	};
 
-	
-    const [isProductSelectPopup, setIsProductSelectPopup] = useState(false)
-    const [dataPageProduct, setDataPageProduct] = useState({
-        page: 1,
-        size: 10,
-        totalPage: 1,
-        totalElement: 1,
-        keyword: ""
-    })
-    const productSelectBtnRef = useRef(null);
-    const [productSelectList, setProductSelectList] = useState([])
-    const fetchProductList = async () => {
-        const response = await quickGetProductList(dataPageProduct.page, dataPageProduct.size, dataPageProduct.keyword);
-        setProductSelectList(response.data.data);
-        setDataPageProduct(prev => {
-            return {
-                ...prev,
-                totalPage: response.data.totalPage,
-                totalElement: response.data.totalElement
-            }
-        })
-    }
-    useEffect(() => {
-        if (isProductSelectPopup) {
-            fetchProductList();
-        }
-    }, [isProductSelectPopup])
+	const [isProductSelectPopup, setIsProductSelectPopup] = useState(false);
+	const [dataPageProduct, setDataPageProduct] = useState({
+		page: 1,
+		size: 10,
+		totalPage: 1,
+		totalElement: 1,
+		keyword: "",
+	});
+	const productSelectBtnRef = useRef(null);
+	const [productSelectList, setProductSelectList] = useState([]);
+	const fetchProductList = async () => {
+		const response = await quickGetProductList(
+			dataPageProduct.page,
+			dataPageProduct.size,
+			dataPageProduct.keyword
+		);
+		setProductSelectList(response.data.data);
+		setDataPageProduct((prev) => {
+			return {
+				...prev,
+				totalPage: response.data.totalPage,
+				totalElement: response.data.totalElement,
+			};
+		});
+	};
+	useEffect(() => {
+		if (isProductSelectPopup) {
+			fetchProductList();
+		}
+	}, [isProductSelectPopup]);
 
-    const [listProductDetail, setListProductDetail] = useState([]);
 
-    const [dataBody, setDataBody] = useState({
+	const [dataBody, setDataBody] = useState({
 		sub_id: null,
 		note: "",
 		tags: "",
 		user_inspection_id: localStorage.getItem("userId"),
 		isBalance: false,
 		products: [
-		  {
-			product_id: "PRD00001",
-			actual_stock: 30,
-			discrepancy_quantity: 30,
-			reason: "Hư hỏng",
-			note: "Kiểm hàng 15/9",
-			unit: "Chiếc"
-		  }
-		]
-	  });
-    const handleCreateGIN = async () => {
-        const response = await createNewGIN(dataBody);
+			{
+				product_id: "PRD00001",
+				actual_stock: 30,
+				discrepancy_quantity: 30,
+				reason: "Hư hỏng",
+				note: "Kiểm hàng 15/9",
+				unit: "Chiếc",
+			},
+		],
+	});
+	const handleCreateGIN = async () => {
+		const response = await createNewGIN(dataBody);
 
-        if (response.status_code === 201) {
-            alert('Tạo đơn kiểm hàng thành công');
-            navigate('/admin/order_suppliers');
-        }
-    }
+		if (response.status_code === 201) {
+			alert("Tạo đơn kiểm hàng thành công");
+			navigate("/admin/order_suppliers");
+		}
+	};
 
-    useEffect(() => {
-        setDataBody(prev => {
-            return {
-                ...prev,
-                products: listProductDetail.map(product => {
-                    return {
-                        product_id: product.id,
+	useEffect(() => {
+		setDataBody((prev) => {
+			return {
+				...prev,
+				products: listProductDetail.map((product) => {
+					return {
+						product_id: product.id,
 						unit: product.unit,
 						actual_stock: product.actual_stock,
 						discrepancy_quantity: product.discrepancy_quantity,
 						reason: product.reason,
 						note: product.note,
-                     
-                    }
-                })
-            }
-        })
-    }, [listProductDetail])
-    console.log(listProductDetail);
-    console.log(dataBody);
+					};
+				}),
+			};
+		});
+	}, [listProductDetail]);
+	console.log(listProductDetail);
+	console.log(dataBody);
 
 	return (
 		<>
@@ -181,15 +188,14 @@ const CreateGIN = () => {
 			<div className="right__paperPage">
 				<div className="right__paperPage-wrapper">
 					<div className="right__paperPage-container">
-
-					<div className="box-supplier">
-                        <div className="box-paper">
-                            <div className="paper-header">
-                                <p>Thông tin phiếu</p>
-                            </div>
-							<div className="paper-content">
+						<div className="box-supplier">
+							<div className="box-paper">
+								<div className="paper-header">
+									<p>Thông tin phiếu</p>
+								</div>
+								<div className="paper-content">
 									<div className="group-info">
-									<div className="info-item">
+										<div className="info-item">
 											<p className="info-title">Mã phiếu</p>
 											<div className="info-field">
 												<div className="box-input">
@@ -205,12 +211,11 @@ const CreateGIN = () => {
 												</div>
 											</div>
 										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 
-									</div>
-									</div>
-                        </div>
-                    </div>
-					
 						<div className="box-info">
 							<div className="box-paper">
 								<div className="paper-header">
@@ -218,7 +223,6 @@ const CreateGIN = () => {
 								</div>
 								<div className="paper-content">
 									<div className="group-info">
-
 										<div className="info-item">
 											<p className="info-title">Ghi chú</p>
 											<div className="info-field">
@@ -288,14 +292,12 @@ const CreateGIN = () => {
 										</div>
 
 										<div className="btn-toolbar">
-										<button className="btn btn-base btn-text">
-                        <span className="btn__label">
-                            <span className="btn__icon">
-                                {importIcon}
-                            </span>
-                            Nhập file
-                        </span>
-                    </button>
+											<button className="btn btn-base btn-text">
+												<span className="btn__label">
+													<span className="btn__icon">{importIcon}</span>
+													Nhập file
+												</span>
+											</button>
 										</div>
 									</div>
 								</div>
@@ -304,7 +306,11 @@ const CreateGIN = () => {
 										<div className="right__table-search-filter">
 											<div className="box-search-filter-btns">
 												<div className="box-search">
-													<div ref={productSelectBtnRef} onClick={() => setIsProductSelectPopup(true)} className="box-input">
+													<div
+														ref={productSelectBtnRef}
+														onClick={() => setIsProductSelectPopup(true)}
+														className="box-input"
+													>
 														<div className="search-icon">
 															<FontAwesomeIcon icon={faMagnifyingGlass} />
 														</div>
@@ -317,32 +323,45 @@ const CreateGIN = () => {
 														/>
 														<fieldset className="input-field" />
 													</div>
-													{
-                                                        isProductSelectPopup &&
-                                                        <ListSelectPopup
-                                                            title={"sản phẩm"}
-                                                            isLarge={true}
-                                                            isSearch={false}
-                                                            isFastCreate={true}
-                                                            dataList={productSelectList}
-                                                            handleSelect={(id) => setListProductDetail(prev => {
-                                                                return [...prev,
-                                                                {
-                                                                    id: id,
-                                                                    name: productSelectList.find(product => product.id === id)?.name,
-                                                                    image: productSelectList.find(product => product.id === id)?.images?.[0],
-                                                                    unit: productSelectList.find(product => product.id === id)?.unit || "------",
-                                                                    quantity: productSelectList.find(product => product.id === id)?.quantity || 0,
-																	actual_stock: 0,
-																	discrepancy_quantity: 0,
-																	reason: "Khác",
-																	note: "",
-                                                                }]
-                                                            })}
-                                                            btnRef={productSelectBtnRef}
-                                                            closePopup={() => setIsProductSelectPopup(false)}
-                                                        />
-                                                    }
+													{isProductSelectPopup && (
+														<ListSelectPopup
+															title={"sản phẩm"}
+															isLarge={true}
+															isSearch={false}
+															isFastCreate={true}
+															dataList={productSelectList}
+															handleSelect={(id) =>
+																setListProductDetail((prev) => {
+																	return [
+																		...prev,
+																		{
+																			id: id,
+																			name: productSelectList.find(
+																				(product) => product.id === id
+																			)?.name,
+																			image: productSelectList.find(
+																				(product) => product.id === id
+																			)?.images?.[0],
+																			unit:
+																				productSelectList.find(
+																					(product) => product.id === id
+																				)?.unit || "------",
+																			quantity:
+																				productSelectList.find(
+																					(product) => product.id === id
+																				)?.quantity || 0,
+																			actual_stock: 0,
+																			discrepancy_quantity: 0,
+																			reason: "Khác",
+																			note: "",
+																		},
+																	];
+																})
+															}
+															btnRef={productSelectBtnRef}
+															closePopup={() => setIsProductSelectPopup(false)}
+														/>
+													)}
 													<button className="btn btn-base">
 														<span className="btn__label">
 															<p>Chọn nhanh</p>
@@ -365,7 +384,9 @@ const CreateGIN = () => {
 								</div>
 								<div className="box-table">
 									<GINProductsTable
-										productsList={listProductDetail} colsToRender={colsToRender} setProductList={setListProductDetail}
+										productsList={filteredProducts}
+										colsToRender={colsToRender}
+										setProductList={setListProductDetail}
 									/>
 								</div>
 							</div>
