@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react"
 import { formatDateTime } from "../../utils/DateUtils"
 import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup"
 import CreateCategoryPopup from "../CreateCategoryPopup/CreateCategoryPopup"
+import { useDebouncedEffect } from "../../utils/CommonUtils"
 
 const CategoryList = () => {
 
