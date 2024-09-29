@@ -36,3 +36,13 @@ export const getGINs = async (page, size, filterName, filterJson) => {
     }
 }
 
+export const getGINDetail = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/gins/detail.json/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+

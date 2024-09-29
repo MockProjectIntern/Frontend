@@ -2748,7 +2748,7 @@ input:focus-within ~ .input-field {
         margin: 0px;
     }
 
-    &--pending, &--unpaid, &--not_entered {
+    &--pending, &--unpaid, &--not_entered,&--not_returned, &--not_refunded, &--checking {
         border: 1px solid rgb(207, 209, 211);
         background-color: rgb(243, 244, 245);
 
