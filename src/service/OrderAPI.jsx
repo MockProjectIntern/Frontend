@@ -25,3 +25,13 @@ export const getAllOrders = async (page, size, filterName, filterJson, body) => 
         throw error;
     }
 }
+
+export const getOrderById = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/orders/detail.json/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

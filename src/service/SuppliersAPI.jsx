@@ -20,7 +20,6 @@ export const getSupplierList = async (page, size, filterName, filterJson, bodyJs
 export const getAllSupplierByName = async (page, size, name) => {
     try {
         const response = await axiosInstance.get(`suppliers/list-name.json?page=${page}&size=${size}&keyword=${name}`);
-
         return response.data;
     } catch (err) {
         console.log(err);
@@ -54,6 +53,16 @@ export const getDebtSupplier = async (id) => {
     try {
         const response = await axiosInstance.get(`suppliers/detail-money.json/${id}`);
 
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
+export const getDataExportExcel = async (mode, bodyJson) => {
+    try {
+        const response = await axiosInstance.post(`suppliers/export-data.json?mode=${mode}`, bodyJson);
         return response.data;
     } catch (err) {
         console.log(err);

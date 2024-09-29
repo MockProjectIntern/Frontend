@@ -1,6 +1,6 @@
 import Header from "../Header/Header"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus,faMagnifyingGlass,faCaretDown,faChevronRight,faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faMagnifyingGlass, faCaretDown, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import cn from "classnames"
 import { getListCategory } from "../../service/CategoryAPI"
 import { useEffect, useRef, useState } from "react"
@@ -35,31 +35,36 @@ const CategoryList = () => {
             setPage(prev => prev + 1);
         }
     }
-    const fetchCategoriesList = async () =>{
-        try{
+    const fetchCategoriesList = async () => {
+        try {
             const categories = await getListCategory(page, limit, dataBody);
-            if(categories.status_code === 200){
+            if (categories.status_code === 200) {
                 setCategoriesList(categories.data.data);
                 setCategoriesQuantity(categories.data.total_items);
                 setPageQuantity(categories.data.total_page);
             }
-            else{
-                console.log("status code:",categories.status_code);
+            else {
+                console.log("status code:", categories.status_code);
             }
         }
-        catch(err){
+        catch (err) {
             console.log(err);
             throw err;
         }
     }
 
-
     useEffect(() => {
-        fetchCategoriesList();
-    }, [limit,page]);
+        const handler = setTimeout(() => {
+            fetchCategoriesList();
+        }, 150); 
+    
+        return () => clearTimeout(handler);
+        
+    }, [limit, page, dataBody]);
+
     return (
         <>
-            <Header title={"Loại sản phẩm"}/>
+            <Header title={"Loại sản phẩm"} />
             <div className="right__listPage">
                 <div className='right__toolbar'>
                     <div className="btn-toolbar">
@@ -82,14 +87,24 @@ const CategoryList = () => {
                     <div className="right__table-search-filter">
                         <div className="">
                             <div className="box-search-filter-btns">
-                            <div className="box-search">
-                                <div className="box-input">
-                                    <div className="search-icon">
-                                        <FontAwesomeIcon icon={faMagnifyingGlass} />
+                                <div className="box-search">
+                                    <div className="box-input">
+                                        <div className="search-icon">
+                                            <FontAwesomeIcon icon={faMagnifyingGlass} />
+                                        </div>
+                                        <input placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm'
+                                            type="text"
+                                            name="search"
+                                            id=""
+                                            autoComplete='on'
+                                            onChange={e => setDataBody(prev => {
+                                                return {
+                                                    ...prev,
+                                                    keyword: e.target.value
+                                                }
+                                            })} />
+                                        <fieldset className='input-field' />
                                     </div>
-                                    <input placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode' type="text" name="search" id="" autoComplete='on' />
-                                    <fieldset className='input-field' />
-                                </div>
                                 </div>
                             </div>
                         </div>
@@ -97,7 +112,7 @@ const CategoryList = () => {
                     <div className="right__table-headers">
                         <table className="box-table-headers">
                             <colgroup>
-                                <col style={{ width: "80px" }} /> 
+                                <col style={{ width: "80px" }} />
                                 <col style={{ width: "470px" }} />
                                 <col style={{ width: "215px" }} />
                                 <col style={{ width: "220px" }} />
@@ -152,15 +167,15 @@ const CategoryList = () => {
                             <div className="table-data__container">
                                 <table className="box-table-data">
                                     <colgroup>
-                                        <col style={{ width: "80px" }} /> 
+                                        <col style={{ width: "80px" }} />
                                         <col style={{ width: "470px" }} />
                                         <col style={{ width: "215px" }} />
                                         <col style={{ width: "220px" }} />
                                         <col style={{ width: "215px" }} />
                                     </colgroup>
                                     <tbody>
-                                        {categoriesList.map((category,index) => {
-                                            return(
+                                        {categoriesList.map((category, index) => {
+                                            return (
                                                 <tr key={index} className="table-data-row">
                                                     <td rowSpan={1} className='table-icon'>
                                                         <div className="group-icons">
@@ -179,7 +194,7 @@ const CategoryList = () => {
                                                     </td>
                                                     <td className={cn("table-data-item", "text-center")}>
                                                         <p className="box-text">
-                                                            {category.id}
+                                                            {category.sub_id}
                                                         </p>
                                                     </td>
                                                     <td className={cn("table-data-item", "text-start")}>
@@ -212,12 +227,12 @@ const CategoryList = () => {
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </span>
                                 </button>
-                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => { setLimit(limit) }}/>}
+                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => { setLimit(limit) }} />}
                             </div>
                             <p>Kết quả</p>
                             <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + categoriesList.length} trên tổng {categoriesQuantity}</p>
-                            <button 
-                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
+                            <button
+                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1 })}
                                 onClick={handlePrevPage}
                             >
                                 <FontAwesomeIcon icon={faChevronLeft} />

@@ -33,6 +33,8 @@ const ProductList = () => {
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_products');
         return storedCols ? JSON.parse(storedCols) : {
+            id: true, 
+            sub_id: true,
             images: true,
             name: true,
             status: true,
@@ -317,9 +319,6 @@ const ProductList = () => {
                         </button>
                         <button className="btn btn-base btn-text" onClick={() => navigate('/admin/categories')}>
                             <span className="btn__label">
-                                <span className="btn__icon">
-                                    {importIcon}
-                                </span>
                                 Loại sản phẩm
                             </span>
                         </button>

@@ -17,9 +17,7 @@ import boxOpenIcon from '../../assets/icons/BoxOpenIcon'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCircleMinus, faCirclePlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 
-const ProductsTable = ({ productsList, setProductList, colsToRender }) => {
-    const [discount, setDiscount] = useState(0);
-
+const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) => {
     const handleChangeData = (index, key, value) => {
         const newProductsList = [...productsList];
         newProductsList[index][key] = value;
@@ -45,7 +43,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender }) => {
                         }
                         return null;
                     })}
-                    <col style={{ width: "40px" }} />
+                    {!isView && <col style={{ width: "40px" }} />}
                 </colgroup>
                 <thead className={s.tableHeader}>
                     <tr className={s.tableRow}>
@@ -64,7 +62,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender }) => {
                             }
                             return null;
                         })}
-                        <th className={cn(s.tableCell, s.tableCellHeader, "text-center")}></th>
+                        {!isView && <th className={cn(s.tableCell, s.tableCellHeader, "text-center")}></th>}
                     </tr>
                 </thead>
                 <tbody className={s.tableBody}>
@@ -108,14 +106,24 @@ const ProductsTable = ({ productsList, setProductList, colsToRender }) => {
                                                     </div>
                                                 </td>
                                             )
-                                        } else if (key.includes("quantity")) {
+                                        } else if (key === "quantity") {
+                                            if (isView) {
+                                                return (
+                                                    <td
+                                                        key={key}
+                                                        className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                    >
+                                                        <p>{product[key]}</p>
+                                                    </td>
+                                                )
+                                            }
                                             return (
                                                 <td
                                                     key={key}
                                                     className={cn(s.tableCell, s.tableCellBody, col[key].align)}
                                                 >
                                                     <div className={s.boxQuantity}>
-                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.quantity - 1)}>
+                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.ordered_quantity - 1)}>
                                                             <span className={s.btnIconLabel}>
                                                                 <FontAwesomeIcon icon={faCircleMinus} />
                                                             </span>
@@ -130,7 +138,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender }) => {
                                                                 />
                                                             </div>
                                                         </div>
-                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.quantity + 1)}>
+                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.ordered_quantity + 1)}>
                                                             <span className={s.btnIconLabel}>
                                                                 <FontAwesomeIcon icon={faCirclePlus} />
                                                             </span>
@@ -138,7 +146,97 @@ const ProductsTable = ({ productsList, setProductList, colsToRender }) => {
                                                     </div>
                                                 </td>
                                             )
-                                        } else if (key === "costPrice") {
+                                        } else if (key === "imported_quantity") {
+                                            if (isView) {
+                                                return (
+                                                    <td
+                                                        key={key}
+                                                        className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                    >
+                                                        <p>{product[key]}</p>
+                                                    </td>
+                                                )
+                                            }
+                                            return (
+                                                <td
+                                                    key={key}
+                                                    className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                >
+                                                    <div className={s.boxQuantity}>
+                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.ordered_quantity - 1)}>
+                                                            <span className={s.btnIconLabel}>
+                                                                <FontAwesomeIcon icon={faCircleMinus} />
+                                                            </span>
+                                                        </button>
+                                                        <div className={s.boxFormControl}>
+                                                            <div className={s.boxInput}>
+                                                                <input
+                                                                    className={cn(s.inputField, col[key].align)}
+                                                                    type="text"
+                                                                    value={product[key]}
+                                                                    onChange={(e) => handleChangeData(index, key, e.target.value)}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.ordered_quantity + 1)}>
+                                                            <span className={s.btnIconLabel}>
+                                                                <FontAwesomeIcon icon={faCirclePlus} />
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            )
+                                        } else if (key === "ordered_quantity") {
+                                            if (isView) {
+                                                return (
+                                                    <td
+                                                        key={key}
+                                                        className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                    >
+                                                        <p>{product[key]}</p>
+                                                    </td>
+                                                )
+                                            }
+                                            return (
+                                                <td
+                                                    key={key}
+                                                    className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                >
+                                                    <div className={s.boxQuantity}>
+                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.ordered_quantity - 1)}>
+                                                            <span className={s.btnIconLabel}>
+                                                                <FontAwesomeIcon icon={faCircleMinus} />
+                                                            </span>
+                                                        </button>
+                                                        <div className={s.boxFormControl}>
+                                                            <div className={s.boxInput}>
+                                                                <input
+                                                                    className={cn(s.inputField, col[key].align)}
+                                                                    type="text"
+                                                                    value={product[key]}
+                                                                    onChange={(e) => handleChangeData(index, key, e.target.value)}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.ordered_quantity + 1)}>
+                                                            <span className={s.btnIconLabel}>
+                                                                <FontAwesomeIcon icon={faCirclePlus} />
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            )
+                                        } else if (key === "price") {
+                                            if (isView) {
+                                                return (
+                                                    <td
+                                                        key={key}
+                                                        className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                    >
+                                                        <p>{product[key]}</p>
+                                                    </td>
+                                                )
+                                            }
                                             return (
                                                 <td
                                                     key={key}
@@ -152,10 +250,20 @@ const ProductsTable = ({ productsList, setProductList, colsToRender }) => {
                                                 </td>
                                             )
                                         } else if (key === "discount") {
+                                            if (isView) {
+                                                return (
+                                                    <td
+                                                        key={key}
+                                                        className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                    >
+                                                        <p>{product[key]}</p>
+                                                    </td>
+                                                )
+                                            }
                                             return (
                                                 <DiscountTableCell
                                                     key={key}
-                                                    price={product.costPrice}
+                                                    price={product.price}
                                                     discount={product.discount}
                                                     handleChangeDiscount={(value) => {
                                                         handleChangeData(index, key, value);
@@ -163,6 +271,16 @@ const ProductsTable = ({ productsList, setProductList, colsToRender }) => {
                                                 />
                                             )
                                         } else if (key === "tax") {
+                                            if (isView) {
+                                                return (
+                                                    <td
+                                                        key={key}
+                                                        className={cn(s.tableCell, s.tableCellBody, col[key].align)}
+                                                    >
+                                                        <p>{product[key]}</p>
+                                                    </td>
+                                                )
+                                            }
                                             return (
                                                 <td
                                                     key={key}
@@ -182,9 +300,11 @@ const ProductsTable = ({ productsList, setProductList, colsToRender }) => {
                                                 className={cn(s.tableCell, s.tableCellBody, col[key].align)}
                                             >
                                                 <p>
-                                                    {key === "total"
-                                                        ? Number(product.quantity) * (Number(product.costPrice) - Number(product.discount) + Number(product.tax))
-                                                        : product.unit}
+                                                    {
+                                                        key === "total"
+                                                            ? Number(!isNaN(product.ordered_quantity) ? product.ordered_quantity : product.imported_quantity) * (Number(product.price) - Number(product.discount) + Number(product.tax))
+                                                            : key === "index" ? index + 1 : product.unit
+                                                    }
                                                 </p>
 
                                             </td>
@@ -192,11 +312,17 @@ const ProductsTable = ({ productsList, setProductList, colsToRender }) => {
                                     }
                                     return null;
                                 })}
-                                <td className={cn(s.tableCell, s.tableCellBody, "text-center")}>
-                                    <button className="btn-icon">
-                                        <FontAwesomeIcon icon={faXmark} />
-                                    </button>
-                                </td>
+                                {
+                                    !isView &&
+                                    <td className={cn(s.tableCell, s.tableCellBody, "text-center")}>
+                                        <button
+                                            className="btn-icon"
+                                            onClick={() => setProductList(prev => prev.filter((_, i) => i !== index))}
+                                        >
+                                            <FontAwesomeIcon icon={faXmark} />
+                                        </button>
+                                    </td>
+                                }
                             </tr>
                         )
                     })}

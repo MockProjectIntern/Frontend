@@ -122,9 +122,9 @@ const CreateGRN = () => {
                 </div>
             </div>
 
-            <div className='right__createPaperPage'>
-                <div className='right__createPaperPage-wrapper'>
-                    <div className="right__createPaperPage-container">
+            <div className='right__paperPage'>
+                <div className='right__paperPage-wrapper'>
+                    <div className="right__paperPage-container">
                         <div className="box-supplier">
                             <div className="box-paper">
                                 <div className="paper-header">
