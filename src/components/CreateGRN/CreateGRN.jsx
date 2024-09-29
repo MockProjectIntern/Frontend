@@ -15,15 +15,6 @@ import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import '../../styles/_overrides.scss'
 const CreateGRN = () => {
-    // const [supplier, setSupplier] = useState({
-    //     name: "Test",
-    //     phone: "0123456789",
-    //     address: "Hà Nội, Phường Bách Khoa, Quận Hai Bà Trưng, Hà Nội, Việt Nam",
-    //     debt: "4,000,000",
-    //     grn_quantity: 0,
-    //     grn_total: 0,
-    //     return: 0,
-    // });
     const [supplier, setSupplier] = useState(null);
     const [tags, setTags] = useState([]);
     const [tagValue, setTagValue] = useState("");
@@ -96,6 +87,7 @@ const CreateGRN = () => {
     useEffect(() => {
         Cookies.set('filter_products_table', JSON.stringify(colsToRender));
     }, [colsToRender])
+    
     return (
         <>
             <div className="right__navbar">
@@ -147,19 +139,10 @@ const CreateGRN = () => {
                                 <div className="paper-content">
                                     <div className="group-info">
                                         <div className="info-item">
-                                            <p className="info-title">Chi nhánh</p>
-                                            <div className="info-field">
-                                                <div className="box-input">
-                                                    <input placeholder='Chi nhánh' name='branch' type="text" className="text-field" />
-                                                    <fieldset className='input-field'></fieldset>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="info-item">
                                             <p className="info-title">Nhân viên</p>
                                             <div className="info-field">
                                                 <div className="box-input">
-                                                    <input placeholder='Nhân viên' name='user_created_name' type="text" className="text-field" />
+                                                    <input value={localStorage.getItem("fullName")} name='user_created_name' type="text" className="text-field" disabled va/>
                                                     <fieldset className='input-field'></fieldset>
                                                 </div>
                                             </div>

@@ -20,50 +20,6 @@ import StatusFilter from './FiltersPopup/StatusFilter.jsx'
 import CreatedAtFilter from '../GINList/FiltersPopup/CreatedAtFilter.jsx'
 import { getGRNs } from '../../service/GRNApi.jsx'
 
-// const grnList = [
-//     {
-//         id: "OSN00004",
-//         created_at: "13/09/2024 11:36",
-//         status: "Đang giao dịch",
-//         received_status: "Chưa nhập",
-//         supplier_name: "MDC",
-//         user_created: "Admin",
-//         total_value: "2,448,000"
-//     },
-//     {
-//         id: "OSN00003",
-//         created_at: "13/09/2024 11:36",
-//         status: "Đã hủy",
-//         received_status: "Đã nhập",
-//         supplier_name: "MDC",
-//         user_created: "Admin",
-//         total_value: "2,448,000"
-        
-//     },
-//     {
-//         id: "OSN00002",
-//         created_at: "13/09/2024 11:36",
-//         status: "Hoàn thành",
-//         received_status: "Đã nhập",
-//         supplier_name: "MDC",
-//         user_created: "Admin",
-//         total_value: "2,448,000"
-//     },
-//     {
-//         id: "OSN00001",
-//         created_at: "13/09/2024 11:36",
-//         status: "Đang giao dịch",
-//         received_status: "Chưa nhập",
-//         supplier_name: "MDC",
-//         user_created: "Admin",
-//         total_value: "2,448,000"
-//     }
-
-  
-// ]
-
-
-
 const grnsQuantity = 4;
 
 const GRNList = () => {
@@ -120,7 +76,6 @@ const GRNList = () => {
                 ...filterBody, start_date_at: createdMin, end_created_at: createdMax, statuses: statusListFilter
             });
             setGrnList(res.data.data);
-            console.log(res.data.data)
             setPageQuantity(Math.ceil(res.data.total_items / limit));
             setTotalItems(res.data.total_items);
         } catch (error) {

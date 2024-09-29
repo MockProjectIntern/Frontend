@@ -30,3 +30,12 @@ export const getGRNs = async (page, size, filterName, filterJson,data) => {
     }
 }
 
+export const getAllByOrder = async (orderId, page, size) => {
+    try {
+        const response = await axiosInstance.get(`/grns/order-all.json/${orderId}?page=${page}&size=${size}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

@@ -19,45 +19,7 @@ import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifying
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import StatusFilter from '../GRNList/FiltersPopup/StatusFilter.jsx'
 import { getAllOrders } from '../../service/OrderAPI.jsx'
-
-const ordersList = [
-    {
-        id: "OSN00004",
-        created_at: "13/09/2024 11:36",
-        status: "Nhập một phần",
-        supplier_name: "MDC",
-        user_created_name: "Admin",
-        total_quantity: 7,
-        total_price: "2,448,000"
-    },
-    {
-        id: "OSN00003",
-        created_at: "13/09/2024 11:36",
-        status: "Đã hủy",
-        supplier_name: "MDC",
-        user_created_name: "Admin",
-        total_quantity: 7,
-        total_price: "2,448,000"
-    },
-    {
-        id: "OSN00002",
-        created_at: "13/09/2024 11:36",
-        status: "Hoàn thành",
-        supplier_name: "MDC",
-        user_created_name: "Admin",
-        total_quantity: 7,
-        total_price: "2,448,000"
-    },
-    {
-        id: "OSN00001",
-        created_at: "13/09/2024 11:36",
-        status: "Chưa nhập",
-        supplier_name: "MDC",
-        user_created_name: "Admin",
-        total_quantity: 7,
-        total_price: "2,448,000"
-    }
-]
+import { formatDateTime } from '../../utils/DateUtils.jsx'
 
 const ordersQuantity = 4;
 
@@ -393,6 +355,15 @@ const OrdersList = () => {
                                                                         })}>
                                                                             <span>{status[order[key]]}</span>
                                                                         </div>
+                                                                    </td>
+                                                                )
+                                                            } else if (key.includes("_at")) {
+                                                                return (
+                                                                    <td
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        <p className='box-text'>{formatDateTime(order[key])}</p>
                                                                     </td>
                                                                 )
                                                             }

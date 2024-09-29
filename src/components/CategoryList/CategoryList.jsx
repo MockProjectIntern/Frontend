@@ -1,0 +1,261 @@
+import Header from "../Header/Header"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus, faMagnifyingGlass, faCaretDown, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import cn from "classnames"
+import { getListCategory } from "../../service/CategoryAPI"
+import { useRef, useState } from "react"
+import { formatDateTime } from "../../utils/DateUtils"
+import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup"
+import { useDebouncedEffect } from "../../utils/CommonUtils"
+
+const CategoryList = () => {
+
+    const limitBtnRef = useRef(null);
+
+    const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
+    const [limit, setLimit] = useState(10);
+    const [page, setPage] = useState(1);
+    const [pageQuantiy, setPageQuantity] = useState(1);
+    const [categoriesQuantity, setCategoriesQuantity] = useState();
+    const [categoriesList, setCategoriesList] = useState([]);
+    const [dataBody, setDataBody] = useState(
+        {
+            keyword: null
+        }
+    );
+
+
+    const handlePrevPage = () => {
+        if (page > 1) {
+            setPage(prev => prev - 1);
+        }
+    }
+
+    const handleNextPage = () => {
+        if (page < pageQuantiy) {
+            setPage(prev => prev + 1);
+        }
+    }
+    const fetchCategoriesList = async () => {
+        try {
+            const categories = await getListCategory(page, limit, dataBody);
+            if (categories.status_code === 200) {
+                setCategoriesList(categories.data.data);
+                setCategoriesQuantity(categories.data.total_items);
+                setPageQuantity(categories.data.total_page);
+            }
+            else {
+                console.log("status code:", categories.status_code);
+            }
+        }
+        catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
+
+    useDebouncedEffect(() => {
+        fetchCategoriesList();
+    }, 300, [limit, page, dataBody]);
+
+    return (
+        <>
+            <Header title={"Loại sản phẩm"} />
+            <div className="right__listPage">
+                <div className='right__toolbar'>
+                    <div className="btn-toolbar">
+                        <button className="btn btn-primary">
+                            <span className="btn__icon">
+                                <FontAwesomeIcon icon={faPlus} />
+                            </span>
+                            <span className="btn__title">Thêm loại sản phẩm</span>
+                        </button>
+                    </div>
+                </div>
+                <div className="right__table">
+                    <div className="right__table-scroller">
+                        <div className="box-scroller">
+                            <div className="group-scroller-btns">
+                                <button className="btn-scroller active">Tất cả loại sản phẩm</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="right__table-search-filter">
+                        <div className="">
+                            <div className="box-search-filter-btns">
+                                <div className="box-search">
+                                    <div className="box-input">
+                                        <div className="search-icon">
+                                            <FontAwesomeIcon icon={faMagnifyingGlass} />
+                                        </div>
+                                        <input placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm'
+                                            type="text"
+                                            name="search"
+                                            id=""
+                                            autoComplete='on'
+                                            onChange={e => setDataBody(prev => {
+                                                return {
+                                                    ...prev,
+                                                    keyword: e.target.value
+                                                }
+                                            })} />
+                                        <fieldset className='input-field' />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="right__table-headers">
+                        <table className="box-table-headers">
+                            <colgroup>
+                                <col style={{ width: "80px" }} />
+                                <col style={{ width: "470px" }} />
+                                <col style={{ width: "215px" }} />
+                                <col style={{ width: "220px" }} />
+                                <col style={{ width: "215px" }} />
+                            </colgroup>
+                            <thead>
+                                <tr className="group-table-headers">
+                                    <th rowSpan={1} className='table-icon'>
+                                        <div className="group-icons">
+                                            <div className="checkbox__container">
+                                                <div className="checkbox__wrapper">
+                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
+                                                    <div className="btn-checkbox"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th
+                                        colSpan={1}
+                                        rowSpan={1}
+                                        className={cn("table-header-item", "text-start")}
+                                    >
+                                        Tên loại sản phẩm
+                                    </th>
+                                    <th
+                                        colSpan={1}
+                                        rowSpan={1}
+                                        className={cn("table-header-item", "text-center")}
+                                    >
+                                        Mã loại
+                                    </th>
+                                    <th
+                                        colSpan={1}
+                                        rowSpan={1}
+                                        className={cn("table-header-item", "text-start")}
+                                    >
+                                        Ngày sửa gần nhất
+                                    </th>
+                                    <th
+                                        colSpan={1}
+                                        rowSpan={1}
+                                        className={cn("table-header-item", "text-center")}
+                                    >
+                                        Ngày tạo
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div className="right__table-content">
+                        <div className="right__table-data">
+                            <div className="table-data__container">
+                                <table className="box-table-data">
+                                    <colgroup>
+                                        <col style={{ width: "80px" }} />
+                                        <col style={{ width: "470px" }} />
+                                        <col style={{ width: "215px" }} />
+                                        <col style={{ width: "220px" }} />
+                                        <col style={{ width: "215px" }} />
+                                    </colgroup>
+                                    <tbody>
+                                        {categoriesList.map((category, index) => {
+                                            return (
+                                                <tr key={index} className="table-data-row">
+                                                    <td rowSpan={1} className='table-icon'>
+                                                        <div className="group-icons">
+                                                            <div className="checkbox__container">
+                                                                <div className="checkbox__wrapper">
+                                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
+                                                                    <div className="btn-checkbox"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className={cn("table-data-item", "text-start")}>
+                                                        <p className="box-text">
+                                                            {category.name}
+                                                        </p>
+                                                    </td>
+                                                    <td className={cn("table-data-item", "text-center")}>
+                                                        <p className="box-text">
+                                                            {category.sub_id}
+                                                        </p>
+                                                    </td>
+                                                    <td className={cn("table-data-item", "text-start")}>
+                                                        <p className="box-text">
+                                                            {formatDateTime(category.created_at)}
+                                                        </p>
+                                                    </td>
+                                                    <td className={cn("table-data-item", "text-center")}>
+                                                        <p className="box-text">
+                                                            {formatDateTime(category.updated_at)}
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div className="right__table-pagination">
+                            <p>Hiển thị</p>
+                            <div className="box-page-limit">
+                                <button
+                                    ref={limitBtnRef}
+                                    onClick={() => setIsOpenLimitPopup(!isOpenLimitPopup)}
+                                    className={cn("btn-page-limit", { "selected": isOpenLimitPopup })}
+                                >
+                                    {limit}
+                                    <span>
+                                        <FontAwesomeIcon icon={faCaretDown} />
+                                    </span>
+                                </button>
+                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => { setLimit(limit) }} />}
+                            </div>
+                            <p>Kết quả</p>
+                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + categoriesList.length} trên tổng {categoriesQuantity}</p>
+                            <button
+                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1 })}
+                                onClick={handlePrevPage}
+                            >
+                                <FontAwesomeIcon icon={faChevronLeft} />
+                            </button>
+                            {
+                                Array(pageQuantiy).fill(null).map((_, index) => (
+                                    <div
+                                        key={index}
+                                        className={cn("box-page", { 'active': page === index + 1 })}
+                                        onClick={() => setPage(index + 1)}
+                                    >
+                                        {index + 1}
+                                    </div>
+                                ))
+                            }
+                            <button
+                                className={cn('btn-icon', 'btn-page', { 'inactive': page === pageQuantiy })}
+                                onClick={handleNextPage}
+                            >
+                                <FontAwesomeIcon icon={faChevronRight} />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+export default CategoryList
