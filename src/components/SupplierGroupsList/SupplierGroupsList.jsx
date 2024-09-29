@@ -1,4 +1,4 @@
-import { getListSupplierGroups } from "../../service/SupplierGroupsAPI";
+import { createSupplierGroup, getListSupplierGroups } from "../../service/SupplierGroupsAPI";
 import Header from "../Header/Header"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faMagnifyingGlass, faCaretDown, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
@@ -7,6 +7,7 @@ import { useEffect, useState, useRef } from "react"
 import { formatDateTime } from "../../utils/DateUtils"
 import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup";
 import { useDebouncedEffect } from "../../utils/CommonUtils";
+import CreateSupplierGroupPopup from "../CreateSupplierGroupPopup/CreateSupplierGroupPopup";
 
 const SupplierGroupsList = () => {
 
@@ -24,6 +25,45 @@ const SupplierGroupsList = () => {
             status: "ACTIVE"
         }
     );
+
+    const [dataCreateSupplierGroup, setDataCreateSupplierGroup] = useState({
+        name: "",
+        note: "",
+        sub_id: "",
+    })
+    const [isCreateSupplierGroups, setIsCreateSupplierGroups] = useState(false);
+
+    const handleChangeDataCreateSupplierGroup = (e) => {
+        const { name, value } = e.target; // Lấy name và value từ input
+        setDataCreateSupplierGroup((prevData) => ({
+            ...prevData,
+            [name]: value // Cập nhật giá trị tương ứng với name
+        }));
+    };
+
+    const handleClickBack = () =>{
+        setIsCreateSupplierGroups(false);
+    }
+
+    const handleCLickCreate = async() =>{
+        try{
+            const response = await createSupplierGroup(dataCreateSupplierGroup);
+            if (response.status === 201) {
+                alert("Tạo nhóm nhà cung cấp thành thành công!");
+                setDataCreateSupplierGroup({
+                    name: "",
+                    note: "",
+                    sub_id: "",
+                });
+                setIsCreateSupplierGroups(false)
+            }
+            setIsCreateSupplierGroups(false)
+        }
+        catch(err){
+            console.log(err);
+            throw err;
+        }
+    }
 
 
     const handlePrevPage = () => {
@@ -58,15 +98,21 @@ const SupplierGroupsList = () => {
 
     useDebouncedEffect(() => {
         fetchSupplierGroupsList();
-    }, 300, [limit, page, dataBody]);
+    }, 300, [limit, page, dataBody, isCreateSupplierGroups]);
 
     return (
-        <>
-            <Header title={"Nhóm nhà cung cấp"} />
+        <>  
+            {isCreateSupplierGroups && (
+                <>
+                    <div className="overlay"></div>
+                    <CreateSupplierGroupPopup handleOnClickBack = {handleClickBack} handleOnClickCreate = {handleCLickCreate} handleOnChange = {handleChangeDataCreateSupplierGroup}/>
+                </>
+            )}
+            <Header title={"Nhóm nhà cung cấp"}/>
             <div className="right__listPage">
                 <div className='right__toolbar'>
                     <div className="btn-toolbar">
-                        <button className="btn btn-primary">
+                        <button className="btn btn-primary" onClick={() => setIsCreateSupplierGroups(!isCreateSupplierGroups)}>
                             <span className="btn__icon">
                                 <FontAwesomeIcon icon={faPlus} />
                             </span>

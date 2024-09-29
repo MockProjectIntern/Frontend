@@ -2784,3 +2784,13 @@ input:focus-within ~ .input-field {
         }
     }
 }
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);  // Màu đen trong suốt
+    z-index: 10000;  // Đảm bảo nó xuất hiện trên các thành phần khác
+  }

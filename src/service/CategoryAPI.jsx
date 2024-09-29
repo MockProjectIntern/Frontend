@@ -11,3 +11,15 @@ export const getListCategory = async (page, size, dataFilter) => {
         throw err;
     }
 }
+
+export const createCategory = async (dataBody) => {
+    try {
+        const response = await axiosInstance.post(`categories/create.json`, 
+            dataBody
+        );
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}

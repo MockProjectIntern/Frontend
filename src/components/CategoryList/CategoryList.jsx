@@ -2,11 +2,11 @@ import Header from "../Header/Header"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faMagnifyingGlass, faCaretDown, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import cn from "classnames"
-import { getListCategory } from "../../service/CategoryAPI"
-import { useRef, useState } from "react"
+import { createCategory, getListCategory } from "../../service/CategoryAPI"
+import { useEffect, useRef, useState } from "react"
 import { formatDateTime } from "../../utils/DateUtils"
 import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup"
-import { useDebouncedEffect } from "../../utils/CommonUtils"
+import CreateCategoryPopup from "../CreateCategoryPopup/CreateCategoryPopup"
 
 const CategoryList = () => {
 
@@ -24,6 +24,10 @@ const CategoryList = () => {
         }
     );
 
+    const [isCreateCategory, setIsCreateCategory] = useState(false); 
+    const [dataCreateCategory, setDataCreateCategory] = useState({
+        name: "",
+    })
 
     const handlePrevPage = () => {
         if (page > 1) {
@@ -36,6 +40,37 @@ const CategoryList = () => {
             setPage(prev => prev + 1);
         }
     }
+
+    const handleChangeDataCreateSupplierGroup = (e) => {
+        const { name, value } = e.target; // Lấy name và value từ input
+        setDataCreateCategory((prevData) => ({
+            ...prevData,
+            [name]: value // Cập nhật giá trị tương ứng với name
+        }));
+    };
+
+    const handleClickBack = () =>{
+        setIsCreateCategory(false);
+    }
+
+    const handleCLickCreate = async() =>{
+        try{
+            const response = await createCategory(dataCreateCategory);
+            if (response.status === 201) {
+                alert("Tạo loại sản phẩm thành công!");
+                setDataCreateCategory({
+                    name: "",
+                });
+                setIsCreateCategory(false);
+            }
+            setIsCreateCategory(false);
+        }
+        catch(err){
+            console.log(err);
+            throw err;
+        }
+    }
+
     const fetchCategoriesList = async () => {
         try {
             const categories = await getListCategory(page, limit, dataBody);
@@ -56,15 +91,23 @@ const CategoryList = () => {
 
     useDebouncedEffect(() => {
         fetchCategoriesList();
-    }, 300, [limit, page, dataBody]);
+    }, 300, [limit, page, dataBody, isCreateCategory]);
 
     return (
-        <>
+        <>  
+            
+            {isCreateCategory && (
+                <>
+                    <div className="overlay"></div>
+                    <CreateCategoryPopup handleOnClickBack = {handleClickBack} handleOnChange = {handleChangeDataCreateSupplierGroup} handleOnClickCreate={handleCLickCreate}/>
+                </>
+            )}
+            
             <Header title={"Loại sản phẩm"} />
             <div className="right__listPage">
                 <div className='right__toolbar'>
                     <div className="btn-toolbar">
-                        <button className="btn btn-primary">
+                        <button className="btn btn-primary" onClick={() => setIsCreateCategory(true)}>
                             <span className="btn__icon">
                                 <FontAwesomeIcon icon={faPlus} />
                             </span>

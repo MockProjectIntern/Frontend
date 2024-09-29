@@ -10,3 +10,15 @@ export const getListSupplierGroups = async(page, size, bodyJson) =>{
         throw err;
     }
 }
+
+export const createSupplierGroup = async (dataBody) => {
+    try {
+        const response = await axiosInstance.post(`supplier-groups/create.json`, 
+            dataBody
+        );
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
