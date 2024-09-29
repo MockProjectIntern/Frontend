@@ -15,10 +15,12 @@ import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
-import { getAllSupplierByName, getSupplierList } from '../../service/SuppliersAPI.jsx'
+import { getAllSupplierByName, getDataExportExcel, getSupplierList } from '../../service/SuppliersAPI.jsx'
 import { useNavigate } from 'react-router-dom'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import s from './SupplierFilter.module.scss'
+import { exportExcel } from '../../config/ExportExcel.jsx'
+import { formatDateTime } from '../../utils/DateUtils.jsx'
 
 
 const SupplierList = () => {
@@ -92,11 +94,9 @@ const SupplierList = () => {
     useEffect(() => {
         Cookies.set('filter_suppliers', JSON.stringify(colsToRender));
     }, [colsToRender])
-    //console.log(col)
 
     useEffect(() => {
         fetchSupplierList();
-
     }, [limit, page]);
 
 
@@ -105,7 +105,7 @@ const SupplierList = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(false);
     const [supplierList, setSupplierList] = useState([]);
-    const [isPopupVisible, setIsPopupVisible] = useState(false); // State to control visibility of the popup
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
     const popupRef = useRef(null);
 
     const fetchSuppliersByName = async () => {
@@ -151,13 +151,35 @@ const SupplierList = () => {
         };
     }, [popupRef]);
 
+    const handleExport = async () => {
+        const responseAPI = await getDataExportExcel("DEFAULT", dataBody);
+
+        const dataExport = responseAPI.data.map((item) => {
+            return {
+                "Mã nhà cung cấp": item.sub_id,
+                "Tên nhà cung cấp": item.name,
+                "Số điện thoại": item.phone,
+                "Email": item.email,
+                "Địa chỉ": item.address,
+                "Nhãn hiệu": item.tags,
+                "Ghi chú": item.note,
+                "Tên nhóm nhà cung cấp": item.name_group,
+                "Mã nhóm nhà cung cấp": item.sub_id_group,
+                "Ngày tạo": formatDateTime(item.created_at),
+                "Ngày cập nhật": formatDateTime(item.updated_at)
+            }
+        });
+
+        exportExcel(dataExport, "Danh sách nhà cung cấp");
+    }
+
     return (
         <>
             <Header title={"Danh sách nhà cung cấp"} />
             <div className='right__listPage'>
                 <div className='right__toolbar'>
                     <div className='btn-toolbar'>
-                        <button className='btn btn-base btn-text'>
+                        <button className='btn btn-base btn-text' onClick={handleExport}>
                             <span className="btn__label">
                                 <span className="btn__icon">
                                     {exportIcon}

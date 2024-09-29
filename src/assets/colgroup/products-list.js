@@ -1,4 +1,14 @@
 const productsListColgroup = {
+    id: {
+        name: "Mã sản phẩm",
+        width: "0px",
+        align: "text-start"
+    },
+    sub_id: {
+        name: "Mã phụ",
+        width: "0px",
+        align: "text-start"
+    },
     name: {
         name: "Sản phẩm",
         width: "270px",

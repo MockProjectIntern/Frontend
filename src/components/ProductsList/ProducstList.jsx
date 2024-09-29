@@ -29,6 +29,8 @@ const ProductList = () => {
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_products');
         return storedCols ? JSON.parse(storedCols) : {
+            id: true, 
+            sub_id: true,
             images: true,
             name: true,
             status: true,

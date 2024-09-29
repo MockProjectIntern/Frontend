@@ -59,3 +59,13 @@ export const getDebtSupplier = async (id) => {
         throw err;
     }
 }
+
+export const getDataExportExcel = async (mode, bodyJson) => {
+    try {
+        const response = await axiosInstance.post(`suppliers/export-data.json?mode=${mode}`, bodyJson);
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
