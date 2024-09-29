@@ -15,9 +15,10 @@ import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
-import { getSupplierList } from '../../service/SuppliersAPI.jsx'
+import { getAllSupplierByName, getSupplierList } from '../../service/SuppliersAPI.jsx'
 import { useNavigate } from 'react-router-dom'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
+import s from './SupplierFilter.module.scss'
 
 
 const SupplierList = () => {
@@ -97,6 +98,59 @@ const SupplierList = () => {
         fetchSupplierList();
 
     }, [limit, page]);
+
+
+    const [pageFilter, setPageFilter] = useState(1);
+    const [limitFilter, setLimitFilter] = useState(10);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [supplierList, setSupplierList] = useState([]);
+    const [isPopupVisible, setIsPopupVisible] = useState(false); // State to control visibility of the popup
+    const popupRef = useRef(null);
+
+    const fetchSuppliersByName = async () => {
+        try {
+            setLoading(true);
+            const response = await getAllSupplierByName(pageFilter, limitFilter, searchTerm);
+            if (response && response.data) {
+                setSupplierList(response.data.data);
+            } else {
+                setSupplierList([]);
+            }
+            setLoading(false);
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
+    };
+
+    const handleSearch = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        setIsPopupVisible(true); // Show popup when typing
+    };
+
+    useEffect(() => {
+        if (searchTerm) {
+            fetchSuppliersByName();
+        }
+    }, [searchTerm, pageFilter, limitFilter]);
+
+    // Handle clicks outside the popup
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (popupRef.current && !popupRef.current.contains(event.target)) {
+                setIsPopupVisible(false); // Hide popup if click is outside
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [popupRef]);
+
     return (
         <>
             <Header title={"Danh sách nhà cung cấp"} />
@@ -148,15 +202,42 @@ const SupplierList = () => {
                     </div>
                     <div className='right__table-search-filter'>
                         <div className='box-search-filter-btns'>
-                            <div className="box-search">
-                                <div className="box-input">
-                                    <div className="search-icon">
+                            <div className={s["box-search"]}>
+                                <div className={s["box-input"]}>
+                                    <div className={s["search-icon"]}>
                                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                                     </div>
-                                    <input placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode' type="text" name="search" id="" autoComplete='on' />
-                                    <fieldset className='input-field' />
+                                    <input
+                                        placeholder="Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode"
+                                        type="text"
+                                        name="search"
+                                        autoComplete="on"
+                                        value={searchTerm}
+                                        onChange={handleSearch}
+                                    />
+                                    <fieldset className={s['input-field']} />
                                 </div>
+
+                                {/* Hiển thị trạng thái loading */}
+                                {loading && <p className={s["loading-text"]}>Đang tìm kiếm...</p>}
+
+                                {/* Hiển thị kết quả tìm kiếm */}
+                                {!loading && supplierList.length > 0 && isPopupVisible && (
+                                    <div ref={popupRef} className={s["search-results"]}>
+                                        {supplierList.map((supplier) => (
+                                            <div key={supplier.id} className={s["search-result-item"]}>
+                                                <p>{supplier.name}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Thông báo khi không tìm thấy kết quả */}
+                                {!loading && supplierList.length === 0 && searchTerm && isPopupVisible && (
+                                    <p className={s["no-results"]}>Không tìm thấy nhà cung cấp nào.</p>
+                                )}
                             </div>
+
                             <div className="btn-group group-filter-btns">
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
