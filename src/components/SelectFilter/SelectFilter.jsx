@@ -18,16 +18,19 @@ const SelectFilter = ({
     handleChangeKeyword,
     loadMoreData
 }) => {
+    const [loading, setLoading] = useState(false); // Trạng thái loading để kiểm soát tải thêm dữ liệu
+    const listRef = useRef(null); // Tham chiếu đến danh sách cuộn
 
     // Hàm xử lý khi cuộn đến gần cuối của danh sách
     const handleScroll = useCallback(() => {
         const list = listRef.current;
         if (!list || loading) return; // Nếu đang loading hoặc không có listRef thì không làm gì
- 
+        
+        // Lấy các giá trị của thanh cuộn
         const scrollTop = list.scrollTop;
         const scrollHeight = list.scrollHeight;
         const clientHeight = list.clientHeight;
- 
+
         // Kiểm tra nếu đã cuộn đến 80% của danh sách
         if (scrollTop + clientHeight >= scrollHeight * 0.8) {
             setLoading(true); // Đặt trạng thái loading để ngăn chặn việc gọi API nhiều lần
@@ -35,17 +38,16 @@ const SelectFilter = ({
                 setLoading(false); // Sau khi tải xong, bỏ trạng thái loading
             });
         }
-    }, [loadMoreData]);
+    }, [loading, loadMoreData]);
 
-    const [loading, setLoading] = useState(false); // Trạng thái loading để kiểm soát tải thêm dữ liệu
-
-    // Xử lý sự kiện cuộn để tải thêm dữ liệu
+    // Thêm sự kiện cuộn để tải thêm dữ liệu
     useEffect(() => {
         const list = listRef.current;
         if (list) {
             list.addEventListener('scroll', handleScroll);
         }
- 
+
+        // Cleanup: Xóa sự kiện khi component bị hủy hoặc listRef thay đổi
         return () => {
             if (list) {
                 list.removeEventListener('scroll', handleScroll);
@@ -54,7 +56,6 @@ const SelectFilter = ({
     }, [handleScroll]);
 
     const popupRef = useRef(null);
-    const listRef = useRef(null);
     
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [isAllSelected, setIsAllSelected] = useState(false);

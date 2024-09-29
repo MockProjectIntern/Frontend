@@ -3,9 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faMagnifyingGlass, faCaretDown, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import cn from "classnames"
 import { getListCategory } from "../../service/CategoryAPI"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { formatDateTime } from "../../utils/DateUtils"
 import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup"
+import { useDebouncedEffect } from "../../utils/CommonUtils"
 
 const CategoryList = () => {
 
@@ -53,14 +54,9 @@ const CategoryList = () => {
         }
     }
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            fetchCategoriesList();
-        }, 150); 
-    
-        return () => clearTimeout(handler);
-        
-    }, [limit, page, dataBody]);
+    useDebouncedEffect(() => {
+        fetchCategoriesList();
+    }, 300, [limit, page, dataBody]);
 
     return (
         <>

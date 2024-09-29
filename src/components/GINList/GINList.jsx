@@ -22,42 +22,6 @@ import { getGINs } from '../../service/GINApi.jsx'
 import GINStatusFilter from './FiltersPopup/GINStatusFilter.jsx'
 import CreatedAtFilter from './FiltersPopup/CreatedAtFilter.jsx'
 
-// const ginList = [
-//     {
-//         id: "OSN00004",
-//         created_at: "13/09/2024 11:36",
-//         balanced_at: "13/09/2024 11:36",
-//         status: "Đang kiểm kho",
-//         user_created: "Admin",
-//         user_inspection: "Admin",
-//         user_balanced: "Admin",
-//         note: "Giao hàng",
-//     },
-//     {
-//         id: "OSN00003",
-//         created_at: "13/09/2024 11:36",
-//         balanced_at: "13/09/2024 11:36",
-//         status: "Đã cân bằng",
-//         user_created: "Admin",
-//         user_inspection: "Admin",
-//         user_balanced: "Admin",
-//         note: "Giao hàng",
-//     },
-//     {
-//         id: "OSN00002",
-//         created_at: "13/09/2024 11:36",
-//         balanced_at: "13/09/2024 11:36",
-//         status: "Đã xóa",
-//         user_created: "Admin",
-//         user_inspection: "Admin",
-//         user_balanced: "Admin",
-//         note: "Giao hàng",
-//     }
-
-
-// ]
-
-
 const GINList = () => {
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
@@ -111,6 +75,7 @@ const GINList = () => {
         }
         fetchGinList();
     }, [page, limit])
+    
     const headersRef = useRef(null);
     const contentRef = useRef(null);
     const ginStatusRef = useRef(null);

@@ -21,6 +21,7 @@ import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import s from './SupplierFilter.module.scss'
 import { exportExcel } from '../../config/ExportExcel.jsx'
 import { formatDateTime } from '../../utils/DateUtils.jsx'
+import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 
 
 
@@ -68,16 +69,18 @@ const SupplierList = () => {
     const [suppliersQuantity, setSuppliersQuantity] = useState();
     const limitBtnRef = useRef(null);
 
-    const [dataBody, setDataBody] = useState(
-        {
-            "keyword": null,
-            "status": null
-        }
-    );
+    const [dataFilter, setDataFilter] = useState({
+        keyword: null,
+        statuses: null,
+        supplier_group_ids: null,
+        created_date_from: null,
+        created_date_to: null,
+        tags: null
+    });
 
     const fetchSupplierList = async () => {
         try {
-            const suppliers = await getSupplierList(page, limit, "filter_suppliers", Cookies.get("filter_suppliers"), dataBody);
+            const suppliers = await getSupplierList(page, limit, "filter_suppliers", Cookies.get("filter_suppliers"), dataFilter);
 
             if (suppliers.status_code === 200) {
                 setSuppliersList(suppliers.data.data);
@@ -96,64 +99,12 @@ const SupplierList = () => {
         Cookies.set('filter_suppliers', JSON.stringify(colsToRender));
     }, [colsToRender])
 
-    useEffect(() => {
+    useDebouncedEffect(() => {
         fetchSupplierList();
-    }, [limit, page]);
-
-
-    const [pageFilter, setPageFilter] = useState(1);
-    const [limitFilter, setLimitFilter] = useState(10);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [supplierList, setSupplierList] = useState([]);
-    const [isPopupVisible, setIsPopupVisible] = useState(false);
-    const popupRef = useRef(null);
-
-    const fetchSuppliersByName = async () => {
-        try {
-            setLoading(true);
-            const response = await getAllSupplierByName(pageFilter, limitFilter, searchTerm);
-            if (response && response.data) {
-                setSupplierList(response.data.data);
-            } else {
-                setSupplierList([]);
-            }
-            setLoading(false);
-        } catch (err) {
-            console.log(err);
-            setLoading(false);
-        }
-    };
-
-    const handleSearch = (e) => {
-        const value = e.target.value;
-        setSearchTerm(value);
-        setIsPopupVisible(true); // Show popup when typing
-    };
-
-    useEffect(() => {
-        if (searchTerm) {
-            fetchSuppliersByName();
-        }
-    }, [searchTerm, pageFilter, limitFilter]);
-
-    // Handle clicks outside the popup
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (popupRef.current && !popupRef.current.contains(event.target)) {
-                setIsPopupVisible(false); // Hide popup if click is outside
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [popupRef]);
+    }, 300, [page, limit, dataFilter, colsToRender])
 
     const handleExport = async () => {
-        const responseAPI = await getDataExportExcel("DEFAULT", dataBody);
+        const responseAPI = await getDataExportExcel("DEFAULT", dataFilter);
 
         const dataExport = responseAPI.data.map((item) => {
             return {
@@ -198,9 +149,6 @@ const SupplierList = () => {
                         </button>
                         <button className="btn btn-base btn-text" onClick={() => navigate("/admin/supplier_groups")}>
                             <span className="btn__label">
-                                <span className="btn__icon">
-                                    {importIcon}
-                                </span>
                                 Nhóm nhà cung cấp
                             </span>
                         </button>
@@ -225,40 +173,21 @@ const SupplierList = () => {
                     </div>
                     <div className='right__table-search-filter'>
                         <div className='box-search-filter-btns'>
-                            <div className={s["box-search"]}>
-                                <div className={s["box-input"]}>
-                                    <div className={s["search-icon"]}>
+                            <div className="box-search">
+                                <div className="box-input">
+                                    <div className="search-icon">
                                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                                     </div>
                                     <input
-                                        placeholder="Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode"
+                                        placeholder='Tìm kiếm theo tên, mã hoặc số điện thoại nhà cung cấp'
                                         type="text"
                                         name="search"
-                                        autoComplete="on"
-                                        value={searchTerm}
-                                        onChange={handleSearch}
+                                        id=""
+                                        autoComplete='on'
+                                        onChange={(e) => setDataFilter({ ...dataFilter, keyword: e.target.value })}
                                     />
-                                    <fieldset className={s['input-field']} />
+                                    <fieldset className='input-field' />
                                 </div>
-
-                                {/* Hiển thị trạng thái loading */}
-                                {loading && <p className={s["loading-text"]}>Đang tìm kiếm...</p>}
-
-                                {/* Hiển thị kết quả tìm kiếm */}
-                                {!loading && supplierList.length > 0 && isPopupVisible && (
-                                    <div ref={popupRef} className={s["search-results"]}>
-                                        {supplierList.map((supplier) => (
-                                            <div key={supplier.id} className={s["search-result-item"]}>
-                                                <p>{supplier.name}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {/* Thông báo khi không tìm thấy kết quả */}
-                                {!loading && supplierList.length === 0 && searchTerm && isPopupVisible && (
-                                    <p className={s["no-results"]}>Không tìm thấy nhà cung cấp nào.</p>
-                                )}
                             </div>
 
                             <div className="btn-group group-filter-btns">
@@ -441,6 +370,15 @@ const SupplierList = () => {
                                                                         className={cn("table-data-item", col[key].align)}
                                                                     >
                                                                         <img src={supplier.images[0]?.url} alt={supplier.images[0]?.alt} />
+                                                                    </td>
+                                                                )
+                                                            } else if (key.includes("_at")) {
+                                                                return (
+                                                                    <td
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        {formatDateTime(supplier[key])}
                                                                     </td>
                                                                 )
                                                             }
