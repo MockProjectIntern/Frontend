@@ -95,8 +95,6 @@ const OrderDetails = () => {
         fetchOrderDetail();
     }, [])
 
-    console.log(grnList)
-
     return (
         <>
             <div className="right__navbar">
@@ -240,7 +238,6 @@ const OrderDetails = () => {
                                             </thead>
                                             <tbody className={s.tableBody}>
                                                 {grnList?.map((grn, index) => {
-                                                    console.log(grn)
                                                     return (
                                                         <tr key={index} className={s.tableRow}>
                                                             <td className={cn(s.tableCell, s.tableCellBody, "text-center")}>

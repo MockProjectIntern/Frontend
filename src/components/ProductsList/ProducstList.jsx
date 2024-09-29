@@ -319,9 +319,6 @@ const ProductList = () => {
                         </button>
                         <button className="btn btn-base btn-text" onClick={() => navigate('/admin/categories')}>
                             <span className="btn__label">
-                                <span className="btn__icon">
-                                    {importIcon}
-                                </span>
                                 Loại sản phẩm
                             </span>
                         </button>

@@ -104,7 +104,6 @@ const GRNList = () => {
                 ...filterBody, start_date_at: createdMin, end_created_at: createdMax, statuses: statusListFilter
             });
             setGrnList(res.data.data);
-            console.log(res.data.data)
             setPageQuantity(Math.ceil(res.data.total_items / limit));
             setTotalItems(res.data.total_items);
         } catch (error) {
