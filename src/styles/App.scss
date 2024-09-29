@@ -2766,6 +2766,24 @@ input:focus-within ~ .input-field {
         }
     }
 
+    &--ordering {
+        border: 1px solid rgb(168, 86, 151);
+        background-color: rgb(255, 243, 224);
+
+        > span {
+            color: rgb(141, 76, 132);
+        }
+    }
+
+    &--trading {
+        border: 1px solid rgb(0, 150, 136);
+        background-color: rgb(224, 242, 241);
+
+        > span {
+            color: rgb(0, 131, 116);
+        }
+    }
+
     &--completed, &--imported, &--balanced, &--entered, &--paid {
         border: 1px solid rgb(159, 237, 207);
         background-color: rgb(243, 252, 249);

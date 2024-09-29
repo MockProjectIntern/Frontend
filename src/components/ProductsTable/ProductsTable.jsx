@@ -123,7 +123,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) =
                                                     className={cn(s.tableCell, s.tableCellBody, col[key].align)}
                                                 >
                                                     <div className={s.boxQuantity}>
-                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.ordered_quantity - 1)}>
+                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, Number(product.quantity) - 1)}>
                                                             <span className={s.btnIconLabel}>
                                                                 <FontAwesomeIcon icon={faCircleMinus} />
                                                             </span>
@@ -138,7 +138,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) =
                                                                 />
                                                             </div>
                                                         </div>
-                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.ordered_quantity + 1)}>
+                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, Number(product.quantity) + 1)}>
                                                             <span className={s.btnIconLabel}>
                                                                 <FontAwesomeIcon icon={faCirclePlus} />
                                                             </span>
@@ -163,7 +163,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) =
                                                     className={cn(s.tableCell, s.tableCellBody, col[key].align)}
                                                 >
                                                     <div className={s.boxQuantity}>
-                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.ordered_quantity - 1)}>
+                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, Number(product.imported_quantity) - 1)}>
                                                             <span className={s.btnIconLabel}>
                                                                 <FontAwesomeIcon icon={faCircleMinus} />
                                                             </span>
@@ -178,7 +178,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) =
                                                                 />
                                                             </div>
                                                         </div>
-                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.ordered_quantity + 1)}>
+                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, Number(product.imported_quantity) + 1)}>
                                                             <span className={s.btnIconLabel}>
                                                                 <FontAwesomeIcon icon={faCirclePlus} />
                                                             </span>
@@ -203,7 +203,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) =
                                                     className={cn(s.tableCell, s.tableCellBody, col[key]?.align)}
                                                 >
                                                     <div className={s.boxQuantity}>
-                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.ordered_quantity - 1)}>
+                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, Number(product.ordered_quantity) - 1)}>
                                                             <span className={s.btnIconLabel}>
                                                                 <FontAwesomeIcon icon={faCircleMinus} />
                                                             </span>
@@ -218,7 +218,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) =
                                                                 />
                                                             </div>
                                                         </div>
-                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, product.ordered_quantity + 1)}>
+                                                        <button className={s.btnIcon} onClick={() => handleChangeData(index, key, Number(product.ordered_quantity) + 1)}>
                                                             <span className={s.btnIconLabel}>
                                                                 <FontAwesomeIcon icon={faCirclePlus} />
                                                             </span>

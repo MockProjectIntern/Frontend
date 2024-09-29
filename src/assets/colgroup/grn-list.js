@@ -1,6 +1,17 @@
 const grn_list_colgroup = {
-    grn_supplier_sub_id: {
+    grn_id: {
+        name: "ID",
+        width: "0px",
+        align: "text-start"
+
+    },
+    grn_sub_id: {
         name: "Mã phiếu",
+        width: "160px",
+        align: "text-start"
+    },
+    grn_supplier_sub_id: {
+        name: "Mã nhà cung cấp",
         width: "160px",
         align: "text-start"
     },

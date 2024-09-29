@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React from 'react'
 import Cookies from 'js-cookie'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faChevronLeft, faGear, faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons'
-import calendarIcon from '../../assets/icons/CalendarIcon.jsx'
 import infoIcon from '../../assets/icons/InfoIcon.jsx'
 import SupplierInfo from '../SupplierInfo/SupplierInfo'
 import SearchSupplier from '../SearchSupplier/SearchSupplier'
@@ -14,51 +13,28 @@ import DiscountPopup from '../DiscountPopup/DiscountPopup.jsx'
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import '../../styles/_overrides.scss'
+import { quickGetProductList } from '../../service/ProductAPI.jsx'
+import ListSelectPopup from '../ListSelectPopup/ListSelectPopup.jsx'
+import { createNewGRN } from '../../service/GRNApi.jsx'
 const CreateGRN = () => {
-    const [supplier, setSupplier] = useState(null);
+    const navigate = useNavigate();
     const [tags, setTags] = useState([]);
-    const [tagValue, setTagValue] = useState("");
     const [isDiscountPopup, setIsDiscountPopup] = useState(false)
     const [order, setOrder] = useState({
         discount: 0,
         total: 350000,
     });
-    const [productsList, setProductsList] = useState([
-        {
-            id: "PVN05",
-            image: "https://sapo.dktcdn.net/100/805/407/variants/1abe9da6-729b-4bc6-b0f3-df59da5fcfe2-1726473515737.jpg",
-            name: "Áo khoác Chino thời thượng SID56708 - Trắng",
-            barcode: "SID56708",
-            unit: "---",
-            ordered_quantity: 0,
-            price: 350000,
-            discount: 17000,
-            tax: "0%",
-            total: "0"
-        },
-        {
-            id: "PVN06",
-            image: "https://sapo.dktcdn.net/100/805/407/variants/1abe9da6-729b-4bc6-b0f3-df59da5fcfe2-1726473515737.jpg",
-            name: "Áo khoác Chino thời thượng SID56708 - Trắng- An tes",
-            barcode: "SID56708",
-            unit: "---",
-            ordered_quantity: 0,
-            price: 350000,
-            discount: 17000,
-            tax: "0%",
-            total: "0"
-        }
-    ])
+
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('filter_products_table');
+        const storedCols = Cookies.get('filter_products_table_grn');
         return storedCols ? JSON.parse(storedCols) : {
             index: true,
             image: true,
             name: true,
             barcode: true,
             unit: true,
-            ordered_quantity: true,
+            imported_quantity: true,
             price: true,
             discount: true,
             tax: true,
@@ -66,14 +42,14 @@ const CreateGRN = () => {
         }
     })
 
-    const discountBtnRef = useRef(null)
+    useEffect(() => {
+        setColsToRender((prev) => {
+            const { ordered_quantity, ...rest } = prev;
+            return rest;
+        });
+    }, [])
 
-    const addTag = (e) => {
-        if (e.key === 'Enter' &&!tags.includes(tagValue)) {
-            setTags([...tags, tagValue])
-            setTagValue("");
-        }
-    }
+    const discountBtnRef = useRef(null)
 
     const deleteTag = (tag) => {
         setTags(prev => prev.filter(item => item !== tag))
@@ -85,18 +61,108 @@ const CreateGRN = () => {
 
     // Set required columns to Cookies
     useEffect(() => {
-        Cookies.set('filter_products_table', JSON.stringify(colsToRender));
+        Cookies.set('filter_products_table_grn', JSON.stringify(colsToRender));
     }, [colsToRender])
-    
+
+    const [isProductSelectPopup, setIsProductSelectPopup] = useState(false)
+    const [dataPageProduct, setDataPageProduct] = useState({
+        page: 1,
+        size: 10,
+        totalPage: 1,
+        totalElement: 1,
+        keyword: ""
+    })
+    const productSelectBtnRef = useRef(null);
+    const [productSelectList, setProductSelectList] = useState([])
+    const fetchProductList = async () => {
+        const response = await quickGetProductList(dataPageProduct.page, dataPageProduct.size, dataPageProduct.keyword);
+        setProductSelectList(response.data.data);
+        setDataPageProduct(prev => {
+            return {
+                ...prev,
+                totalPage: response.data.totalPage,
+                totalElement: response.data.totalElement
+            }
+        })
+    }
+    useEffect(() => {
+        if (isProductSelectPopup) {
+            fetchProductList();
+        }
+    }, [isProductSelectPopup])
+
+    const [listProductDetail, setListProductDetail] = useState([]);
+
+    const [dataBody, setDataBody] = useState({
+        sub_id: null,
+        expected_delivery_at: null,
+        supplier_id: null,
+        tags: null,
+        note: null,
+        status: "TRADING",
+        discount: 0,
+        import_cost: [],
+        payment_method: [],
+        products: [],
+        order_id: null,
+        received_status: null
+    })
+
+    useEffect(() => {
+        setDataBody(prev => {
+            return {
+                ...prev,
+                products: listProductDetail.map(product => {
+                    return {
+                        product_id: product.id,
+                        quantity: product.imported_quantity,
+                        price: product.price,
+                        discount: product.discount,
+                        tax: product.tax,
+                        total: (product.price - product.discount + product.tax) * product.imported_quantity
+                    }
+                })
+            }
+        })
+    }, [listProductDetail])
+
+    const handleCreateNewGRN = (statusReceived) => {
+        setDataBody(prev => {
+            return {
+                ...prev,
+                received_status: statusReceived
+            }
+        })
+    }
+    const createGRN = async () => {
+        const responseAPI = await createNewGRN(dataBody);
+        if (responseAPI.status_code === 201) {
+            alert(responseAPI.message);
+            navigate('/admin/grns');
+        }
+        setDataBody(prev => {
+            return {
+                ...prev,
+                received_status: null
+            }
+        })
+    }
+
+    useEffect(() => {
+        if (dataBody.received_status !== null) {
+            createGRN();
+        }
+    }, [dataBody.received_status])
+
     return (
         <>
             <div className="right__navbar">
                 <div className="box-navbar">
                     <div className="btn-toolbar">
-                        <Link to='/admin/order_suppliers' className='btn-back'>
+                        <Link to='/admin/grns' className='btn-back'>
                             <FontAwesomeIcon icon={faChevronLeft} />
                             <h6 className="btn-back__title">
-                                Quay lại danh sách đơn đặt hàng
+                                Quay lại danh sách đơn nhập hàng
                             </h6>
                         </Link>
                     </div>
@@ -104,10 +170,10 @@ const CreateGRN = () => {
                         <button className="btn btn-outline-primary">
                             <span className="btn__title">Thoát</span>
                         </button>
-                        <button className="btn btn-outline-primary">
+                        <button className="btn btn-outline-primary" onClick={() => handleCreateNewGRN("NOT_ENTERED")}>
                             <span className="btn__title">Tạo & Chưa nhập</span>
                         </button>
-                        <button className="btn btn-primary">
+                        <button className="btn btn-primary" onClick={() => handleCreateNewGRN("ENTERED")}>
                             <span className="btn__title">Tạo & và Nhập hàng</span>
                         </button>
                     </div>
@@ -123,11 +189,15 @@ const CreateGRN = () => {
                                     <p>Thông tin nhà cung cấp</p>
                                 </div>
                                 <div className="paper-content">
-                                        {
-                                            supplier ?
-                                            <SupplierInfo supplier={supplier} handleCancel={() => setSupplier(null)} /> :
-                                            <SearchSupplier />
-                                        }
+                                    {
+                                        dataBody.supplier_id ?
+                                            <SupplierInfo supplier={dataBody.supplier_id} handleCancel={() => setDataBody(prev => {
+                                                return { ...prev, supplier_id: null }
+                                            })} /> :
+                                            <SearchSupplier setSelectItem={id => setDataBody(prev => {
+                                                return { ...prev, supplier_id: id }
+                                            })} />
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -142,7 +212,7 @@ const CreateGRN = () => {
                                             <p className="info-title">Nhân viên</p>
                                             <div className="info-field">
                                                 <div className="box-input">
-                                                    <input value={localStorage.getItem("fullName")} name='user_created_name' type="text" className="text-field" disabled va/>
+                                                    <input value={localStorage.getItem("fullName")} name='user_created_name' type="text" className="text-field" disabled />
                                                     <fieldset className='input-field'></fieldset>
                                                 </div>
                                             </div>
@@ -151,15 +221,17 @@ const CreateGRN = () => {
                                             <p className="info-title">Ngày hẹn giao</p>
                                             <div className="info-field">
                                                 <div className="box-input">
-                                                    {/* <input placeholder='Chọn ngày hẹn giao' name='expected_at' type="text" className="text-field" />
-                                                    <fieldset className='input-field'></fieldset>
-                                                    <div className="calendar-icon">
-                                                        {calendarIcon}
-                                                    </div> */}
-                                                    <LocalizationProvider dateAdapter={AdapterDayjs}> <DateTimePicker/></LocalizationProvider>
-                                                 
-                                                  
-                                                </div>               
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                        <DateTimePicker
+                                                            onChange={(value) => {
+                                                                setDataBody((prev) => ({
+                                                                    ...prev,
+                                                                    expected_delivery_at: value ? value.format("YYYY-MM-DD") : null // Extract only the date part
+                                                                }));
+                                                            }}
+                                                            renderInput={(params) => <TextField {...params} />} />
+                                                    </LocalizationProvider>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -190,13 +262,39 @@ const CreateGRN = () => {
                                         <div className="right__table-search-filter">
                                             <div className="box-search-filter-btns">
                                                 <div className="box-search">
-                                                    <div className="box-input">
+                                                    <div className="box-input" ref={productSelectBtnRef} onClick={() => setIsProductSelectPopup(true)}>
                                                         <div className="search-icon">
                                                             <FontAwesomeIcon icon={faMagnifyingGlass} />
                                                         </div>
                                                         <input placeholder='Tìm theo tên, mã SKU, hoặc quét mã Barcode...(F3)' type="text" name="search" id="" autoComplete='on' />
                                                         <fieldset className='input-field' />
                                                     </div>
+                                                    {
+                                                        isProductSelectPopup &&
+                                                        <ListSelectPopup
+                                                            title={"sản phẩm"}
+                                                            isLarge={true}
+                                                            isSearch={false}
+                                                            isFastCreate={true}
+                                                            dataList={productSelectList}
+                                                            handleSelect={(id) => setListProductDetail(prev => {
+                                                                return [...prev,
+                                                                {
+                                                                    id: id,
+                                                                    name: productSelectList.find(product => product.id === id)?.name,
+                                                                    image: productSelectList.find(product => product.id === id)?.images?.[0],
+                                                                    unit: productSelectList.find(product => product.id === id)?.unit || "------",
+                                                                    imported_quantity: 0,
+                                                                    price: productSelectList.find(product => product.id === id)?.cost_price,
+                                                                    discount: 0,
+                                                                    tax: 0,
+                                                                    total: 0
+                                                                }]
+                                                            })}
+                                                            btnRef={productSelectBtnRef}
+                                                            closePopup={() => setIsProductSelectPopup(false)}
+                                                        />
+                                                    }
                                                     <button className="btn btn-base">
                                                         <span className="btn__label">
                                                             <p>Chọn nhanh</p>
@@ -218,14 +316,22 @@ const CreateGRN = () => {
                                     </div>
                                 </div>
                                 <div className='box-table'>
-                                    <ProductsTable productsList={productsList} colsToRender={colsToRender}/>
+                                    <ProductsTable productsList={listProductDetail} setProductList={setListProductDetail} colsToRender={colsToRender} />
                                     <div className='box-total'>
                                         <div className="box-total__container">
                                             <div className="box-subinfo">
                                                 <div className="box-note">
                                                     <label className='input-label' htmlFor="note">Ghi chú đơn</label>
                                                     <div className="text-field">
-                                                        <textarea name="note" id="note" placeholder='VD: Hàng tặng gói riêng'></textarea>
+                                                        <textarea
+                                                            name="note"
+                                                            id="note"
+                                                            placeholder='VD: Hàng tặng gói riêng'
+                                                            onChange={(e) => setDataBody(prev => {
+                                                                return { ...prev, note: e.target.value }
+
+                                                            })}
+                                                        />
                                                         <fieldset className='input-field'></fieldset>
                                                     </div>
                                                 </div>
@@ -243,34 +349,28 @@ const CreateGRN = () => {
                                                                     )
                                                                 })
                                                             }
-                                                            <input 
-                                                                id='tags'
-                                                                onChange={(e) => setTagValue(e.target.value)}
-                                                                onKeyDown={addTag}
-                                                                aria-invalid="false" 
-                                                                autoComplete='off' 
-                                                                placeholder='Nhập ký tự và ấn Enter' 
-                                                                type="text" 
-                                                                className="tags-input"
-                                                                aria-autocomplete='list'
-                                                                autoCapitalize='none'
-                                                                spellCheck="false"
-                                                                maxLength={255}
-                                                                value={tagValue}
+                                                            <textarea
+                                                                name="Tags"
+                                                                id="note"
+                                                                placeholder='VD: Hàng tặng'
+                                                                onChange={(e) => setDataBody(prev => {
+                                                                    return { ...prev, tags: e.target.value }
+
+                                                                })}
                                                             />
                                                             <fieldset className='input-field'></fieldset>
-                                                        </div>    
-                                                    </div>                                                             
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div className="box-price-info">
                                                 <div className="info-item">
                                                     <p>Số lượng</p>
-                                                    <p>0</p>
+                                                    <p>{listProductDetail.map(prod => !isNaN(prod.ordered_quantity) ? prod.ordered_quantity : prod.imported_quantity).reduce((acc, curr) => acc + curr, 0)}</p>
                                                 </div>
                                                 <div className="info-item">
                                                     <p>Tổng tiền</p>
-                                                    <p>350,000</p>
+                                                    <p>{listProductDetail.map(prod => (Number(prod.price) - Number(prod.discount) + Number(prod.tax)) * Number(!isNaN(prod.ordered_quantity) ? prod.ordered_quantity : prod.imported_quantity)).reduce((acc, curr) => acc + curr, 0)}</p>
                                                 </div>
                                                 <div className="info-item">
                                                     <button onClick={() => setIsDiscountPopup(true)} ref={discountBtnRef} className="btn-base">
@@ -278,19 +378,32 @@ const CreateGRN = () => {
                                                             <p>Chiết khấu (F6)</p>
                                                         </span>
                                                     </button>
-                                                    {isDiscountPopup && <DiscountPopup price={order.total} discount={order.discount} btnRef={discountBtnRef} closePopup={closeDiscountPopup} />}
-                                                    <p>0</p>
+                                                    {isDiscountPopup && <DiscountPopup
+                                                        price={order.total}
+                                                        discount={order.discount}
+                                                        btnRef={discountBtnRef}
+                                                        closePopup={closeDiscountPopup}
+                                                        handleChangeDiscount={(value) => {
+                                                            setDataBody(prev => {
+                                                                return {
+                                                                    ...prev,
+                                                                    discount: value
+                                                                }
+                                                            })
+                                                        }}
+                                                    />}
+                                                    <p>{dataBody.discount}</p>
                                                 </div>
                                                 <div className="info-item">
                                                     <div className="d-flex">
                                                         <p>Thuế</p>
                                                         <p>{infoIcon}</p>
                                                     </div>
-                                                    <p>0</p>
+                                                    <p>{listProductDetail.map(prod => Number(prod.tax)).reduce((acc, curr) => acc + curr, 0)}</p>
                                                 </div>
                                                 <div className="info-item">
                                                     <p className='total-price'>Tiền cần trả</p>
-                                                    <p className='total-price'>350,000</p>
+                                                    <p className='total-price'>{listProductDetail.map(prod => (Number(prod.price) - Number(prod.discount) + Number(prod.tax)) * Number(!isNaN(prod.ordered_quantity) ? prod.ordered_quantity : prod.imported_quantity)).reduce((acc, curr) => acc + curr, 0) - Number(dataBody.discount)}</p>
                                                 </div>
                                             </div>
                                         </div>

@@ -38,8 +38,8 @@ const CreateOrder = () => {
             image: true,
             name: true,
             unit: true,
-            quantity: true,
-            costPrice: true,
+            ordered_quantity: true,
+            price: true,
             discount: true,
             tax: true,
             total: true
@@ -106,7 +106,7 @@ const CreateOrder = () => {
         supplier_id: null,
         sub_id: null,
         expected_at: null,
-        note: null,
+        note: null, 
         tags: null,
         discount: 0,
         products: []
@@ -115,7 +115,7 @@ const CreateOrder = () => {
         const response = await createNewOrder(dataBody);
 
         if (response.status_code === 201) {
-            alert('Tạo đơn đặt hàng thành công');
+            alert('Tạo đơn đặt hàng thành công'); 
             navigate('/admin/order_suppliers');
         }
     }
@@ -388,7 +388,7 @@ const CreateOrder = () => {
                                                         <p>Thuế</p>
                                                         <p>{infoIcon}</p>
                                                     </div>
-                                                    <p>0</p>
+                                                    <p>{listProductDetail.map(prod => Number(prod.tax)).reduce((acc, curr) => acc + curr, 0)}</p>
                                                 </div>
                                                 <div className="info-item">
                                                     <p className='total-price'>Tiền cần trả</p>
