@@ -147,19 +147,10 @@ const CreateGRN = () => {
                                 <div className="paper-content">
                                     <div className="group-info">
                                         <div className="info-item">
-                                            <p className="info-title">Chi nhánh</p>
-                                            <div className="info-field">
-                                                <div className="box-input">
-                                                    <input placeholder='Chi nhánh' name='branch' type="text" className="text-field" />
-                                                    <fieldset className='input-field'></fieldset>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="info-item">
                                             <p className="info-title">Nhân viên</p>
                                             <div className="info-field">
                                                 <div className="box-input">
-                                                    <input placeholder='Nhân viên' name='user_created_name' type="text" className="text-field" />
+                                                    <input value={localStorage.getItem("fullName")} name='user_created_name' type="text" className="text-field" disabled va/>
                                                     <fieldset className='input-field'></fieldset>
                                                 </div>
                                             </div>

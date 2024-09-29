@@ -26,7 +26,7 @@ const productsTableColgroup = {
         minWidth: "90px",
         align: "text-start"
     },
-    ordered_quantity: {
+    quantity: {
         name: "SL đặt",
         width: "150px",
         align: "text-center"
@@ -36,7 +36,7 @@ const productsTableColgroup = {
         width: "150px",
         align: "text-center"
     },
-    price: {
+    costPrice: {
         name: "Đơn giá",
         width: "124px",
         minWidth: "124px",

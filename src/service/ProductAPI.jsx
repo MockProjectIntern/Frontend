@@ -1,10 +1,11 @@
 import axiosInstance from "./axiosInstance";
 
-export const getProductList = async (page, size, filterName, filterJson) => {
+export const getProductList = async (page, size, filterName, filterJson, bodyJson ) => {
     try {
-        const response = await axiosInstance.post(`products/filter.json?page=${page}&size=${size}`, {
+        const response = await axiosInstance.post(`products/filter.json?page=${page}&size=${size}`,
             // Payload của yêu cầu (body)
-        }, {
+            bodyJson
+        , {
             headers: {
                 [filterName]: filterJson // Thiết lập giá trị của filterName vào header
             }

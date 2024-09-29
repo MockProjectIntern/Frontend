@@ -38,8 +38,8 @@ const CreateOrder = () => {
             image: true,
             name: true,
             unit: true,
-            ordered_quantity: true,
-            price: true,
+            quantity: true,
+            costPrice: true,
             discount: true,
             tax: true,
             total: true
@@ -137,9 +137,6 @@ const CreateOrder = () => {
             }
         })
     }, [listProductDetail])
-    console.log(listProductDetail);
-    console.log(dataBody);
-    
 
     return (
         <>
