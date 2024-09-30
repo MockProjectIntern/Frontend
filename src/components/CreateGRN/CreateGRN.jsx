@@ -16,6 +16,7 @@ import '../../styles/_overrides.scss'
 import { quickGetProductList } from '../../service/ProductAPI.jsx'
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup.jsx'
 import { createNewGRN } from '../../service/GRNApi.jsx'
+
 const CreateGRN = () => {
     const navigate = useNavigate();
     const [tags, setTags] = useState([]);

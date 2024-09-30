@@ -1,10 +1,12 @@
 import s from './CreateProductFastlyPopup.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
-import { useRef, useState,useEffect } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import SelectListCategoryPopup from './SelectListCategoryPopup/SelectListCategoryPopup'
 import { getListCategory } from '../../service/CategoryAPI'
-const CreateProductFastlyPopup = ({handleCLickBack}) =>{
+import { quickCreateProduct } from '../../service/ProductAPI'
+
+const CreateProductFastlyPopup = ({ handleCLickBack, setListProductDetail }) => {
     const [isSelectCategoryList, setIsSelectCategoryList] = useState(false);
 
     const selectCategoryRef = useRef(null);
@@ -75,7 +77,39 @@ const CreateProductFastlyPopup = ({handleCLickBack}) =>{
         });
         handleFetchMoreCategory();
     }, [categoryDataFilter.keyword])
-    return(
+
+    const [dataBody, setDataBody] = useState({
+        name: null,
+        cost_price: null,
+        retail_price: null,
+        category_id: null,
+        unit: null,
+        quantity: null
+    });
+
+    const handleQuickCreateProduct = async () => {
+        const responseAPI = await quickCreateProduct(dataBody);
+        if (responseAPI.status_code === 201) {
+            setListProductDetail((prev) => {
+                return [...prev,
+                {
+                    id: responseAPI.data,
+                    name: dataBody.name,
+                    image: null,
+                    unit: dataBody.unit || "-----",
+                    ordered_quantity: dataBody.quantity,
+                    price: dataBody.retail_price,
+                    discount: 0,
+                    tax: 0,
+                    total: 0
+                }]
+            });
+            alert("Thêm sản phẩm thành công");
+            handleCLickBack();
+        }
+    }
+
+    return (
         <div className={s["modal-content"]}>
             <div className={s["modal-header"]}>
                 <div className={s["modal-box-header"]}>
@@ -95,6 +129,12 @@ const CreateProductFastlyPopup = ({handleCLickBack}) =>{
                             name="name"
                             id="name"
                             placeholder='Nhập tên sản phẩm'
+                            onChange={(e) => setDataBody((prev) => {
+                                return {
+                                    ...prev,
+                                    name: e.target.value
+                                }
+                            })}
                         />
                         <fieldset className="input-field"></fieldset>
                     </div>
@@ -109,6 +149,7 @@ const CreateProductFastlyPopup = ({handleCLickBack}) =>{
                                 type="number"
                                 name="name"
                                 id="name"
+                                onChange={(e) => setDataBody((prev) => { return { ...prev, cost_price: e.target.value } })}
                             />
                             <fieldset className="input-field"></fieldset>
                         </div>
@@ -122,6 +163,7 @@ const CreateProductFastlyPopup = ({handleCLickBack}) =>{
                                 type="number"
                                 name="name"
                                 id="name"
+                                onChange={(e) => setDataBody((prev) => { return { ...prev, retail_price: e.target.value } })}
                             />
                             <fieldset className="input-field"></fieldset>
                         </div>
@@ -137,6 +179,7 @@ const CreateProductFastlyPopup = ({handleCLickBack}) =>{
                                 type="number"
                                 name="name"
                                 id="name"
+                                onChange={(e) => setDataBody((prev) => { return { ...prev, quantity: e.target.value } })}
                             />
                             <fieldset className="input-field"></fieldset>
                         </div>
@@ -146,20 +189,21 @@ const CreateProductFastlyPopup = ({handleCLickBack}) =>{
                             Loại sản phẩm
                         </label>
                         <div className={s["box-select"]}>
-                            <button  id='category' ref={selectCategoryRef} onClick={() => setIsSelectCategoryList(!isSelectCategoryList)}>
+                            <button id='category' ref={selectCategoryRef} onClick={() => setIsSelectCategoryList(!isSelectCategoryList)}>
                                 Chọn loại sản phẩm
                                 {isSelectCategoryList ? <FontAwesomeIcon icon={faCaretDown} /> : <FontAwesomeIcon icon={faCaretUp} />}
                             </button>
                             {
-                                isSelectCategoryList && 
-                                <SelectListCategoryPopup 
+                                isSelectCategoryList &&
+                                <SelectListCategoryPopup
                                     btnRef={selectCategoryRef}
                                     title={"Loại sản phẩm"}
                                     closePopup={() => setIsSelectCategoryList(false)}
                                     dataList={categoryList}
                                     fetchMoreData={fetchMoreCategory}
+                                    handleSelect={(id) => setDataBody((prev) => { return { ...prev, category_id: id } })}
                                 />
-                                
+
                             }
                         </div>
                     </div>
@@ -174,6 +218,7 @@ const CreateProductFastlyPopup = ({handleCLickBack}) =>{
                                 type="text"
                                 name="name"
                                 id="name"
+                                onChange={(e) => setDataBody((prev) => { return { ...prev, unit: e.target.value } })}
                             />
                             <fieldset className="input-field"></fieldset>
                         </div>
@@ -184,7 +229,7 @@ const CreateProductFastlyPopup = ({handleCLickBack}) =>{
                 <button className="btn btn-outline-primary" onClick={handleCLickBack} >
                     <span className="btn__title">Thoát</span>
                 </button>
-                <button className="btn btn-primary" onClick={handleCLickBack}>
+                <button className="btn btn-primary" onClick={handleQuickCreateProduct}>
                     <span className="btn__title">Thêm</span>
                 </button>
             </div>

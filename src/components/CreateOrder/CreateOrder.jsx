@@ -19,6 +19,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { quickGetProductList } from '../../service/ProductAPI.jsx'
 import { createNewOrder } from '../../service/OrderAPI.jsx'
 import CreateProductFastlyPopup from '../CreateProductFastlyPopup/CreateProductFastlyPopup.jsx'
+
 const CreateOrder = () => {
     const navigate = useNavigate();
     const [order, setOrder] = useState({
@@ -85,7 +86,7 @@ const CreateOrder = () => {
     const productSelectBtnRef = useRef(null);
     const [productSelectList, setProductSelectList] = useState([])
 
-    const [isCreateProductQuickly,setIsCreateProductQuickly] = useState(false);
+    const [isCreateProductQuickly, setIsCreateProductQuickly] = useState(false);
     const fetchProductList = async () => {
         const response = await quickGetProductList(dataPageProduct.page, dataPageProduct.size, dataPageProduct.keyword);
         setProductSelectList(response.data.data);
@@ -109,7 +110,7 @@ const CreateOrder = () => {
         supplier_id: null,
         sub_id: null,
         expected_at: null,
-        note: null, 
+        note: null,
         tags: null,
         discount: 0,
         products: []
@@ -118,16 +119,16 @@ const CreateOrder = () => {
         const response = await createNewOrder(dataBody);
 
         if (response.status_code === 201) {
-            alert('Tạo đơn đặt hàng thành công'); 
+            alert('Tạo đơn đặt hàng thành công');
             navigate('/admin/order_suppliers');
         }
     }
 
-    const handleClickCreateQuicklylyProduct = () =>{
+    const handleClickCreateQuicklylyProduct = () => {
         setIsCreateProductQuickly(true);
     }
 
-    const handleClickBack = () =>{
+    const handleClickBack = () => {
         setIsCreateProductQuickly(false);
     }
 
@@ -148,14 +149,17 @@ const CreateOrder = () => {
             }
         })
     }, [listProductDetail])
-    console.log(isCreateProductQuickly);
+
     return (
         <>
             <>
                 {isCreateProductQuickly && (
                     <>
                         <div className="overlay"></div>
-                        <CreateProductFastlyPopup handleCLickBack={handleClickBack}/>
+                        <CreateProductFastlyPopup
+                            handleCLickBack={handleClickBack}
+                            setListProductDetail={setListProductDetail}
+                        />
                     </>
                 )}
             </>
