@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react"
 import { formatDateTime } from "../../utils/DateUtils"
 import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup"
 import CreateCategoryPopup from "../CreateCategoryPopup/CreateCategoryPopup"
+import { useDebouncedEffect } from "../../utils/CommonUtils"
 
 const CategoryList = () => {
 
@@ -89,14 +90,9 @@ const CategoryList = () => {
         }
     }
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            fetchCategoriesList();
-        }, 150); 
-    
-        return () => clearTimeout(handler);
-        
-    }, [limit, page, dataBody, isCreateCategory]);
+    useDebouncedEffect(() => {
+        fetchCategoriesList();
+    }, 300, [limit, page, dataBody, isCreateCategory]);
 
     return (
         <>  

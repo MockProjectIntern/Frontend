@@ -25,5 +25,16 @@ export const quickGetProductList = async (page, size, keyword) => {
         console.log(err);
         throw err;
     }
+}
 
+export const quickCreateProduct = async (dataBody) => {
+    try {
+        const response = await axiosInstance.post(`products/quick-create.json`, 
+            dataBody
+        );
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
 }

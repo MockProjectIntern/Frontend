@@ -39,8 +39,8 @@ const CreateOrder = () => {
             image: true,
             name: true,
             unit: true,
-            quantity: true,
-            costPrice: true,
+            ordered_quantity: true,
+            price: true,
             discount: true,
             tax: true,
             total: true
@@ -85,7 +85,7 @@ const CreateOrder = () => {
     const productSelectBtnRef = useRef(null);
     const [productSelectList, setProductSelectList] = useState([])
 
-    const [isCreateProductQuickly,setIsCreateProductQuickly] = useState(false);
+    const [isCreateProductQuickly, setIsCreateProductQuickly] = useState(false);
     const fetchProductList = async () => {
         const response = await quickGetProductList(dataPageProduct.page, dataPageProduct.size, dataPageProduct.keyword);
         setProductSelectList(response.data.data);
@@ -123,11 +123,11 @@ const CreateOrder = () => {
         }
     }
 
-    const handleClickCreateQuicklylyProduct = () =>{
+    const handleClickCreateQuicklylyProduct = () => {
         setIsCreateProductQuickly(true);
     }
 
-    const handleClickBack = () =>{
+    const handleClickBack = () => {
         setIsCreateProductQuickly(false);
     }
 
@@ -155,7 +155,10 @@ const CreateOrder = () => {
                 {isCreateProductQuickly && (
                     <>
                         <div className="overlay"></div>
-                        <CreateProductFastlyPopup handleCLickBack={handleClickBack}/>
+                        <CreateProductFastlyPopup
+                            handleCLickBack={handleClickBack}
+                            setListProductDetail={setListProductDetail}
+                        />
                     </>
                 )}
             </>
@@ -408,7 +411,7 @@ const CreateOrder = () => {
                                                         <p>Thuế</p>
                                                         <p>{infoIcon}</p>
                                                     </div>
-                                                    <p>0</p>
+                                                    <p>{listProductDetail.map(prod => Number(prod.tax)).reduce((acc, curr) => acc + curr, 0)}</p>
                                                 </div>
                                                 <div className="info-item">
                                                     <p className='total-price'>Tiền cần trả</p>

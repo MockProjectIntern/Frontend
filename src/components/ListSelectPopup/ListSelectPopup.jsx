@@ -15,7 +15,7 @@ const ListSelectPopup = ({
     keyword,
     handleChangeKeyword,
     isFastCreate,
-    dataList,
+    dataList, 
     handleSelect,
     btnRef,
     closePopup,

@@ -11,18 +11,15 @@ export const createNewGRN = async (data) => {
 }
 
 
-export const getGRNs = async (page, size, filterName, filterJson,data) => {
+export const getGRNs = async (page, size, filterName, filterJson, data) => {
     try {
-   
-        const response = await axiosInstance.post(`/grns/filter.json?page=${page}&size=${size}`,
 
-            data
-        ,{
-        headers : {
-            [filterName]: filterJson, // Thiết lập giá trị của filterName vào header
+        const response = await axiosInstance.post(`/grns/filter.json?page=${page}&size=${size}`, data, {
+            headers: {
+                [filterName]: filterJson, // Thiết lập giá trị của filterName vào header
+            }
         }
-    }
-    );
+        );
         return response.data;
     } catch (error) {
         console.error(error.message);

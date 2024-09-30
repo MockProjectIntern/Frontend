@@ -15,6 +15,7 @@ import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import SelectFilter from '../SelectFilter/SelectFilter.jsx'
 import { getListCategory } from '../../service/CategoryAPI.jsx'
 import { getListBrand } from '../../service/BrandAPI.jsx'
+import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 
 
 
@@ -33,7 +34,7 @@ const ProductList = () => {
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_products');
         return storedCols ? JSON.parse(storedCols) : {
-            id: true, 
+            id: true,
             sub_id: true,
             images: true,
             name: true,
@@ -117,24 +118,24 @@ const ProductList = () => {
     const handleSelectionChangeCategories = (selected) => {
         setSelectedCategories(selected);
         setDataBody((prevDataBody) => ({
-            ...prevDataBody, // Giữ nguyên các thuộc tính khác của prevDataBody
-            category_ids: selected // Cập nhật danh sách brand_ids
+            ...prevDataBody,
+            category_ids: selected
         }));
     };
     const handleSelectionChangeBrands = (selected) => {
         setSelectedBrands(selected);
         setDataBody((prevDataBody) => ({
-            ...prevDataBody, // Giữ nguyên các thuộc tính khác của prevDataBody
-            brand_ids: selected // Cập nhật danh sách brand_ids
+            ...prevDataBody,
+            brand_ids: selected
         }));
     };
 
-    const handleClickButtonFilterCategory = () =>{
+    const handleClickButtonFilterCategory = () => {
         fetchProductList();
         setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup)
     }
 
-    const handleClickButtonFilterBrand = () =>{
+    const handleClickButtonFilterBrand = () => {
         fetchProductList();
         setIsOpenFilterBrandPopup(!isOpenFilterBrandPopup)
     }
@@ -144,7 +145,6 @@ const ProductList = () => {
             const products = await getProductList(page, limit, "filter_products", Cookies.get("filter_products"), dataBody);
 
             if (products.status_code === 200) {
-                console.log("data")
                 setProductsList(products.data.data);
                 setProductsQuantity(products.data.total_items);
                 setPageQuantity(products.data.total_page)
@@ -159,8 +159,8 @@ const ProductList = () => {
 
     const fetchCategoryList = async () => {
         try {
-            const categories = await getListCategory(currentPageFilterCategory,10,dataFilterCategory )
-            if(categories.status_code === 200){
+            const categories = await getListCategory(currentPageFilterCategory, 10, dataFilterCategory)
+            if (categories.status_code === 200) {
                 setListCategories(categories.data.data);
                 setTotalPageFilterCategory(categories.data.total_page)
             }
@@ -175,8 +175,8 @@ const ProductList = () => {
 
     const fetchBrandList = async () => {
         try {
-            const brands = await getListBrand(currentPageFilterCategory,10,dataFilterCategory )
-            if(brands.status_code === 200){
+            const brands = await getListBrand(currentPageFilterCategory, 10, dataFilterCategory)
+            if (brands.status_code === 200) {
                 setListBrands(brands.data.data);
                 setTotalPageFilterBrand(brands.data.total_page)
             }
@@ -189,10 +189,9 @@ const ProductList = () => {
         }
     }
 
-
-    const fetchMoreCategoryList = async() =>{
-        if(currentPageFilterCategory < totalPageFilterCategory){
-            const categories = await getListCategory(currentPageFilterCategory + 1,10,dataFilterCategory )
+    const fetchMoreCategoryList = async () => {
+        if (currentPageFilterCategory < totalPageFilterCategory) {
+            const categories = await getListCategory(currentPageFilterCategory + 1, 10, dataFilterCategory)
             setListCategories(prev => [
                 ...prev,
                 ...categories.data.data,
@@ -202,9 +201,9 @@ const ProductList = () => {
         }
     }
 
-    const fetchMoreBrandsList = async() =>{
-        if(currentPageFilterBrand < totalPageFilterBrand){
-            const brands = await getListCategory(currentPageFilterBrand + 1,10,dataFilterBrand )
+    const fetchMoreBrandsList = async () => {
+        if (currentPageFilterBrand < totalPageFilterBrand) {
+            const brands = await getListCategory(currentPageFilterBrand + 1, 10, dataFilterBrand)
             setListBrands(prev => [
                 ...prev,
                 ...brands.data.data,
@@ -214,11 +213,10 @@ const ProductList = () => {
         }
     }
 
-    const handleFetchMoreCategoryList = () =>{
-        if(isOpenFilterCategoryPopup){
+    const handleFetchMoreCategoryList = () => {
+        if (isOpenFilterCategoryPopup) {
             fetchCategoryList();
-        }
-        else{
+        } else {
             setListCategories([]);
             setCategoryKeyword("");
             setCurrentPageFilterCategory(1);
@@ -226,11 +224,11 @@ const ProductList = () => {
         }
     }
 
-    const handleFetchMoreBrandList = () =>{
-        if(isOpenFilterBrandPopup){
+    const handleFetchMoreBrandList = () => {
+        if (isOpenFilterBrandPopup) {
             fetchBrandList();
         }
-        else{
+        else {
             setListBrands([]);
             setBrandKeyword("");
             setCurrentPageFilterBrand(1);
@@ -238,62 +236,30 @@ const ProductList = () => {
         }
     }
 
-    useEffect(() =>{
+    useEffect(() => {
         handleFetchMoreCategoryList();
-    },[isOpenFilterCategoryPopup])
-
-    useEffect(() =>{
+    }, [isOpenFilterCategoryPopup])
+    useEffect(() => {
         setCurrentPageFilterCategory(1);
         handleFetchMoreCategoryList();
-    },[categoryKeyword])
+    }, [categoryKeyword])
 
-    useEffect(() =>{
+    useEffect(() => {
         handleFetchMoreBrandList();
-    },[isOpenFilterBrandPopup])
+    }, [isOpenFilterBrandPopup])
 
-    useEffect(() =>{
+    useEffect(() => {
         setCurrentPageFilterBrand(1);
         handleFetchMoreBrandList();
-    },[brandKeyword])
+    }, [brandKeyword])
 
     useEffect(() => {
         Cookies.set('filter_products', JSON.stringify(colsToRender));
     }, [colsToRender])
-    //console.log(col)
 
-    useEffect(() => {
+    useDebouncedEffect(() => {
         fetchProductList();
-
-    }, [limit, page]);
-
-    useEffect(()=>{
-        if(isOpenFilterCategoryPopup){
-            fetchCategoryList();
-        }
-        else{
-            setListCategories([]);
-            setDataFilterCategory({keyword: null});
-        }
-
-    }, [isOpenFilterCategoryPopup, dataFilterCategory.keyword, currentPageFilterCategory]);
-
-    useEffect(()=>{
-        if(isOpenFilterBrandPopup){
-            fetchBrandList();
-        }
-        else{
-            setListBrands([]);
-            setDataFilterBrand({keyword: null});
-        }
-
-    }, [isOpenFilterBrandPopup, dataFilterBrand.keyword, currentPageFilterBrand]);
-
-    useEffect(() => {
-        console.log("Sản phẩm đã thay đổi:", productsList);
-        // Bạn có thể thực hiện các hành động khác nếu cần khi sản phẩm thay đổi
-    }, [productsList]);
-
-    console.log(selectedBrands)
+    }, 300, [limit, page, dataBody.keyword]);
 
     return (
         <>
@@ -348,12 +314,19 @@ const ProductList = () => {
                                     <div className="search-icon">
                                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                                     </div>
-                                    <input placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode' type="text" name="search" id="" autoComplete='on' />
+                                    <input
+                                        placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode'
+                                        type="text"
+                                        name="search"
+                                        id=""
+                                        autoComplete='on'
+                                        onChange={(e) => setDataBody({ ...dataBody, keyword: e.target.value })}
+                                    />
                                     <fieldset className='input-field' />
                                 </div>
                             </div>
                             <div className="btn-group group-filter-btns">
-                                <button className="btn btn-base btn-filter" onClick={() => {setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup);  }} ref={filterCategoryBtnRef}>
+                                <button className="btn btn-base btn-filter" onClick={() => { setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup); }} ref={filterCategoryBtnRef}>
                                     <span className="btn__label">
                                         Loại sản phẩm
                                         <span className="btn__icon">
@@ -362,12 +335,12 @@ const ProductList = () => {
                                     </span>
                                 </button>
                                 {
-                                    isOpenFilterCategoryPopup && 
+                                    isOpenFilterCategoryPopup &&
                                     <SelectFilter
-                                        btnRef={filterCategoryBtnRef} 
-                                        closePopup={() =>setIsOpenFilterCategoryPopup(false)} 
-                                        listObject={listCategories} 
-                                        currentPage={currentPageFilterCategory} 
+                                        btnRef={filterCategoryBtnRef}
+                                        closePopup={() => setIsOpenFilterCategoryPopup(false)}
+                                        listObject={listCategories}
+                                        currentPage={currentPageFilterCategory}
                                         totalPage={totalPageFilterCategory}
                                         onSelectionChange={handleSelectionChangeCategories}
                                         handleOnClickButton={handleClickButtonFilterCategory}
@@ -386,7 +359,7 @@ const ProductList = () => {
                                         </span>
                                     </span>
                                 </button>
-                                <button className="btn btn-base btn-filter" onClick={() => {setIsOpenFilterBrandPopup(!isOpenFilterBrandPopup);  }} ref={filterBrandBtnRef}>
+                                <button className="btn btn-base btn-filter" onClick={() => { setIsOpenFilterBrandPopup(!isOpenFilterBrandPopup); }} ref={filterBrandBtnRef}>
                                     <span className="btn__label">
                                         Nhãn hiệu
                                         <span className="btn__icon">
@@ -395,12 +368,12 @@ const ProductList = () => {
                                     </span>
                                 </button>
                                 {
-                                    isOpenFilterBrandPopup && 
+                                    isOpenFilterBrandPopup &&
                                     <SelectFilter
-                                        btnRef={filterBrandBtnRef} 
-                                        closePopup={() =>setIsOpenFilterBrandPopup(false)} 
-                                        listObject={listBrands} 
-                                        currentPage={currentPageFilterBrand} 
+                                        btnRef={filterBrandBtnRef}
+                                        closePopup={() => setIsOpenFilterBrandPopup(false)}
+                                        listObject={listBrands}
+                                        currentPage={currentPageFilterBrand}
                                         totalPage={totalPageFilterBrand}
                                         onSelectionChange={handleSelectionChangeBrands}
                                         handleOnClickButton={handleClickButtonFilterBrand}
@@ -626,8 +599,8 @@ const ProductList = () => {
                             </div>
                             <p>kết quả</p>
                             <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + productsList.length} trên tổng {productsQuantity}</p>
-                            <button 
-                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
+                            <button
+                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1 })}
                                 onClick={handlePrevPage}
                             >
                                 <FontAwesomeIcon icon={faChevronLeft} />

@@ -1,14 +1,15 @@
 import { createSupplierGroup, getListSupplierGroups } from "../../service/SupplierGroupsAPI";
 import Header from "../Header/Header"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus,faMagnifyingGlass,faCaretDown,faChevronRight,faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faMagnifyingGlass, faCaretDown, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import cn from "classnames"
-import { useEffect, useState,useRef } from "react"
+import { useEffect, useState, useRef } from "react"
 import { formatDateTime } from "../../utils/DateUtils"
 import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup";
+import { useDebouncedEffect } from "../../utils/CommonUtils";
 import CreateSupplierGroupPopup from "../CreateSupplierGroupPopup/CreateSupplierGroupPopup";
 
-const SupplierGroupsList = () =>{
+const SupplierGroupsList = () => {
 
     const limitBtnRef = useRef(null);
 
@@ -77,30 +78,28 @@ const SupplierGroupsList = () =>{
         }
     }
 
-    const fetchSupplierGroupsList = async () =>{
-        try{
+    const fetchSupplierGroupsList = async () => {
+        try {
             const supplierGroups = await getListSupplierGroups(page, limit, dataBody);
-            if(supplierGroups.status_code === 200){
+            if (supplierGroups.status_code === 200) {
                 setSupplierGroupsList(supplierGroups.data.data);
                 setSupplierGroupsQuantity(supplierGroups.data.total_items);
                 setPageQuantity(supplierGroups.data.total_page);
             }
-            else{
-                console.log("status code:",supplierGroups.status_code);
+            else {
+                console.log("status code:", supplierGroups.status_code);
             }
         }
-        catch(err){
+        catch (err) {
             console.log(err);
             throw err;
         }
     }
 
-
-    useEffect(() => {
+    useDebouncedEffect(() => {
         fetchSupplierGroupsList();
-    }, [limit,page, isCreateSupplierGroups]);
+    }, 300, [limit, page, dataBody, isCreateSupplierGroups]);
 
-    console.log(dataCreateSupplierGroup);
     return (
         <>  
             {isCreateSupplierGroups && (
@@ -132,14 +131,21 @@ const SupplierGroupsList = () =>{
                     <div className="right__table-search-filter">
                         <div className="">
                             <div className="box-search-filter-btns">
-                            <div className="box-search">
-                                <div className="box-input">
-                                    <div className="search-icon">
-                                        <FontAwesomeIcon icon={faMagnifyingGlass} />
+                                <div className="box-search">
+                                    <div className="box-input">
+                                        <div className="search-icon">
+                                            <FontAwesomeIcon icon={faMagnifyingGlass} />
+                                        </div>
+                                        <input
+                                            placeholder='Tìm kiếm theo mã nhóm, tên nhóm nhà cung cấp'
+                                            type="text"
+                                            name="search"
+                                            id=""
+                                            autoComplete='on'
+                                            onChange={(e) => setDataBody({ ...dataBody, keyword: e.target.value })}
+                                        />
+                                        <fieldset className='input-field' />
                                     </div>
-                                    <input placeholder='Tìm kiếm theo mã nhóm,tên nhóm nhà cung cấp' type="text" name="search" id="" autoComplete='on' />
-                                    <fieldset className='input-field' />
-                                </div>
                                 </div>
                             </div>
                         </div>
@@ -147,7 +153,7 @@ const SupplierGroupsList = () =>{
                     <div className="right__table-headers">
                         <table className="box-table-headers">
                             <colgroup>
-                                <col style={{ width: "233px" }} /> 
+                                <col style={{ width: "233px" }} />
                                 <col style={{ width: "233px" }} />
                                 <col style={{ width: "233px" }} />
                                 <col style={{ width: "295px" }} />
@@ -199,15 +205,15 @@ const SupplierGroupsList = () =>{
                             <div className="table-data__container">
                                 <table className="box-table-data">
                                     <colgroup>
-                                        <col style={{ width: "233px" }} /> 
+                                        <col style={{ width: "233px" }} />
                                         <col style={{ width: "233px" }} />
                                         <col style={{ width: "233px" }} />
                                         <col style={{ width: "295px" }} />
                                         <col style={{ width: "233px" }} />
                                     </colgroup>
                                     <tbody>
-                                        {supplierGroupsList?.map((supplierGroup,index) => {
-                                            return(
+                                        {supplierGroupsList?.map((supplierGroup, index) => {
+                                            return (
                                                 <tr key={index} className="table-data-row">
                                                     <td className={cn("table-data-item", "text-start")}>
                                                         <p className="box-text">
@@ -254,12 +260,12 @@ const SupplierGroupsList = () =>{
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </span>
                                 </button>
-                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => { setLimit(limit) }}/>}
+                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => { setLimit(limit) }} />}
                             </div>
                             <p>Kết quả</p>
                             <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + supplierGroupsList.length} trên tổng {supplierGroupsQuantity}</p>
-                            <button 
-                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1})}
+                            <button
+                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1 })}
                                 onClick={handlePrevPage}
                             >
                                 <FontAwesomeIcon icon={faChevronLeft} />
