@@ -8,19 +8,20 @@ import s from './SupplierInfo.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import classNames from 'classnames'
-import { getDebtSupplier } from '../../service/SuppliersAPI'
+import { getSupplier } from '../../service/SuppliersAPI'
 
-const SupplierInfo = ({ supplier, handleCancel }) => {
-  const [debt, setDebt] = useState({});
+const SupplierInfo = ({ supplierId, handleCancel }) => {
+  const [supplier, setSupplier] = useState({});
 
-  const fetchDebtSupplier = async () => {
-    const response = await getDebtSupplier(supplier);
-    setDebt(response.data);
+  const fetchSupplier = async () => {
+    const response = await getSupplier(supplierId);
+    setSupplier(response.data);
   }
 
   useEffect(() => {
-    fetchDebtSupplier();
-  }, [supplier]);
+    fetchSupplier();
+  }, [supplierId]);
+  
 
   return (
     <div className={s.container}>
@@ -29,7 +30,7 @@ const SupplierInfo = ({ supplier, handleCancel }) => {
           <div className={s.supplierName}>
             <p>
               <Link>
-                {debt.name}
+                {supplier.name}
               </Link>
             </p>
           </div>
@@ -45,17 +46,17 @@ const SupplierInfo = ({ supplier, handleCancel }) => {
           }
         </div>
         {
-          debt.phone &&
+          supplier.phone &&
           <div className={s.boxPhone}>
-            <p>{debt.phone}</p>
+            <p>{supplier.phone}</p>
           </div>
         }
         {
-          debt.address &&
+          supplier.address &&
           <div className={s.boxAddress}>
             <p>
               <span className={s.addressTitle}>Địa chỉ:&nbsp;</span>
-              {debt.address}
+              {supplier.address}
             </p>
           </div>
         }
@@ -64,15 +65,15 @@ const SupplierInfo = ({ supplier, handleCancel }) => {
         <div className={s.boxReport}>
           <div className={s.reportItem}>
             <p className={s.reportTitle}>Nợ hiện tại</p>
-            <p className={classNames(s.reportValue, s.danger)}>{debt.current_debt}</p>
+            <p className={classNames(s.reportValue, s.danger)}>{supplier.current_debt}</p>
           </div>
           <div className={s.reportItem}>
-            <p className={s.reportTitle}>Tổng đơn nhập ({debt.grn_count})</p>
-            <p className={s.reportValue}>{debt.grn_total_value?.toLocaleString('en-US')}</p>
+            <p className={s.reportTitle}>Tổng đơn nhập ({supplier.grn_count})</p>
+            <p className={s.reportValue}>{supplier.grn_total_value?.toLocaleString('en-US')}</p>
           </div>
           <div className={s.reportItem}>
             <p className={s.reportTitle}>Trả hàng</p>
-            <p className={classNames(s.reportValue, s.danger)}>{debt.total_refund}</p>
+            <p className={classNames(s.reportValue, s.danger)}>{supplier.total_refund}</p>
           </div>
         </div>
       </div>
