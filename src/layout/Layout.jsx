@@ -23,6 +23,7 @@ import GRNPage from '../pages/GRN/GRNPage'
 import GINPage from '../pages/GIN/GINPage'
 import CategoryPage from '../pages/Category/CategoryPage'
 import SupplierGroups from '../pages/SupplierGroups/SupplierGroups'
+import UserPage from '../pages/User/UserPage'
 
 const Layout = () => {
   return (
@@ -45,6 +46,7 @@ const Layout = () => {
               <Route path='/gins/*' element={<GINPage/>}/>
               <Route path='/categories/*' element={<CategoryPage/>}/>
               <Route path='/supplier_groups/*' element={<SupplierGroups/>}/>
+              <Route path='/settings/users/*' element = {<UserPage/>}/>
           </Routes>
         </div>
     </div>
