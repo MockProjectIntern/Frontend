@@ -23,6 +23,8 @@ import importIcon from "../../assets/icons/ImportIcon.jsx";
 import GINProductsTable from "../GINProductsTable/GINProductsTable.jsx";
 import { createNewGIN } from "../../service/GINApi.jsx";
 import { quickGetProductList } from "../../service/ProductAPI.jsx";
+
+import cn from "classnames";
 const CreateGIN = () => {
 	const handleProductRequestChange = (e) => {
 		const { name, value } = e.target;
@@ -266,25 +268,25 @@ const CreateGIN = () => {
 									<div className="box-header">
 										<div className="btn-tab">
 											<button
-												className={activeTab === "all" ? "active" : ""}
+												className={cn("btn-scroller", {"active": activeTab === "all"})}
 												onClick={() => setActiveTab("all")}
 											>
 												Tất cả
 											</button>
 											<button
-												className={activeTab === "unchecked" ? "active" : ""}
+												className={cn("btn-scroller", {"active": activeTab === "unchecked"})}
 												onClick={() => setActiveTab("unchecked")}
 											>
 												Chưa kiểm
 											</button>
 											<button
-												className={activeTab === "matched" ? "active" : ""}
+												className={cn("btn-scroller", {"active": activeTab === "matched"})}
 												onClick={() => setActiveTab("matched")}
 											>
 												Khớp
 											</button>
 											<button
-												className={activeTab === "mismatched" ? "active" : ""}
+												className={cn("btn-scroller", {"active": activeTab === "mismatched"})}
 												onClick={() => setActiveTab("mismatched")}
 											>
 												Lệch

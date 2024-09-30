@@ -217,6 +217,14 @@ const GINProductsTable = ({
 										</td>
 									);
 								} else if (key === "quantity") {
+									if(isView) {
+										return (	<td
+											key={key}
+											className={cn(s.tableCell, s.tableCellBody, col.align)}
+										>
+											<p>{product.actual_stock-product.discrepancy_quantity}</p>
+										</td>)
+									}
 									return (
 										<td
 											key={key}
