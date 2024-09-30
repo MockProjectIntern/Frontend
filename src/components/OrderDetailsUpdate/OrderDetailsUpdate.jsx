@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import cn from 'classnames'
 import Cookies from 'js-cookie'
 
@@ -107,6 +107,8 @@ const OrderDetailsUpdate = () => {
         fetchOrderDetail();
     }, [])
 
+    const navigate = useNavigate();
+
     const handleSave = () => {
         console.log("check save!!", productsList)
 
@@ -123,8 +125,9 @@ const OrderDetailsUpdate = () => {
         }
         console.log(test)
         const res = putUpdateOrder(orderId, test);
-        if (res.status === "OK") {
+        if (res) {
             console.log("check :", res)
+            navigate(`/admin/order_suppliers/ORD/${orderId}`);
         }
     }
 

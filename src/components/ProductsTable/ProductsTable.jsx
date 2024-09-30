@@ -149,7 +149,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) =
                                                     </div>
                                                 </td>
                                             )
-                                        } else if (key === "imported_quantity") {
+                                        } else if (key === "imported_quantity" && !isEditUrl) {
                                             if (isView) {
                                                 return (
                                                     <td
