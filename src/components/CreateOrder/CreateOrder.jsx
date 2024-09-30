@@ -18,6 +18,7 @@ import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { quickGetProductList } from '../../service/ProductAPI.jsx'
 import { createNewOrder } from '../../service/OrderAPI.jsx'
+import CreateProductFastlyPopup from '../CreateProductFastlyPopup/CreateProductFastlyPopup.jsx'
 const CreateOrder = () => {
     const navigate = useNavigate();
     const [order, setOrder] = useState({
@@ -83,6 +84,8 @@ const CreateOrder = () => {
     })
     const productSelectBtnRef = useRef(null);
     const [productSelectList, setProductSelectList] = useState([])
+
+    const [isCreateProductQuickly,setIsCreateProductQuickly] = useState(false);
     const fetchProductList = async () => {
         const response = await quickGetProductList(dataPageProduct.page, dataPageProduct.size, dataPageProduct.keyword);
         setProductSelectList(response.data.data);
@@ -120,6 +123,14 @@ const CreateOrder = () => {
         }
     }
 
+    const handleClickCreateQuicklylyProduct = () =>{
+        setIsCreateProductQuickly(true);
+    }
+
+    const handleClickBack = () =>{
+        setIsCreateProductQuickly(false);
+    }
+
     useEffect(() => {
         setDataBody(prev => {
             return {
@@ -137,9 +148,17 @@ const CreateOrder = () => {
             }
         })
     }, [listProductDetail])
-
+    console.log(isCreateProductQuickly);
     return (
         <>
+            <>
+                {isCreateProductQuickly && (
+                    <>
+                        <div className="overlay"></div>
+                        <CreateProductFastlyPopup handleCLickBack={handleClickBack}/>
+                    </>
+                )}
+            </>
             <div className="right__navbar">
                 <div className="box-navbar">
                     <div className="btn-toolbar">
@@ -284,6 +303,7 @@ const CreateOrder = () => {
                                                             isSearch={false}
                                                             isFastCreate={true}
                                                             dataList={productSelectList}
+                                                            handleCLickCreateProductQuickly={handleClickCreateQuicklylyProduct}
                                                             handleSelect={(id) => setListProductDetail(prev => {
                                                                 return [...prev,
                                                                 {
