@@ -657,6 +657,71 @@ input:focus-within ~ .input-field {
     color: $red;
 }
 
+.box-scroller {
+    white-space: nowrap;
+    overflow-x: scroll;
+    scroll-behavior: smooth;
+    display: flex;
+    box-sizing: content-box;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    .group-scroller-btns {
+        display: inline-flex;
+        -webkit-box-pack: center;
+        justify-content: center;
+        position: relative;
+        -webkit-box-align: center;
+        align-items: center;
+        outline: 0px;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        font-family: $font-family-base;
+        font-weight: $font-weight-semibold;
+        font-size: $font-size-base;
+        line-height: 20px;
+
+        .btn-scroller {
+            display: inline-block;
+            -webkit-box-pack: center;
+            position: relative;
+            padding: 6px 16px;
+            box-sizing: border-box;
+            -webkit-box-align: center;
+            border-top: none;
+            border-right: none;
+            border-left: none;
+            border-image: initial;
+            border-bottom: 2px solid transparent;
+            color: rgb(116, 124, 135);
+            background-color: transparent;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: left;
+            cursor: pointer;
+            font-family: $font-family-base;
+            font-weight: $font-weight-semibold;
+            font-size: $font-size-base;
+            line-height: 20px;
+            margin: 0px;
+            height: 48px;
+            max-width: 240px;
+
+            &.active {
+                color: $violet;
+                border-bottom: 2px solid $violet;
+            }
+        }
+    }
+}
+
 .right {
     display: flex;
     flex-direction: column;
@@ -705,71 +770,6 @@ input:focus-within ~ .input-field {
             background-color: #fff;
             cursor: pointer;
             box-shadow: rgb(232, 234, 235) 0px -1px 0px 0px inset;
-
-            .box-scroller {
-                white-space: nowrap;
-                overflow-x: scroll;
-                scroll-behavior: smooth;
-                display: flex;
-                box-sizing: content-box;
-                background-color: transparent;
-                border: none;
-                cursor: pointer;
-                scrollbar-width: none;
-
-                &::-webkit-scrollbar {
-                    display: none;
-                }
-
-                .group-scroller-btns {
-                    display: inline-flex;
-                    -webkit-box-pack: center;
-                    justify-content: center;
-                    position: relative;
-                    -webkit-box-align: center;
-                    align-items: center;
-                    outline: 0px;
-                    background-color: transparent;
-                    border: none;
-                    cursor: pointer;
-                    font-family: $font-family-base;
-                    font-weight: $font-weight-semibold;
-                    font-size: $font-size-base;
-                    line-height: 20px;
-
-                    .btn-scroller {
-                        display: inline-block;
-                        -webkit-box-pack: center;
-                        position: relative;
-                        padding: 6px 16px;
-                        box-sizing: border-box;
-                        -webkit-box-align: center;
-                        border-top: none;
-                        border-right: none;
-                        border-left: none;
-                        border-image: initial;
-                        border-bottom: 2px solid transparent;
-                        color: rgb(116, 124, 135);
-                        background-color: transparent;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        text-align: left;
-                        cursor: pointer;
-                        font-family: $font-family-base;
-                        font-weight: $font-weight-semibold;
-                        font-size: $font-size-base;
-                        line-height: 20px;
-                        margin: 0px;
-                        height: 48px;
-                        max-width: 240px;
-
-                        &.active {
-                            color: $violet;
-                            border-bottom: 2px solid $violet;
-                        }
-                    }
-                }
-            }
         }
 
         &-search-filter {
@@ -2135,7 +2135,20 @@ input:focus-within ~ .input-field {
     color: $default;
 
     .paper-header {
+        display: flex;
         padding: 16px 24px;
+        align-items: center;
+
+        > svg {
+            font-size: 16px;
+            color: rgb(163, 168, 175);
+            padding: 2px;
+            margin-right: 8px;
+
+            &.check-icon {
+                color: rgb(13, 180, 115);
+            }
+        }
 
         p {
             box-sizing: border-box;
@@ -2152,6 +2165,7 @@ input:focus-within ~ .input-field {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            width: 100%;
 
             .btn-toolbar {
                 gap: 6px;
@@ -2165,6 +2179,10 @@ input:focus-within ~ .input-field {
                     }
                 }
             }
+        }
+
+        &:has(.box-scroller) {
+            padding: 0;
         }
     }
 
@@ -2748,7 +2766,7 @@ input:focus-within ~ .input-field {
         margin: 0px;
     }
 
-    &--pending, &--unpaid, &--not_entered {
+    &--pending, &--unpaid, &--not_entered, &--ordering, &--not_refund, &--not_return {
         border: 1px solid rgb(207, 209, 211);
         background-color: rgb(243, 244, 245);
 
@@ -2757,7 +2775,7 @@ input:focus-within ~ .input-field {
         }
     }
 
-    &--partial, &--partial_paid {
+    &--partial, &--partial_paid , &--trading {
         border: 1px solid rgb(255, 223, 155);
         background-color: rgb(255, 247, 231);
 
@@ -2766,7 +2784,7 @@ input:focus-within ~ .input-field {
         }
     }
 
-    &--completed, &--imported, &--balanced, &--entered, &--paid {
+    &--completed, &--imported, &--balanced, &--entered, &--paid, &--full {
         border: 1px solid rgb(159, 237, 207);
         background-color: rgb(243, 252, 249);
 
