@@ -6,25 +6,36 @@ import Cookies from 'js-cookie'
 import SupplierInfo from '../SupplierInfo/SupplierInfo'
 import ProductsTable from '../ProductsTable/ProductsTable'
 
-import s from './OrderDetails.module.scss'
+import s from '../OrderDetails/OrderDetails.module.scss'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft, faGear, faPrint } from '@fortawesome/free-solid-svg-icons'
 import { faCopy } from '@fortawesome/free-regular-svg-icons'
-import { getOrderById } from '../../service/OrderAPI'
+import { getOrderById, putUpdateOrder } from '../../service/OrderAPI'
 import { formatDate, formatDateTime } from '../../utils/DateUtils'
 import { getAllByOrder } from '../../service/GRNApi'
 
-const OrderDetails = () => {
+const OrderDetailsUpdate = () => {
     const { orderId } = useParams()
+    const [data, setData] = useState();
+
+    const fetchData = async () => {
+        const res = await getOrderById(orderId);  // Chờ promise được resolve
+        // setProductsList(res.order_details)
+        setData(res);
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [orderId]);
+
     const [order, setOrder] = useState({
         id: "OSN00004",
         created_at: "25/09/2024 00:14",
-        status: "COMPLETED",
+        status: "PENDING",
         user_created_name: "Admin",
         expected_at: ""
     })
-    const [supplier, setSupplier] = useState(null)
     const status = {
         COMPLETED: "Hoàn thành",
         PENDING: "Chưa nhập",
@@ -38,6 +49,7 @@ const OrderDetails = () => {
     }
     const [grnList, setGRNList] = useState()
     const [productsList, setProductsList] = useState([])
+    const [isView, setIsView] = useState(order.status === 'COMPLETED' ? true : false);
 
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
@@ -95,6 +107,27 @@ const OrderDetails = () => {
         fetchOrderDetail();
     }, [])
 
+    const handleSave = () => {
+        console.log("check save!!", productsList)
+
+        const filteredProductsList = productsList.map(({ id, ordered_quantity, price, discount, tax }) => ({
+            product_id: id, quantity: ordered_quantity, price, discount, tax
+        }));
+        const test = {
+            "supplier_id": data.data.supplier_id,
+            "expected_at": null,
+            "tags": null,
+            "note": null,
+            "discount": 0,
+            products: filteredProductsList
+        }
+        console.log(test)
+        const res = putUpdateOrder(orderId, test);
+        if (res.status === "OK") {
+            console.log("check :", res)
+        }
+    }
+
     return (
         <>
             <div className="right__navbar">
@@ -111,12 +144,8 @@ const OrderDetails = () => {
                         <button className="btn btn-outline-primary">
                             <span className="btn__title">Thoát</span>
                         </button>
-                        <button className="btn btn-primary">
-                            <Link to={`/admin/order_suppliers/ORD/${orderId}/edit`} className='box-id'>
-                                <span className="btn__title">
-                                    Sửa đơn
-                                </span>
-                            </Link>
+                        <button className="btn btn-primary" onClick={() => { handleSave() }}>
+                            <span className="btn__title">Lưu</span>
                         </button>
                     </div>
                 </div>
@@ -307,7 +336,7 @@ const OrderDetails = () => {
                                     </div>
                                 </div>
                                 <div className="box-table">
-                                    <ProductsTable productsList={productsList} colsToRender={colsToRender} isView={true} />
+                                    <ProductsTable productsList={productsList} colsToRender={colsToRender} isView={isView} setProductList={setProductsList} />
                                     <div className="box-total">
                                         <div className="box-total__container">
                                             <div className="box-subinfo">
@@ -362,4 +391,4 @@ const OrderDetails = () => {
     )
 }
 
-export default OrderDetails
+export default OrderDetailsUpdate

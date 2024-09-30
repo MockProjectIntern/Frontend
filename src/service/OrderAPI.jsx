@@ -35,3 +35,13 @@ export const getOrderById = async (id) => {
         throw error;
     }
 }
+
+export const putUpdateOrder = async (id, data) => {
+    try {
+        const response = await axiosInstance.put(`/orders/update.json/${id}`, data);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
