@@ -158,7 +158,7 @@ const OrderDetails = () => {
                                     <p>Thông tin nhà cung cấp</p>
                                 </div>
                                 <div className="paper-content">
-                                    {order?.supplier_id && <SupplierInfo supplier={order.supplier_id} />}
+                                    {order?.supplier_id && <SupplierInfo supplierId={order.supplier_id} />}
                                 </div>
                             </div>
                         </div>
