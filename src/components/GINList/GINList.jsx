@@ -121,11 +121,13 @@ const GINList = () => {
 
     const handleExportExcel = async () => {
         const responseAPI = await exportData("DEFAULT", dataFilter);
-
-        const dataExport = responseAPI.data?.map((item) => {
-            return item.products.map((product) => {
+    
+        const dataExport = responseAPI.data?.map((item, index) => {
+            // For each item, map the products
+            return item.products.map((product, indexProduct) => {
                 return {
-                    "Mã phiếu kiếm": item.sub_id,
+                    "STT": indexProduct === 0 ? index + 1 : "",
+                    "Mã phiếu kiểm": item.sub_id,
                     "Nhân viên kiểm": item.user_created_name,
                     "Nhân viên tạo": item.user_created_name,
                     "Nhân viên cân bằng": item.user_balanced_name,
@@ -139,13 +141,14 @@ const GINList = () => {
                     "Số lượng lệch": product.discrepancy_quantity,
                     "Lí do": product.reason,
                     "Ghi chú": product.note
-                }
-            })[0];
-        })
-
+                };
+            });
+        }).flat(); // Flatten the array because each item has multiple products
+    
         exportExcel(dataExport, "Danh sách phiếu kiểm hàng");
         alert("Xuất file thành công");
-    }
+    };
+    
 
     return (
         <>

@@ -125,10 +125,10 @@ const GINDetail = () => {
 			<div className="right__navbar">
 				<div className="box-navbar">
 					<div className="btn-toolbar">
-						<Link to="/admin/order_suppliers" className="btn-back">
+						<Link to="/admin/gins" className="btn-back">
 							<FontAwesomeIcon icon={faChevronLeft} />
 							<h6 className="btn-back__title">
-								Quay lại danh sách đơn đặt hàng
+								Quay lại danh sách phiếu kiểm hàng
 							</h6>
 						</Link>
 					</div>

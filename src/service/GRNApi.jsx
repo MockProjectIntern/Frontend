@@ -45,3 +45,13 @@ export const getGRNById = async (grnId) => {
         throw error;
     }
 }
+
+export const getDataExport = async (mode, dataBody) => {
+    try {
+        const response = await axiosInstance.post(`/grns/export-data.json?mode=${mode}`, dataBody);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

@@ -18,8 +18,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import StatusFilter from './FiltersPopup/StatusFilter.jsx'
 import CreatedAtFilter from '../GINList/FiltersPopup/CreatedAtFilter.jsx'
-import { getGRNs } from '../../service/GRNApi.jsx'
+import { getDataExport, getGRNs } from '../../service/GRNApi.jsx'
 import { formatDateTime } from '../../utils/DateUtils.jsx'
+import { exportExcel } from '../../config/ExportExcel.jsx'
 
 const grnsQuantity = 4;
 
@@ -147,13 +148,34 @@ const GRNList = () => {
         setColsToRender({ ...colsToRender, [name]: !colsToRender[name] })
     }
 
+    const handleExportData = async () => {
+        const responseAPI = await getDataExport("DEFAULT", defaultFilter);
+        
+        const dataExport = responseAPI.data.map((grn) => {
+            return {
+                "Mã đơn nhập": grn.sub_id,
+                "Trạng thái": status[grn.status],
+                "Trạng thái nhận hàng": status[grn.received_status],
+                "Tên nhà cung cấp": grn.supplier_name,
+                "Tên nhân viên nhập": grn.user_imported_name,
+                "Tổng tiền": grn.total_value,
+                "Ngày tạo": formatDateTime(grn.created_at),
+                "Ngày nhập": formatDateTime(grn.received_at),
+                "Ngày cập nhật": formatDateTime(grn.updated_at),
+            }
+        })
+
+        exportExcel(dataExport, "Danh sách đơn nhập hàng");
+        alert("Xuất file thành công");
+    }
+
     return (
         <>
             <Header title={"Danh sách đơn nhập hàng"} />
             <div className='right__listPage'>
                 <div className='right__toolbar'>
                     <div className="btn-toolbar">
-                        <button className="btn btn-base btn-text">
+                        <button className="btn btn-base btn-text" onClick={handleExportData}>
                             <span className="btn__label">
                                 <span className="btn__icon">
                                     {exportIcon}
@@ -340,7 +362,6 @@ const GRNList = () => {
                                     </colgroup>
                                     <tbody>
                                         {grnList.map((grn, index) => {
-                                            console.log(grn)
                                             return (
                                                 <tr key={index} className="table-data-row">
                                                     <td rowSpan={1} className='table-icon'>

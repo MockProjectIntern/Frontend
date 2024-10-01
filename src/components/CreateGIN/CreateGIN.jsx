@@ -136,8 +136,8 @@ const CreateGIN = () => {
 		const response = await createNewGIN(dataBody);
 
 		if (response.status_code === 201) {
-			alert("Tạo đơn kiểm hàng thành công");
-			navigate("/admin/order_suppliers");
+			alert("Tạo phiếu kiểm hàng thành công");
+			navigate("/admin/gins");
 		}
 	};
 
@@ -158,8 +158,6 @@ const CreateGIN = () => {
 			};
 		});
 	}, [listProductDetail]);
-	console.log(listProductDetail);
-	console.log(dataBody);
 
 	return (
 		<>
