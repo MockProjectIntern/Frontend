@@ -138,7 +138,7 @@ const GINList = () => {
                     "Tồn thực tế": product.actual_stock,
                     "Số lượng lệch": product.discrepancy_quantity,
                     "Lí do": product.reason,
-                    "note": product.note
+                    "Ghi chú": product.note
                 }
             })[0];
         })

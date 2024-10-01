@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 import Cookies from 'js-cookie'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 // Import Components
 import Header from '../Header/Header'
@@ -85,7 +85,7 @@ const GRNList = () => {
     useEffect(() => {
         fetchGrnList();
     }, [])
-    
+
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_grns');
         return storedCols ? JSON.parse(storedCols) : {
@@ -340,6 +340,7 @@ const GRNList = () => {
                                     </colgroup>
                                     <tbody>
                                         {grnList.map((grn, index) => {
+                                            console.log(grn)
                                             return (
                                                 <tr key={index} className="table-data-row">
                                                     <td rowSpan={1} className='table-icon'>
@@ -369,6 +370,20 @@ const GRNList = () => {
                                                                         )}>
                                                                             <span>{(status[grn[key.substring(4)]])}</span>
                                                                         </div>
+                                                                    </td>
+                                                                )
+                                                            } else if (key === "grn_sub_id") {
+                                                                return (
+                                                                    <td
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        <Link to={`/admin/grns/GRN/${grn.id}`}>
+                                                                            <p className='box-text'>
+                                                                                <a className='box-id'>{grn[key.substring(4)]}</a>
+                                                                            </p>
+                                                                        </Link>
+
                                                                     </td>
                                                                 )
                                                             } else if (key.includes("_at")) {

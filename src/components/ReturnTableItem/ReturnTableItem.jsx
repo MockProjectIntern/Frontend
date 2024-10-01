@@ -15,7 +15,7 @@ const ReturnTableItem = ({ returnItem }) => {
         FULL: "Hoàn tiền toàn bộ",
         PARTIAL: "Hoàn tiền một phần",
         NOT_REFUNDED: "Chưa hoàn tiền"
-    }
+    } 
     
     return (
         <>
@@ -46,7 +46,7 @@ const ReturnTableItem = ({ returnItem }) => {
                     }
                 </td>
                 <td className="table-data-item text-start">
-                    <div className={`box-status box-status--refunded`}>
+                    <div className={`box-status box-status--${returnItem?.refund_payment_status.toLowerCase()}`}>
                         <span>{status[returnItem?.refund_payment_status]}</span>
                     </div>
                 </td>

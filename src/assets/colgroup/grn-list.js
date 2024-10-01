@@ -11,7 +11,7 @@ const grn_list_colgroup = {
         align: "text-start"
     },
     grn_supplier_sub_id: {
-        name: "Mã nhà cung cấp",
+        name: "Mã nhà cung cấp", 
         width: "160px",
         align: "text-start"
     },

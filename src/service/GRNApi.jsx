@@ -1,5 +1,4 @@
 import axiosInstance from "./axiosInstance";
-import Cookies from 'js-cookie'
 export const createNewGRN = async (data) => {
     try {
         const response = await axiosInstance.post(`/grns/create.json`, data);
@@ -30,6 +29,16 @@ export const getGRNs = async (page, size, filterName, filterJson, data) => {
 export const getAllByOrder = async (orderId, page, size) => {
     try {
         const response = await axiosInstance.get(`/grns/order-all.json/${orderId}?page=${page}&size=${size}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export const getGRNById = async (grnId) => {
+    try {
+        const response = await axiosInstance.get(`/grns/detail.json/${grnId}`);
         return response.data;
     } catch (error) {
         console.error(error);
