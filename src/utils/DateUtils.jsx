@@ -1,6 +1,6 @@
 export const formatDateTime = (dateTimeString) => {
     if (!dateTimeString) {
-        return ; // Xử lý lỗi nếu chuỗi thời gian không hợp lệ
+        return ; 
     }
     // Loại bỏ phần mili giây nếu có và đảm bảo định dạng hợp lệ
     const cleanString = dateTimeString.split('.')[0]; // Loại bỏ phần mili giây (sau dấu '.')

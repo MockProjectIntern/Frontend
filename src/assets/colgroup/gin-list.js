@@ -1,19 +1,14 @@
 export const col = {
     id: {
         name: "Mã phiếu",
-        width: "160px",
+        width: "0",
         align: "text-start"
     },
     sub_id: {
-        name: "Mã phiếu con",
+        name: "Mã phiếu",
         width: "160px",
         align: "text-start"
     },
-    // keyword: {
-    //     name: "Từ khóa",
-    //     width: "160px",
-    //     align: "text-start"
-    // },
     status: {
         name: "Trạng thái",
         width: "180px",
