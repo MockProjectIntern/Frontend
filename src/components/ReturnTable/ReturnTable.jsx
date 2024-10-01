@@ -1,6 +1,46 @@
-import React from 'react'
+import React, { useState } from 'react'
+import ReturnTableItem from '../ReturnTableItem/ReturnTableItem'
 
 const ReturnTable = () => {
+    const [returnList, setReturnList] = useState([
+        {
+            created_at: "2024-09-30T16:31:01",
+            updated_at: "2024-09-30T16:31:01",
+            supplier_id: "SUP00002",
+            supplier_name: "Nhà cung cấp 2",
+            reason: "Chả có gì",
+            transaction: {
+                amount: 30000.00,
+                updated_at: "2024-09-30T16:30:44",
+                user_created_name: "Nguyễn Đình Văn",
+                created_at: "2024-09-30T16:30:44",
+                id: "TSN00002",
+                payment_method: "CASH"
+            },
+            total_refunded_quantity: 1.00,
+            total_refunded_value: 20000.00,
+            status: "REFUNDED",
+            refund_payment_status: "PARTIAL",
+            user_created_name: "Nguyễn Đình Văn",
+            refund_details: [
+                {
+                    id: "RID00001",
+                    subId: "RID00001",
+                    quantity: 1.00,
+                    refundedPrice: 30000.00,
+                    amount: 20000.00,
+                    image: {
+                        url: "https://firebasestorage.googleapis.com/v0/b/imagestore-f373f.appspot.com/o/images%2FScreenshot%202024-09-14%20014439_8aW1Jr.png?alt=media&token=17bf69bf-5267-4e28-ad4a-5b26a0eb3565",
+                        alt: "Screenshot 2024-09-14 014439.png"
+                    },
+                    productName: "Hoa quả",
+                    productId: "PRD00009",
+                    productSubId: "PRD00009"
+                }
+            ]
+        }
+    ])
+
     return (
         <>
             <div className="right__table-headers">
@@ -40,7 +80,13 @@ const ReturnTable = () => {
                                 <col style={{ width: "155px" }} />
                                 <col style={{ width: "200px" }} />
                             </colgroup>
-                            
+                            <tbody>
+                                {
+                                    returnList?.map((returnItem, index) => (
+                                        <ReturnTableItem key={index} returnItem={returnItem} />
+                                    ))
+                                }
+                            </tbody>
                         </table>
                     </div>
                 </div>

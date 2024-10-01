@@ -21,13 +21,13 @@ const TransactionItem = ({ payment }) => {
                 <div className={s.itemTitle}>
                     <button onClick={() => setIsOpen(!isOpen)} className={s.btnCollapse}>
                         <span className={s.btnTitle}>
-                            <p>Tiền mặt {payment.amount?.toLocaleString('en-US')}</p>
+                            <p>Tiền mặt {payment?.amount?.toLocaleString('en-US')}</p>
                         </span>
                         <span className={cn(s.btnIcon, { [s.collapseIcon]: isOpen })}>
                             <FontAwesomeIcon icon={faCaretDown} />
                         </span>
                     </button>
-                    <p className={s.date}>{formatDateTime(payment.date)}</p>
+                    <p className={s.date}>{formatDateTime(payment?.date)}</p>
                 </div>
                 <Collapse className={s.panel} isOpen={isOpen}>
                     <div className={s.collapseItem}>
@@ -35,14 +35,14 @@ const TransactionItem = ({ payment }) => {
                             <p>Phương thức thanh toán</p>
                             <p>
                                 :&nbsp;
-                                {payment.method}
+                                {payment?.method}
                             </p>
                         </div>
                         <div className={s.infoItem}>
                             <p>Tham chiếu</p>
                             <p>
                                 :&nbsp;
-                                {payment.reference}
+                                {payment?.reference}
                             </p>
                         </div>
                     </div>
