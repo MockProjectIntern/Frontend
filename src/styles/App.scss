@@ -881,7 +881,7 @@ input:focus-within ~ .input-field {
                         &:hover {
                             background-color: rgb(243, 244, 245);
                         }
-
+                        
                         .table-data-item {
                             color: inherit;
                             font-family: $font-family-base;
@@ -893,7 +893,7 @@ input:focus-within ~ .input-field {
                             border-right: none;
                             overflow: hidden;
                             height: 52px;
-
+                            
                             > .box-text {
                                 display: inline-block;
                                 box-sizing: border-box;
@@ -908,7 +908,7 @@ input:focus-within ~ .input-field {
                                 overflow: hidden;
                                 text-overflow: ellipsis;
                                 white-space: nowrap;
-
+                                
                                 > .box-id {
                                     text-decoration: none;
                                     font-family: $font-family-base;
@@ -918,18 +918,28 @@ input:focus-within ~ .input-field {
                                     margin: 0px;
                                     cursor: pointer;
                                     color: $violet;
-
+                                    
                                     &:hover {
                                         text-decoration: underline;
                                     }
                                 }
                             }
-
+                            
                             > img {
                                 height: 35px;
                                 display: block;
                                 margin: auto;
                                 max-height: 35px;
+                            }
+                        }
+
+                        &.item-details {
+                            background-color: #f6f3ff;
+                            border: none;
+
+                            .btn-icon svg {
+                                transform: rotate(90deg);
+                                color: $violet;
                             }
                         }
                     }
@@ -2676,7 +2686,7 @@ input:focus-within ~ .input-field {
         justify-content: center;
         -webkit-box-align: center;
         align-items: center;
-        width: 80px;
+        width: 100%;
 
         .checkbox__wrapper:hover {
             background: rgb(232, 234, 235);
@@ -2784,7 +2794,7 @@ input:focus-within ~ .input-field {
         }
     }
 
-    &--completed, &--imported, &--balanced, &--entered, &--paid, &--full {
+    &--completed, &--imported, &--balanced, &--entered, &--paid, &--full, &--refunded {
         border: 1px solid rgb(159, 237, 207);
         background-color: rgb(243, 252, 249);
 

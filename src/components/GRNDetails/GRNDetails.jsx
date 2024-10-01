@@ -246,7 +246,7 @@ const GRNDetails = () => {
                                     <p>Thông tin nhà cung cấp</p>
                                 </div>
                                 <div className="paper-content">
-                                    {grn.supplierId && <SupplierInfo supplierIdId={grn.supplierId} />}
+                                    {grn.supplierId && <SupplierInfo supplierId={grn.supplierId} />}
                                 </div>
                             </div>
                         </div>
