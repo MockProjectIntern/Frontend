@@ -15,6 +15,7 @@ import TransactionItem from '../TransactionItem/TransactionItem'
 import ProductsTable from '../ProductsTable/ProductsTable'
 import ReturnTable from '../ReturnTable/ReturnTable'
 import { getGRNById } from '../../service/GRNApi'
+import ImportHistoriesPopup from '../ImportHistoriesPopup/ImportHistoriesPopup'
 
 const GRNDetails = () => {
     const { grnId } = useParams();
@@ -64,6 +65,7 @@ const GRNDetails = () => {
 
     const [isReceiveDetail, setIsReceiveDetail] = useState(false)
     const [tab, setTab] = useState("products")
+    const [isHistoriesPopup, setIsHistoriesPopup] = useState(false);
 
     const [dataDetail, setDataDetail] = useState({});
 
@@ -98,12 +100,27 @@ const GRNDetails = () => {
                         </Link>
                     </div>
                     <div className="btn-toolbar">
-                        <button className="btn btn-outline-primary">
-                            <span className="btn__title">Thoát</span>
-                        </button>
+                        {
+                            dataDetail.received_status === "NOT_ENTERED" ?
+                            <button className="btn btn-outline-danger">
+                                <span className="btn__title">Hủy</span>
+                            </button> :
+                            <button className="btn btn-outline-primary">
+                                <span className="btn__title">Thoát</span>
+                            </button>
+                        }
                         <button className="btn btn-outline-primary">
                             <span className="btn__title">Sửa đơn</span>
                         </button>
+                        {
+                            dataDetail.received_status === "NOT_ENTERED" ?
+                            <button className="btn btn-primary">
+                                <span className="btn__title">Nhập hàng</span>
+                            </button> :
+                            <button className="btn btn-primary">
+                                <span className="btn__title">Hoàn trả</span>
+                            </button>
+                        }
                     </div>
                 </div>
             </div>
@@ -192,7 +209,7 @@ const GRNDetails = () => {
                                     <p>Thông tin nhà cung cấp</p>
                                 </div>
                                 <div className="paper-content">
-                                    {dataDetail.supplierId && <SupplierInfo supplierId={dataDetail.supplierId} />}
+                                    {dataDetail.supplier_id && <SupplierInfo supplierId={dataDetail.supplier_id} />}
                                 </div>
                             </div>
                         </div>
@@ -218,7 +235,7 @@ const GRNDetails = () => {
                                     </div>
                                 </div>
                                 <div className={s.btnHistory}>
-                                    <a>Xem lịch sử đơn hàng</a>
+                                    <a onClick={() => setIsHistoriesPopup(true)}>Xem lịch sử đơn hàng</a>
                                 </div>
                             </div>
                         </div>
@@ -280,12 +297,24 @@ const GRNDetails = () => {
                         <div className={s.boxPayment}>
                             <div className="box-paper">
                                 <div className={cn("paper-header", s.boxHeader)}>
-                                    {
-                                        dataDetail.payment_status === "PAID" ?
-                                            <FontAwesomeIcon className="check-icon" icon={faCheckCircle} /> :
-                                            <FontAwesomeIcon icon={faMoneyBills} />
-                                    }
-                                    <p>Đơn nhập hàng {status[dataDetail.payment_status]?.toLowerCase()}</p>
+                                    <div className="box-header">
+                                        <div className='d-flex h-100 align-items-center'>
+                                            {
+                                                dataDetail.payment_status === "PAID" ?
+                                                    <FontAwesomeIcon className="check-icon" icon={faCheckCircle} /> :
+                                                    <FontAwesomeIcon icon={faMoneyBills} />
+                                            }
+                                            <p>Đơn nhập hàng {status[dataDetail.payment_status]?.toLowerCase()}</p>
+                                        </div>
+                                        {
+                                            dataDetail.payment_status !== "PAID" &&
+                                            <div className="btn-toolbar">
+                                                <button className="btn btn-primary">
+                                                    <span className="btn__title">Thanh toán</span>
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                                 <div className="paper-content pt-3">
                                     <div className={s.paymentSummary}>
@@ -317,14 +346,14 @@ const GRNDetails = () => {
                                 <div className="paper-header">
                                     <div className="box-header">
                                         {
-                                            dataDetail?.return_status === "NOT_RETURN" ?
-                                                <p>Thông tin sản phẩm</p> :
-                                                <div className="box-scroller">
-                                                    <div className="group-scroller-btns">
-                                                        <button onClick={() => setTab("products")} className={cn("btn-scroller", { "active": tab === "products" })}>Thông tin sản phẩm</button>
-                                                        <button onClick={() => setTab("return")} className={cn("btn-scroller", { "active": tab === "return" })}>Thông tin hoàn trả</button>
-                                                    </div>
+                                            dataDetail?.return_status === "NOT_RETURNED" ?
+                                            <p>Thông tin sản phẩm</p> :
+                                            <div className="box-scroller">
+                                                <div className="group-scroller-btns">
+                                                    <button onClick={() => setTab("products")} className={cn("btn-scroller", { "active": tab === "products" })}>Thông tin sản phẩm</button>
+                                                    <button onClick={() => setTab("return")} className={cn("btn-scroller", { "active": tab === "return" })}>Thông tin hoàn trả</button>
                                                 </div>
+                                            </div>
                                         }
                                         {
                                             tab === "products" &&
@@ -339,50 +368,50 @@ const GRNDetails = () => {
                                 <div className="box-table">
                                     {
                                         tab === "products" ?
-                                            <>
-                                                {dataDetail.products
-                                                    && dataDetail.products.length > 0
-                                                    && <ProductsTable productsList={dataDetail?.products} colsToRender={colsToRender} isView={true} />}
-                                                <div className="box-total">
-                                                    <div className="box-total__container">
-                                                        <div className="box-subinfo">
-                                                            <div className="box-note">
-                                                                <p className='box-label'>Ghi chú đơn</p>
-                                                                <p className='box-content'>{dataDetail.note || "Chưa có ghi chú"}</p>
-                                                            </div>
-                                                            <div className="box-tags">
-                                                                <p className='box-label'>Tags</p>
-                                                                <p className='box-content'>{dataDetail.tags || "Chưa có tags"}</p>
-                                                            </div>
+                                        <>
+                                            {dataDetail.products
+                                                && dataDetail.products.length > 0
+                                                && <ProductsTable productsList={dataDetail?.products} colsToRender={colsToRender} isView={true} />}
+                                            <div className="box-total">
+                                                <div className="box-total__container">
+                                                    <div className="box-subinfo">
+                                                        <div className="box-note">
+                                                            <p className='box-label'>Ghi chú đơn</p>
+                                                            <p className='box-content'>{dataDetail.note || "Chưa có ghi chú"}</p>
                                                         </div>
-                                                        <div className="box-price-info">
-                                                            <div className="info-item">
-                                                                <p>Số lượng</p>
-                                                                <p>{dataDetail.total_received_quantity}</p>
+                                                        <div className="box-tags">
+                                                            <p className='box-label'>Tags</p>
+                                                            <p className='box-content'>{dataDetail.tags || "Chưa có tags"}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="box-price-info">
+                                                        <div className="info-item">
+                                                            <p>Số lượng</p>
+                                                            <p>{dataDetail.total_received_quantity}</p>
+                                                        </div>
+                                                        <div className="info-item">
+                                                            <p>Tổng tiền</p>
+                                                            <p>{dataDetail.products?.map(item => (item.price - item.discount + item.tax) * item.quantity).reduce((acc, curr) => acc + curr, 0)}</p>
+                                                        </div>
+                                                        <div className="info-item">
+                                                            <p>Chiết khấu</p>
+                                                            <p>{dataDetail.discount}</p>
+                                                        </div>
+                                                        <div className="info-item">
+                                                            <div className="d-flex">
+                                                                <p>Thuế</p>
                                                             </div>
-                                                            <div className="info-item">
-                                                                <p>Tổng tiền</p>
-                                                                <p>{dataDetail.products?.map(item => (item.price - item.discount + item.tax) * item.quantity).reduce((acc, curr) => acc + curr, 0)}</p>
-                                                            </div>
-                                                            <div className="info-item">
-                                                                <p>Chiết khấu</p>
-                                                                <p>{dataDetail.discount}</p>
-                                                            </div>
-                                                            <div className="info-item">
-                                                                <div className="d-flex">
-                                                                    <p>Thuế</p>
-                                                                </div>
-                                                                <p>{dataDetail.tax_amount}</p>
-                                                            </div>
-                                                            <div className="info-item">
-                                                                <p className='total-price'>Tiền cần trả</p>
-                                                                <p className='total-price'>{dataDetail.total_value}</p>
-                                                            </div>
+                                                            <p>{dataDetail.tax_amount}</p>
+                                                        </div>
+                                                        <div className="info-item">
+                                                            <p className='total-price'>Tiền cần trả</p>
+                                                            <p className='total-price'>{dataDetail.total_value}</p>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </> :
-                                            <ReturnTable grnId={grnId}/>
+                                            </div>
+                                        </> :
+                                        <ReturnTable grnId={grnId}/>
                                     }
                                 </div>
                             </div>
@@ -390,6 +419,7 @@ const GRNDetails = () => {
                     </div>
                 </div>
             </div>
+            {isHistoriesPopup && <ImportHistoriesPopup histories={dataDetail.histories} closePopup={() => setIsHistoriesPopup(false)} />}
         </>
     )
 }
