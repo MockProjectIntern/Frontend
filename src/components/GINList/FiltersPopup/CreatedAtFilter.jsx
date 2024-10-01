@@ -8,8 +8,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 const CreatedAtFilter = ({
 	createdRef,
 	closePopup,
-	setCreatedMin,
-	setCreatedMax,
+	handeChangeDatafilter,
+	parentCalling
 }) => {
 	const popupRef = useRef(null);
 	const [selectedRange, setSelectedRange] = useState(null);
@@ -80,13 +80,15 @@ const CreatedAtFilter = ({
   
   const handleFilterClick = () => {
     if (dateTempo.createdAtmin && dateTempo.createdAtmax) {
-      setCreatedMin(dateTempo.createdAtmin);
-      setCreatedMax(dateTempo.createdAtmax);
+		if(parentCalling === "GIN") {
+			handeChangeDatafilter("created_date_from",dateTempo.createdAtmin);
+			handeChangeDatafilter("created_date_to",dateTempo.createdAtmax);
     }
     console.log(dayjs(dateTempo.createdAtmin).format("YYYY-MM-DD"), dayjs(dateTempo.createdAtmax).format("YYYY-MM-DD"));
   
     closePopup();
-  };
+  }
+}
   
   useEffect(() => {
     if (isSelectCustom && customStartDate && customEndDate) {

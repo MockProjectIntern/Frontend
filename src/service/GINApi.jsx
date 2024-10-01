@@ -11,19 +11,10 @@ export const createNewGIN = async (data) => {
 }
 
 
-export const getGINs = async (page, size, filterName, filterJson) => {
+export const getGINs = async (page, size, filterName, filterJson,data) => {
     try {
    
-        const response = await axiosInstance.post(`/gins/filter.json?page=${page}&size=${size}`,{
-            status: null,
-            created_date_from: null,
-            created_date_to: null,
-            balanced_date_from: null,
-            balanced_date_to: null,
-            user_created_ids: null,
-            user_balanced_ids: null,
-            user_inspection_ids: null
-        },{
+        const response = await axiosInstance.post(`/gins/filter.json?page=${page}&size=${size}`,data,{
         headers : {
             [filterName]: filterJson, // Thiết lập giá trị của filterName vào header
         }

@@ -22,40 +22,7 @@ import { getGINs } from '../../service/GINApi.jsx'
 import GINStatusFilter from './FiltersPopup/GINStatusFilter.jsx'
 import CreatedAtFilter from './FiltersPopup/CreatedAtFilter.jsx'
 
-// const ginList = [
-//     {
-//         id: "OSN00004",
-//         created_at: "13/09/2024 11:36",
-//         balanced_at: "13/09/2024 11:36",
-//         status: "Đang kiểm kho",
-//         user_created: "Admin",
-//         user_inspection: "Admin",
-//         user_balanced: "Admin",
-//         note: "Giao hàng",
-//     },
-//     {
-//         id: "OSN00003",
-//         created_at: "13/09/2024 11:36",
-//         balanced_at: "13/09/2024 11:36",
-//         status: "Đã cân bằng",
-//         user_created: "Admin",
-//         user_inspection: "Admin",
-//         user_balanced: "Admin",
-//         note: "Giao hàng",
-//     },
-//     {
-//         id: "OSN00002",
-//         created_at: "13/09/2024 11:36",
-//         balanced_at: "13/09/2024 11:36",
-//         status: "Đã xóa",
-//         user_created: "Admin",
-//         user_inspection: "Admin",
-//         user_balanced: "Admin",
-//         note: "Giao hàng",
-//     }
 
-
-// ]
 
 
 const GINList = () => {
@@ -67,12 +34,43 @@ const GINList = () => {
     const navigate = useNavigate();
     const [totalItems, setTotalItems] = useState(0);
     
+    const [dataFilters,setdataFilters] = useState({
+        keyword: null,
+        statues: null,
+        created_date_from: null,
+        created_date_to: null,
+        balanced_date_from: null,
+        balanced_date_to: null,
+        user_created_ids: null,
+        user_balanced_ids: null,
+        user_inspection_ids: null
+    })
+
+    const statues = ["CHECKING", "BALANCED", "DELETED"];
 
     const [isOpenStatusPopup, setIsOpenStatusPopup] = useState(false);
     const [statusListFilter, setStatusListFilter] = useState([]);
     const [isOpenCreatedAtPopup, setIsOpenCreatedAtPopup] = useState(false);
-    const [createdMin, setCreatedMin] = useState(null);
-    const [createdMax, setCreatedMax] = useState(null);
+
+    const [activeTab, setActiveTab] = useState("ALL");
+
+
+    const handleChangeTab = (tab) => { 
+        setActiveTab(tab);
+        if(tab =="ALL") {
+            setdataFilters({...dataFilters, statues: [...statues] })
+        } else if(tab == "CHECKING") {
+            setdataFilters({...dataFilters, statues: ["CHECKING"]})
+        } else if(tab == "BALANCED") {
+            setdataFilters({...dataFilters, statues: ["BALANCED"]})
+        }
+    }
+
+    const handeChangeDatafilter = (key,value) => {
+        setdataFilters({...dataFilters, [key]:value})
+    }
+
+
 
 
     const [ginList, setGinList] = useState([]);
@@ -101,7 +99,7 @@ const GINList = () => {
     useEffect(() => {
         const fetchGinList = async () => {
             try {
-                const res = await getGINs(page, limit, "filter_gins", Cookies.get('filter_gins'));
+                const res = await getGINs(page, limit, "filter_gins", Cookies.get('filter_gins'),dataFilters);
                 setGinList(res.data.data);
                 setPageQuantity(Math.ceil(res.data.total_items / limit));
                 setTotalItems(res.data.total_items);
@@ -110,7 +108,7 @@ const GINList = () => {
             }
         }
         fetchGinList();
-    }, [page, limit])
+    }, [page, limit, dataFilters])
     const headersRef = useRef(null);
     const contentRef = useRef(null);
     const ginStatusRef = useRef(null);
@@ -172,9 +170,10 @@ const GINList = () => {
                 <div className="right__table-scroller">
                     <div className="box-scroller">
                         <div className="group-scroller-btns">
-                            <button className="btn-scroller active">Tất cả phiếu kiểm hàng</button>
-                            <button className="btn-scroller">Đang kiểm</button>
-                            <button className="btn-scroller">Đã cân bằng</button>
+                        <button onClick={() => handleChangeTab("ALL")} className={cn("btn-scroller", { active: activeTab === "ALL" })}>Tất cả phiếu kiểm hàng</button>
+<button onClick={() => handleChangeTab("CHECKING")} className={cn("btn-scroller", { active: activeTab === "CHECKING" })}>Đang kiểm</button>
+<button onClick={() => handleChangeTab("BALANCED")} className={cn("btn-scroller", { active: activeTab === "BALANCED" })}>Đã cân bằng</button>
+
                         </div>
                     </div>
                 </div>
@@ -198,7 +197,7 @@ const GINList = () => {
                                     </span>
                                 </span>
                             </button>
-                            {isOpenStatusPopup && <GINStatusFilter ginStatusRef={ginStatusRef} closePopup={() => setIsOpenStatusPopup(false)} statusList = {statusListFilter} setStatusList={setStatusListFilter}/>}
+                            {isOpenStatusPopup && <GINStatusFilter ginStatusRef={ginStatusRef} closePopup={() => setIsOpenStatusPopup(false)} handeChangeDatafilter ={handeChangeDatafilter} />}
                             <button ref={createdAtRef} onClick={()=>setIsOpenCreatedAtPopup(!isOpenCreatedAtPopup)} className="btn btn-base btn-filter">
                                 <span className="btn__label">
                                     Ngày tạo
@@ -207,7 +206,7 @@ const GINList = () => {
                                     </span>
                                 </span>
                             </button>
-                            {isOpenCreatedAtPopup && <CreatedAtFilter createdRef={createdAtRef} closePopup={() => setIsOpenCreatedAtPopup(false)} setCreatedMin={setCreatedMin} setCreatedMax={setCreatedMax} />}
+                            {isOpenCreatedAtPopup && <CreatedAtFilter parentCalling="GIN" createdRef={createdAtRef} closePopup={() => setIsOpenCreatedAtPopup(false)} handeChangeDatafilter = {handeChangeDatafilter}/>}
                         
                             <button className="btn btn-base btn-filter">
                                 <span className="btn__label">
