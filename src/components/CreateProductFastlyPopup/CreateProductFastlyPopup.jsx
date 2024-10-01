@@ -120,7 +120,7 @@ const CreateProductFastlyPopup = ({ handleCLickBack, setListProductDetail }) => 
             <div className={s["modal-body"]}>
                 <div className={s["row-name"]}>
                     <label htmlFor="name" className={s["form-label"]}>
-                        Tên nhóm nhà cung cấp
+                        Tên sản phẩm
                         <span className="asterisk-icon">*</span>
                     </label>
                     <div className={s["form-textfield"]}>
@@ -141,28 +141,28 @@ const CreateProductFastlyPopup = ({ handleCLickBack, setListProductDetail }) => 
                 </div>
                 <div className={s["row-content"]}>
                     <div className={s["content"]}>
-                        <label htmlFor="name" className={s["form-label"]}>
+                        <label htmlFor="gianhap" className={s["form-label"]}>
                             Giá nhập
                         </label>
                         <div className={s["form-textfield"]}>
                             <input
                                 type="number"
-                                name="name"
-                                id="name"
+                                name="gianhap"
+                                id="gianhap"
                                 onChange={(e) => setDataBody((prev) => { return { ...prev, cost_price: e.target.value } })}
                             />
                             <fieldset className="input-field"></fieldset>
                         </div>
                     </div>
                     <div className={s["content"]}>
-                        <label htmlFor="name" className={s["form-label"]}>
+                        <label htmlFor="giabanle" className={s["form-label"]}>
                             Giá bán lẻ
                         </label>
                         <div className={s["form-textfield"]}>
                             <input
                                 type="number"
-                                name="name"
-                                id="name"
+                                name="giabanle"
+                                id="giabanle"
                                 onChange={(e) => setDataBody((prev) => { return { ...prev, retail_price: e.target.value } })}
                             />
                             <fieldset className="input-field"></fieldset>
@@ -171,26 +171,26 @@ const CreateProductFastlyPopup = ({ handleCLickBack, setListProductDetail }) => 
                 </div>
                 <div className={s["row-content"]}>
                     <div className={s["content"]}>
-                        <label htmlFor="name" className={s["form-label"]}>
+                        <label htmlFor="soluongdat" className={s["form-label"]}>
                             Số lượng đặt
                         </label>
                         <div className={s["form-textfield"]}>
                             <input
                                 type="number"
-                                name="name"
-                                id="name"
+                                name="soluongdat"
+                                id="soluongdat"
                                 onChange={(e) => setDataBody((prev) => { return { ...prev, quantity: e.target.value } })}
                             />
                             <fieldset className="input-field"></fieldset>
                         </div>
                     </div>
                     <div className={s["content"]}>
-                        <label htmlFor="name" className={s["form-label"]}>
-                            Loại sản phẩm
+                        <label htmlFor="loaisanpham" className={s["form-label"]}>
+                            Chọn loại sản phẩm
                         </label>
                         <div className={s["box-select"]}>
                             <button id='category' ref={selectCategoryRef} onClick={() => setIsSelectCategoryList(!isSelectCategoryList)}>
-                                Chọn loại sản phẩm
+                            {dataBody.category_id === null ? "Chọn loại sản phẩm" : dataBody.category_id}
                                 {isSelectCategoryList ? <FontAwesomeIcon icon={faCaretDown} /> : <FontAwesomeIcon icon={faCaretUp} />}
                             </button>
                             {
@@ -210,14 +210,14 @@ const CreateProductFastlyPopup = ({ handleCLickBack, setListProductDetail }) => 
                 </div>
                 <div className={s["row-content"]}>
                     <div className={s["content"]}>
-                        <label htmlFor="name" className={s["form-label"]}>
+                        <label htmlFor="donvi" className={s["form-label"]}>
                             Đơn vị
                         </label>
                         <div className={s["form-textfield"]}>
                             <input
                                 type="text"
-                                name="name"
-                                id="name"
+                                name="donvi"
+                                id="donvi"
                                 onChange={(e) => setDataBody((prev) => { return { ...prev, unit: e.target.value } })}
                             />
                             <fieldset className="input-field"></fieldset>

@@ -27,6 +27,7 @@ import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 
 
 
+
 const SupplierList = () => {
     const navigate = useNavigate();
     const headersRef = useRef(null);
