@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import cn from "classnames";
 import Cookies from "js-cookie";
 
@@ -17,18 +17,15 @@ import {
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import { getGINDetail } from "../../service/GINApi";
 import GINProductsTable from "../GINProductsTable/GINProductsTable";
+import { formatDateTime } from "../../utils/DateUtils";
 
 const GINDetail = () => {
 	const [gin, setGin] = useState({});
-
-    const [updateGin, setUpdateGin] = useState({});
-
 	const [activeTab, setActiveTab] = useState("all");
-
-	const [isView, setIsView] = useState(true);
 
 	const [productsList, setProductsList] = useState([{}]);
 
+	const navigate = useNavigate();
 
 	const status = {
 		COMPLETED: "Hoàn thành",
@@ -43,14 +40,6 @@ const GINDetail = () => {
 	useEffect(() => {
 		setFilteredProducts(filterProducts(productsList));
 	}, [activeTab, productsList]);
-
-    const handleUpdate = (type) => {
-        if (type === "edit") {
-            setIsView(false);
-        } else {
-            setIsView(true);
-        }
-    }
 
 	const filterProducts = (products) => {
 		switch (activeTab) {
@@ -69,32 +58,12 @@ const GINDetail = () => {
 		}
 	};
 
-	// Get list of columns that need redering from Cookies
-	const [colsToRender, setColsToRender] = useState(() => {
-		const storedCols = Cookies.get("filter_products_table");
-		return storedCols
-			? JSON.parse(storedCols)
-			: {
-					index: true,
-					image: true,
-					name: true,
-					unit: true,
-					ordered_quantity: true,
-					imported_quantity: true,
-					price: true,
-					discount: true,
-					tax: true,
-					total: true,
-			  };
-	});
-
 	useEffect(() => {
 		const fetchGinDetail = async () => {
 			try {
 				const ginDetail = await getGINDetail(ginId);
 				setGin(ginDetail.data);
 				setProductsList(ginDetail.data.products);
-                setUpdateGin(ginDetail.data);
 				console.log(ginDetail);
 			} catch (error) {
 				console.error(error);
@@ -102,23 +71,6 @@ const GINDetail = () => {
 		};
 		fetchGinDetail();
 	}, [ginId]);
-
-	useEffect(() => {
-		setColsToRender((prev) => {
-			const updatedCols = {
-				...Object.fromEntries(Object.entries(prev).slice(0, 4)), // Lấy các thuộc tính từ index đến unit
-				ordered_quantity: true,
-				imported_quantity: true,
-				...Object.fromEntries(Object.entries(prev).slice(4)), // Lấy các thuộc tính từ price trở đi
-			};
-			return updatedCols;
-		});
-	}, []);
-
-	// Set required columns to Cookies
-	useEffect(() => {
-		Cookies.set("filter_products_table", JSON.stringify(colsToRender));
-	}, [colsToRender]);
 
 	return (
 		<>
@@ -132,30 +84,18 @@ const GINDetail = () => {
 							</h6>
 						</Link>
 					</div>
-					<div className="btn-toolbar">
-						{isView ? (
-							<button className="btn btn-outline-danger">
-								<span className="btn__title">Xóa</span>
-							</button>
-						) : (
-							<button className="btn btn-outline-danger">
-								<span className="btn__title">Hủy</span>
-							</button>
-						)}
-						{isView ? (
-							<button onClick={()=>handleUpdate("edit")} className="btn btn-outline-primary">
-								<span className="btn__title">Sửa</span>
-							</button>
-						) : (
-							<button className="btn btn-outline-primary">
-								<span className="btn__title">Lưu</span>
-							</button>
-						)}
-
+					{gin.status !== "BALANCED" && <div className="btn-toolbar">
+						<button className="btn btn-outline-danger">
+							<span className="btn__title">Xóa</span>
+						</button>
+						<button onClick={() => navigate("edit")} className="btn btn-outline-primary">
+							<span className="btn__title">Sửa</span>
+						</button>
 						<button className="btn btn-primary">
 							<span className="btn__title">Cân bằng kho</span>
 						</button>
-					</div>
+					</div>}
+
 				</div>
 			</div>
 			<div className="right__paperPage">
@@ -214,11 +154,11 @@ const GINDetail = () => {
 										</div>
 										<div className="info-item">
 											<p className="info-title">Ngày tạo</p>
-											<p className="info-value">: {gin.created_at || "---"}</p>
+											<p className="info-value">: {formatDateTime(gin.created_at) || "---"}</p>
 										</div>
 										<div className="info-item">
 											<p className="info-title">Ngày cân bằng</p>
-											<p className="info-value">: {gin.balanced_at || "---"}</p>
+											<p className="info-value">: {formatDateTime(gin.balanced_at) || "---"}</p>
 										</div>
 									</div>
 								</div>
@@ -233,41 +173,16 @@ const GINDetail = () => {
 									<div className="group-info">
 										<div className="info-item">
 											<p className="info-title">Ghi chú</p>
-											{isView ? (
-												<p className="info-value">: {gin?.note}</p>
-											) : (
-												<div className="info-field">
-												<div className="box-input">
-													<input
-														placeholder="Kiểm hàng ngày 13/9/2024"
-														name="note"
-														
-														type="text"
-														className="text-field"
-													/>
-													<fieldset className="input-field"></fieldset>
-												</div>
-											</div>
-											)}
+
+											<p className="info-value">: {gin?.note}</p>
+
 										</div>
 										<div className="info-item">
 											<p className="info-title">Tags</p>
-											{isView ? (
-												<p className="info-value">: {gin?.tags}</p>
-											) : (
-												<div className="info-field">
-												<div className="box-input">
-													<input
-														placeholder="Nhập Ký tự và enter"
-														name="note"
-														
-														type="text"
-														className="text-field"
-													/>
-													<fieldset className="input-field"></fieldset>
-												</div>
-											</div>
-											)}
+
+											<p className="info-value">: {gin?.tags}</p>
+
+
 										</div>
 									</div>
 								</div>
@@ -309,8 +224,8 @@ const GINDetail = () => {
 								<div className="box-table">
 									<GINProductsTable
 										productsList={filteredProducts}
-										colsToRender={colsToRender}
-										isView={isView}
+										isBalance={gin?.status === "BALANCED"}
+										isView={true}
 									/>
 								</div>
 							</div>

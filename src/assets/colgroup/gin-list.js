@@ -1,19 +1,14 @@
-const gin_list_colgroup = {
+export const col = {
     id: {
+        name: "Mã phiếu",
+        width: "0",
+        align: "text-start"
+    },
+    sub_id: {
         name: "Mã phiếu",
         width: "160px",
         align: "text-start"
     },
-    sub_id: {
-        name: "Mã phiếu con",
-        width: "160px",
-        align: "text-start"
-    },
-    // keyword: {
-    //     name: "Từ khóa",
-    //     width: "160px",
-    //     align: "text-start"
-    // },
     status: {
         name: "Trạng thái",
         width: "180px",
@@ -56,4 +51,9 @@ const gin_list_colgroup = {
     }
 }
 
-export default gin_list_colgroup;
+
+export const gin_status = {
+    CHECKING: "Đang kiểm kho",
+    BALANCED:"Đã cân bằng",
+    DELETED:"Đã xóa"
+}

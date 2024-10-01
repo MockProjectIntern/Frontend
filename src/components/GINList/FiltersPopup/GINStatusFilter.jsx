@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef } from 'react';
 import cn from 'classnames'; // Đảm bảo bạn đã cài đặt classnames package: npm install classnames
 import s from './GINStatusFilter.module.scss'; // Đảm bảo bạn đã import CSS cho file này
 
-const GINStatusFilter = ({ ginStatusRef,closePopup, setStatusList }) => {
+const GINStatusFilter = ({ ginStatusRef,closePopup, handeChangeDatafilter }) => {
   const popupRef = useRef(null);
 
   const [status,setStatus] = useState([])
@@ -37,7 +37,7 @@ const GINStatusFilter = ({ ginStatusRef,closePopup, setStatusList }) => {
   };
 
   const hanldeClickFilter = ()=> {
-    setStatusList([...status])
+    handeChangeDatafilter({statues:[...status]})
     closePopup()
   }
 
@@ -70,7 +70,7 @@ const GINStatusFilter = ({ ginStatusRef,closePopup, setStatusList }) => {
           {statuses.DELETED}
         </button>
       </div>
-      <button>Lọc</button>
+      <button onClick={hanldeClickFilter}>Lọc</button>
     </div>
   );
 };

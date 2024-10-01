@@ -2,25 +2,23 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import cn from 'classnames';
 
 // Import CSS
-import s from './ListSelectPopup.module.scss';
+import s from './SelectListGroup.module.scss';
 
 // Import Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons';
 
-const ListSelectPopup = ({
+const SelectListSupplierGroupsPopup = ({
     title,
     isLarge,
     isSearch,
     keyword,
     handleChangeKeyword,
-    isFastCreate,
-    dataList, 
+    dataList,
     handleSelect,
     btnRef,
     closePopup,
     fetchMoreData,
-    handleCLickCreateProductQuickly,
 }) => {
     const popupRef = useRef(null);
     const listRef = useRef(null); // Ref cho container của danh sách
@@ -81,34 +79,10 @@ const ListSelectPopup = ({
 
     return (
         <div ref={popupRef} className={cn(s.container, { [s.largePopup]: isLarge })}>
-            <div className={s.wrapper}>
-                {isSearch && (
-                    <div className={s.boxSearch}>
-                        <div className={s.searchBar}>
-                            <div className={s.searchIcon}>
-                                <FontAwesomeIcon icon={faMagnifyingGlass} />
-                            </div>
-                            <input 
-                                value={keyword} 
-                                onChange={handleChangeKeyword} 
-                                className={s.searchInput} 
-                                placeholder="Tìm kiếm hoặc nhập mới" 
-                                type="text" 
-                            />
-                        </div>
-                    </div>
-                )}
-                {isFastCreate && (
-                    <button className={s.btnCreate} onClick={handleCLickCreateProductQuickly}>
-                        <span className={s.btnIcon}>
-                            <FontAwesomeIcon icon={faPlus} />
-                        </span>
-                        <h6 className={s.btnLabel}>Thêm mới {title}</h6>
-                    </button>
-                )}
+            <div className={s.wrapper}>                
                 <div>
                     {dataList?.length > 0 ? (
-                        <div ref={listRef} className={s.selectList} style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                        <div ref={listRef} className={s.selectList} >
                             {dataList.map((item, index) => (
                                 <div key={index} className={s.selectItem} onClick={() => onSelectItem(item?.id)}>
                                     {title === 'nhà cung cấp' && <FontAwesomeIcon className={s.supplierAvatar} icon={faCircleUser} />}
@@ -127,4 +101,4 @@ const ListSelectPopup = ({
     );
 };
 
-export default ListSelectPopup;
+export default SelectListSupplierGroupsPopup;
