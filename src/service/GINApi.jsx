@@ -37,6 +37,16 @@ export const getGINDetail = async (id) => {
     }
 }
 
+export const updateGIN = async (data,id) => {
+    try {
+        const response = await axiosInstance.put(`/gins/update.json/${id}`, data);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
 export const exportData = async (mode, bodyJson) => {
     try {
         const response = await axiosInstance.post(`/gins/export-data.json?mode=${mode}`, bodyJson);

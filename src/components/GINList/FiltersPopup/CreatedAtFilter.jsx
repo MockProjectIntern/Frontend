@@ -82,10 +82,10 @@ const CreatedAtFilter = ({
   const handleFilterClick = () => {
     if (dateTempo.createdAtmin && dateTempo.createdAtmax) {
 		if(parentCalling === "GIN") {
-			handeChangeDatafilter({created_date_from:dateTempo.createdAtmin,created_date_to:dateTempo.createdAtmax});
+			handeChangeDatafilter({created_date_from:dayjs(dateTempo.createdAtmin).format("YYYY-MM-DD"),created_date_to:dayjs(dateTempo.createdAtmax).format("YYYY-MM-DD")});
 			
     }
-    console.log(dayjs(dateTempo.createdAtmin).format("YYYY-MM-DD"), dayjs(dateTempo.createdAtmax).format("YYYY-MM-DD"));
+
   
     closePopup();
   }

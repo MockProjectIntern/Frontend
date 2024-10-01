@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
 // Import Components
@@ -34,29 +34,10 @@ const CreateGIN = () => {
 	const [listProductDetail, setListProductDetail] = useState([]);
 	const [activeTab, setActiveTab] = useState("all");
 
-	// Get list of columns that need redering from Cookies
-	const [colsToRender, setColsToRender] = useState(() => {
-		const storedCols = Cookies.get("filter_products_table");
-		return storedCols
-			? JSON.parse(storedCols)
-			: {
-					index: true,
-					image: true,
-					name: true,
-					barcode: true,
-					unit: true,
-					ordered_quantity: true,
-					price: true,
-					discount: true,
-					tax: true,
-					total: true,
-			  };
-	});
 
-	// Set required columns to Cookies
-	useEffect(() => {
-		Cookies.set("filter_products_table", JSON.stringify(colsToRender));
-	}, [colsToRender]);
+	const navigate = useNavigate();
+
+
 
 	const [filteredProducts, setFilteredProducts] = useState([]);
 
@@ -122,14 +103,7 @@ const CreateGIN = () => {
 		user_inspection_id: localStorage.getItem("userId"),
 		isBalance: false,
 		products: [
-			{
-				product_id: "PRD00001",
-				actual_stock: 30,
-				discrepancy_quantity: 30,
-				reason: "Hư hỏng",
-				note: "Kiểm hàng 15/9",
-				unit: "Chiếc",
-			},
+		
 		],
 	});
 	const handleCreateGIN = async () => {
@@ -172,11 +146,11 @@ const CreateGIN = () => {
 						</Link>
 					</div>
 					<div className="btn-toolbar">
-						<button className="btn btn-outline-primary">
+						<button onClick={()=>navigate(-1)} className="btn btn-outline-danger">
 							<span className="btn__title">Thoát</span>
 						</button>
-						<button className="btn btn-primary" onClick={handleCreateGIN}>
-							<span className="btn__title">Tạo phiếu kiểm</span>
+						<button className="btn btn-outline-primary" onClick={handleCreateGIN}>
+							<span className="btn__title">Tạo</span>
 						</button>
 						<button
 							className="btn btn-secondary-cyan"
@@ -387,7 +361,7 @@ const CreateGIN = () => {
 								<div className="box-table">
 									<GINProductsTable
 										productsList={filteredProducts}
-										colsToRender={colsToRender}
+										
 										setProductList={setListProductDetail}
 									/>
 								</div>

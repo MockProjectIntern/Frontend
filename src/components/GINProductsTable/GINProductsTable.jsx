@@ -22,8 +22,8 @@ import ReasonTableCell from "../ReasonTableCell/ReasonTableCell";
 const GINProductsTable = ({
 	productsList,
 	setProductList,
-	colsToRender,
 	isView,
+	isBalance
 }) => {
 	const handleChangeData = (index, key, value) => {
 		const newValue =
@@ -37,7 +37,7 @@ const GINProductsTable = ({
 					// Tự động cập nhật discrepancy_quantity nếu key là actual_stock
 					if (key === "actual_stock") {
 						updatedProduct.discrepancy_quantity =
-							newValue - updatedProduct.quantity;
+							newValue - updatedProduct.real_quantity;
 					}
 
 					return updatedProduct;
@@ -101,8 +101,8 @@ const GINProductsTable = ({
 													<p>{product.name}</p>
 												</div>
 												<div className={s.boxId}>
-													<Link to={`/admin/products/${product.id}`}>
-														<p>{product.id}</p>
+													<Link to={`/admin/products/${product.product_id}`}>
+														<p>{product.product_id}</p>
 													</Link>
 												</div>
 											</div>
@@ -216,30 +216,23 @@ const GINProductsTable = ({
 											/>
 										</td>
 									);
-								} else if (key === "quantity") {
-									if(isView) {
+								} else if (key === "real_quantity") {
+									
 										return (	<td
 											key={key}
 											className={cn(s.tableCell, s.tableCellBody, col.align)}
 										>
-											<p>{product.actual_stock-product.discrepancy_quantity}</p>
+											<p>{isBalance? product.actual_stock-product.discrepancy_quantity : product[key]}</p>
 										</td>)
-									}
-									return (
-										<td
-											key={key}
-											className={cn(s.tableCell, s.tableCellBody, col.align)}
-										>
-											<p>{product[key]}</p>
-										</td>
-									);
+									
+								
 								} else if (key === "discrepancy_quantity") {
 									return (
 										<td
 											key={key}
 											className={cn(s.tableCell, s.tableCellBody, col.align)}
 										>
-											<p>{product[key]}</p>
+											<p>{isBalance? product[key] : product.actual_stock-product.real_quantity}</p>
 										</td>
 									);
 								}

@@ -784,6 +784,99 @@ input:focus-within ~ .input-field {
                 gap: 16px;
                 justify-content: space-between;
             }
+
+            .box-show-selected-filter {
+                .box-show-selected-container {
+                    margin-top: -6px;
+                    padding-left: 0;
+                    padding-right: 10px;
+                    padding-bottom: 10px;
+                    .box-show-selected-item {
+                        cursor: pointer;
+                        height: unset;
+                        margin: 6px;
+                        display: inline-flex;
+                        padding: 6px 12px;
+                        overflow: hidden;
+                        font-size: 14px;
+                        max-width: calc(100% - 12px);
+                        background: #E6F4FF;
+                        box-sizing: border-box;
+                        text-align: left;
+                        align-items: center;
+                        font-weight: 400;
+                        border-radius: 20px;
+                        justify-content: flex-start;
+
+                        >span {
+                            color: #2B4263;
+                            overflow: hidden;
+                            line-height: 20px;
+                            white-space: nowrap;
+                            margin-right: 12px;
+                            text-overflow: ellipsis;
+                        }
+
+                        .box-remove-item {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
+                            .btn-remove-item {
+                                color: #0088FF;
+                                width: 18px;
+                                height: 18px;
+                                padding: 0;
+
+                                flex: 0 0 auto;
+                              
+                                overflow: visible;
+                                font-size: 1rem;
+                                text-align: center;
+                                transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+                                border-radius: 50%;
+
+                           
+                                border: 0;
+                                cursor: pointer;
+                                margin: 0;
+                                display: inline-flex;
+                                outline: 0;
+                              
+                                position: relative;
+                                align-items: center;
+                                user-select: none;
+                         
+                                vertical-align: middle;
+                                -moz-appearance: none;
+                                justify-content: center;
+                                text-decoration: none;
+                                background-color: transparent;
+                                -webkit-appearance: none;
+                                -webkit-tap-highlight-color: transparent;
+
+                                >span {
+                                    width: 100%;
+                                    display: flex;
+                                    align-items: inherit;
+                                    justify-content: inherit;
+
+                                    >svg {
+                                        width: 18px;
+                                        height: 18px;
+                                        fill: currentColor;
+                                        display: inline-block;
+                                        font-size: 1.5rem;
+                                        transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+                                        flex-shrink: 0;
+                                        user-select: none;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         &-headers {

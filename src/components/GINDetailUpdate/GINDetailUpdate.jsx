@@ -31,9 +31,6 @@ const GINDetailUpdate = () => {
 
 	const [activeTab, setActiveTab] = useState("all");
 
-	const [isView, setIsView] = useState(false);
-
-
 	const navigate = useNavigate();
 
 	const status = {
@@ -43,7 +40,7 @@ const GINDetailUpdate = () => {
 		CHECKING: "Đang kiểm kho",
 	};
 	const { ginId } = useParams();
-
+    console.log(ginId)
 
 
 
@@ -97,6 +94,7 @@ const GINDetailUpdate = () => {
                         product_id: product.product_id,
                         unit: product.unit,
                         actual_stock: product.actual_stock,
+						real_quantity: product.real_quantity,
                         discrepancy_quantity: product.discrepancy_quantity,
                         reason: product.reason,
                         note: product.note,
@@ -188,7 +186,7 @@ const GINDetailUpdate = () => {
 		const response = await updateGIN((isBalance? {...dataBody,isBalance:true} : dataBody),ginId);
 
 		if (response.status_code === 200) {
-			alert("Tạo đơn kiểm hàng thành công");
+			alert(response.message);
 			navigate(-1);
 		}
 	};
@@ -227,7 +225,7 @@ const GINDetailUpdate = () => {
 						<button onClick={()=> navigate(-1)} className="btn btn-outline-danger">
 							<span className="btn__title">Hủy</span>
 						</button>
-						<button className="btn btn-outline-primary" onClick={handleUpdateGIN}>
+						<button className="btn btn-outline-primary" onClick={()=>handleUpdateGIN()}>
 							<span className="btn__title">Lưu</span>
 						</button>
 						<button onClick={() => handleUpdateGIN(true)}
@@ -437,10 +435,9 @@ const GINDetailUpdate = () => {
 									</div>
 								</div>
 								<div className="box-table">
-									<GINProductsTable isView={isView}
-                                    isBalance={gin?.status === "BALANCED"}
+									<GINProductsTable isView={false}
 										productsList={filteredProducts}
-										colsToRender={colsToRender}
+										isBalance={gin?.status === "BALANCED"}
 										setProductList={setListProductDetail}
 									/>
 								</div>

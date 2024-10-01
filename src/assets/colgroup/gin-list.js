@@ -1,4 +1,4 @@
-const gin_list_colgroup = {
+export const col = {
     id: {
         name: "Mã phiếu",
         width: "160px",
@@ -56,4 +56,9 @@ const gin_list_colgroup = {
     }
 }
 
-export default gin_list_colgroup;
+
+export const gin_status = {
+    CHECKING: "Đang kiểm kho",
+    BALANCED:"Đã cân bằng",
+    DELETED:"Đã xóa"
+}
