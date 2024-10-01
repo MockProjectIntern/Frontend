@@ -19,6 +19,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { quickGetProductList } from '../../service/ProductAPI.jsx'
 import { createNewOrder } from '../../service/OrderAPI.jsx'
 import CreateProductFastlyPopup from '../CreateProductFastlyPopup/CreateProductFastlyPopup.jsx'
+import CreateSupplierPopup from '../CreateSupplierPopup/CreateSupplierPopup.jsx'
 const CreateOrder = () => {
     const navigate = useNavigate();
     const [order, setOrder] = useState({
@@ -86,6 +87,7 @@ const CreateOrder = () => {
     const [productSelectList, setProductSelectList] = useState([])
 
     const [isCreateProductQuickly, setIsCreateProductQuickly] = useState(false);
+    const [isCreateSupplier, setIsCreateSupplier] = useState(false);
     const fetchProductList = async () => {
         const response = await quickGetProductList(dataPageProduct.page, dataPageProduct.size, dataPageProduct.keyword);
         setProductSelectList(response.data.data);
@@ -131,6 +133,14 @@ const CreateOrder = () => {
         setIsCreateProductQuickly(false);
     }
 
+    const handleClickBackInSupplier = () =>{
+        setIsCreateSupplier(false);
+    }
+
+    const handleClickCreateSupplier = () =>{
+        setIsCreateSupplier(true);
+    }
+
     useEffect(() => {
         setDataBody(prev => {
             return {
@@ -148,7 +158,6 @@ const CreateOrder = () => {
             }
         })
     }, [listProductDetail])
-    console.log(isCreateProductQuickly);
     return (
         <>
             <>
@@ -161,6 +170,22 @@ const CreateOrder = () => {
                         />
                     </>
                 )}
+                { isCreateSupplier && (
+                    <>
+                        <div className="overlay"></div>
+                        <CreateSupplierPopup 
+                            handleCLickBack={handleClickBackInSupplier}
+                            setSupplerID={(id) => setDataBody((prev) => {
+                                return{
+                                    ...prev,
+                                    supplier_id: id
+                                }  
+                            })}
+                        />
+                    </>
+                )
+                    
+                }
             </>
             <div className="right__navbar">
                 <div className="box-navbar">
@@ -192,7 +217,7 @@ const CreateOrder = () => {
                                 </div>
                                 <div className="paper-content">
                                     {dataBody.supplier_id ?
-                                        <SupplierInfo supplier={dataBody.supplier_id} handleCancel={() => setDataBody(prev => {
+                                        <SupplierInfo supplierId={dataBody.supplier_id} handleCancel={() => setDataBody(prev => {
                                             return {
                                                 ...prev,
                                                 supplier_id: null
@@ -203,7 +228,9 @@ const CreateOrder = () => {
                                                 ...prev,
                                                 supplier_id: id
                                             }
-                                        })} />
+                                        })} 
+                                        
+                                        setCreateSupplier={handleClickCreateSupplier}/>
                                     }
                                 </div>
                             </div>

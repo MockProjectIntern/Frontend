@@ -192,7 +192,7 @@ const CreateGRN = () => {
                                 <div className="paper-content">
                                     {
                                         dataBody.supplier_id ?
-                                            <SupplierInfo supplier={dataBody.supplier_id} handleCancel={() => setDataBody(prev => {
+                                            <SupplierInfo supplierId={dataBody.supplier_id} handleCancel={() => setDataBody(prev => {
                                                 return { ...prev, supplier_id: null }
                                             })} /> :
                                             <SearchSupplier setSelectItem={id => setDataBody(prev => {
