@@ -50,8 +50,9 @@ const productsTableColgroup = {
     },
     tax: {
         name: "Thuế",
-        width: "117px",
-        align: "text-start"
+        width: "120px",
+        minWidth: "120px",
+        align: "text-end"
     },
     total: {
         name: "Thành tiền",

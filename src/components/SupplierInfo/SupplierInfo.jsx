@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // Import CSS
@@ -8,8 +8,21 @@ import s from './SupplierInfo.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import classNames from 'classnames'
+import { getSupplier } from '../../service/SuppliersAPI'
 
-const SupplierInfo = ({ supplier, handleCancel }) => {
+const SupplierInfo = ({ supplierId, handleCancel }) => {
+  const [supplier, setSupplier] = useState({});
+
+  const fetchSupplier = async () => {
+    const response = await getSupplier(supplierId);
+    setSupplier(response.data);
+  }
+
+  useEffect(() => {
+    fetchSupplier();
+  }, [supplierId]);
+  
+
   return (
     <div className={s.container}>
       <div className={s.boxInfo}>
@@ -22,7 +35,7 @@ const SupplierInfo = ({ supplier, handleCancel }) => {
             </p>
           </div>
           {
-            handleCancel && 
+            handleCancel &&
             <div className={s.cancelIcon}>
               <button onClick={handleCancel} className={s.btnCancel}>
                 <span className={s.btnLabel}>
@@ -52,15 +65,15 @@ const SupplierInfo = ({ supplier, handleCancel }) => {
         <div className={s.boxReport}>
           <div className={s.reportItem}>
             <p className={s.reportTitle}>Nợ hiện tại</p>
-            <p className={classNames(s.reportValue, s.danger)}>{supplier.debt}</p>
+            <p className={classNames(s.reportValue, s.danger)}>{supplier.current_debt}</p>
           </div>
           <div className={s.reportItem}>
-            <p className={s.reportTitle}>Tổng đơn nhập ({supplier.grn_quantity})</p>
-            <p className={s.reportValue}>{supplier.grn_total}</p>
+            <p className={s.reportTitle}>Tổng đơn nhập ({supplier.grn_count})</p>
+            <p className={s.reportValue}>{supplier.grn_total_value?.toLocaleString('en-US')}</p>
           </div>
           <div className={s.reportItem}>
             <p className={s.reportTitle}>Trả hàng</p>
-            <p className={classNames(s.reportValue, s.danger)}>{supplier.return}</p>
+            <p className={classNames(s.reportValue, s.danger)}>{supplier.total_refund}</p>
           </div>
         </div>
       </div>

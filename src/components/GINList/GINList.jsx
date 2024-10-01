@@ -18,7 +18,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router-dom'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
-import { getGINs } from '../../service/GINApi.jsx'
+import { exportData, getGINs } from '../../service/GINApi.jsx'
 import GINStatusFilter from './FiltersPopup/GINStatusFilter.jsx'
 import CreatedAtFilter from './FiltersPopup/CreatedAtFilter.jsx'
 
@@ -66,8 +66,12 @@ const GINList = () => {
         }
     }
 
-    const handeChangeDatafilter = (key,value) => {
-        setdataFilters({...dataFilters, [key]:value})
+    const handeChangeDatafilter = (filters) => {
+        const updateDataFilters = {...dataFilters}
+        for (const [key, value] of Object.entries(filters)) {
+                updateDataFilters[key]=value;
+          }
+          setdataFilters(updateDataFilters)
     }
 
 

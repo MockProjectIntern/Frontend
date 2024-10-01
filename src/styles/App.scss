@@ -657,6 +657,71 @@ input:focus-within ~ .input-field {
     color: $red;
 }
 
+.box-scroller {
+    white-space: nowrap;
+    overflow-x: scroll;
+    scroll-behavior: smooth;
+    display: flex;
+    box-sizing: content-box;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    .group-scroller-btns {
+        display: inline-flex;
+        -webkit-box-pack: center;
+        justify-content: center;
+        position: relative;
+        -webkit-box-align: center;
+        align-items: center;
+        outline: 0px;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        font-family: $font-family-base;
+        font-weight: $font-weight-semibold;
+        font-size: $font-size-base;
+        line-height: 20px;
+
+        .btn-scroller {
+            display: inline-block;
+            -webkit-box-pack: center;
+            position: relative;
+            padding: 6px 16px;
+            box-sizing: border-box;
+            -webkit-box-align: center;
+            border-top: none;
+            border-right: none;
+            border-left: none;
+            border-image: initial;
+            border-bottom: 2px solid transparent;
+            color: rgb(116, 124, 135);
+            background-color: transparent;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: left;
+            cursor: pointer;
+            font-family: $font-family-base;
+            font-weight: $font-weight-semibold;
+            font-size: $font-size-base;
+            line-height: 20px;
+            margin: 0px;
+            height: 48px;
+            max-width: 240px;
+
+            &.active {
+                color: $violet;
+                border-bottom: 2px solid $violet;
+            }
+        }
+    }
+}
+
 .right {
     display: flex;
     flex-direction: column;
@@ -705,71 +770,6 @@ input:focus-within ~ .input-field {
             background-color: #fff;
             cursor: pointer;
             box-shadow: rgb(232, 234, 235) 0px -1px 0px 0px inset;
-
-            .box-scroller {
-                white-space: nowrap;
-                overflow-x: scroll;
-                scroll-behavior: smooth;
-                display: flex;
-                box-sizing: content-box;
-                background-color: transparent;
-                border: none;
-                cursor: pointer;
-                scrollbar-width: none;
-
-                &::-webkit-scrollbar {
-                    display: none;
-                }
-
-                .group-scroller-btns {
-                    display: inline-flex;
-                    -webkit-box-pack: center;
-                    justify-content: center;
-                    position: relative;
-                    -webkit-box-align: center;
-                    align-items: center;
-                    outline: 0px;
-                    background-color: transparent;
-                    border: none;
-                    cursor: pointer;
-                    font-family: $font-family-base;
-                    font-weight: $font-weight-semibold;
-                    font-size: $font-size-base;
-                    line-height: 20px;
-
-                    .btn-scroller {
-                        display: inline-block;
-                        -webkit-box-pack: center;
-                        position: relative;
-                        padding: 6px 16px;
-                        box-sizing: border-box;
-                        -webkit-box-align: center;
-                        border-top: none;
-                        border-right: none;
-                        border-left: none;
-                        border-image: initial;
-                        border-bottom: 2px solid transparent;
-                        color: rgb(116, 124, 135);
-                        background-color: transparent;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        text-align: left;
-                        cursor: pointer;
-                        font-family: $font-family-base;
-                        font-weight: $font-weight-semibold;
-                        font-size: $font-size-base;
-                        line-height: 20px;
-                        margin: 0px;
-                        height: 48px;
-                        max-width: 240px;
-
-                        &.active {
-                            color: $violet;
-                            border-bottom: 2px solid $violet;
-                        }
-                    }
-                }
-            }
         }
 
         &-search-filter {
@@ -881,7 +881,7 @@ input:focus-within ~ .input-field {
                         &:hover {
                             background-color: rgb(243, 244, 245);
                         }
-
+                        
                         .table-data-item {
                             color: inherit;
                             font-family: $font-family-base;
@@ -893,7 +893,7 @@ input:focus-within ~ .input-field {
                             border-right: none;
                             overflow: hidden;
                             height: 52px;
-
+                            
                             > .box-text {
                                 display: inline-block;
                                 box-sizing: border-box;
@@ -908,7 +908,7 @@ input:focus-within ~ .input-field {
                                 overflow: hidden;
                                 text-overflow: ellipsis;
                                 white-space: nowrap;
-
+                                
                                 > .box-id {
                                     text-decoration: none;
                                     font-family: $font-family-base;
@@ -918,18 +918,28 @@ input:focus-within ~ .input-field {
                                     margin: 0px;
                                     cursor: pointer;
                                     color: $violet;
-
+                                    
                                     &:hover {
                                         text-decoration: underline;
                                     }
                                 }
                             }
-
+                            
                             > img {
                                 height: 35px;
                                 display: block;
                                 margin: auto;
                                 max-height: 35px;
+                            }
+                        }
+
+                        &.item-details {
+                            background-color: #f6f3ff;
+                            border: none;
+
+                            .btn-icon svg {
+                                transform: rotate(90deg);
+                                color: $violet;
                             }
                         }
                     }
@@ -1121,7 +1131,7 @@ input:focus-within ~ .input-field {
         }
     }
 
-    &__createPaperPage {
+    &__paperPage {
         width: 100%;
 
         &-wrapper {
@@ -2046,6 +2056,55 @@ input:focus-within ~ .input-field {
     }
 }
 
+.box-title {
+    grid-area: title;
+    margin: 0;
+    box-sizing: border-box;
+    margin-bottom: 24px;
+
+    .group-details {
+        display: flex;
+        align-items: flex-end;
+
+        h4.box-code {
+            font-size: 1.4rem;
+            font-family: var(--bs-font-sans-serif);
+            font-weight: $font-weight-semibold;
+            line-height: 24px;
+            margin: 0;
+        }
+
+        h6.box-date {
+            font-size: $font-size-sm;
+            font-family: var(--bs-font-sans-serif);
+            font-weight: $font-weight-semibold;
+            line-height: 15px;
+            margin: 0;
+            margin-left: 4px;
+            margin-right: 12px;
+            color: rgb(163, 168, 175);
+        }
+    }
+
+    .btn-toolbar {
+        margin-top: 12px;
+        gap: 16px;
+
+        .btn-text {
+            background-color: #fff;
+            border-radius: 3px;
+            padding: 0 16px;
+            min-width: 64px;
+            border: 1px solid rgb(211, 213, 215);
+
+            &:hover {
+                color: $default;
+                background-color: #efe9ff;
+            }
+        }
+    }
+}
+
 .box-supplier {
     grid-area: supplier;
     margin: 0;
@@ -2062,6 +2121,10 @@ input:focus-within ~ .input-field {
     margin: 0;
     box-sizing: border-box;
     height: 100%;
+
+    .box-paper {
+        height: 100%;
+    }
 
     .paper-content {
         padding-right: 0 !important;
@@ -2082,7 +2145,20 @@ input:focus-within ~ .input-field {
     color: $default;
 
     .paper-header {
+        display: flex;
         padding: 16px 24px;
+        align-items: center;
+
+        > svg {
+            font-size: 16px;
+            color: rgb(163, 168, 175);
+            padding: 2px;
+            margin-right: 8px;
+
+            &.check-icon {
+                color: rgb(13, 180, 115);
+            }
+        }
 
         p {
             box-sizing: border-box;
@@ -2099,6 +2175,7 @@ input:focus-within ~ .input-field {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            width: 100%;
 
             .btn-toolbar {
                 gap: 6px;
@@ -2112,6 +2189,10 @@ input:focus-within ~ .input-field {
                     }
                 }
             }
+        }
+
+        &:has(.box-scroller) {
+            padding: 0;
         }
     }
 
@@ -2234,6 +2315,18 @@ input:focus-within ~ .input-field {
                         }
                     }
                 }
+                
+                .info-value {
+                    font-size: $font-size-base;
+                    font-family: var(--bs-font-sans-serif);
+                    font-weight: $font-weight-base;
+                    line-height: 20px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    margin: 0;
+                    width: 65%;
+                }
             } 
         }
 
@@ -2341,10 +2434,34 @@ input:focus-within ~ .input-field {
 
                 .box-note {
                     width: 100%;
+
+                    .box-label {
+                        box-sizing: border-box;
+                        font-family: $font-family-base;
+                        font-weight: $font-weight-semibold;
+                        font-size: $font-size-base;
+                        line-height: 20px;
+                        margin: 0px;
+                        color: $default;
+                        text-align: inherit;
+                        padding-bottom: 10px;
+                    }
                 }
                 
                 .box-tags {
                     padding-top: 16px;
+
+                    .box-label {
+                        box-sizing: border-box;
+                        font-family: $font-family-base;
+                        font-weight: $font-weight-semibold;
+                        font-size: $font-size-base;
+                        line-height: 20px;
+                        margin: 0px;
+                        color: $default;
+                        text-align: inherit;
+                        padding-bottom: 10px;
+                    }
                     
                     .tags-field {
                         border: 0;
@@ -2569,7 +2686,7 @@ input:focus-within ~ .input-field {
         justify-content: center;
         -webkit-box-align: center;
         align-items: center;
-        width: 80px;
+        width: 100%;
 
         .checkbox__wrapper:hover {
             background: rgb(232, 234, 235);
@@ -2659,7 +2776,7 @@ input:focus-within ~ .input-field {
         margin: 0px;
     }
 
-    &--pending {
+    &--pending, &--unpaid, &--not_entered,&--not_returned, &--not_refunded, &--checking, &--ordering {
         border: 1px solid rgb(207, 209, 211);
         background-color: rgb(243, 244, 245);
 
@@ -2668,7 +2785,7 @@ input:focus-within ~ .input-field {
         }
     }
 
-    &--partial {
+    &--partial, &--partial_paid , &--trading {
         border: 1px solid rgb(255, 223, 155);
         background-color: rgb(255, 247, 231);
 
@@ -2677,7 +2794,7 @@ input:focus-within ~ .input-field {
         }
     }
 
-    &--completed, &--imported, &--balanced {
+    &--completed, &--imported, &--balanced, &--entered, &--paid, &--full, &--refunded {
         border: 1px solid rgb(159, 237, 207);
         background-color: rgb(243, 252, 249);
 
@@ -2695,3 +2812,13 @@ input:focus-within ~ .input-field {
         }
     }
 }
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);  // Màu đen trong suốt
+    z-index: 10000;  // Đảm bảo nó xuất hiện trên các thành phần khác
+  }

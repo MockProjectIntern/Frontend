@@ -51,3 +51,23 @@ export const refreshToken = async () => {
         throw error;
     }
 }
+
+export const getListUser = async (page, limit, dataBody) => {
+    try {
+        const response = await axiosInstance.post(`/users/list.json?page=${page}&limit=${limit}`, dataBody);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export const createNewUser = async (dataBody) => {
+    try {
+        const response = await axiosInstance.post(`/users/admin-create.json`, dataBody);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

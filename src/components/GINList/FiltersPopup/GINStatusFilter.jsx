@@ -37,7 +37,7 @@ const GINStatusFilter = ({ ginStatusRef,closePopup, handeChangeDatafilter }) => 
   };
 
   const hanldeClickFilter = ()=> {
-    handeChangeDatafilter("statues",[...status])
+    handeChangeDatafilter({statues:[...status]})
     closePopup()
   }
 

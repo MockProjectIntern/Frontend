@@ -15,9 +15,16 @@ import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
-import { getSupplierList } from '../../service/SuppliersAPI.jsx'
+import { getAllSupplierByName, getDataExportExcel, getSupplierList } from '../../service/SuppliersAPI.jsx'
 import { useNavigate } from 'react-router-dom'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
+import s from './SupplierFilter.module.scss'
+import { exportExcel } from '../../config/ExportExcel.jsx'
+import { formatDateTime } from '../../utils/DateUtils.jsx'
+import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
+
+
+
 
 
 const SupplierList = () => {
@@ -64,16 +71,18 @@ const SupplierList = () => {
     const [suppliersQuantity, setSuppliersQuantity] = useState();
     const limitBtnRef = useRef(null);
 
-    const [dataBody, setDataBody] = useState(
-        {
-            "keyword": null,
-            "status": null
-        }
-    );
+    const [dataFilter, setDataFilter] = useState({
+        keyword: null,
+        statuses: null,
+        supplier_group_ids: null,
+        created_date_from: null,
+        created_date_to: null,
+        tags: null
+    });
 
     const fetchSupplierList = async () => {
         try {
-            const suppliers = await getSupplierList(page, limit, "filter_suppliers", Cookies.get("filter_suppliers"), dataBody);
+            const suppliers = await getSupplierList(page, limit, "filter_suppliers", Cookies.get("filter_suppliers"), dataFilter);
 
             if (suppliers.status_code === 200) {
                 setSuppliersList(suppliers.data.data);
@@ -91,19 +100,40 @@ const SupplierList = () => {
     useEffect(() => {
         Cookies.set('filter_suppliers', JSON.stringify(colsToRender));
     }, [colsToRender])
-    //console.log(col)
 
-    useEffect(() => {
+    useDebouncedEffect(() => {
         fetchSupplierList();
+    }, 300, [page, limit, dataFilter, colsToRender])
 
-    }, [limit, page]);
+    const handleExport = async () => {
+        const responseAPI = await getDataExportExcel("DEFAULT", dataFilter);
+
+        const dataExport = responseAPI.data.map((item) => {
+            return {
+                "Mã nhà cung cấp": item.sub_id,
+                "Tên nhà cung cấp": item.name,
+                "Số điện thoại": item.phone,
+                "Email": item.email,
+                "Địa chỉ": item.address,
+                "Nhãn hiệu": item.tags,
+                "Ghi chú": item.note,
+                "Tên nhóm nhà cung cấp": item.name_group,
+                "Mã nhóm nhà cung cấp": item.sub_id_group,
+                "Ngày tạo": formatDateTime(item.created_at),
+                "Ngày cập nhật": formatDateTime(item.updated_at)
+            }
+        });
+
+        exportExcel(dataExport, "Danh sách nhà cung cấp");
+    }
+
     return (
         <>
             <Header title={"Danh sách nhà cung cấp"} />
             <div className='right__listPage'>
                 <div className='right__toolbar'>
                     <div className='btn-toolbar'>
-                        <button className='btn btn-base btn-text'>
+                        <button className='btn btn-base btn-text' onClick={handleExport}>
                             <span className="btn__label">
                                 <span className="btn__icon">
                                     {exportIcon}
@@ -119,12 +149,9 @@ const SupplierList = () => {
                                 Nhập file
                             </span>
                         </button>
-                        <button className="btn btn-base btn-text">
+                        <button className="btn btn-base btn-text" onClick={() => navigate("/admin/supplier_groups")}>
                             <span className="btn__label">
-                                <span className="btn__icon">
-                                    {importIcon}
-                                </span>
-                                Loại sản phẩm
+                                Nhóm nhà cung cấp
                             </span>
                         </button>
                     </div>
@@ -153,10 +180,18 @@ const SupplierList = () => {
                                     <div className="search-icon">
                                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                                     </div>
-                                    <input placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode' type="text" name="search" id="" autoComplete='on' />
+                                    <input
+                                        placeholder='Tìm kiếm theo tên, mã hoặc số điện thoại nhà cung cấp'
+                                        type="text"
+                                        name="search"
+                                        id=""
+                                        autoComplete='on'
+                                        onChange={(e) => setDataFilter({ ...dataFilter, keyword: e.target.value })}
+                                    />
                                     <fieldset className='input-field' />
                                 </div>
                             </div>
+
                             <div className="btn-group group-filter-btns">
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
@@ -337,6 +372,15 @@ const SupplierList = () => {
                                                                         className={cn("table-data-item", col[key].align)}
                                                                     >
                                                                         <img src={supplier.images[0]?.url} alt={supplier.images[0]?.alt} />
+                                                                    </td>
+                                                                )
+                                                            } else if (key.includes("_at")) {
+                                                                return (
+                                                                    <td
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        {formatDateTime(supplier[key])}
                                                                     </td>
                                                                 )
                                                             }

@@ -15,11 +15,12 @@ const ListSelectPopup = ({
     keyword,
     handleChangeKeyword,
     isFastCreate,
-    dataList,
+    dataList, 
     handleSelect,
     btnRef,
     closePopup,
-    fetchMoreData
+    fetchMoreData,
+    handleCLickCreateProductQuickly
 }) => {
     const popupRef = useRef(null);
     const listRef = useRef(null); // Ref cho container của danh sách
@@ -98,7 +99,7 @@ const ListSelectPopup = ({
                     </div>
                 )}
                 {isFastCreate && (
-                    <button className={s.btnCreate}>
+                    <button className={s.btnCreate} onClick={handleCLickCreateProductQuickly}>
                         <span className={s.btnIcon}>
                             <FontAwesomeIcon icon={faPlus} />
                         </span>

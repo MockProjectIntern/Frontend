@@ -536,10 +536,6 @@ const CreateProduct = () => {
         handleFetchMoreBrand();
     }, [brandDataFilter.name])
 
-    useEffect(() => {
-        console.log(dataBody)
-    }, [dataBody])
-
     return (
         <>
             <div className="right__navbar">

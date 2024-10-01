@@ -7,7 +7,7 @@ import DiscountPopup from '../DiscountPopup/DiscountPopup'
 // Import CSS
 import s from '../ProductsTable/ProductsTable.module.scss'
 
-const DiscountTableCell = ({ price, discount }) => {
+const DiscountTableCell = ({ price, discount, handleChangeDiscount }) => {
     const [isDiscountPopup, setIsDiscountPopup] = useState(false)
     const discountBtnRef = useRef(null)
 
@@ -23,7 +23,7 @@ const DiscountTableCell = ({ price, discount }) => {
                 {discount !== 0 && <p className={s.discountRate}>{(discount / price * 100).toFixed(2)}%</p>}
             </span>
         </button>
-        {isDiscountPopup && <DiscountPopup price={price} discount={discount} btnRef={discountBtnRef} closePopup={closeDiscountPopup} />}
+        {isDiscountPopup && <DiscountPopup price={price} discount={discount} btnRef={discountBtnRef} handleChangeDiscount={(value) => handleChangeDiscount(value)} closePopup={closeDiscountPopup} />}
     </td>
   )
 }

@@ -27,3 +27,22 @@ export const getGINs = async (page, size, filterName, filterJson,data) => {
     }
 }
 
+export const getGINDetail = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/gins/detail.json/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export const exportData = async (mode, bodyJson) => {
+    try {
+        const response = await axiosInstance.post(`/gins/export-data.json?mode=${mode}`, bodyJson);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

@@ -24,12 +24,12 @@ const ordersListColgroup = {
         width: "160px",
         align: "text-start"
     },
-    total_quantity: {
+    quantity: {
         name: "SL đặt",
         width: "160px",
         align: "text-center"
     },
-    total_price: {
+    price: {
         name: "Giá trị đơn",
         width: "160px",
         align: "text-end"

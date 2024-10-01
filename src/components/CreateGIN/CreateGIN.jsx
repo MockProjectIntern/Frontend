@@ -7,7 +7,7 @@ import SearchSupplier from "../SearchSupplier/SearchSupplier";
 import SupplierInfo from "../SupplierInfo/SupplierInfo";
 import ProductsTable from "../ProductsTable/ProductsTable.jsx";
 import DiscountPopup from "../DiscountPopup/DiscountPopup.jsx";
-
+import ListSelectPopup from "../ListSelectPopup/ListSelectPopup.jsx";
 // Import Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -22,80 +22,16 @@ import infoIcon from "../../assets/icons/InfoIcon.jsx";
 import importIcon from "../../assets/icons/ImportIcon.jsx";
 import GINProductsTable from "../GINProductsTable/GINProductsTable.jsx";
 import { createNewGIN } from "../../service/GINApi.jsx";
+import { quickGetProductList } from "../../service/ProductAPI.jsx";
 
+import cn from "classnames";
 const CreateGIN = () => {
-
-	    const [productRequest,setProductRequest] = useState({
-        
-            sub_id: null,
-            note: "",
-            tags: "",
-            user_inspection_id: "USR00002",
-            isBalance: false,
-            products: [
-                {
-                    product_id: "PRD00007",
-                    actual_stock: 30,
-                    discrepancy_quantity: 5,
-                    reason: "Hư hỏng",
-                    note: "Ghi chú",
-                    unit: "Chiếc"
-                }
-            ]
-        
-});
-
 	const handleProductRequestChange = (e) => {
 		const { name, value } = e.target;
-		setProductRequest({ ...productRequest, [name]: value });
+		setDataBody({ ...dataBody, [name]: value });
 	};
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		try {
-			console.log("Tao gin moi")
-			const res = await createNewGIN(productRequest);
-			console.log(res);
-			if(res.status_code == 201){
-				alert(res.message);
-			}
-
-		}	catch (error) {
-			console.log(error);
-		}
-	};
-
-	const [productsList, setProductsList] = useState([
-		{
-			id: "PVN05",
-			image:
-				"https://sapo.dktcdn.net/100/805/407/variants/1abe9da6-729b-4bc6-b0f3-df59da5fcfe2-1726473515737.jpg",
-			name: "Áo khoác Chino thời thượng SID56708 - Trắng",
-			barcode: "SID56708",
-			unit: "---",
-			quantity: 10,
-			actual_stock: 10,
-			discrepancy_quantity: 0,
-			reason: "Hư hỏng",
-		},
-		{
-			id: "PVN05",
-			image:
-				"https://sapo.dktcdn.net/100/805/407/variants/1abe9da6-729b-4bc6-b0f3-df59da5fcfe2-1726473515737.jpg",
-			name: "Áo khoác Chino thời thượng SID56708 - Trắng",
-			barcode: "SID56708",
-			unit: "---",
-			quantity: 10,
-			actual_stock: 0,
-			discrepancy_quantity: 0,
-			reason: "Hư hỏng",
-		},
-	]);
-	const [tags, setTags] = useState([]);
-	const [tagValue, setTagValue] = useState("");
-	const [isDiscountPopup, setIsDiscountPopup] = useState(false);
-	const discountBtnRef = useRef(null);
-
+	const [listProductDetail, setListProductDetail] = useState([]);
 	const [activeTab, setActiveTab] = useState("all");
 
 	// Get list of columns that need redering from Cookies
@@ -122,6 +58,14 @@ const CreateGIN = () => {
 		Cookies.set("filter_products_table", JSON.stringify(colsToRender));
 	}, [colsToRender]);
 
+	const [filteredProducts, setFilteredProducts] = useState([]);
+
+	// Khi tab thay đổi, áp dụng bộ lọc
+	useEffect(() => {
+		setFilteredProducts(filterProducts(listProductDetail));
+	}, [activeTab, listProductDetail]);
+
+
 	const filterProducts = (products) => {
 		switch (activeTab) {
 			case "unchecked":
@@ -139,6 +83,84 @@ const CreateGIN = () => {
 		}
 	};
 
+	const [isProductSelectPopup, setIsProductSelectPopup] = useState(false);
+	const [dataPageProduct, setDataPageProduct] = useState({
+		page: 1,
+		size: 10,
+		totalPage: 1,
+		totalElement: 1,
+		keyword: "",
+	});
+	const productSelectBtnRef = useRef(null);
+	const [productSelectList, setProductSelectList] = useState([]);
+	const fetchProductList = async () => {
+		const response = await quickGetProductList(
+			dataPageProduct.page,
+			dataPageProduct.size,
+			dataPageProduct.keyword
+		);
+		setProductSelectList(response.data.data);
+		setDataPageProduct((prev) => {
+			return {
+				...prev,
+				totalPage: response.data.totalPage,
+				totalElement: response.data.totalElement,
+			};
+		});
+	};
+	useEffect(() => {
+		if (isProductSelectPopup) {
+			fetchProductList();
+		}
+	}, [isProductSelectPopup]);
+
+
+	const [dataBody, setDataBody] = useState({
+		sub_id: null,
+		note: "",
+		tags: "",
+		user_inspection_id: localStorage.getItem("userId"),
+		isBalance: false,
+		products: [
+			{
+				product_id: "PRD00001",
+				actual_stock: 30,
+				discrepancy_quantity: 30,
+				reason: "Hư hỏng",
+				note: "Kiểm hàng 15/9",
+				unit: "Chiếc",
+			},
+		],
+	});
+	const handleCreateGIN = async () => {
+		const response = await createNewGIN(dataBody);
+
+		if (response.status_code === 201) {
+			alert("Tạo đơn kiểm hàng thành công");
+			navigate("/admin/order_suppliers");
+		}
+	};
+
+	useEffect(() => {
+		setDataBody((prev) => {
+			return {
+				...prev,
+				products: listProductDetail.map((product) => {
+					return {
+						product_id: product.id,
+						unit: product.unit,
+						actual_stock: product.actual_stock,
+						discrepancy_quantity: product.discrepancy_quantity,
+						reason: product.reason,
+						note: product.note,
+					};
+				}),
+			};
+		});
+	}, [listProductDetail]);
+	console.log(listProductDetail);
+	console.log(dataBody);
+
 	return (
 		<>
 			<div className="right__navbar">
@@ -153,7 +175,7 @@ const CreateGIN = () => {
 						<button className="btn btn-outline-primary">
 							<span className="btn__title">Thoát</span>
 						</button>
-						<button className="btn btn-primary" onClick={handleSubmit}>
+						<button className="btn btn-primary" onClick={handleCreateGIN}>
 							<span className="btn__title">Tạo phiếu kiểm</span>
 						</button>
 						<button
@@ -165,25 +187,24 @@ const CreateGIN = () => {
 					</div>
 				</div>
 			</div>
-			<div className="right__createPaperPage">
-				<div className="right__createPaperPage-wrapper">
-					<div className="right__createPaperPage-container">
-
-					<div className="box-supplier">
-                        <div className="box-paper">
-                            <div className="paper-header">
-                                <p>Thông tin phiếu</p>
-                            </div>
-							<div className="paper-content">
+			<div className="right__paperPage">
+				<div className="right__paperPage-wrapper">
+					<div className="right__paperPage-container">
+						<div className="box-supplier">
+							<div className="box-paper">
+								<div className="paper-header">
+									<p>Thông tin phiếu</p>
+								</div>
+								<div className="paper-content">
 									<div className="group-info">
-									<div className="info-item">
+										<div className="info-item">
 											<p className="info-title">Mã phiếu</p>
 											<div className="info-field">
 												<div className="box-input">
 													<input
 														placeholder="Nhập mã phiếu"
 														name="sub_id"
-														value={productRequest.sub_id}
+														value={dataBody.sub_id}
 														onChange={handleProductRequestChange}
 														type="text"
 														className="text-field"
@@ -192,12 +213,11 @@ const CreateGIN = () => {
 												</div>
 											</div>
 										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 
-									</div>
-									</div>
-                        </div>
-                    </div>
-					
 						<div className="box-info">
 							<div className="box-paper">
 								<div className="paper-header">
@@ -205,7 +225,6 @@ const CreateGIN = () => {
 								</div>
 								<div className="paper-content">
 									<div className="group-info">
-
 										<div className="info-item">
 											<p className="info-title">Ghi chú</p>
 											<div className="info-field">
@@ -213,7 +232,7 @@ const CreateGIN = () => {
 													<input
 														placeholder="Kiểm hàng ngày 13/9/2024"
 														name="note"
-														value={productRequest.note}
+														value={dataBody.note}
 														onChange={handleProductRequestChange}
 														type="text"
 														className="text-field"
@@ -230,7 +249,7 @@ const CreateGIN = () => {
 													<input
 														placeholder="Nhập Ký tự và enter"
 														name="tags"
-														value={productRequest.tags}
+														value={dataBody.tags}
 														onChange={handleProductRequestChange}
 														type="text"
 														className="text-field"
@@ -249,25 +268,25 @@ const CreateGIN = () => {
 									<div className="box-header">
 										<div className="btn-tab">
 											<button
-												className={activeTab === "all" ? "active" : ""}
+												className={cn("btn-scroller", {"active": activeTab === "all"})}
 												onClick={() => setActiveTab("all")}
 											>
 												Tất cả
 											</button>
 											<button
-												className={activeTab === "unchecked" ? "active" : ""}
+												className={cn("btn-scroller", {"active": activeTab === "unchecked"})}
 												onClick={() => setActiveTab("unchecked")}
 											>
 												Chưa kiểm
 											</button>
 											<button
-												className={activeTab === "matched" ? "active" : ""}
+												className={cn("btn-scroller", {"active": activeTab === "matched"})}
 												onClick={() => setActiveTab("matched")}
 											>
 												Khớp
 											</button>
 											<button
-												className={activeTab === "mismatched" ? "active" : ""}
+												className={cn("btn-scroller", {"active": activeTab === "mismatched"})}
 												onClick={() => setActiveTab("mismatched")}
 											>
 												Lệch
@@ -275,14 +294,12 @@ const CreateGIN = () => {
 										</div>
 
 										<div className="btn-toolbar">
-										<button className="btn btn-base btn-text">
-                        <span className="btn__label">
-                            <span className="btn__icon">
-                                {importIcon}
-                            </span>
-                            Nhập file
-                        </span>
-                    </button>
+											<button className="btn btn-base btn-text">
+												<span className="btn__label">
+													<span className="btn__icon">{importIcon}</span>
+													Nhập file
+												</span>
+											</button>
 										</div>
 									</div>
 								</div>
@@ -291,7 +308,11 @@ const CreateGIN = () => {
 										<div className="right__table-search-filter">
 											<div className="box-search-filter-btns">
 												<div className="box-search">
-													<div className="box-input">
+													<div
+														ref={productSelectBtnRef}
+														onClick={() => setIsProductSelectPopup(true)}
+														className="box-input"
+													>
 														<div className="search-icon">
 															<FontAwesomeIcon icon={faMagnifyingGlass} />
 														</div>
@@ -304,6 +325,45 @@ const CreateGIN = () => {
 														/>
 														<fieldset className="input-field" />
 													</div>
+													{isProductSelectPopup && (
+														<ListSelectPopup
+															title={"sản phẩm"}
+															isLarge={true}
+															isSearch={false}
+															isFastCreate={true}
+															dataList={productSelectList}
+															handleSelect={(id) =>
+																setListProductDetail((prev) => {
+																	return [
+																		...prev,
+																		{
+																			id: id,
+																			name: productSelectList.find(
+																				(product) => product.id === id
+																			)?.name,
+																			image: productSelectList.find(
+																				(product) => product.id === id
+																			)?.images?.[0],
+																			unit:
+																				productSelectList.find(
+																					(product) => product.id === id
+																				)?.unit || "------",
+																			quantity:
+																				productSelectList.find(
+																					(product) => product.id === id
+																				)?.quantity || 0,
+																			actual_stock: 0,
+																			discrepancy_quantity: 0,
+																			reason: "Khác",
+																			note: "",
+																		},
+																	];
+																})
+															}
+															btnRef={productSelectBtnRef}
+															closePopup={() => setIsProductSelectPopup(false)}
+														/>
+													)}
 													<button className="btn btn-base">
 														<span className="btn__label">
 															<p>Chọn nhanh</p>
@@ -326,8 +386,9 @@ const CreateGIN = () => {
 								</div>
 								<div className="box-table">
 									<GINProductsTable
-										productsList={filterProducts(productsList)}
+										productsList={filteredProducts}
 										colsToRender={colsToRender}
+										setProductList={setListProductDetail}
 									/>
 								</div>
 							</div>

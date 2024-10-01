@@ -12,8 +12,8 @@ const StatusFilter = ({ statusBtnRef, closePopup, setStatusList, type }) => {
     const statuses =
         type === "GRN"
             ? {
-                  ORDERING: "Đã cân bằng",
-                  TRADING: "Đang kiểm kho",
+                  ORDERING: "Đang đặt",
+                  TRADING: "Đang giao dịch",
                   CANCELLED: "Đã hủy",
                   COMPLETED: "Đã hoàn thành",
               }
@@ -55,7 +55,6 @@ const StatusFilter = ({ statusBtnRef, closePopup, setStatusList, type }) => {
 
     const handleClickFilter = () => {
         setStatusList([...status]);
-        console.log(status);
         closePopup();
     };
 

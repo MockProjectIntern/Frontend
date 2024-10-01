@@ -17,6 +17,7 @@ const CreatedAtFilter = ({
 	const [customStartDate, setCustomStartDate] = useState(null);
 	const [customEndDate, setCustomEndDate] = useState(null);
 
+
 	const dateRanges = {
 		today: "Hôm nay",
 		yesterday: "Hôm qua",
@@ -81,8 +82,8 @@ const CreatedAtFilter = ({
   const handleFilterClick = () => {
     if (dateTempo.createdAtmin && dateTempo.createdAtmax) {
 		if(parentCalling === "GIN") {
-			handeChangeDatafilter("created_date_from",dateTempo.createdAtmin);
-			handeChangeDatafilter("created_date_to",dateTempo.createdAtmax);
+			handeChangeDatafilter({created_date_from:dateTempo.createdAtmin,created_date_to:dateTempo.createdAtmax});
+			
     }
     console.log(dayjs(dateTempo.createdAtmin).format("YYYY-MM-DD"), dayjs(dateTempo.createdAtmax).format("YYYY-MM-DD"));
   
