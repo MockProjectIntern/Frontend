@@ -151,8 +151,9 @@ const GRNList = () => {
     const handleExportData = async () => {
         const responseAPI = await getDataExport("DEFAULT", defaultFilter);
         
-        const dataExport = responseAPI.data.map((grn) => {
+        const dataExport = responseAPI.data.map((grn, index) => {
             return {
+                "STT": index + 1,
                 "Mã đơn nhập": grn.sub_id,
                 "Trạng thái": status[grn.status],
                 "Trạng thái nhận hàng": status[grn.received_status],

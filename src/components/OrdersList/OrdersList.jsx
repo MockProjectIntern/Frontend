@@ -18,8 +18,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import StatusFilter from '../GRNList/FiltersPopup/StatusFilter.jsx'
-import { getAllOrders } from '../../service/OrderAPI.jsx'
+import { getAllOrders, getDataExport } from '../../service/OrderAPI.jsx'
 import { formatDateTime } from '../../utils/DateUtils.jsx'
+import { exportExcel } from '../../config/ExportExcel.jsx'
 
 const ordersQuantity = 4;
 
@@ -129,13 +130,35 @@ const OrdersList = () => {
         fetchOrderList();
     }, [])
 
+    const handleExportData = async () => {
+        const response = await getDataExport("DEFAULT", dataFilter);
+
+        const dataExport = response.data.map((order, index) => {
+            return {
+                "STT": index + 1,
+                "Mã đơn đặt hàng": order.sub_id,
+                "Ngày tạo đơn": formatDateTime(order.created_at),
+                "Trạng thái đơn": status[order.status],
+                "Nhà cung cấp": order.supplier_name,
+                "Nhân viên tạo": order.user_created_name,
+                "Tổng số lượng đặt": order.total_quantity,
+                "Tổng tiền": order.total_price
+            }
+        })
+
+        exportExcel(dataExport, "Danh sách đơn đặt hàng nhập");
+
+    }
+
+
+
     return (
         <>
             <Header title={"Danh sách đơn đặt hàng nhập"} />
             <div className='right__listPage'>
                 <div className='right__toolbar'>
                     <div className="btn-toolbar">
-                        <button className="btn btn-base btn-text">
+                        <button className="btn btn-base btn-text" onClick={handleExportData}>
                             <span className="btn__label">
                                 <span className="btn__icon">
                                     {exportIcon}
@@ -184,7 +207,7 @@ const OrdersList = () => {
                                 </div>
                             </div>
                             <div className="btn-group group-filter-btns">
-                                <button ref={orderStatusRef} onClick={()=>setIsOpenStatusPopup(!isOpenStatusPopup)} className="btn btn-base btn-filter">
+                                <button ref={orderStatusRef} onClick={() => setIsOpenStatusPopup(!isOpenStatusPopup)} className="btn btn-base btn-filter">
                                     <span className="btn__label">
                                         Trạng thái
                                         <span className="btn__icon">
@@ -192,7 +215,7 @@ const OrdersList = () => {
                                         </span>
                                     </span>
                                 </button>
-                                {isOpenStatusPopup && <StatusFilter statusBtnRef = {orderStatusRef} closePopup={() => setIsOpenStatusPopup(false)} type={"Order"} setStatusList={setStatusListFilter}/>}
+                                {isOpenStatusPopup && <StatusFilter statusBtnRef={orderStatusRef} closePopup={() => setIsOpenStatusPopup(false)} type={"Order"} setStatusList={setStatusListFilter} />}
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
                                         Ngày tạo
