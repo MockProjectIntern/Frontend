@@ -20,7 +20,7 @@ const productsTableColgroup = {
 		minWidth: "90px",
 		align: "text-start",
 	},
-	quantity: {
+	real_quantity: {
 		name: "Tồn chi nhánh",
 		width: "150px",
 		align: "text-center",

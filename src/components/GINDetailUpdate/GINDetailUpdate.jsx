@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link,useNavigate } from "react-router-dom";
+import { Link,useNavigate,useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 
 // Import Components
@@ -21,23 +21,95 @@ import calendarIcon from "../../assets/icons/CalendarIcon.jsx";
 import infoIcon from "../../assets/icons/InfoIcon.jsx";
 import importIcon from "../../assets/icons/ImportIcon.jsx";
 import GINProductsTable from "../GINProductsTable/GINProductsTable.jsx";
-import { createNewGIN } from "../../service/GINApi.jsx";
+import { updateGIN,getGINDetail } from "../../service/GINApi.jsx";
 import { quickGetProductList } from "../../service/ProductAPI.jsx";
 
 import cn from "classnames";
-const CreateGIN = () => {
+const GINDetailUpdate = () => {
+    
+    const [gin,setGin] = useState({})
+
+	const [activeTab, setActiveTab] = useState("all");
+
+	const navigate = useNavigate();
+
+	const status = {
+		COMPLETED: "Hoàn thành",
+		BALANCED: "Đã cân bằng",
+		DELETED: "Đã xóa",
+		CHECKING: "Đang kiểm kho",
+	};
+	const { ginId } = useParams();
+    console.log(ginId)
+
+
+
+
 	const handleProductRequestChange = (e) => {
 		const { name, value } = e.target;
 		setDataBody({ ...dataBody, [name]: value });
 	};
 
 	const [listProductDetail, setListProductDetail] = useState([]);
-	const [activeTab, setActiveTab] = useState("all");
 
 
-	const navigate = useNavigate();
+	// Get list of columns that need redering from Cookies
+	const [colsToRender, setColsToRender] = useState(() => {
+		const storedCols = Cookies.get("filter_products_table");
+		return storedCols
+			? JSON.parse(storedCols)
+			: {
+					index: true,
+					image: true,
+					name: true,
+					barcode: true,
+					unit: true,
+					ordered_quantity: true,
+					price: true,
+					discount: true,
+					tax: true,
+					total: true,
+			  };
+	});
 
+	// Set required columns to Cookies
+	useEffect(() => {
+		Cookies.set("filter_products_table", JSON.stringify(colsToRender));
+	}, [colsToRender]);
 
+    useEffect(() => {
+		const fetchGinDetail = async () => {
+			try {
+				const ginDetail = await getGINDetail(ginId);
+				setGin(ginDetail.data);
+				setListProductDetail(ginDetail.data.products);
+				
+                setDataBody((prev) => ({
+                    ...prev,
+                    sub_id: ginDetail.data.sub_id,
+                    isBalance: ginDetail.data.status === "BALANCED",
+                    note: ginDetail.data.note,
+                    tags: ginDetail.data.tags,
+                    products: ginDetail.data.products.map((product) => ({
+                        product_id: product.product_id,
+                        unit: product.unit,
+                        actual_stock: product.actual_stock,
+						real_quantity: product.real_quantity,
+                        discrepancy_quantity: product.discrepancy_quantity,
+                        reason: product.reason,
+                        note: product.note,
+                    })),
+                }));
+                
+				console.log(ginDetail);
+				console.log("GIN Detail: ", ginDetail.data);
+
+			} catch (error) {
+				console.error(error);
+			}
+		};
+		fetchGinDetail();
+	}, [ginId]);
 
 	const [filteredProducts, setFilteredProducts] = useState([]);
 
@@ -106,12 +178,16 @@ const CreateGIN = () => {
 		
 		],
 	});
-	const handleCreateGIN = async () => {
-		const response = await createNewGIN(dataBody);
 
-		if (response.status_code === 201) {
-			alert("Tạo phiếu kiểm hàng thành công");
-			navigate("/admin/gins");
+    
+	const handleUpdateGIN = async (isBalance = false) => {
+		
+        console.log(dataBody)
+		const response = await updateGIN((isBalance? {...dataBody,isBalance:true} : dataBody),ginId);
+
+		if (response.status_code === 200) {
+			alert(response.message);
+			navigate(-1);
 		}
 	};
 
@@ -121,7 +197,7 @@ const CreateGIN = () => {
 				...prev,
 				products: listProductDetail.map((product) => {
 					return {
-						product_id: product.id,
+						product_id: product.product_id,
 						unit: product.unit,
 						actual_stock: product.actual_stock,
 						discrepancy_quantity: product.discrepancy_quantity,
@@ -132,6 +208,8 @@ const CreateGIN = () => {
 			};
 		});
 	}, [listProductDetail]);
+	console.log(listProductDetail);
+	console.log(dataBody);
 
 	return (
 		<>
@@ -144,13 +222,13 @@ const CreateGIN = () => {
 						</Link>
 					</div>
 					<div className="btn-toolbar">
-						<button onClick={()=>navigate(-1)} className="btn btn-outline-danger">
-							<span className="btn__title">Thoát</span>
+						<button onClick={()=> navigate(-1)} className="btn btn-outline-danger">
+							<span className="btn__title">Hủy</span>
 						</button>
-						<button className="btn btn-outline-primary" onClick={handleCreateGIN}>
-							<span className="btn__title">Tạo</span>
+						<button className="btn btn-outline-primary" onClick={()=>handleUpdateGIN()}>
+							<span className="btn__title">Lưu</span>
 						</button>
-						<button
+						<button onClick={() => handleUpdateGIN(true)}
 							className="btn btn-secondary-cyan"
 							style={{ color: "white" }}
 						>
@@ -176,7 +254,7 @@ const CreateGIN = () => {
 													<input
 														placeholder="Nhập mã phiếu"
 														name="sub_id"
-														value={dataBody.sub_id}
+														value={dataBody?.sub_id}
 														onChange={handleProductRequestChange}
 														type="text"
 														className="text-field"
@@ -204,7 +282,7 @@ const CreateGIN = () => {
 													<input
 														placeholder="Kiểm hàng ngày 13/9/2024"
 														name="note"
-														value={dataBody.note}
+														value={dataBody?.note}
 														onChange={handleProductRequestChange}
 														type="text"
 														className="text-field"
@@ -221,7 +299,7 @@ const CreateGIN = () => {
 													<input
 														placeholder="Nhập Ký tự và enter"
 														name="tags"
-														value={dataBody.tags}
+														value={dataBody?.tags}
 														onChange={handleProductRequestChange}
 														type="text"
 														className="text-field"
@@ -357,9 +435,9 @@ const CreateGIN = () => {
 									</div>
 								</div>
 								<div className="box-table">
-									<GINProductsTable
+									<GINProductsTable isView={false}
 										productsList={filteredProducts}
-										
+										isBalance={gin?.status === "BALANCED"}
 										setProductList={setListProductDetail}
 									/>
 								</div>
@@ -372,4 +450,4 @@ const CreateGIN = () => {
 	);
 };
 
-export default CreateGIN;
+export default GINDetailUpdate;
