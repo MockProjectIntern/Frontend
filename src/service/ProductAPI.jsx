@@ -38,3 +38,13 @@ export const quickCreateProduct = async (dataBody) => {
         throw err;
     }
 }
+
+export const getProductById = async (productId) => {
+    try {
+        const response = await axiosInstance.get(`products/detail.json/${productId}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

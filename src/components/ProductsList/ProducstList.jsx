@@ -9,7 +9,7 @@ import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import Header from '../Header/Header.jsx'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { getProductList } from '../../service/ProductAPI.jsx'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import SelectFilter from '../SelectFilter/SelectFilter.jsx'
@@ -544,7 +544,7 @@ const ProductList = () => {
                                                                     <p className='box-text'>
                                                                         {
                                                                             key !== "name" ? product[key] :
-                                                                                <a className='box-id'>{product[key]}</a>
+                                                                            <Link to={`/admin/products/PRD/${product?.sub_id}`} className='box-id'>{product[key]}</Link>
                                                                         }
                                                                     </p>
                                                                 </td>
