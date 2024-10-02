@@ -12,7 +12,7 @@ const SelectFilter = ({
     btnRef, 
     currentPage, 
     totalPage,
-    onSelectionChange, // Thêm prop này
+    onSelectionChange, 
     handleOnClickButton,
     keyword,
     handleChangeKeyword,
@@ -73,9 +73,10 @@ const SelectFilter = ({
         };
     }, []);
     
-    useEffect(() => {
-        onSelectionChange(selectedCategories); // Gọi hàm truyền lên mỗi khi selectedCategories thay đổi
-    }, [selectedCategories]); // Khi selectedCategories thay đổi, gọi hàm onSelectionChange
+    const handleOnclickButtonFilter = () => {
+        onSelectionChange(selectedCategories);
+        closePopup();
+    }
 
     const toggleSelectAll = () => {
         if (isAllSelected) {
@@ -120,7 +121,6 @@ const SelectFilter = ({
 
                 <div className={s.wrapper_select} ref={listRef}>
                     <div className={s.select_all} onClick={toggleSelectAll}>
-
                         {
                             isAllSelected ?
                             (
@@ -156,7 +156,7 @@ const SelectFilter = ({
                     ))}
                 </div>
 
-                <button className={s.btn_select} onClick={handleOnClickButton}>Lọc</button>
+                <button className={s.btn_select} onClick={handleOnclickButtonFilter}>Lọc</button>
             </div>
         </div>
     );

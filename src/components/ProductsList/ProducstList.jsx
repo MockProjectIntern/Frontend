@@ -18,9 +18,6 @@ import { getListBrand } from '../../service/BrandAPI.jsx'
 import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 import SelectDatePopup from '../SelectDatePopup.jsx'
 
-
-
-
 const ProductList = () => {
 
     const formatDate = (dateString) => {
@@ -83,7 +80,7 @@ const ProductList = () => {
     const [dataBody, setDataBody] = useState(
         {
             keyword: null,
-            category_ids: null,
+            category_ids: [],
             created_date_from: null,
             created_date_to: null,
             brand_ids: null,
@@ -133,12 +130,10 @@ const ProductList = () => {
     };
 
     const handleClickButtonFilterCategory = () => {
-        fetchProductList();
         setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup)
     }
 
     const handleClickButtonFilterBrand = () => {
-        fetchProductList();
         setIsOpenFilterBrandPopup(!isOpenFilterBrandPopup)
     }
 
@@ -148,7 +143,6 @@ const ProductList = () => {
         setProductsList(products.data.data);
         setProductsQuantity(products.data.total_items);
         setPageQuantity(products.data.total_page)
-
     }
 
     const fetchCategoryList = async () => {
@@ -292,7 +286,7 @@ const ProductList = () => {
                                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                                     </div>
                                     <input
-                                        placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode'
+                                        placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm'
                                         type="text"
                                         name="search"
                                         id=""
@@ -578,7 +572,15 @@ const ProductList = () => {
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </span>
                                 </button>
-                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => { setLimit(limit) }} />}
+                                {isOpenLimitPopup && <LimitSelectPopup
+                                    btnRef={limitBtnRef}
+                                    closePopup={() => setIsOpenLimitPopup(false)}
+                                    limit={limit}
+                                    handleChangeLimit={(limit) => { 
+                                        setLimit(limit);
+                                        setPage(1);
+                                    }}
+                                />}
                             </div>
                             <p>kết quả</p>
                             <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + productsList.length} trên tổng {productsQuantity}</p>

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react'
 import Cookies from 'js-cookie'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faChevronLeft, faGear, faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons'
 import infoIcon from '../../assets/icons/InfoIcon.jsx'
@@ -16,6 +16,7 @@ import '../../styles/_overrides.scss'
 import { quickGetProductList } from '../../service/ProductAPI.jsx'
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup.jsx'
 import { createNewGRN } from '../../service/GRNApi.jsx'
+import { getOrderById } from '../../service/OrderAPI.jsx'
 
 const CreateGRN = () => {
     const navigate = useNavigate();
@@ -26,6 +27,32 @@ const CreateGRN = () => {
         total: 350000,
     });
 
+    const location = useLocation();
+    const { orderId } = location.state || {};
+
+    const fetchOrderDetail = async () => {
+        const responseAPI = await getOrderById(orderId)
+        setDataBody(prev => {
+            return {
+                ...prev,
+                supplier_id: responseAPI.data.supplier_id,
+            }
+        })
+        setListProductDetail(responseAPI.data.order_details.map(detail => {            
+            return {
+                id: detail.id,
+                name: detail.name,
+                image: detail.image,
+                price: detail.price,
+                imported_quantity: 0,
+                unit: detail.product_unit ? detail.product_unit : "------",
+                discount: detail.discount,
+                tax: detail.tax,
+                total: 0
+            }
+        }))
+    }
+
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_products_table_grn');
@@ -33,7 +60,6 @@ const CreateGRN = () => {
             index: true,
             image: true,
             name: true,
-            barcode: true,
             unit: true,
             imported_quantity: true,
             price: true,
@@ -48,6 +74,9 @@ const CreateGRN = () => {
             const { ordered_quantity, ...rest } = prev;
             return rest;
         });
+        if (orderId) {
+            fetchOrderDetail();
+        }
     }, [])
 
     const discountBtnRef = useRef(null)
@@ -245,16 +274,6 @@ const CreateGRN = () => {
                                     <div className="box-header">
                                         <p>Thông tin sản phẩm</p>
                                         <div className="btn-toolbar">
-                                            <div className="checkbox__container">
-                                                <div className="checkbox__wrapper">
-                                                    <input type="checkbox" name="" id="checkBoxInput" className='checkbox__input' />
-                                                    <div className="btn-checkbox"></div>
-                                                </div>
-                                                <label htmlFor='checkBoxInput' className='checkbox__label'>Tách dòng</label>
-                                            </div>
-                                            <button className="btn-icon">
-                                                <FontAwesomeIcon icon={faGear} />
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -267,7 +286,20 @@ const CreateGRN = () => {
                                                         <div className="search-icon">
                                                             <FontAwesomeIcon icon={faMagnifyingGlass} />
                                                         </div>
-                                                        <input placeholder='Tìm theo tên, mã SKU, hoặc quét mã Barcode...(F3)' type="text" name="search" id="" autoComplete='on' />
+                                                        <input
+                                                            placeholder='Tìm theo tên hoặc mã sản phẩm'
+                                                            type="text"
+                                                            name="search"
+                                                            id=""
+                                                            autoComplete='on'
+                                                            onChange={(e) => setDataPageProduct(prev => {
+                                                                return {
+                                                                    ...prev,
+                                                                    keyword: e.target.value
+                                                                }
+                                                            })
+                                                            }
+                                                        />
                                                         <fieldset className='input-field' />
                                                     </div>
                                                     {
@@ -296,28 +328,18 @@ const CreateGRN = () => {
                                                             closePopup={() => setIsProductSelectPopup(false)}
                                                         />
                                                     }
-                                                    <button className="btn btn-base">
-                                                        <span className="btn__label">
-                                                            <p>Chọn nhanh</p>
-                                                        </span>
-                                                    </button>
-                                                </div>
-                                                <div className="btn-group group-filter-btns">
-                                                    <button className="btn btn-base btn-filter">
-                                                        <span className="btn__label">
-                                                            Giá nhập
-                                                            <span className="btn__icon">
-                                                                <FontAwesomeIcon icon={faCaretDown} />
-                                                            </span>
-                                                        </span>
-                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className='box-table'>
-                                    <ProductsTable productsList={listProductDetail} setProductList={setListProductDetail} colsToRender={colsToRender} />
+                                    <ProductsTable
+                                        productsList={listProductDetail}
+                                        setProductList={setListProductDetail}
+                                        colsToRender={colsToRender}
+                                        setIsProductSelectPopup={setIsProductSelectPopup}
+                                    />
                                     <div className='box-total'>
                                         <div className="box-total__container">
                                             <div className="box-subinfo">

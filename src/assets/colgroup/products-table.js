@@ -14,12 +14,6 @@ const productsTableColgroup = {
         minWidth: "120px",
         align: "text-start"
     },
-    barcode: {
-        name: "Mã vạch",
-        width: "115px",
-        minWidth: "115px",
-        align: "text-start"
-    },
     unit: {
         name: "Đơn vị",
         width: "90px",

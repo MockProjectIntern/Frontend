@@ -16,6 +16,7 @@ import { getVariantList } from '../../service/VariantAPI.jsx'
 import { getListCategory } from '../../service/CategoryAPI.jsx'
 import { getListBrand } from '../../service/BrandAPI.jsx'
 import SelectDatePopup from '../SelectDatePopup.jsx'
+import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 
 const VariantList = () => {
 
@@ -123,7 +124,6 @@ const VariantList = () => {
     };
 
     const handleClickButtonFilterCategory = () => {
-        fetchVariantList();
         setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup)
     }
 
@@ -139,7 +139,6 @@ const VariantList = () => {
         const categories = await getListCategory(currentPageFilterCategory, 10, dataFilterCategory)
         setListCategories(categories.data.data);
         setTotalPageFilterCategory(categories.data.total_page)
-
     }
 
     const fetchMoreCategoryList = async () => {
@@ -220,17 +219,6 @@ const VariantList = () => {
     }, [categoryKeyword])
 
     useEffect(() => {
-        if (isOpenFilterCategoryPopup) {
-            fetchCategoryList();
-        }
-        else {
-            setListCategories([]);
-            setDataFilterCategory({ keyword: null });
-        }
-
-    }, [isOpenFilterCategoryPopup, dataFilterCategory.keyword, currentPageFilterCategory]);
-
-    useEffect(() => {
         handleFetchMoreBrandList();
     }, [isOpenFilterBrandPopup])
 
@@ -240,23 +228,12 @@ const VariantList = () => {
     }, [brandKeyword])
 
     useEffect(() => {
-        if (isOpenFilterBrandPopup) {
-            fetchBrandList();
-        }
-        else {
-            setListBrands([]);
-            setDataFilterBrand({ keyword: null });
-        }
-
-    }, [isOpenFilterBrandPopup, dataFilterBrand.keyword, currentPageFilterBrand]);
-
-    useEffect(() => {
         Cookies.set('filter_products_manage', JSON.stringify(colsToRender))
     }, [colsToRender])
 
-    useEffect(() => {
+    useDebouncedEffect(() => {
         fetchVariantList();
-    }, [limit, page, dataBody]);
+    }, 300, [dataBody, page, limit])
 
     return (
         <>
@@ -308,7 +285,19 @@ const VariantList = () => {
                                     <div className="search-icon">
                                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                                     </div>
-                                    <input placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm, barcode' type="text" name="search" id="" autoComplete='on' />
+                                    <input
+                                        placeholder='Tìm kiếm theo mã sản phẩm, tên sản phẩm'
+                                        type="text"
+                                        name="search"
+                                        id=""
+                                        autoComplete='on'
+                                        onChange={(e) => setDataBody(prev => {
+                                            return {
+                                                ...prev,
+                                                keyword: e.target.value
+                                            };
+                                        })}
+                                    />
                                     <fieldset className='input-field' />
                                 </div>
                             </div>
@@ -582,7 +571,16 @@ const VariantList = () => {
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </span>
                                 </button>
-                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => setLimit(limit)} />}
+                                {isOpenLimitPopup
+                                    && <LimitSelectPopup
+                                        btnRef={limitBtnRef}
+                                        closePopup={() => setIsOpenLimitPopup(false)}
+                                        limit={limit}
+                                        handleChangeLimit={(limit) => {
+                                            setPage(1)
+                                            setLimit(limit)
+                                        }}
+                                    />}
                             </div>
                             <p>kết quả</p>
                             <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + variantsList.length} trên tổng {variantsQuantity}</p>

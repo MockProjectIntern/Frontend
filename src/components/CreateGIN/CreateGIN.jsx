@@ -308,7 +308,7 @@ const CreateGIN = () => {
 															<FontAwesomeIcon icon={faMagnifyingGlass} />
 														</div>
 														<input
-															placeholder="Tìm theo tên, mã SKU, hoặc quét mã Barcode...(F3)"
+															placeholder="Tìm theo tên hoặc mã sản phẩm"
 															type="text"
 															name="search"
 															id=""

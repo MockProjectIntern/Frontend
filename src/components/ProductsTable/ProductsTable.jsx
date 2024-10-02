@@ -17,7 +17,7 @@ import boxOpenIcon from '../../assets/icons/BoxOpenIcon'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCircleMinus, faCirclePlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 
-const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) => {
+const ProductsTable = ({ productsList, setProductList, colsToRender, isView, setIsProductSelectPopup }) => {
     const handleChangeData = (index, key, value) => {
         const newProductsList = [...productsList];
         newProductsList[index][key] = value;
@@ -336,7 +336,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView }) =
                 <div className={s.boxEmpty}>
                     {boxOpenIcon}
                     <p>{colsToRender["ordered_quantity"] ? "Đơn đặt hàng nhập" : "Đơn nhập hàng"} của bạn chưa có sản phẩm nào</p>
-                    <button className="btn btn-outline-primary">
+                    <button className="btn btn-outline-primary" onClick={setIsProductSelectPopup}>
                         <span className="btn__label">Thêm sản phẩm</span>
                     </button>
                 </div>

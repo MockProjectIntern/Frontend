@@ -23,11 +23,7 @@ import { formatDateTime } from '../../utils/DateUtils.jsx'
 import { exportExcel } from '../../config/ExportExcel.jsx'
 import SelectDatePopup from '../SelectDatePopup.jsx'
 
-const ordersQuantity = 4;
-
 const OrdersList = () => {
-    const [page, setPage] = useState(1);
-    const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(10);
     const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
     const limitBtnRef = useRef(null);
@@ -74,14 +70,24 @@ const OrdersList = () => {
     }
 
     const handlePrevPage = () => {
-        if (page > 1) {
-            setPage(prev => prev - 1);
+        if (dataPage.page > 1) {
+            setDataPage(prev => {
+                return {
+                    ...prev,
+                    page: prev.page - 1
+                }
+            });
         }
     }
 
     const handleNextPage = () => {
-        if (page < pageQuantiy) {
-            setPage(prev => prev + 1);
+        if (dataPage.page < dataPage.totalPage) {
+            setDataPage(prev => {
+                return {
+                    ...prev,
+                    page: prev.page + 1
+                }
+            });
         }
     }
 
@@ -231,10 +237,11 @@ const OrdersList = () => {
                                             return {
                                                 ...prev,
                                                 keyword: e.target.value
-                                            }})
+                                            }
+                                        })
                                         }
                                     />
-                                            < fieldset className = 'input-field' />
+                                    < fieldset className='input-field' />
                                 </div>
                             </div>
                             <div className="btn-group group-filter-btns">
@@ -464,39 +471,58 @@ const OrdersList = () => {
                                     onClick={() => setIsOpenLimitPopup(!isOpenLimitPopup)}
                                     className={cn("btn-page-limit", { "selected": isOpenLimitPopup })}
                                 >
-                                    {limit}
+                                    {dataPage.size}
                                     <span>
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </span>
                                 </button>
-                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => setLimit(limit)} />}
+                                {isOpenLimitPopup
+                                    && <LimitSelectPopup
+                                        btnRef={limitBtnRef}
+                                        closePopup={() => setIsOpenLimitPopup(false)}
+                                        limit={dataPage.size}
+                                        handleChangeLimit={(limit) => {                                            
+                                            setDataPage(prev => {
+                                                return {
+                                                    ...prev,
+                                                    page: 1,
+                                                    size: limit
+                                                }
+                                            });
+                                        }}
+                                    />}
                             </div>
                             <p>kết quả</p>
-                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + ordersList.length} trên tổng {ordersQuantity}</p>
+                            <p className="item-quantity">Từ {(dataPage.page - 1) * dataPage.size + 1} đến {(dataPage.page - 1) * dataPage.size + ordersList.length} trên tổng {dataPage.totalItem}</p>
                             <button
-                                className={cn('btn-icon', 'btn-page', { 'inactive': page === 1 })}
+                                className={cn('btn-icon', 'btn-page', { 'inactive': dataPage.page === 1 })}
                                 onClick={handlePrevPage}
                             >
                                 <FontAwesomeIcon icon={faChevronLeft} />
                             </button>
                             {
-                                Array(pageQuantiy).fill(null).map((_, index) => (
+                                Array(dataPage.totalPage).fill(null).map((_, index) => (
                                     <div
                                         key={index}
-                                        className={cn("box-page", { 'active': page === index + 1 })}
-                                        onClick={() => setPage(index + 1)}
+                                        className={cn("box-page", { 'active': dataPage.page === index + 1 })}
+                                        onClick={() => setDataPage(prev => {
+                                            return {
+                                                ...prev,
+                                                page: index + 1
+                                            }
+                                        })
+                                        }
                                     >
                                         {index + 1}
                                     </div>
                                 ))
                             }
                             <button
-                                className={cn('btn-icon', 'btn-page', { 'inactive': page === pageQuantiy })}
+                                className={cn('btn-icon', 'btn-page', { 'inactive': dataPage.page === dataPage.totalPage })}
                                 onClick={handleNextPage}
                             >
                                 <FontAwesomeIcon icon={faChevronRight} />
                             </button>
-                            {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => setLimit(limit)} />}
                         </div>
                     </div>
                 </div>

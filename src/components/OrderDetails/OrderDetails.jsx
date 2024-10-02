@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import cn from 'classnames'
 import Cookies from 'js-cookie'
 
@@ -16,6 +16,7 @@ import { formatDate, formatDateTime } from '../../utils/DateUtils'
 import { getAllByOrder } from '../../service/GRNApi'
 
 const OrderDetails = () => {
+    const navigate = useNavigate()
     const { orderId } = useParams()
     const [order, setOrder] = useState({
         id: "OSN00004",
@@ -192,7 +193,9 @@ const OrderDetails = () => {
                                         <p>Thông tin nhập hàng</p>
                                         {
                                             order.status !== "COMPLETED" &&
-                                            <button className="btn btn-outline-primary">
+                                            <button
+                                                className="btn btn-outline-primary"
+                                                onClick={() => navigate("/admin/grns/create", { state: { orderId: orderId } })}>
                                                 <span className="btn__label">Tạo đơn nhập hàng</span>
                                             </button>
                                         }

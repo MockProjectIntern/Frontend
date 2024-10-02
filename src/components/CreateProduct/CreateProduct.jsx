@@ -114,7 +114,7 @@ const CreateProduct = () => {
             ...dataBody,
             images: uploadedImages
         });
-        if (response.status === 201) {
+        if (response.status_code === 201) {
             alert("Tạo sản phẩm thành công!");
             navigate('/admin/products');
         }
@@ -466,6 +466,7 @@ const CreateProduct = () => {
     }, [dataBody.category_id])
 
     const [brandList, setBrandList] = useState([]);
+    const [brand, setBrand] = useState("");
     const [isBrandPopup, setIsBrandPopup] = useState(false);
     const brandBtnRef = useRef(null);
     const [brandDataFilter, setBrandDataFilter] = useState({
@@ -535,6 +536,11 @@ const CreateProduct = () => {
         });
         handleFetchMoreBrand();
     }, [brandDataFilter.name])
+    useEffect(() => {
+        const selectedBrand = brandList.find(brand => brand.id === dataBody.brand_id);
+
+        setBrand(selectedBrand);
+    }, [dataBody.brand_id])
 
     return (
         <>
@@ -977,7 +983,7 @@ const CreateProduct = () => {
                                         </label>
                                         <div className="box-select">
                                             <button ref={brandBtnRef} onClick={() => setIsBrandPopup(!isBrandPopup)} id='brand' className="btn-select">
-                                                Chọn nhãn hiệu
+                                                {brand?.name || 'Chọn nhãn hiệu'}
                                                 <FontAwesomeIcon icon={faCaretDown} />
                                             </button>
                                             {

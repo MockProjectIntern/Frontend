@@ -20,6 +20,7 @@ import { quickGetProductList } from '../../service/ProductAPI.jsx'
 import { createNewOrder } from '../../service/OrderAPI.jsx'
 import CreateProductFastlyPopup from '../CreateProductFastlyPopup/CreateProductFastlyPopup.jsx'
 import CreateSupplierPopup from '../CreateSupplierPopup/CreateSupplierPopup.jsx'
+import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 const CreateOrder = () => {
     const navigate = useNavigate();
     const [order, setOrder] = useState({
@@ -105,6 +106,10 @@ const CreateOrder = () => {
         }
     }, [isProductSelectPopup])
 
+    useDebouncedEffect(() => {
+        fetchProductList();
+    }, 300, [dataPageProduct.keyword])
+
     const [listProductDetail, setListProductDetail] = useState([]);
 
     const [dataBody, setDataBody] = useState({
@@ -133,11 +138,11 @@ const CreateOrder = () => {
         setIsCreateProductQuickly(false);
     }
 
-    const handleClickBackInSupplier = () =>{
+    const handleClickBackInSupplier = () => {
         setIsCreateSupplier(false);
     }
 
-    const handleClickCreateSupplier = () =>{
+    const handleClickCreateSupplier = () => {
         setIsCreateSupplier(true);
     }
 
@@ -170,21 +175,21 @@ const CreateOrder = () => {
                         />
                     </>
                 )}
-                { isCreateSupplier && (
+                {isCreateSupplier && (
                     <>
                         <div className="overlay"></div>
-                        <CreateSupplierPopup 
+                        <CreateSupplierPopup
                             handleCLickBack={handleClickBackInSupplier}
                             setSupplerID={(id) => setDataBody((prev) => {
-                                return{
+                                return {
                                     ...prev,
                                     supplier_id: id
-                                }  
+                                }
                             })}
                         />
                     </>
                 )
-                    
+
                 }
             </>
             <div className="right__navbar">
@@ -228,9 +233,9 @@ const CreateOrder = () => {
                                                 ...prev,
                                                 supplier_id: id
                                             }
-                                        })} 
-                                        
-                                        setCreateSupplier={handleClickCreateSupplier}/>
+                                        })}
+
+                                            setCreateSupplier={handleClickCreateSupplier} />
                                     }
                                 </div>
                             </div>
@@ -299,18 +304,6 @@ const CreateOrder = () => {
                                 <div className="paper-header">
                                     <div className="box-header">
                                         <p>Thông tin sản phẩm</p>
-                                        <div className="btn-toolbar">
-                                            <div className="checkbox__container">
-                                                <div className="checkbox__wrapper">
-                                                    <input type="checkbox" name="" id="checkBoxInput" className='checkbox__input' />
-                                                    <div className="btn-checkbox"></div>
-                                                </div>
-                                                <label htmlFor='checkBoxInput' className='checkbox__label'>Tách dòng</label>
-                                            </div>
-                                            <button className="btn-icon">
-                                                <FontAwesomeIcon icon={faGear} />
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
                                 <div className="paper-content">
@@ -322,7 +315,20 @@ const CreateOrder = () => {
                                                         <div className="search-icon">
                                                             <FontAwesomeIcon icon={faMagnifyingGlass} />
                                                         </div>
-                                                        <input placeholder='Tìm theo tên, mã SKU, hoặc quét mã Barcode...(F3)' type="text" name="search" id="" autoComplete='on' />
+                                                        <input
+                                                            placeholder='Tìm theo tên hoặc mã sản phẩm'
+                                                            type="text"
+                                                            name="search"
+                                                            id=""
+                                                            autoComplete='on'
+                                                            onChange={(e) => setDataPageProduct(prev => {
+                                                                return {
+                                                                    ...prev,
+                                                                    keyword: e.target.value
+                                                                }
+                                                            })
+                                                            }
+                                                        />
                                                         <fieldset className='input-field' />
                                                     </div>
                                                     {
@@ -352,28 +358,18 @@ const CreateOrder = () => {
                                                             closePopup={() => setIsProductSelectPopup(false)}
                                                         />
                                                     }
-                                                    <button className="btn btn-base">
-                                                        <span className="btn__label">
-                                                            <p>Chọn nhanh</p>
-                                                        </span>
-                                                    </button>
-                                                </div>
-                                                <div className="btn-group group-filter-btns">
-                                                    <button className="btn btn-base btn-filter">
-                                                        <span className="btn__label">
-                                                            Giá nhập
-                                                            <span className="btn__icon">
-                                                                <FontAwesomeIcon icon={faCaretDown} />
-                                                            </span>
-                                                        </span>
-                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="box-table">
-                                    <ProductsTable productsList={listProductDetail} colsToRender={colsToRender} setProductList={setListProductDetail} />
+                                    <ProductsTable
+                                        productsList={listProductDetail}
+                                        colsToRender={colsToRender}
+                                        setProductList={setListProductDetail}
+                                        setIsProductSelectPopup={() => setIsProductSelectPopup(true)}
+                                    />
                                     <div className="box-total">
                                         <div className="box-total__container">
                                             <div className="box-subinfo">
