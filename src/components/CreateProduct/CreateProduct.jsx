@@ -1076,7 +1076,6 @@ const CreateProduct = () => {
                                                     />
                                                     <span className="switch-bar" ></span>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>

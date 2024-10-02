@@ -722,6 +722,69 @@ input:focus-within ~ .input-field {
     }
 }
 
+
+.box-price {
+
+    .grid-container {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: 
+            'retail wholesale'
+            'hr hr'
+            'cost .';
+        gap: 20px;
+        box-sizing: border-box;
+
+        .box-retail-price {
+            grid-area: retail;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .box-wholesale-price {
+            grid-area: wholesale;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        hr {
+            grid-area: hr;
+            margin: 0;
+            height: 0;
+        }
+
+        .box-cost-price {
+            grid-area: cost;
+            margin: 0;
+            box-sizing: border-box;
+        }
+    }
+}
+
+
+.switch-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    p {
+        font-size: $font-size-base;
+        font-family: var(--bs-font-sans-serif);
+        font-weight: $font-weight-base;
+        line-height: 20px;
+        margin: 0;
+    }
+}
+
+.box-paper {
+    .switch-item {
+        gap: 20px;
+        justify-content: flex-start;
+    }
+}
+
 .right {
     display: flex;
     flex-direction: column;
@@ -1367,21 +1430,6 @@ input:focus-within ~ .input-field {
                     }
                 }
 
-                .switch-item {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    width: 100%;
-
-                    p {
-                        font-size: $font-size-base;
-                        font-family: var(--bs-font-sans-serif);
-                        font-weight: $font-weight-base;
-                        line-height: 20px;
-                        margin: 0;
-                    }
-                }
-
                 textarea {
                     color: $default;
                     width: 100%;
@@ -1575,45 +1623,6 @@ input:focus-within ~ .input-field {
                                     opacity: 1;
                                 }
                             }
-                        }
-                    }
-                }
-
-                .box-price {
-
-                    .grid-container {
-                        width: 100%;
-                        display: grid;
-                        grid-template-columns: 1fr 1fr;
-                        grid-template-areas: 
-                            'retail wholesale'
-                            'hr hr'
-                            'cost .';
-                        gap: 20px;
-                        box-sizing: border-box;
-
-                        .box-retail-price {
-                            grid-area: retail;
-                            margin: 0;
-                            box-sizing: border-box;
-                        }
-
-                        .box-wholesale-price {
-                            grid-area: wholesale;
-                            margin: 0;
-                            box-sizing: border-box;
-                        }
-
-                        hr {
-                            grid-area: hr;
-                            margin: 0;
-                            height: 0;
-                        }
-
-                        .box-cost-price {
-                            grid-area: cost;
-                            margin: 0;
-                            box-sizing: border-box;
                         }
                     }
                 }
@@ -2315,114 +2324,114 @@ input:focus-within ~ .input-field {
             &::-webkit-scrollbar-track {
                 background-color: transparent; /* Nền trong suốt hoặc có thể đổi màu theo ý bạn */
             }
+        }
 
-            .info-item {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                width: 100%;
+        .info-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
 
-                .info-title {
-                    box-sizing: border-box;
-                    font-family: $font-family-base;
-                    font-weight: $font-weight-base;
-                    font-size: $font-size-base;
-                    line-height: 20px;
+            .info-title {
+                box-sizing: border-box;
+                font-family: $font-family-base;
+                font-weight: $font-weight-base;
+                font-size: $font-size-base;
+                line-height: 20px;
+                margin: 0px;
+                color: $default;
+                text-align: inherit;
+            }
+
+            .info-field {
+                width: 65%;
+
+                .btn-dropdown {
+                    width: 100%;
                     margin: 0px;
-                    color: $default;
-                    text-align: inherit;
-                }
-
-                .info-field {
-                    width: 65%;
-
-                    .btn-dropdown {
-                        width: 100%;
-                        margin: 0px;
-                        display: block;
-                        padding: 8px 36px 8px 12px;
-                        height: 40px;
-                        border: 1px solid rgb(211, 213, 215);
-                        border-radius: 3px;
-                        text-align: left;
-                        white-space: nowrap;
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                        position: relative;
-                        cursor: pointer;
-                        background: transparent;
-                        
-                        > p {
-                            font-family: $font-family-base;
-                            font-weight: $font-weight-base;
-                            font-size: $font-size-base;
-                            line-height: 20px;
-                            box-sizing: border-box;
-                            margin: 0px;
-                            color: $default;
-                            text-align: inherit;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            white-space: nowrap;
-                        }
-
-                        > svg {
-                            position: absolute;
-                            top: 50%;
-                            transform: translate(0px, -50%);
-                            color: rgb(163, 168, 175);
-                            right: 20px;
-                        }
-                    }
-
-                    .box-input {
-                        position: relative;
-                        height: 40px;
-
-                        .text-field {
-                            background: transparent;
-                            box-sizing: border-box;
-                            padding: 10px 40px 10px 12px;
-                            width: 100%;
-                            height: 100%;
-                            border: none;
-                            border-radius: 3px;
-                            font-family: $font-family-base;
-                            font-weight: $font-weight-base;
-                            font-size: $font-size-base;
-                            line-height: 20px;
-                            margin: 0px;
-                            color: $default;
-                        }
-
-                        .calendar-icon {
-                            transform: translate(0px, -50%);
-                            position: absolute;
-                            top: 50%;
-                            right: 12px;
-                            color: rgb(163, 168, 175);
-                            display: flex;
-                            -webkit-box-align: center;
-                            align-items: center;
-                            -webkit-box-pack: center;
-                            justify-content: center;
-                        }
-                    }
-                }
-                
-                .info-value {
-                    font-size: $font-size-base;
-                    font-family: var(--bs-font-sans-serif);
-                    font-weight: $font-weight-base;
-                    line-height: 20px;
-                    overflow: hidden;
+                    display: block;
+                    padding: 8px 36px 8px 12px;
+                    height: 40px;
+                    border: 1px solid rgb(211, 213, 215);
+                    border-radius: 3px;
+                    text-align: left;
                     white-space: nowrap;
                     text-overflow: ellipsis;
-                    margin: 0;
-                    width: 65%;
+                    overflow: hidden;
+                    position: relative;
+                    cursor: pointer;
+                    background: transparent;
+                    
+                    > p {
+                        font-family: $font-family-base;
+                        font-weight: $font-weight-base;
+                        font-size: $font-size-base;
+                        line-height: 20px;
+                        box-sizing: border-box;
+                        margin: 0px;
+                        color: $default;
+                        text-align: inherit;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+
+                    > svg {
+                        position: absolute;
+                        top: 50%;
+                        transform: translate(0px, -50%);
+                        color: rgb(163, 168, 175);
+                        right: 20px;
+                    }
                 }
-            } 
-        }
+
+                .box-input {
+                    position: relative;
+                    height: 40px;
+
+                    .text-field {
+                        background: transparent;
+                        box-sizing: border-box;
+                        padding: 10px 40px 10px 12px;
+                        width: 100%;
+                        height: 100%;
+                        border: none;
+                        border-radius: 3px;
+                        font-family: $font-family-base;
+                        font-weight: $font-weight-base;
+                        font-size: $font-size-base;
+                        line-height: 20px;
+                        margin: 0px;
+                        color: $default;
+                    }
+
+                    .calendar-icon {
+                        transform: translate(0px, -50%);
+                        position: absolute;
+                        top: 50%;
+                        right: 12px;
+                        color: rgb(163, 168, 175);
+                        display: flex;
+                        -webkit-box-align: center;
+                        align-items: center;
+                        -webkit-box-pack: center;
+                        justify-content: center;
+                    }
+                }
+            }
+            
+            .info-value {
+                font-size: $font-size-base;
+                font-family: var(--bs-font-sans-serif);
+                font-weight: $font-weight-base;
+                line-height: 20px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                margin: 0;
+                width: 65%;
+            }
+        } 
 
         .right__table {
             box-shadow: none;
@@ -2490,6 +2499,27 @@ input:focus-within ~ .input-field {
                         right: 12px;
                     }
                 }
+            }
+        }
+
+        .box-image {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .image-item {
+                margin: 0px;
+                width: 150px;
+                height: 100px;
+                cursor: pointer;
+                display: flex;
+                overflow: hidden;
+                position: relative;
+                align-items: center;
+                border-radius: 3px;
+                justify-content: center;
             }
         }
     }
