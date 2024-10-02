@@ -112,12 +112,10 @@ const OrderDetails = () => {
                         <button className="btn btn-outline-primary">
                             <span className="btn__title">Thoát</span>
                         </button>
-                        <button className="btn btn-primary">
-                            <Link to={`/admin/order_suppliers/ORD/${orderId}/edit`} className='box-id'>
-                                <span className="btn__title">
-                                    Sửa đơn
-                                </span>
-                            </Link>
+                        <button className="btn btn-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}/edit`)}>
+                            <span className="btn__title">
+                                Sửa đơn
+                            </span>
                         </button>
                     </div>
                 </div>

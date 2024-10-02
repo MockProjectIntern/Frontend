@@ -135,24 +135,6 @@ const GRNDetails = () => {
                                     <span>{status[dataDetail.status]}</span>
                                 </div>
                             </div>
-                            <div className="btn-toolbar">
-                                <button className="btn btn-base btn-text">
-                                    <span className="btn__label">
-                                        <span className="btn__icon">
-                                            <FontAwesomeIcon icon={faPrint} />
-                                        </span>
-                                        In đơn
-                                    </span>
-                                </button>
-                                <button className="btn btn-base btn-text">
-                                    <span className="btn__label">
-                                        <span className="btn__icon">
-                                            <FontAwesomeIcon icon={faCopy} />
-                                        </span>
-                                        Sao chép
-                                    </span>
-                                </button>
-                            </div>
                         </div>
                         <div className={s.boxTimeline}>
                             <div className={s.boxTimelineWrapper}>
@@ -353,14 +335,6 @@ const GRNDetails = () => {
                                                     <button onClick={() => setTab("products")} className={cn("btn-scroller", { "active": tab === "products" })}>Thông tin sản phẩm</button>
                                                     <button onClick={() => setTab("return")} className={cn("btn-scroller", { "active": tab === "return" })}>Thông tin hoàn trả</button>
                                                 </div>
-                                            </div>
-                                        }
-                                        {
-                                            tab === "products" &&
-                                            <div className="btn-toolbar">
-                                                <button className="btn-icon">
-                                                    <FontAwesomeIcon icon={faGear} />
-                                                </button>
                                             </div>
                                         }
                                     </div>

@@ -35,14 +35,7 @@ const TransactionItem = ({ payment }) => {
                             <p>Phương thức thanh toán</p>
                             <p>
                                 :&nbsp;
-                                {payment?.method}
-                            </p>
-                        </div>
-                        <div className={s.infoItem}>
-                            <p>Tham chiếu</p>
-                            <p>
-                                :&nbsp;
-                                {payment?.reference}
+                                {payment?.method.toLowerCase() === "cash" ? "Tiền mặt" : "Chuyển khoản"}
                             </p>
                         </div>
                     </div>

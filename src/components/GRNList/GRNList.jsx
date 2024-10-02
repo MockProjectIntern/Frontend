@@ -22,6 +22,7 @@ import { getDataExport, getGRNs } from '../../service/GRNApi.jsx'
 import { formatDateTime } from '../../utils/DateUtils.jsx'
 import { exportExcel } from '../../config/ExportExcel.jsx'
 import SelectDatePopup from '../SelectDatePopup.jsx'
+import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 
 const grnsQuantity = 4;
 
@@ -81,10 +82,35 @@ const GRNList = () => {
         setTotalItems(responseAPI.data.total_items);
     }
 
-    useEffect(() => {
-        console.log(filterBody)
+    const statusTab = [
+        { key: "all", label: "Tất cả đơn đặt hàng", statuses: null },
+        { key: "ordering", label: "Đang đặt hàng", statuses: ["ORDERING"] },
+        { key: "trading", label: "Đang giao dịch", statuses: ["TRADING"] },
+        { key: "completed", label: "Hoàn thành", statuses: ["COMPLETED"] }
+    ];
+    const [tabActive, setTabActive] = useState("all");
+    const handleTabClick = (key, statuses) => {
+        setTabActive(key);
+        setFilterBody(prev => ({
+            ...prev,
+            statuses: statuses
+        }));
+    };
+
+    useDebouncedEffect(() => {
         fetchGrnList();
-    }, [filterBody])
+    }, 300, [page, limit, filterBody])
+
+    useEffect(() => {
+        setFilterBody(prev => {
+            return {
+                ...prev,
+                statuses: statusListFilter,
+                start_created_at: createdMin,
+                end_created_at: createdMax
+            }
+        })
+    }, [statusListFilter, createdMin, createdMax])
 
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_grns');
@@ -183,19 +209,6 @@ const GRNList = () => {
                                 Xuất file
                             </span>
                         </button>
-                        <button className="btn btn-base btn-text">
-                            <span className="btn__label">
-                                <span className="btn__icon">
-                                    {importIcon}
-                                </span>
-                                Nhập file
-                            </span>
-                        </button>
-                        <button className="btn btn-base btn-text">
-                            <span className="btn__label">
-                                Quản lý hoàn trả NCC
-                            </span>
-                        </button>
                     </div>
                     <div className="btn-toolbar">
                         <button className="btn btn-primary" onClick={() => { navigate("/admin/grns/create") }}>
@@ -210,9 +223,15 @@ const GRNList = () => {
                     <div className="right__table-scroller">
                         <div className="box-scroller">
                             <div className="group-scroller-btns">
-                                <button className="btn-scroller active">Tất cả đơn nhập hàng</button>
-                                <button className="btn-scroller">Đang giao dịch</button>
-                                <button className="btn-scroller">Hoàn thành</button>
+                                {statusTab.map(({ key, label, statuses }) => (
+                                    <button
+                                        key={key}
+                                        className={`btn-scroller ${tabActive === key ? "active" : ""}`}
+                                        onClick={() => handleTabClick(key, statuses)}
+                                    >
+                                        {label}
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -249,11 +268,13 @@ const GRNList = () => {
                                         </span>
                                     </span>
                                 </button>
-                                {isOpenStatusPopup && <StatusFilter
-                                    statusBtnRef={statusBtnRef}
-                                    closePopup={() => setIsOpenStatusPopup(false)} type={"GRN"}
-                                    setStatusList={setStatusListFilter}
-                                />}
+                                {isOpenStatusPopup
+                                    && <StatusFilter
+                                        statusBtnRef={statusBtnRef}
+                                        closePopup={() => setIsOpenStatusPopup(false)} type={"GRN"}
+                                        setStatusList={setStatusListFilter}
+                                    />
+                                }
                                 <SelectDatePopup
                                     setDataFilters={(data) => setFilterBody(prev => {
                                         return {
@@ -471,7 +492,7 @@ const GRNList = () => {
                                 </button>
                             </div>
                             <p>kết quả</p>
-                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + grnList.length} trên tổng {grnsQuantity}</p>
+                            <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + grnList.length} trên tổng {totalItems}</p>
                             <button
                                 className={cn('btn-icon', 'btn-page', { 'inactive': page === 1 })}
                                 onClick={handlePrevPage}

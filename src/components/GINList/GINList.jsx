@@ -28,6 +28,7 @@ import GINStatusFilter from "./FiltersPopup/GINStatusFilter.jsx";
 import CreatedAtFilter from "./FiltersPopup/CreatedAtFilter.jsx";
 import { exportExcel } from "../../config/ExportExcel.jsx";
 import { formatDate, formatDateTime } from "../../utils/DateUtils.jsx";
+import { useDebouncedEffect } from "../../utils/CommonUtils.jsx";
 
 const GINList = () => {
 	const [page, setPage] = useState(1);
@@ -50,31 +51,10 @@ const GINList = () => {
 		user_inspection_ids: null,
 	});
 
-	const status = {
-		CHECKING: "Đang kiểm kho",
-		BALANCED: "Đã cân bằng",
-		DELETED: "Đã xóa"
-	}
-
 	const [isOpenStatusPopup, setIsOpenStatusPopup] = useState(false);
 	const [isOpenCreatedAtPopup, setIsOpenCreatedAtPopup] = useState(false);
 
 	const [activeTab, setActiveTab] = useState("ALL");
-
-	const [keywordInput, setKeywordInput] = useState(""); // Trạng thái cho input keyword
-
-	const handleKeywordChange = (e) => {
-		if (e.target.value.trim() === "") {
-			handeChangeDatafilter({ keyword: null });
-		}
-		setKeywordInput(e.target.value);
-	};
-
-	const handleKeywordSearch = (e) => {
-		if (e.key === "Enter") {
-			handeChangeDatafilter({ keyword: keywordInput });
-		}
-	};
 
 	const handleChangeTab = (tab) => {
 		setActiveTab(tab);
@@ -121,26 +101,21 @@ const GINList = () => {
 	}, [colsToRender]);
 
 	const fetchGinList = async () => {
-		try {
-			setGinList([]); // Clear the list before fetching new data
-			const res = await getGINs(
-				page,
-				limit,
-				"filter_gins",
-				Cookies.get("filter_gins"),
-				dataFilters
-			);
-			setGinList(res.data.data);
-			setPageQuantity(Math.ceil(res.data.total_items / limit));
-			setTotalItems(res.data.total_items);
-		} catch (error) {
-			console.error(error);
-		}
+		const res = await getGINs(
+			page,
+			limit,
+			"filter_gins",
+			Cookies.get("filter_gins"),
+			dataFilters
+		);
+		setGinList(res.data.data);
+		setPageQuantity(res.data.total_page);
+		setTotalItems(res.data.total_items);
 	};
 
-	useEffect(() => {
+	useDebouncedEffect(() => {
 		fetchGinList();
-	}, [page, limit, dataFilters]);
+	}, 300, [page, limit, dataFilters]);
 
 	const headersRef = useRef(null);
 	const contentRef = useRef(null);
@@ -209,12 +184,6 @@ const GINList = () => {
 								Xuất file
 							</span>
 						</button>
-						<button className="btn btn-base btn-text">
-							<span className="btn__label">
-								<span className="btn__icon">{importIcon}</span>
-								Nhập file
-							</span>
-						</button>
 					</div>
 					<div className="btn-toolbar">
 						<button
@@ -267,9 +236,13 @@ const GINList = () => {
 										<FontAwesomeIcon icon={faMagnifyingGlass} />
 									</div>
 									<input
-										value={keywordInput}
-										onChange={handleKeywordChange}
-										onKeyDown={handleKeywordSearch}
+										value={dataFilters.keyword || ""}
+										onChange={(e) => {
+											setPage(1)
+											setdataFilters(prev => {
+												return { ...prev, keyword: e.target.value }
+											})
+										}}
 										placeholder="Tìm mã đơn nhập, đơn đặt hàng, tên, SĐT, mã NCC"
 										type="text"
 										name="keyword"
@@ -287,7 +260,7 @@ const GINList = () => {
 								>
 									<span className="btn__label">
 										Trạng thái
-										<span className="btn__icon"> 
+										<span className="btn__icon">
 											<FontAwesomeIcon icon={faCaretDown} />
 										</span>
 									</span>
@@ -593,7 +566,10 @@ const GINList = () => {
 										btnRef={limitBtnRef}
 										closePopup={() => setIsOpenLimitPopup(false)}
 										limit={limit}
-										handleChangeLimit={(limit) => setLimit(limit)}
+										handleChangeLimit={(limit) => {
+											setPage(1);
+											setLimit(limit)
+										}}
 									/>
 								)}
 							</div>

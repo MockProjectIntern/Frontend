@@ -7,6 +7,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { faAddressCard } from '@fortawesome/free-regular-svg-icons'
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup'
 import { getAllSupplierByName } from '../../service/SuppliersAPI'
+import { useDebouncedEffect } from '../../utils/CommonUtils'
 
 const SearchSupplier = ({setSelectItem, setCreateSupplier}) => {
     const [isSupplierPopup, setIsSupplierPopup] = useState(false);
@@ -35,7 +36,11 @@ const SearchSupplier = ({setSelectItem, setCreateSupplier}) => {
         if (isSupplierPopup) {
             fetchSupplier();
         }
-    }, [isSupplierPopup, dataFilter.keyword]);
+    }, [isSupplierPopup]);
+
+    useDebouncedEffect(() => {
+        fetchSupplier();
+    }, 300, [dataFilter.keyword]);
 
     return (
         <div className={s.container}>

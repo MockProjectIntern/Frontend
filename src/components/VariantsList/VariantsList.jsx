@@ -249,14 +249,6 @@ const VariantList = () => {
                                 Xuất file
                             </span>
                         </button>
-                        <button className="btn btn-base btn-text">
-                            <span className="btn__label">
-                                <span className="btn__icon">
-                                    {importIcon}
-                                </span>
-                                Nhập file
-                            </span>
-                        </button>
                         <button className="btn btn-base btn-text" onClick={() => navigate('/admin/categories')}>
                             <span className="btn__label">
                                 Loại sản phẩm

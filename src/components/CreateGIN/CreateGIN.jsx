@@ -283,15 +283,6 @@ const CreateGIN = () => {
 												Lệch
 											</button>
 										</div>
-
-										<div className="btn-toolbar">
-											<button className="btn btn-base btn-text">
-												<span className="btn__label">
-													<span className="btn__icon">{importIcon}</span>
-													Nhập file
-												</span>
-											</button>
-										</div>
 									</div>
 								</div>
 								<div className="paper-content">

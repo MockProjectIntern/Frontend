@@ -17,6 +17,7 @@ import { quickGetProductList } from '../../service/ProductAPI.jsx'
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup.jsx'
 import { createNewGRN } from '../../service/GRNApi.jsx'
 import { getOrderById } from '../../service/OrderAPI.jsx'
+import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 
 const CreateGRN = () => {
     const navigate = useNavigate();
@@ -38,7 +39,7 @@ const CreateGRN = () => {
                 supplier_id: responseAPI.data.supplier_id,
             }
         })
-        setListProductDetail(responseAPI.data.order_details.map(detail => {            
+        setListProductDetail(responseAPI.data.order_details.map(detail => {
             return {
                 id: detail.id,
                 name: detail.name,
@@ -120,6 +121,10 @@ const CreateGRN = () => {
             fetchProductList();
         }
     }, [isProductSelectPopup])
+
+    useDebouncedEffect(() => {
+        fetchProductList();
+    }, 500, [dataPageProduct.keyword])
 
     const [listProductDetail, setListProductDetail] = useState([]);
 
@@ -297,8 +302,7 @@ const CreateGRN = () => {
                                                                     ...prev,
                                                                     keyword: e.target.value
                                                                 }
-                                                            })
-                                                            }
+                                                            })}
                                                         />
                                                         <fieldset className='input-field' />
                                                     </div>

@@ -134,14 +134,6 @@ const SupplierList = () => {
                                 Xuất file
                             </span>
                         </button>
-                        <button className="btn btn-base btn-text">
-                            <span className="btn__label">
-                                <span className="btn__icon">
-                                    {importIcon}
-                                </span>
-                                Nhập file
-                            </span>
-                        </button>
                         <button className="btn btn-base btn-text" onClick={() => navigate("/admin/supplier_groups")}>
                             <span className="btn__label">
                                 Nhóm nhà cung cấp

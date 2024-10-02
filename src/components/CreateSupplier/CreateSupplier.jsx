@@ -204,26 +204,6 @@ const CreateSupplier = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="box-product-unit">
-                                            <div className="form-item">
-                                                <label htmlFor="supplier_group_id" className="form-label">
-                                                    Nhóm nhà cung cấp
-                                                </label>
-                                                <div className="form-textfield">
-                                                    <input
-                                                        type="text"
-                                                        name="supplier_group_id"
-                                                        id="supplier_group_id"
-                                                        onChange={e => setDataBody(prevState => {
-                                                            return {
-                                                                ...prevState,
-                                                                supplier_group_id: e.target.value
-                                                            }
-                                                        })} />
-                                                    <fieldset className="input-field"></fieldset>
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div className="box-product-phone">
                                             <div className="form-item">
                                                 <label htmlFor="phone" className="form-label">

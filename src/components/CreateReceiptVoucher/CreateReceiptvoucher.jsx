@@ -14,7 +14,7 @@ const CreateReceiptVoucher = () => {
     const [keywordRecipient, setKeywordRecipient] = useState("");
 
     const [dataPageRecipient, setDataPageRecipient] = useState({
-        currentPage: 1,
+        currentPage: 1, 
         totalPage: 1,
         currentSize: 10,
     });

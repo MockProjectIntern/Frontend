@@ -114,23 +114,20 @@ const OrderDetailsUpdate = () => {
     const navigate = useNavigate();
 
     const handleSave = () => {
-        console.log("check save!!", productsList)
-        console.log("data", data)
         const filteredProductsList = productsList.map(({ id, ordered_quantity, price, discount, tax }) => ({
             product_id: id, quantity: ordered_quantity, price, discount, tax
         }));
         const test = {
-            "supplier_id": data.supplier_id,
-            "expected_at": null,
-            "tags": null,
-            "note": null,
-            "discount": 0,
+            supplier_id: data.supplier_id,
+            expected_at: null,
+            tags: null,
+            note: null,
+            discount: 0,
             products: filteredProductsList
         }
-        console.log(test)
         const res = putUpdateOrder(orderId, test);
         if (res) {
-            console.log("check :", res)
+            alert("Cập nhật đơn đặt hàng thành công");
             navigate(`/admin/order_suppliers/ORD/${orderId}`);
         }
     }
@@ -198,7 +195,7 @@ const OrderDetailsUpdate = () => {
                                     <p>Thông tin nhà cung cấp</p>
                                 </div>
                                 <div className="paper-content">
-                                    {order?.supplier_id && <SupplierInfo supplier={order.supplier_id} />}
+                                    {order.supplier_id && <SupplierInfo supplierId={order.supplier_id} />}
                                 </div>
                             </div>
                         </div>
@@ -228,7 +225,10 @@ const OrderDetailsUpdate = () => {
                                         <p>Thông tin nhập hàng</p>
                                         {
                                             order.status !== "COMPLETED" &&
-                                            <button className="btn btn-outline-primary">
+                                            <button
+                                                className="btn btn-outline-primary"
+                                                onClick={() => navigate("/admin/grns/create", { state: { orderId: orderId } })}
+                                            >
                                                 <span className="btn__label">Tạo đơn nhập hàng</span>
                                             </button>
                                         }
@@ -343,7 +343,13 @@ const OrderDetailsUpdate = () => {
                                     </div>
                                 </div>
                                 <div className="box-table">
-                                    <ProductsTable productsList={productsList} colsToRender={colsToRender} isView={isView} setProductList={setProductsList} />
+                                    <ProductsTable
+                                        productsList={productsList}
+                                        colsToRender={colsToRender}
+                                        isView={isView}
+                                        isDelete={order.status === "PENDING"}
+                                        setProductList={setProductsList}
+                                    />
                                     <div className="box-total">
                                         <div className="box-total__container">
                                             <div className="box-subinfo">

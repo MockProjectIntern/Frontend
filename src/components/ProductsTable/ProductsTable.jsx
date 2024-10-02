@@ -17,12 +17,12 @@ import boxOpenIcon from '../../assets/icons/BoxOpenIcon'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCircleMinus, faCirclePlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 
-const ProductsTable = ({ productsList, setProductList, colsToRender, isView, setIsProductSelectPopup }) => {
+const ProductsTable = ({ productsList, setProductList, colsToRender, isView, isDelete, setIsProductSelectPopup }) => {
     const handleChangeData = (index, key, value) => {
         const newProductsList = [...productsList];
         newProductsList[index][key] = value;
         setProductList(newProductsList);
-    }
+    }    
 
     const currentUrl = window.location.href;
     const isEditUrl = currentUrl.includes("/edit");
@@ -316,7 +316,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView, set
                                     return null;
                                 })}
                                 {
-                                    !isView &&
+                                    !isView && isDelete === undefined &&
                                     <td className={cn(s.tableCell, s.tableCellBody, "text-center")}>
                                         <button
                                             className="btn-icon"

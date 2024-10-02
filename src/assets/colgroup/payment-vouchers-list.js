@@ -1,7 +1,7 @@
 const paymentVouchersListColgroup = {
     id: {
         name: "Mã phiếu",
-        width: "100px",
+        width: "0px",
         align: "text-start"
     },
     sub_id: {

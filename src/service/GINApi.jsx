@@ -11,15 +11,14 @@ export const createNewGIN = async (data) => {
 }
 
 
-export const getGINs = async (page, size, filterName, filterJson,data) => {
+export const getGINs = async (page, size, filterName, filterJson, data) => {
     try {
-   
-        const response = await axiosInstance.post(`/gins/filter.json?page=${page}&size=${size}`,data,{
-        headers : {
-            [filterName]: filterJson, // Thiết lập giá trị của filterName vào header
+        const response = await axiosInstance.post(`/gins/filter.json?page=${page}&size=${size}`, data, {
+            headers: {
+                [filterName]: filterJson, 
+            }
         }
-    }
-    );
+        );
         return response.data;
     } catch (error) {
         console.error(error.message);
@@ -37,7 +36,7 @@ export const getGINDetail = async (id) => {
     }
 }
 
-export const updateGIN = async (data,id) => {
+export const updateGIN = async (data, id) => {
     try {
         const response = await axiosInstance.put(`/gins/update.json/${id}`, data);
         return response.data;
