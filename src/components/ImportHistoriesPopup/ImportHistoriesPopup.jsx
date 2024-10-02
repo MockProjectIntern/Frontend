@@ -8,9 +8,7 @@ import s from './ImportHistoriesPopup.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 
-const ImportHistoriesPopup = ({ histories, closePopup }) => {
-    console.log(histories);
-    
+const ImportHistoriesPopup = ({ histories, closePopup }) => {    
     return (
         <div className={s.container}>
             <div className="overlay"></div>

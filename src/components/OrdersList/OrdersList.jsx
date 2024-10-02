@@ -21,6 +21,7 @@ import StatusFilter from '../GRNList/FiltersPopup/StatusFilter.jsx'
 import { getAllOrders, getDataExport } from '../../service/OrderAPI.jsx'
 import { formatDateTime } from '../../utils/DateUtils.jsx'
 import { exportExcel } from '../../config/ExportExcel.jsx'
+import SelectDatePopup from '../SelectDatePopup.jsx'
 
 const ordersQuantity = 4;
 
@@ -33,7 +34,6 @@ const OrdersList = () => {
     const navigate = useNavigate()
 
     const [isOpenStatusPopup, setIsOpenStatusPopup] = useState(false);
-    const [statusListFilter, setStatusListFilter] = useState([]);
 
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
@@ -96,6 +96,23 @@ const OrdersList = () => {
         CANCELLED: "Đã hủy"
     }
 
+    const statusTab = [
+        { key: "all", label: "Tất cả đơn đặt hàng", statuses: null },
+        { key: "pending", label: "Chưa nhập", statuses: ["PENDING"] },
+        { key: "partial", label: "Nhập một phần", statuses: ["PARTIAL"] },
+        { key: "completed", label: "Hoàn thành", statuses: ["COMPLETED"] }
+    ];
+
+    const [tabActive, setTabActive] = useState("all");
+
+    const handleTabClick = (key, statuses) => {
+        setTabActive(key);
+        setDataFilter(prev => ({
+            ...prev,
+            statuses: statuses
+        }));
+    };
+
     const [ordersList, setOrdersList] = useState([]);
     const [dataFilter, setDataFilter] = useState({
         keyword: null,
@@ -128,7 +145,7 @@ const OrdersList = () => {
 
     useEffect(() => {
         fetchOrderList();
-    }, [])
+    }, [dataFilter, dataPage.page, dataPage.size, colsToRender])
 
     const handleExportData = async () => {
         const response = await getDataExport("DEFAULT", dataFilter);
@@ -147,10 +164,7 @@ const OrdersList = () => {
         })
 
         exportExcel(dataExport, "Danh sách đơn đặt hàng nhập");
-
     }
-
-
 
     return (
         <>
@@ -188,10 +202,15 @@ const OrdersList = () => {
                     <div className="right__table-scroller">
                         <div className="box-scroller">
                             <div className="group-scroller-btns">
-                                <button className="btn-scroller active">Tất cả đơn đặt hàng</button>
-                                <button className="btn-scroller">Chưa nhập</button>
-                                <button className="btn-scroller">Nhập một phần</button>
-                                <button className="btn-scroller">Hoàn thành</button>
+                                {statusTab.map(({ key, label, statuses }) => (
+                                    <button
+                                        key={key}
+                                        className={`btn-scroller ${tabActive === key ? "active" : ""}`}
+                                        onClick={() => handleTabClick(key, statuses)}
+                                    >
+                                        {label}
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -202,8 +221,20 @@ const OrdersList = () => {
                                     <div className="search-icon">
                                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                                     </div>
-                                    <input placeholder='Tìm mã đơn nhập, đơn đặt hàng, tên, SĐT, mã NCC' type="text" name="search" id="" autoComplete='on' />
-                                    <fieldset className='input-field' />
+                                    <input
+                                        placeholder='Tìm theo mã đơn đặt hàng'
+                                        type="text"
+                                        name="search"
+                                        id=""
+                                        autoComplete='on'
+                                        onChange={(e) => setDataFilter(prev => {
+                                            return {
+                                                ...prev,
+                                                keyword: e.target.value
+                                            }})
+                                        }
+                                    />
+                                            < fieldset className = 'input-field' />
                                 </div>
                             </div>
                             <div className="btn-group group-filter-btns">
@@ -215,15 +246,27 @@ const OrdersList = () => {
                                         </span>
                                     </span>
                                 </button>
-                                {isOpenStatusPopup && <StatusFilter statusBtnRef={orderStatusRef} closePopup={() => setIsOpenStatusPopup(false)} type={"Order"} setStatusList={setStatusListFilter} />}
-                                <button className="btn btn-base btn-filter">
-                                    <span className="btn__label">
-                                        Ngày tạo
-                                        <span className="btn__icon">
-                                            <FontAwesomeIcon icon={faCaretDown} />
-                                        </span>
-                                    </span>
-                                </button>
+                                {isOpenStatusPopup
+                                    && <StatusFilter
+                                        statusBtnRef={orderStatusRef}
+                                        closePopup={() => setIsOpenStatusPopup(false)}
+                                        type={"Order"}
+                                        setStatusList={(data) => setDataFilter(prev => {
+                                            return {
+                                                ...prev,
+                                                statuses: data
+                                            }
+                                        })}
+                                    />}
+                                <SelectDatePopup
+                                    setDataFilters={(data) => setDataFilter(prev => {
+                                        return {
+                                            ...prev,
+                                            start_created_at: data.date_from,
+                                            end_created_at: data.date_to
+                                        };
+                                    })}
+                                />
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
                                         Sản phẩm

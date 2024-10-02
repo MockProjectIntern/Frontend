@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom'
 import { getVariantList } from '../../service/VariantAPI.jsx'
 import { getListCategory } from '../../service/CategoryAPI.jsx'
 import { getListBrand } from '../../service/BrandAPI.jsx'
+import SelectDatePopup from '../SelectDatePopup.jsx'
 
 const VariantList = () => {
 
@@ -84,7 +85,7 @@ const VariantList = () => {
             created_date_to: null,
             brand_ids: null,
             statues: null
-        } 
+        }
     );
 
     // useState quan li filter loai san pham
@@ -121,47 +122,29 @@ const VariantList = () => {
         }));
     };
 
-    const handleClickButtonFilterCategory = () =>{
+    const handleClickButtonFilterCategory = () => {
         fetchVariantList();
         setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup)
     }
 
     const fetchVariantList = async () => {
-        try {
-            const variants = await getVariantList(page, limit,"filter_products_manage", Cookies.get("filter_products_manage"), dataBody)
+        const variants = await getVariantList(page, limit, "filter_products_manage", Cookies.get("filter_products_manage"), dataBody)
 
-            if (variants.status_code === 200) {
-                setVariantsList(variants.data.data);
-                setVariansQuantity(variants.data.total_items);
-                setPageQuantity(variants.data.total_page)
-            } else {
-                console.log("status code:", variants.status_code);
-            }
-        } catch (err) {
-            console.log(err);
-            throw err;
-        }
+        setVariantsList(variants.data.data);
+        setVariansQuantity(variants.data.total_items);
+        setPageQuantity(variants.data.total_page)
     }
 
     const fetchCategoryList = async () => {
-        try {
-            const categories = await getListCategory(currentPageFilterCategory,10,dataFilterCategory )
-            if(categories.status_code === 200){
-                setListCategories(categories.data.data);
-                setTotalPageFilterCategory(categories.data.total_page)
-            }
-            else {
-                console.log("status code:", categories.status_code);
-            }
-        } catch (err) {
-            console.log(err);
-            throw err;
-        }
+        const categories = await getListCategory(currentPageFilterCategory, 10, dataFilterCategory)
+        setListCategories(categories.data.data);
+        setTotalPageFilterCategory(categories.data.total_page)
+
     }
 
-    const fetchMoreCategoryList = async() =>{
-        if(currentPageFilterCategory < totalPageFilterCategory){
-            const categories = await getListCategory(currentPageFilterCategory + 1,10,dataFilterCategory )
+    const fetchMoreCategoryList = async () => {
+        if (currentPageFilterCategory < totalPageFilterCategory) {
+            const categories = await getListCategory(currentPageFilterCategory + 1, 10, dataFilterCategory)
             setListCategories(prev => [
                 ...prev,
                 ...categories.data.data,
@@ -171,11 +154,11 @@ const VariantList = () => {
         }
     }
 
-    const handleFetchMoreCategoryList = () =>{
-        if(isOpenFilterCategoryPopup){
+    const handleFetchMoreCategoryList = () => {
+        if (isOpenFilterCategoryPopup) {
             fetchCategoryList();
         }
-        else{
+        else {
             setListCategories([]);
             setCategoryKeyword("");
             setCurrentPageFilterCategory(1);
@@ -191,30 +174,20 @@ const VariantList = () => {
         }));
     };
 
-    const handleClickButtonFilterBrand = () =>{
+    const handleClickButtonFilterBrand = () => {
         fetchVariantList();
         setIsOpenFilterBrandPopup(!isOpenFilterBrandPopup)
     }
 
     const fetchBrandList = async () => {
-        try {
-            const brands = await getListBrand(currentPageFilterCategory,10,dataFilterCategory )
-            if(brands.status_code === 200){
-                setListBrands(brands.data.data);
-                setTotalPageFilterBrand(brands.data.total_page)
-            }
-            else {
-                console.log("status code:", brands.status_code);
-            }
-        } catch (err) {
-            console.log(err);
-            throw err;
-        }
+        const brands = await getListBrand(currentPageFilterCategory, 10, dataFilterCategory)
+        setListBrands(brands.data.data);
+        setTotalPageFilterBrand(brands.data.total_page)
     }
 
-    const fetchMoreBrandsList = async() =>{
-        if(currentPageFilterBrand < totalPageFilterBrand){
-            const brands = await getListCategory(currentPageFilterBrand + 1,10,dataFilterBrand )
+    const fetchMoreBrandsList = async () => {
+        if (currentPageFilterBrand < totalPageFilterBrand) {
+            const brands = await getListCategory(currentPageFilterBrand + 1, 10, dataFilterBrand)
             setListBrands(prev => [
                 ...prev,
                 ...brands.data.data,
@@ -224,11 +197,11 @@ const VariantList = () => {
         }
     }
 
-    const handleFetchMoreBrandList = () =>{
-        if(isOpenFilterBrandPopup){
+    const handleFetchMoreBrandList = () => {
+        if (isOpenFilterBrandPopup) {
             fetchBrandList();
         }
-        else{
+        else {
             setListBrands([]);
             setBrandKeyword("");
             setCurrentPageFilterBrand(1);
@@ -237,42 +210,42 @@ const VariantList = () => {
     }
 
 
-    useEffect(() =>{
+    useEffect(() => {
         handleFetchMoreCategoryList();
-    },[isOpenFilterCategoryPopup])
+    }, [isOpenFilterCategoryPopup])
 
-    useEffect(() =>{
+    useEffect(() => {
         setCurrentPageFilterCategory(1);
         handleFetchMoreCategoryList();
-    },[categoryKeyword])
+    }, [categoryKeyword])
 
-    useEffect(()=>{
-        if(isOpenFilterCategoryPopup){
+    useEffect(() => {
+        if (isOpenFilterCategoryPopup) {
             fetchCategoryList();
         }
-        else{
+        else {
             setListCategories([]);
-            setDataFilterCategory({keyword: null});
+            setDataFilterCategory({ keyword: null });
         }
 
     }, [isOpenFilterCategoryPopup, dataFilterCategory.keyword, currentPageFilterCategory]);
 
-    useEffect(() =>{
+    useEffect(() => {
         handleFetchMoreBrandList();
-    },[isOpenFilterBrandPopup])
+    }, [isOpenFilterBrandPopup])
 
-    useEffect(() =>{
+    useEffect(() => {
         setCurrentPageFilterBrand(1);
         handleFetchMoreBrandList();
-    },[brandKeyword])
+    }, [brandKeyword])
 
-    useEffect(()=>{
-        if(isOpenFilterBrandPopup){
+    useEffect(() => {
+        if (isOpenFilterBrandPopup) {
             fetchBrandList();
         }
-        else{
+        else {
             setListBrands([]);
-            setDataFilterBrand({keyword: null});
+            setDataFilterBrand({ keyword: null });
         }
 
     }, [isOpenFilterBrandPopup, dataFilterBrand.keyword, currentPageFilterBrand]);
@@ -283,12 +256,8 @@ const VariantList = () => {
 
     useEffect(() => {
         fetchVariantList();
+    }, [limit, page, dataBody]);
 
-    }, [limit, page]);
-
-    useEffect(() => {
-        console.log("Sản phẩm đã thay đổi:", variantsList);// Bạn có thể thực hiện các hành động khác nếu cần khi sản phẩm thay đổi
-    }, [variantsList]);
     return (
         <>
             <Header title={"Quản lý kho"} />
@@ -344,7 +313,7 @@ const VariantList = () => {
                                 </div>
                             </div>
                             <div className="btn-group group-filter-btns">
-                                <button className="btn btn-base btn-filter" onClick={() => {setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup);  }} ref={filterCategoryBtnRef}>
+                                <button className="btn btn-base btn-filter" onClick={() => { setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup); }} ref={filterCategoryBtnRef}>
                                     <span className="btn__label">
                                         Loại sản phẩm
                                         <span className="btn__icon">
@@ -353,12 +322,12 @@ const VariantList = () => {
                                     </span>
                                 </button>
                                 {
-                                    isOpenFilterCategoryPopup && 
+                                    isOpenFilterCategoryPopup &&
                                     <SelectFilter
-                                        btnRef={filterCategoryBtnRef} 
-                                        closePopup={() =>setIsOpenFilterCategoryPopup(false)} 
-                                        listObject={listCategories} 
-                                        currentPage={currentPageFilterCategory} 
+                                        btnRef={filterCategoryBtnRef}
+                                        closePopup={() => setIsOpenFilterCategoryPopup(false)}
+                                        listObject={listCategories}
+                                        currentPage={currentPageFilterCategory}
                                         totalPage={totalPageFilterCategory}
                                         onSelectionChange={handleSelectionChangeCategories}
                                         handleOnClickButton={handleClickButtonFilterCategory}
@@ -369,15 +338,16 @@ const VariantList = () => {
                                         loadMoreData={fetchMoreCategoryList}
                                     />
                                 }
-                                <button className="btn btn-base btn-filter">
-                                    <span className="btn__label">
-                                        Ngày tạo
-                                        <span className="btn__icon">
-                                            <FontAwesomeIcon icon={faCaretDown} />
-                                        </span>
-                                    </span>
-                                </button>
-                                <button className="btn btn-base btn-filter" onClick={() => {setIsOpenFilterBrandPopup(!isOpenFilterBrandPopup);  }} ref={filterBrandBtnRef}>
+                                <SelectDatePopup
+                                    setDataFilters={(data) => setDataBody(prev => {
+                                        return {
+                                            ...prev,
+                                            created_date_from: data.date_from,
+                                            created_date_to: data.date_to
+                                        };
+                                    })}
+                                />
+                                <button className="btn btn-base btn-filter" onClick={() => { setIsOpenFilterBrandPopup(!isOpenFilterBrandPopup); }} ref={filterBrandBtnRef}>
                                     <span className="btn__label">
                                         Nhãn hiệu
                                         <span className="btn__icon">
@@ -386,12 +356,12 @@ const VariantList = () => {
                                     </span>
                                 </button>
                                 {
-                                    isOpenFilterBrandPopup && 
+                                    isOpenFilterBrandPopup &&
                                     <SelectFilter
-                                        btnRef={filterBrandBtnRef} 
-                                        closePopup={() =>setIsOpenFilterBrandPopup(false)} 
-                                        listObject={listBrands} 
-                                        currentPage={currentPageFilterBrand} 
+                                        btnRef={filterBrandBtnRef}
+                                        closePopup={() => setIsOpenFilterBrandPopup(false)}
+                                        listObject={listBrands}
+                                        currentPage={currentPageFilterBrand}
                                         totalPage={totalPageFilterBrand}
                                         onSelectionChange={handleSelectionChangeBrands}
                                         handleOnClickButton={handleClickButtonFilterBrand}

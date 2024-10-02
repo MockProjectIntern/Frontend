@@ -85,13 +85,9 @@ const ReceiptVouchersList = () => {
 
     const fetchTransactionList = async () => {
         const response = await getListTransaction(page, limit, "DESC", "createdAt", "filter_transactions", Cookies.get("filter_transactions"), dataFilter);
-        if (response.status_code === 200) {
-            setTransactionList(response.data.data);
-            setPageQuantity(response.data.total_page);
-            setTotalItem(response.data.total_items);
-        } else {
-            console.log("status code:", response.status_code);
-        }
+        setTransactionList(response.data.data);
+        setPageQuantity(response.data.total_page);
+        setTotalItem(response.data.total_items);
     }
 
     // Set required columns to Cookies

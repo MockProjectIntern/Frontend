@@ -287,7 +287,7 @@ const GINList = () => {
 								>
 									<span className="btn__label">
 										Trạng thái
-										<span className="btn__icon">
+										<span className="btn__icon"> 
 											<FontAwesomeIcon icon={faCaretDown} />
 										</span>
 									</span>

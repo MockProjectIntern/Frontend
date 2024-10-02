@@ -16,6 +16,7 @@ import SelectFilter from '../SelectFilter/SelectFilter.jsx'
 import { getListCategory } from '../../service/CategoryAPI.jsx'
 import { getListBrand } from '../../service/BrandAPI.jsx'
 import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
+import SelectDatePopup from '../SelectDatePopup.jsx'
 
 
 
@@ -90,6 +91,7 @@ const ProductList = () => {
             tags: null
         }
     );
+
     // phan useState quan ly filter loai san pham
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [listCategories, setListCategories,] = useState([]);
@@ -141,52 +143,27 @@ const ProductList = () => {
     }
 
     const fetchProductList = async () => {
-        try {
-            const products = await getProductList(page, limit, "filter_products", Cookies.get("filter_products"), dataBody);
+        const products = await getProductList(page, limit, "filter_products", Cookies.get("filter_products"), dataBody);
 
-            if (products.status_code === 200) {
-                setProductsList(products.data.data);
-                setProductsQuantity(products.data.total_items);
-                setPageQuantity(products.data.total_page)
-            } else {
-                console.log("status code:", products.status_code);
-            }
-        } catch (err) {
-            console.log(err);
-            throw err;
-        }
+        setProductsList(products.data.data);
+        setProductsQuantity(products.data.total_items);
+        setPageQuantity(products.data.total_page)
+
     }
 
     const fetchCategoryList = async () => {
-        try {
-            const categories = await getListCategory(currentPageFilterCategory, 10, dataFilterCategory)
-            if (categories.status_code === 200) {
-                setListCategories(categories.data.data);
-                setTotalPageFilterCategory(categories.data.total_page)
-            }
-            else {
-                console.log("status code:", categories.status_code);
-            }
-        } catch (err) {
-            console.log(err);
-            throw err;
+        const categories = await getListCategory(currentPageFilterCategory, 10, dataFilterCategory)
+        if (categories.status_code === 200) {
+            setListCategories(categories.data.data);
+            setTotalPageFilterCategory(categories.data.total_page)
+
         }
     }
 
     const fetchBrandList = async () => {
-        try {
-            const brands = await getListBrand(currentPageFilterCategory, 10, dataFilterCategory)
-            if (brands.status_code === 200) {
-                setListBrands(brands.data.data);
-                setTotalPageFilterBrand(brands.data.total_page)
-            }
-            else {
-                console.log("status code:", brands.status_code);
-            }
-        } catch (err) {
-            console.log(err);
-            throw err;
-        }
+        const brands = await getListBrand(currentPageFilterCategory, 10, dataFilterCategory)
+        setListBrands(brands.data.data);
+        setTotalPageFilterBrand(brands.data.total_page)
     }
 
     const fetchMoreCategoryList = async () => {
@@ -259,7 +236,7 @@ const ProductList = () => {
 
     useDebouncedEffect(() => {
         fetchProductList();
-    }, 300, [limit, page, dataBody.keyword]);
+    }, 300, [limit, page, dataBody]);
 
     return (
         <>
@@ -326,7 +303,11 @@ const ProductList = () => {
                                 </div>
                             </div>
                             <div className="btn-group group-filter-btns">
-                                <button className="btn btn-base btn-filter" onClick={() => { setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup); }} ref={filterCategoryBtnRef}>
+                                <button
+                                    className="btn btn-base btn-filter"
+                                    onClick={() => { setIsOpenFilterCategoryPopup(!isOpenFilterCategoryPopup); }}
+                                    ref={filterCategoryBtnRef}
+                                >
                                     <span className="btn__label">
                                         Loại sản phẩm
                                         <span className="btn__icon">
@@ -351,14 +332,16 @@ const ProductList = () => {
                                         loadMoreData={fetchMoreCategoryList}
                                     />
                                 }
-                                <button className="btn btn-base btn-filter">
-                                    <span className="btn__label">
-                                        Ngày tạo
-                                        <span className="btn__icon">
-                                            <FontAwesomeIcon icon={faCaretDown} />
-                                        </span>
-                                    </span>
-                                </button>
+                                <SelectDatePopup
+                                    setDataFilters={(data) => setDataBody(prev => {
+                                        return {
+                                            ...prev,
+                                            created_date_from: data.date_from,
+                                            created_date_to: data.date_to
+                                        };
+                                    })}
+                                />
+
                                 <button className="btn btn-base btn-filter" onClick={() => { setIsOpenFilterBrandPopup(!isOpenFilterBrandPopup); }} ref={filterBrandBtnRef}>
                                     <span className="btn__label">
                                         Nhãn hiệu

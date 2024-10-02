@@ -6,10 +6,8 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const CreatedAtFilter = ({
-	createdRef,
 	closePopup,
 	handeChangeDatafilter,
-	parentCalling
 }) => {
 	const popupRef = useRef(null);
 	const [selectedRange, setSelectedRange] = useState(null);
@@ -63,42 +61,37 @@ const CreatedAtFilter = ({
 			end: () => customEndDate,
 		},
 	};
-  const handleDateRange = (range) => {
-    setSelectedRange(range);
-  
-    if (range === "custom") {
-      setCustomEndDate(null);
-      setCustomStartDate(null);
-      setIsSelectCustom(true);
-    } else {
-      setIsSelectCustom(false);
-      setDateTempo({
-        createdAtmin: dateRangesFunctions[range].start(),
-        createdAtmax: dateRangesFunctions[range].end(),
-      });
-    }
-  };
-  
-  const handleFilterClick = () => {
-    if (dateTempo.createdAtmin && dateTempo.createdAtmax) {
-		if(parentCalling === "GIN") {
-			handeChangeDatafilter({created_date_from:dayjs(dateTempo.createdAtmin).format("YYYY-MM-DD"),created_date_to:dayjs(dateTempo.createdAtmax).format("YYYY-MM-DD")});
-			
-    }
+	const handleDateRange = (range) => {
+		setSelectedRange(range);
 
-  
-    closePopup();
-  }
-}
-  
-  useEffect(() => {
-    if (isSelectCustom && customStartDate && customEndDate) {
-      setDateTempo({
-        createdAtmin: customStartDate,
-        createdAtmax: customEndDate,
-      });
-    }
-  }, [customStartDate, customEndDate, isSelectCustom]);
+		if (range === "custom") {
+			setCustomEndDate(null);
+			setCustomStartDate(null);
+			setIsSelectCustom(true);
+		} else {
+			setIsSelectCustom(false);
+			setDateTempo({
+				createdAtmin: dateRangesFunctions[range].start(),
+				createdAtmax: dateRangesFunctions[range].end(),
+			});
+		}
+	};
+
+	const handleFilterClick = () => {
+		if (dateTempo.createdAtmin && dateTempo.createdAtmax) {
+			handeChangeDatafilter({ date_from: dayjs(dateTempo.createdAtmin).format("YYYY-MM-DD"), date_to: dayjs(dateTempo.createdAtmax).format("YYYY-MM-DD") });
+			closePopup();
+		}
+	}
+
+	useEffect(() => {
+		if (isSelectCustom && customStartDate && customEndDate) {
+			setDateTempo({
+				createdAtmin: customStartDate,
+				createdAtmax: customEndDate,
+			});
+		}
+	}, [customStartDate, customEndDate, isSelectCustom]);
 
 
 	return (
@@ -129,7 +122,7 @@ const CreatedAtFilter = ({
 									<DatePicker
 										value={customStartDate}
 										onChange={(date) => setCustomStartDate(date)}
-							
+
 									/>
 								</LocalizationProvider>
 							</div>
@@ -151,7 +144,7 @@ const CreatedAtFilter = ({
 									<DatePicker
 										value={customEndDate}
 										onChange={(date) => setCustomEndDate(date)}
-										
+
 									/>
 								</LocalizationProvider>
 							</div>

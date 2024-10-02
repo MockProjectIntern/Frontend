@@ -58,17 +58,12 @@ const GINDetail = () => {
 		}
 	};
 
+	const fetchGinDetail = async () => {
+		const ginDetail = await getGINDetail(ginId);
+		setGin(ginDetail.data);
+		setProductsList(ginDetail.data.products);
+	};
 	useEffect(() => {
-		const fetchGinDetail = async () => {
-			try {
-				const ginDetail = await getGINDetail(ginId);
-				setGin(ginDetail.data);
-				setProductsList(ginDetail.data.products);
-				console.log(ginDetail);
-			} catch (error) {
-				console.error(error);
-			}
-		};
 		fetchGinDetail();
 	}, [ginId]);
 

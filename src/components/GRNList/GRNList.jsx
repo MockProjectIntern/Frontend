@@ -21,6 +21,7 @@ import CreatedAtFilter from '../GINList/FiltersPopup/CreatedAtFilter.jsx'
 import { getDataExport, getGRNs } from '../../service/GRNApi.jsx'
 import { formatDateTime } from '../../utils/DateUtils.jsx'
 import { exportExcel } from '../../config/ExportExcel.jsx'
+import SelectDatePopup from '../SelectDatePopup.jsx'
 
 const grnsQuantity = 4;
 
@@ -58,7 +59,7 @@ const GRNList = () => {
         TRADING: "Đang giao dịch",
     }
 
-    const defaultFilter = {
+    const [filterBody, setFilterBody] = useState({
         keyword: null,
         statuses: null,
         received_statuses: null,
@@ -71,21 +72,19 @@ const GRNList = () => {
         user_created_ids: null,
         user_completed_ids: null,
         user_cancelled_ids: null
-    }
-    const [filterBody, setFilterBody] = useState(defaultFilter)
+    })
 
     const fetchGrnList = async () => {
-        const responseAPI = await getGRNs(page, limit, "filter_grns", Cookies.get('filter_grns'), {
-            ...filterBody, start_date_at: createdMin, end_created_at: createdMax, statuses: statusListFilter
-        });
+        const responseAPI = await getGRNs(page, limit, "filter_grns", Cookies.get('filter_grns'), filterBody);
         setGrnList(responseAPI.data.data);
         setPageQuantity(responseAPI.data.total_page);
         setTotalItems(responseAPI.data.total_items);
     }
 
     useEffect(() => {
+        console.log(filterBody)
         fetchGrnList();
-    }, [])
+    }, [filterBody])
 
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_grns');
@@ -149,8 +148,8 @@ const GRNList = () => {
     }
 
     const handleExportData = async () => {
-        const responseAPI = await getDataExport("DEFAULT", defaultFilter);
-        
+        const responseAPI = await getDataExport("DEFAULT", filterBody);
+
         const dataExport = responseAPI.data.map((grn, index) => {
             return {
                 "STT": index + 1,
@@ -224,7 +223,20 @@ const GRNList = () => {
                                     <div className="search-icon">
                                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                                     </div>
-                                    <input placeholder='Tìm mã đơn nhập, đơn đặt hàng, tên, SĐT, mã NCC' type="text" name="search" id="" autoComplete='on' />
+                                    <input
+                                        placeholder='Tìm mã đơn nhập'
+                                        type="text"
+                                        name="search"
+                                        id=""
+                                        autoComplete='on'
+                                        onChange={(e) => setFilterBody(prev => {
+                                            return {
+                                                ...prev,
+                                                keyword: e.target.value
+                                            }
+                                        })
+                                        }
+                                    />
                                     <fieldset className='input-field' />
                                 </div>
                             </div>
@@ -237,15 +249,20 @@ const GRNList = () => {
                                         </span>
                                     </span>
                                 </button>
-                                {isOpenStatusPopup && <StatusFilter statusBtnRef={statusBtnRef} closePopup={() => setIsOpenStatusPopup(false)} type={"GRN"} setStatusList={setStatusListFilter} />}
-                                <button onClick={() => setIsOpenCreatedAtPopup(!isOpenCreatedAtPopup)} className="btn btn-base btn-filter">
-                                    <span className="btn__label">
-                                        Ngày tạo
-                                        <span className="btn__icon">
-                                            <FontAwesomeIcon icon={faCaretDown} />
-                                        </span>
-                                    </span>
-                                </button>
+                                {isOpenStatusPopup && <StatusFilter
+                                    statusBtnRef={statusBtnRef}
+                                    closePopup={() => setIsOpenStatusPopup(false)} type={"GRN"}
+                                    setStatusList={setStatusListFilter}
+                                />}
+                                <SelectDatePopup
+                                    setDataFilters={(data) => setFilterBody(prev => {
+                                        return {
+                                            ...prev,
+                                            start_created_at: data.date_from,
+                                            end_created_at: data.date_to
+                                        };
+                                    })}
+                                />
                                 {isOpenCreatedAtPopup && <CreatedAtFilter createdRef={createdAtRef} closePopup={() => setIsOpenCreatedAtPopup(false)} setCreatedMin={setCreatedMin} setCreatedMax={setCreatedMax} />}
 
                                 <button className="btn btn-base btn-filter">

@@ -2,7 +2,6 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
 export const exportExcel = async (data, name) => {
-  console.log(data);
   // Tạo workbook mới
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Sheet1');

@@ -25,7 +25,7 @@ const CategoryList = () => {
         }
     );
 
-    const [isCreateCategory, setIsCreateCategory] = useState(false); 
+    const [isCreateCategory, setIsCreateCategory] = useState(false);
     const [dataCreateCategory, setDataCreateCategory] = useState({
         name: "",
     })
@@ -50,44 +50,28 @@ const CategoryList = () => {
         }));
     };
 
-    const handleClickBack = () =>{
+    const handleClickBack = () => {
         setIsCreateCategory(false);
     }
 
-    const handleCLickCreate = async() =>{
-        try{
-            const response = await createCategory(dataCreateCategory);
-            if (response.status === 201) {
-                alert("Tạo loại sản phẩm thành công!");
-                setDataCreateCategory({
-                    name: "",
-                });
-                setIsCreateCategory(false);
-            }
+    const handleCLickCreate = async () => {
+        const response = await createCategory(dataCreateCategory);
+        if (response.status === 201) {
+            alert("Tạo loại sản phẩm thành công!");
+            setDataCreateCategory({
+                name: "",
+            });
             setIsCreateCategory(false);
         }
-        catch(err){
-            console.log(err);
-            throw err;
-        }
+        setIsCreateCategory(false);
+
     }
 
     const fetchCategoriesList = async () => {
-        try {
-            const categories = await getListCategory(page, limit, dataBody);
-            if (categories.status_code === 200) {
-                setCategoriesList(categories.data.data);
-                setCategoriesQuantity(categories.data.total_items);
-                setPageQuantity(categories.data.total_page);
-            }
-            else {
-                console.log("status code:", categories.status_code);
-            }
-        }
-        catch (err) {
-            console.log(err);
-            throw err;
-        }
+        const categories = await getListCategory(page, limit, dataBody);
+        setCategoriesList(categories.data.data);
+        setCategoriesQuantity(categories.data.total_items);
+        setPageQuantity(categories.data.total_page);
     }
 
     useDebouncedEffect(() => {
@@ -95,15 +79,15 @@ const CategoryList = () => {
     }, 300, [limit, page, dataBody, isCreateCategory]);
 
     return (
-        <>  
-            
+        <>
+
             {isCreateCategory && (
                 <>
                     <div className="overlay"></div>
-                    <CreateCategoryPopup handleOnClickBack = {handleClickBack} handleOnChange = {handleChangeDataCreateSupplierGroup} handleOnClickCreate={handleCLickCreate}/>
+                    <CreateCategoryPopup handleOnClickBack={handleClickBack} handleOnChange={handleChangeDataCreateSupplierGroup} handleOnClickCreate={handleCLickCreate} />
                 </>
             )}
-            
+
             <Header title={"Loại sản phẩm"} />
             <div className="right__listPage">
                 <div className='right__toolbar'>

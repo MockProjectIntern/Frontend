@@ -54,7 +54,7 @@ const StatusFilter = ({ statusBtnRef, closePopup, setStatusList, type }) => {
     };
 
     const handleClickFilter = () => {
-        setStatusList([...status]);
+        setStatusList(status);
         closePopup();
     };
 

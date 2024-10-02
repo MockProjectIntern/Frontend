@@ -41,28 +41,19 @@ const SupplierGroupsList = () => {
         }));
     };
 
-    const handleClickBack = () =>{
+    const handleClickBack = () => {
         setIsCreateSupplierGroups(false);
     }
 
-    const handleCLickCreate = async() =>{
-        try{
-            const response = await createSupplierGroup(dataCreateSupplierGroup);
-            if (response.status === 201) {
-                alert("Tạo nhóm nhà cung cấp thành thành công!");
-                setDataCreateSupplierGroup({
-                    name: "",
-                    note: "",
-                    sub_id: "",
-                });
-                setIsCreateSupplierGroups(false)
-            }
-            setIsCreateSupplierGroups(false)
-        }
-        catch(err){
-            console.log(err);
-            throw err;
-        }
+    const handleCLickCreate = async () => {
+        const response = await createSupplierGroup(dataCreateSupplierGroup);
+        alert("Tạo nhóm nhà cung cấp thành thành công!");
+        setDataCreateSupplierGroup({
+            name: "",
+            note: "",
+            sub_id: "",
+        });
+        setIsCreateSupplierGroups(false)
     }
 
 
@@ -79,21 +70,10 @@ const SupplierGroupsList = () => {
     }
 
     const fetchSupplierGroupsList = async () => {
-        try {
-            const supplierGroups = await getListSupplierGroups(page, limit, dataBody);
-            if (supplierGroups.status_code === 200) {
-                setSupplierGroupsList(supplierGroups.data.data);
-                setSupplierGroupsQuantity(supplierGroups.data.total_items);
-                setPageQuantity(supplierGroups.data.total_page);
-            }
-            else {
-                console.log("status code:", supplierGroups.status_code);
-            }
-        }
-        catch (err) {
-            console.log(err);
-            throw err;
-        }
+        const supplierGroups = await getListSupplierGroups(page, limit, dataBody);
+        setSupplierGroupsList(supplierGroups.data.data);
+        setSupplierGroupsQuantity(supplierGroups.data.total_items);
+        setPageQuantity(supplierGroups.data.total_page);
     }
 
     useDebouncedEffect(() => {
@@ -101,14 +81,14 @@ const SupplierGroupsList = () => {
     }, 300, [limit, page, dataBody, isCreateSupplierGroups]);
 
     return (
-        <>  
+        <>
             {isCreateSupplierGroups && (
                 <>
                     <div className="overlay"></div>
-                    <CreateSupplierGroupPopup handleOnClickBack = {handleClickBack} handleOnClickCreate = {handleCLickCreate} handleOnChange = {handleChangeDataCreateSupplierGroup}/>
+                    <CreateSupplierGroupPopup handleOnClickBack={handleClickBack} handleOnClickCreate={handleCLickCreate} handleOnChange={handleChangeDataCreateSupplierGroup} />
                 </>
             )}
-            <Header title={"Nhóm nhà cung cấp"}/>
+            <Header title={"Nhóm nhà cung cấp"} />
             <div className="right__listPage">
                 <div className='right__toolbar'>
                     <div className="btn-toolbar">

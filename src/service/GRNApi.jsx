@@ -17,8 +17,7 @@ export const getGRNs = async (page, size, filterName, filterJson, data) => {
             headers: {
                 [filterName]: filterJson, // Thiết lập giá trị của filterName vào header
             }
-        }
-        );
+        });
         return response.data;
     } catch (error) {
         console.error(error.message);

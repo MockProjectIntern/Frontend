@@ -35,9 +35,7 @@ const Register = () => {
             alert("Bạn đã đăng ký thành công");
             navigate('/login');
         }
-    }
-    console.log(formData);
-    
+    }    
 
     const handleChange = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value})

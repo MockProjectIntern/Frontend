@@ -22,6 +22,7 @@ import s from './SupplierFilter.module.scss'
 import { exportExcel } from '../../config/ExportExcel.jsx'
 import { formatDateTime } from '../../utils/DateUtils.jsx'
 import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
+import SelectDatePopup from '../SelectDatePopup.jsx'
 
 
 
@@ -82,20 +83,11 @@ const SupplierList = () => {
     });
 
     const fetchSupplierList = async () => {
-        try {
-            const suppliers = await getSupplierList(page, limit, "filter_suppliers", Cookies.get("filter_suppliers"), dataFilter);
+        const suppliers = await getSupplierList(page, limit, "filter_suppliers", Cookies.get("filter_suppliers"), dataFilter);
 
-            if (suppliers.status_code === 200) {
-                setSuppliersList(suppliers.data.data);
-                setSuppliersQuantity(suppliers.data.total_items);
-                setPageQuantity(suppliers.data.total_page)
-            } else {
-                console.log("status code:", suppliers.status_code);
-            }
-        } catch (err) {
-            console.log(err);
-            throw err;
-        }
+        setSuppliersList(suppliers.data.data);
+        setSuppliersQuantity(suppliers.data.total_items);
+        setPageQuantity(suppliers.data.total_page)
     }
 
     useEffect(() => {
@@ -187,37 +179,27 @@ const SupplierList = () => {
                                         name="search"
                                         id=""
                                         autoComplete='on'
-                                        onChange={(e) => setDataFilter({ ...dataFilter, keyword: e.target.value })}
+                                        onChange={(e) => setDataFilter(prev => {
+                                            return {
+                                                ...prev,
+                                                keyword: e.target.value
+                                            }
+                                        })}
                                     />
                                     <fieldset className='input-field' />
                                 </div>
                             </div>
 
                             <div className="btn-group group-filter-btns">
-                                <button className="btn btn-base btn-filter">
-                                    <span className="btn__label">
-                                        Loại sản phẩm
-                                        <span className="btn__icon">
-                                            <FontAwesomeIcon icon={faCaretDown} />
-                                        </span>
-                                    </span>
-                                </button>
-                                <button className="btn btn-base btn-filter">
-                                    <span className="btn__label">
-                                        Ngày tạo
-                                        <span className="btn__icon">
-                                            <FontAwesomeIcon icon={faCaretDown} />
-                                        </span>
-                                    </span>
-                                </button>
-                                <button className="btn btn-base btn-filter">
-                                    <span className="btn__label">
-                                        Nhãn hiệu
-                                        <span className="btn__icon">
-                                            <FontAwesomeIcon icon={faCaretDown} />
-                                        </span>
-                                    </span>
-                                </button>
+                                <SelectDatePopup
+                                    setDataFilters={(data) => setDataFilter(prev => {
+                                        return {
+                                            ...prev,
+                                            created_date_from: data.date_from,
+                                            created_date_to: data.date_to
+                                        };
+                                    })}
+                                />
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
                                         Bộ lọc khác
