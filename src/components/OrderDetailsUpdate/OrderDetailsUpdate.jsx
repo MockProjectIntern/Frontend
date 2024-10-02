@@ -18,11 +18,16 @@ import { getAllByOrder } from '../../service/GRNApi'
 const OrderDetailsUpdate = () => {
     const { orderId } = useParams()
     const [data, setData] = useState();
+    const [isView, setIsView] = useState();
+
 
     const fetchData = async () => {
         const res = await getOrderById(orderId);  // Chờ promise được resolve
         // setProductsList(res.order_details)
-        setData(res);
+        setData(res.data);
+
+        setIsView(res.data.status === "COMPLETED")
+
     };
 
     useEffect(() => {
@@ -49,7 +54,6 @@ const OrderDetailsUpdate = () => {
     }
     const [grnList, setGRNList] = useState()
     const [productsList, setProductsList] = useState([])
-    const [isView, setIsView] = useState(order.status === 'COMPLETED' ? true : false);
 
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
@@ -111,12 +115,12 @@ const OrderDetailsUpdate = () => {
 
     const handleSave = () => {
         console.log("check save!!", productsList)
-
+        console.log("data", data)
         const filteredProductsList = productsList.map(({ id, ordered_quantity, price, discount, tax }) => ({
             product_id: id, quantity: ordered_quantity, price, discount, tax
         }));
         const test = {
-            "supplier_id": data.data.supplier_id,
+            "supplier_id": data.supplier_id,
             "expected_at": null,
             "tags": null,
             "note": null,
