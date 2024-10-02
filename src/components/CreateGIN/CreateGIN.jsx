@@ -188,9 +188,9 @@ const CreateGIN = () => {
 								</div>
 								<div className="paper-content">
 									<div className="group-info">
-										<div className="info-item">
+										<div className="info-item" style={{justifyContent:"flex-start", columnGap:"70px"}}>
 											<p className="info-title">Mã phiếu</p>
-											<div className="info-field">
+											<div className="info-field" style={{width:"60%"}}>
 												<div className="box-input">
 													<input
 														placeholder="Nhập mã phiếu"

@@ -12,7 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import importIcon from "../../assets/icons/ImportIcon.jsx";
 import GINProductsTable from "../GINProductsTable/GINProductsTable.jsx";
-import { updateGIN, getGINDetail } from "../../service/GINApi.jsx";
+import { updateGIN, getGINDetail, balanceGIN } from "../../service/GINApi.jsx";
 import { quickGetProductList } from "../../service/ProductAPI.jsx";
 
 import cn from "classnames";
@@ -163,12 +163,25 @@ const GINDetailUpdate = () => {
 	});
 
 
-	const handleUpdateGIN = async (isBalance = false) => {
-		const response = await updateGIN((isBalance ? { ...dataBody, isBalance: true } : dataBody), ginId);
+	const handleUpdateGIN = async () => {
+		const response = await updateGIN( dataBody, ginId);
 
 		if (response.status_code === 200) {
 			alert(response.message);
 			navigate(-1);
+		}
+	};
+
+	const handleBalance = async () => {
+		try {
+			const response = await balanceGIN(ginId);
+			if (response.status_code === 200) {
+				setGin(prevGin => ({ ...prevGin, status: "BALANCED" }));
+				alert("Cân bằng kho thành công");
+				navigate(-1);
+			}
+		} catch (error) {
+			console.error(error);
 		}
 	};
 
@@ -204,10 +217,10 @@ const GINDetailUpdate = () => {
 						<button onClick={() => navigate(-1)} className="btn btn-outline-danger">
 							<span className="btn__title">Hủy</span>
 						</button>
-						<button className="btn btn-outline-primary" onClick={() => handleUpdateGIN()}>
+						<button className="btn btn-outline-primary" onClick={handleUpdateGIN}>
 							<span className="btn__title">Lưu</span>
 						</button>
-						<button onClick={() => handleUpdateGIN(true)}
+						<button onClick={handleBalance}
 							className="btn btn-secondary-cyan"
 							style={{ color: "white" }}
 						>
@@ -226,9 +239,9 @@ const GINDetailUpdate = () => {
 								</div>
 								<div className="paper-content">
 									<div className="group-info">
-										<div className="info-item">
+										<div className="info-item" style={{justifyContent:"flex-start" , columnGap:"70px"}}>
 											<p className="info-title">Mã phiếu</p>
-											<div className="info-field">
+											<div className="info-field" style={{width: "60%"}}>
 												<div className="box-input">
 													<input
 														placeholder="Nhập mã phiếu"
@@ -237,6 +250,7 @@ const GINDetailUpdate = () => {
 														onChange={handleProductRequestChange}
 														type="text"
 														className="text-field"
+														readOnly
 													/>
 													<fieldset className="input-field"></fieldset>
 												</div>

@@ -56,3 +56,23 @@ export const exportData = async (mode, bodyJson) => {
         throw error;
     }
 }
+
+export const deleteGIN = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`/gins/delete.json/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export const balanceGIN = async (id) => {
+    try {
+        const response = await axiosInstance.put(`/gins/balance.json/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

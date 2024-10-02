@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import cn from "classnames";
 import Cookies from "js-cookie";
@@ -15,9 +15,11 @@ import {
 	faPrint,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
-import { getGINDetail } from "../../service/GINApi";
+import { balanceGIN, deleteGIN, getGINDetail } from "../../service/GINApi";
 import GINProductsTable from "../GINProductsTable/GINProductsTable";
 import { formatDateTime } from "../../utils/DateUtils";
+import { Delete } from "ckeditor5";
+import DeleteConfirmation from "../ConfirmPopup/DeleteConfirmation";
 
 const GINDetail = () => {
 	const [gin, setGin] = useState({});
@@ -27,6 +29,7 @@ const GINDetail = () => {
 
 	const navigate = useNavigate();
 
+
 	const status = {
 		COMPLETED: "Hoàn thành",
 		BALANCED: "Đã cân bằng",
@@ -34,6 +37,36 @@ const GINDetail = () => {
 		CHECKING: "Đang kiểm kho",
 	};
 	const { ginId } = useParams();
+
+	const [isShowDeleteConfirmation, setIsShowDeleteConfirmation] = useState(false);
+
+	const confimationInfo = useMemo(() => {
+		return {
+			action: "xóa",
+			type: "phiếu kiểm",
+			description: "Thao tác này sẽ xóa phiếu kiểm hàng của bạn. Phiếu kiểm đã xóa sẽ không thể cân bằng kho được nữa.",
+			handleClose : () => setIsShowDeleteConfirmation(false),
+			handleConfirm : async () => {
+				const response = await deleteGIN(ginId);
+				if (response.status_code===200) {
+					setIsShowDeleteConfirmation(false);
+					setGin(prevGin => ({ ...prevGin, status: "DELETED" }));
+				}
+			}
+		};
+	}, [ginId]);
+
+	const handleBalance = async () => {
+		try {
+			const response = await balanceGIN(ginId);
+			if (response.status_code === 200) {
+				setGin(prevGin => ({ ...prevGin, status: "BALANCED" }));
+				alert("Cân bằng kho thành công");
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
 	const [filteredProducts, setFilteredProducts] = useState([]);
 
@@ -69,6 +102,7 @@ const GINDetail = () => {
 
 	return (
 		<>
+		<div className={cn(s.wrapcontainer,{[s.opacity]:isShowDeleteConfirmation})}>
 			<div className="right__navbar">
 				<div className="box-navbar">
 					<div className="btn-toolbar">
@@ -79,14 +113,14 @@ const GINDetail = () => {
 							</h6>
 						</Link>
 					</div>
-					{gin.status !== "BALANCED" && <div className="btn-toolbar">
-						<button className="btn btn-outline-danger">
+					{(gin.status !== "BALANCED" && gin.status!=="DELETED") && <div className="btn-toolbar">
+						<button onClick={()=>setIsShowDeleteConfirmation(true)} className="btn btn-outline-danger">
 							<span className="btn__title">Xóa</span>
 						</button>
 						<button onClick={() => navigate("edit")} className="btn btn-outline-primary">
 							<span className="btn__title">Sửa</span>
 						</button>
-						<button className="btn btn-primary">
+						<button onClick={handleBalance} className="btn btn-secondary-cyan" style={{ color: "white" }}>
 							<span className="btn__title">Cân bằng kho</span>
 						</button>
 					</div>}
@@ -228,6 +262,8 @@ const GINDetail = () => {
 					</div>
 				</div>
 			</div>
+			</div>
+		{isShowDeleteConfirmation && (<DeleteConfirmation  {...confimationInfo} />)}
 		</>
 	);
 };
