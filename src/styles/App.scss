@@ -823,7 +823,7 @@ input:focus-within ~ .input-field {
                             justify-content: center;
 
                             .btn-remove-item {
-                                color: #0088FF;
+                                color: $violet;
                                 width: 18px;
                                 height: 18px;
                                 padding: 0;
@@ -862,8 +862,8 @@ input:focus-within ~ .input-field {
                                     justify-content: inherit;
 
                                     >svg {
-                                        width: 18px;
-                                        height: 18px;
+                                        width: 14px;
+                                        height: 14px;
                                         fill: currentColor;
                                         display: inline-block;
                                         font-size: 1.5rem;
@@ -2242,7 +2242,7 @@ input:focus-within ~ .input-field {
         padding: 16px 24px;
         align-items: center;
 
-        > svg {
+        svg {
             font-size: 16px;
             color: rgb(163, 168, 175);
             padding: 2px;
@@ -2279,6 +2279,7 @@ input:focus-within ~ .input-field {
 
                     svg {
                         height: 20px;
+                        margin: 0;
                     }
                 }
             }
@@ -2293,7 +2294,7 @@ input:focus-within ~ .input-field {
         padding: 0 24px 16px;
 
         .group-info {
-            overflow: auto;
+            overflow: visible;
             max-height: 152px;
             padding-right: 24px;
             display: flex;
@@ -2333,7 +2334,7 @@ input:focus-within ~ .input-field {
                 }
 
                 .info-field {
-                    width: 75%;
+                    width: 65%;
 
                     .btn-dropdown {
                         width: 100%;
@@ -2914,4 +2915,4 @@ input:focus-within ~ .input-field {
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);  // Màu đen trong suốt
     z-index: 10000;  // Đảm bảo nó xuất hiện trên các thành phần khác
-  }
+}

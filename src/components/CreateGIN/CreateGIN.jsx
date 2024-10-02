@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
 // Import Components
@@ -34,10 +34,7 @@ const CreateGIN = () => {
 	const [listProductDetail, setListProductDetail] = useState([]);
 	const [activeTab, setActiveTab] = useState("all");
 
-
 	const navigate = useNavigate();
-
-
 
 	const [filteredProducts, setFilteredProducts] = useState([]);
 
@@ -95,25 +92,34 @@ const CreateGIN = () => {
 		}
 	}, [isProductSelectPopup]);
 
-
 	const [dataBody, setDataBody] = useState({
 		sub_id: null,
 		note: "",
 		tags: "",
 		user_inspection_id: localStorage.getItem("userId"),
-		isBalance: false,
-		products: [
-		
-		],
+		is_balance: null,
+		products: [],
 	});
 	const handleCreateGIN = async () => {
 		const response = await createNewGIN(dataBody);
 
 		if (response.status_code === 201) {
-			alert("Tạo đơn kiểm hàng thành công");
-			navigate("/admin/order_suppliers");
+			alert("Tạo phiếu kiểm hàng thành công");
+			navigate("/admin/gins");
 		}
+		setDataBody(prev => {
+			return {
+				...prev,
+				is_balance: null
+			}
+		})
 	};
+
+	useEffect(() => {
+		if (dataBody.is_balance !== null) {
+			handleCreateGIN();
+		}
+	}, [dataBody.is_balance]);
 
 	useEffect(() => {
 		setDataBody((prev) => {
@@ -132,8 +138,6 @@ const CreateGIN = () => {
 			};
 		});
 	}, [listProductDetail]);
-	console.log(listProductDetail);
-	console.log(dataBody);
 
 	return (
 		<>
@@ -146,15 +150,28 @@ const CreateGIN = () => {
 						</Link>
 					</div>
 					<div className="btn-toolbar">
-						<button onClick={()=>navigate(-1)} className="btn btn-outline-danger">
+						<button onClick={() => navigate(-1)} className="btn btn-outline-danger">
 							<span className="btn__title">Thoát</span>
 						</button>
-						<button className="btn btn-outline-primary" onClick={handleCreateGIN}>
+						<button className="btn btn-outline-primary" onClick={() => setDataBody(prev => {
+							return {
+								...prev,
+								is_balance: false
+							}
+						})}>
 							<span className="btn__title">Tạo</span>
 						</button>
 						<button
 							className="btn btn-secondary-cyan"
 							style={{ color: "white" }}
+							onClick={() => {
+								setDataBody((prev) => {
+									return {
+										...prev,
+										is_balance: true,
+									};
+								});
+							}}
 						>
 							<span className="btn__title">Cân bằng kho</span>
 						</button>
@@ -171,9 +188,9 @@ const CreateGIN = () => {
 								</div>
 								<div className="paper-content">
 									<div className="group-info">
-										<div className="info-item">
+										<div className="info-item" style={{justifyContent:"flex-start", columnGap:"70px"}}>
 											<p className="info-title">Mã phiếu</p>
-											<div className="info-field">
+											<div className="info-field" style={{width:"60%"}}>
 												<div className="box-input">
 													<input
 														placeholder="Nhập mã phiếu"
@@ -242,25 +259,25 @@ const CreateGIN = () => {
 									<div className="box-header">
 										<div className="btn-tab">
 											<button
-												className={cn("btn-scroller", {"active": activeTab === "all"})}
+												className={cn("btn-scroller", { "active": activeTab === "all" })}
 												onClick={() => setActiveTab("all")}
 											>
 												Tất cả
 											</button>
 											<button
-												className={cn("btn-scroller", {"active": activeTab === "unchecked"})}
+												className={cn("btn-scroller", { "active": activeTab === "unchecked" })}
 												onClick={() => setActiveTab("unchecked")}
 											>
 												Chưa kiểm
 											</button>
 											<button
-												className={cn("btn-scroller", {"active": activeTab === "matched"})}
+												className={cn("btn-scroller", { "active": activeTab === "matched" })}
 												onClick={() => setActiveTab("matched")}
 											>
 												Khớp
 											</button>
 											<button
-												className={cn("btn-scroller", {"active": activeTab === "mismatched"})}
+												className={cn("btn-scroller", { "active": activeTab === "mismatched" })}
 												onClick={() => setActiveTab("mismatched")}
 											>
 												Lệch
@@ -322,7 +339,7 @@ const CreateGIN = () => {
 																				productSelectList.find(
 																					(product) => product.id === id
 																				)?.unit || "------",
-																			quantity:
+																			real_quantity:
 																				productSelectList.find(
 																					(product) => product.id === id
 																				)?.quantity || 0,
@@ -361,7 +378,7 @@ const CreateGIN = () => {
 								<div className="box-table">
 									<GINProductsTable
 										productsList={filteredProducts}
-										
+
 										setProductList={setListProductDetail}
 									/>
 								</div>

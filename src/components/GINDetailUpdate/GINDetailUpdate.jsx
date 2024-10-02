@@ -1,33 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link,useNavigate,useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 
-// Import Components
-import SearchSupplier from "../SearchSupplier/SearchSupplier";
-import SupplierInfo from "../SupplierInfo/SupplierInfo";
-import ProductsTable from "../ProductsTable/ProductsTable.jsx";
-import DiscountPopup from "../DiscountPopup/DiscountPopup.jsx";
 import ListSelectPopup from "../ListSelectPopup/ListSelectPopup.jsx";
 // Import Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	faCaretDown,
 	faChevronLeft,
-	faGear,
 	faMagnifyingGlass,
-	faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import calendarIcon from "../../assets/icons/CalendarIcon.jsx";
-import infoIcon from "../../assets/icons/InfoIcon.jsx";
 import importIcon from "../../assets/icons/ImportIcon.jsx";
 import GINProductsTable from "../GINProductsTable/GINProductsTable.jsx";
-import { updateGIN,getGINDetail } from "../../service/GINApi.jsx";
+import { updateGIN, getGINDetail, balanceGIN } from "../../service/GINApi.jsx";
 import { quickGetProductList } from "../../service/ProductAPI.jsx";
 
 import cn from "classnames";
+
 const GINDetailUpdate = () => {
-    
-    const [gin,setGin] = useState({})
+	const [gin, setGin] = useState({})
 
 	const [activeTab, setActiveTab] = useState("all");
 
@@ -40,10 +31,6 @@ const GINDetailUpdate = () => {
 		CHECKING: "Đang kiểm kho",
 	};
 	const { ginId } = useParams();
-    console.log(ginId)
-
-
-
 
 	const handleProductRequestChange = (e) => {
 		const { name, value } = e.target;
@@ -59,17 +46,17 @@ const GINDetailUpdate = () => {
 		return storedCols
 			? JSON.parse(storedCols)
 			: {
-					index: true,
-					image: true,
-					name: true,
-					barcode: true,
-					unit: true,
-					ordered_quantity: true,
-					price: true,
-					discount: true,
-					tax: true,
-					total: true,
-			  };
+				index: true,
+				image: true,
+				name: true,
+				barcode: true,
+				unit: true,
+				ordered_quantity: true,
+				price: true,
+				discount: true,
+				tax: true,
+				total: true,
+			};
 	});
 
 	// Set required columns to Cookies
@@ -77,33 +64,29 @@ const GINDetailUpdate = () => {
 		Cookies.set("filter_products_table", JSON.stringify(colsToRender));
 	}, [colsToRender]);
 
-    useEffect(() => {
+	useEffect(() => {
 		const fetchGinDetail = async () => {
 			try {
 				const ginDetail = await getGINDetail(ginId);
 				setGin(ginDetail.data);
 				setListProductDetail(ginDetail.data.products);
-				
-                setDataBody((prev) => ({
-                    ...prev,
-                    sub_id: ginDetail.data.sub_id,
-                    isBalance: ginDetail.data.status === "BALANCED",
-                    note: ginDetail.data.note,
-                    tags: ginDetail.data.tags,
-                    products: ginDetail.data.products.map((product) => ({
-                        product_id: product.product_id,
-                        unit: product.unit,
-                        actual_stock: product.actual_stock,
-						real_quantity: product.real_quantity,
-                        discrepancy_quantity: product.discrepancy_quantity,
-                        reason: product.reason,
-                        note: product.note,
-                    })),
-                }));
-                
-				console.log(ginDetail);
-				console.log("GIN Detail: ", ginDetail.data);
 
+				setDataBody((prev) => ({
+					...prev,
+					sub_id: ginDetail.data.sub_id,
+					isBalance: ginDetail.data.status === "BALANCED",
+					note: ginDetail.data.note,
+					tags: ginDetail.data.tags,
+					products: ginDetail.data.products.map((product) => ({
+						product_id: product.product_id,
+						unit: product.unit,
+						actual_stock: product.actual_stock,
+						real_quantity: product.real_quantity,
+						discrepancy_quantity: product.discrepancy_quantity,
+						reason: product.reason,
+						note: product.note,
+					})),
+				}));
 			} catch (error) {
 				console.error(error);
 			}
@@ -175,19 +158,30 @@ const GINDetailUpdate = () => {
 		user_inspection_id: localStorage.getItem("userId"),
 		isBalance: false,
 		products: [
-		
+
 		],
 	});
 
-    
-	const handleUpdateGIN = async (isBalance = false) => {
-		
-        console.log(dataBody)
-		const response = await updateGIN((isBalance? {...dataBody,isBalance:true} : dataBody),ginId);
+
+	const handleUpdateGIN = async () => {
+		const response = await updateGIN( dataBody, ginId);
 
 		if (response.status_code === 200) {
 			alert(response.message);
 			navigate(-1);
+		}
+	};
+
+	const handleBalance = async () => {
+		try {
+			const response = await balanceGIN(ginId);
+			if (response.status_code === 200) {
+				setGin(prevGin => ({ ...prevGin, status: "BALANCED" }));
+				alert("Cân bằng kho thành công");
+				navigate(-1);
+			}
+		} catch (error) {
+			console.error(error);
 		}
 	};
 
@@ -208,8 +202,6 @@ const GINDetailUpdate = () => {
 			};
 		});
 	}, [listProductDetail]);
-	console.log(listProductDetail);
-	console.log(dataBody);
 
 	return (
 		<>
@@ -222,13 +214,13 @@ const GINDetailUpdate = () => {
 						</Link>
 					</div>
 					<div className="btn-toolbar">
-						<button onClick={()=> navigate(-1)} className="btn btn-outline-danger">
+						<button onClick={() => navigate(-1)} className="btn btn-outline-danger">
 							<span className="btn__title">Hủy</span>
 						</button>
-						<button className="btn btn-outline-primary" onClick={()=>handleUpdateGIN()}>
+						<button className="btn btn-outline-primary" onClick={handleUpdateGIN}>
 							<span className="btn__title">Lưu</span>
 						</button>
-						<button onClick={() => handleUpdateGIN(true)}
+						<button onClick={handleBalance}
 							className="btn btn-secondary-cyan"
 							style={{ color: "white" }}
 						>
@@ -247,9 +239,9 @@ const GINDetailUpdate = () => {
 								</div>
 								<div className="paper-content">
 									<div className="group-info">
-										<div className="info-item">
+										<div className="info-item" style={{justifyContent:"flex-start" , columnGap:"70px"}}>
 											<p className="info-title">Mã phiếu</p>
-											<div className="info-field">
+											<div className="info-field" style={{width: "60%"}}>
 												<div className="box-input">
 													<input
 														placeholder="Nhập mã phiếu"
@@ -258,6 +250,7 @@ const GINDetailUpdate = () => {
 														onChange={handleProductRequestChange}
 														type="text"
 														className="text-field"
+														readOnly
 													/>
 													<fieldset className="input-field"></fieldset>
 												</div>
@@ -318,25 +311,25 @@ const GINDetailUpdate = () => {
 									<div className="box-header">
 										<div className="btn-tab">
 											<button
-												className={cn("btn-scroller", {"active": activeTab === "all"})}
+												className={cn("btn-scroller", { "active": activeTab === "all" })}
 												onClick={() => setActiveTab("all")}
 											>
 												Tất cả
 											</button>
 											<button
-												className={cn("btn-scroller", {"active": activeTab === "unchecked"})}
+												className={cn("btn-scroller", { "active": activeTab === "unchecked" })}
 												onClick={() => setActiveTab("unchecked")}
 											>
 												Chưa kiểm
 											</button>
 											<button
-												className={cn("btn-scroller", {"active": activeTab === "matched"})}
+												className={cn("btn-scroller", { "active": activeTab === "matched" })}
 												onClick={() => setActiveTab("matched")}
 											>
 												Khớp
 											</button>
 											<button
-												className={cn("btn-scroller", {"active": activeTab === "mismatched"})}
+												className={cn("btn-scroller", { "active": activeTab === "mismatched" })}
 												onClick={() => setActiveTab("mismatched")}
 											>
 												Lệch

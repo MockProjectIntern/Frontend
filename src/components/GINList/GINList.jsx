@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import Header from "../Header/Header";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 // Import Columns Info
-import {col,gin_status} from "../../assets/colgroup/gin-list.js";
+import { col, gin_status } from "../../assets/colgroup/gin-list.js";
 
 // Import Icons
 import exportIcon from "../../assets/icons/ExportIcon";
@@ -26,6 +26,8 @@ import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup.jsx";
 import { exportData, getGINs } from "../../service/GINApi.jsx";
 import GINStatusFilter from "./FiltersPopup/GINStatusFilter.jsx";
 import CreatedAtFilter from "./FiltersPopup/CreatedAtFilter.jsx";
+import { exportExcel } from "../../config/ExportExcel.jsx";
+import { formatDate, formatDateTime } from "../../utils/DateUtils.jsx";
 
 const GINList = () => {
 	const [page, setPage] = useState(1);
@@ -48,10 +50,13 @@ const GINList = () => {
 		user_inspection_ids: null,
 	});
 
-
+	const status = {
+		CHECKING: "Đang kiểm kho",
+		BALANCED: "Đã cân bằng",
+		DELETED: "Đã xóa"
+	}
 
 	const [isOpenStatusPopup, setIsOpenStatusPopup] = useState(false);
-	const [statusListFilter, setStatusListFilter] = useState([]);
 	const [isOpenCreatedAtPopup, setIsOpenCreatedAtPopup] = useState(false);
 
 	const [activeTab, setActiveTab] = useState("ALL");
@@ -74,7 +79,7 @@ const GINList = () => {
 	const handleChangeTab = (tab) => {
 		setActiveTab(tab);
 		if (tab == "ALL") {
-			setdataFilters({ ...dataFilters, statues: [Object.keys(gin_status)] });
+			setdataFilters({ ...dataFilters, statues: null });
 		} else if (tab == "CHECKING") {
 			setdataFilters({ ...dataFilters, statues: ["CHECKING"] });
 		} else if (tab == "BALANCED") {
@@ -97,17 +102,17 @@ const GINList = () => {
 		return storedCols
 			? JSON.parse(storedCols)
 			: {
-					id: true,
-					sub_id: true,
-					created_at: true,
-					updated_at: true,
-					status: true,
-					user_created_name: true,
-					user_inspection_name: true,
-					user_balanced_name: true,
-					note: true,
-					balanced_at: true,
-			  };
+				id: true,
+				sub_id: true,
+				created_at: true,
+				updated_at: true,
+				status: true,
+				user_created_name: true,
+				user_inspection_name: true,
+				user_balanced_name: true,
+				note: true,
+				balanced_at: true,
+			};
 	});
 
 	// Set required columns to Cookies
@@ -115,25 +120,28 @@ const GINList = () => {
 		Cookies.set("filter_gins", JSON.stringify(colsToRender));
 	}, [colsToRender]);
 
+	const fetchGinList = async () => {
+		try {
+			setGinList([]); // Clear the list before fetching new data
+			const res = await getGINs(
+				page,
+				limit,
+				"filter_gins",
+				Cookies.get("filter_gins"),
+				dataFilters
+			);
+			setGinList(res.data.data);
+			setPageQuantity(Math.ceil(res.data.total_items / limit));
+			setTotalItems(res.data.total_items);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	useEffect(() => {
-		const fetchGinList = async () => {
-			try {
-				const res = await getGINs(
-					page,
-					limit,
-					"filter_gins",
-					Cookies.get("filter_gins"),
-					dataFilters
-				);
-				setGinList(res.data.data);
-				setPageQuantity(Math.ceil(res.data.total_items / limit));
-				setTotalItems(res.data.total_items);
-			} catch (error) {
-				console.error(error);
-			}
-		};
 		fetchGinList();
 	}, [page, limit, dataFilters]);
+
 	const headersRef = useRef(null);
 	const contentRef = useRef(null);
 	const ginStatusRef = useRef(null);
@@ -141,6 +149,36 @@ const GINList = () => {
 
 	const handleScroll = (e, target) => {
 		target.scrollLeft = e.target.scrollLeft;
+	};
+
+	const handleExportExcel = async () => {
+		const responseAPI = await exportData("DEFAULT", dataFilters);
+
+		const dataExport = responseAPI.data?.map((item, index) => {
+			// For each item, map the products
+			return item.products.map((product, indexProduct) => {
+				return {
+					"STT": indexProduct === 0 ? index + 1 : "",
+					"Mã phiếu kiểm": item.sub_id,
+					"Nhân viên kiểm": item.user_created_name,
+					"Nhân viên tạo": item.user_created_name,
+					"Nhân viên cân bằng": item.user_balanced_name,
+					"Ngày cân bằng": item.balanced_at,
+					"Trạng thái": gin_status[item.status],
+					"Mã sản phẩm": product.product_sub_id,
+					"Tên sản phẩm": product.product_name,
+					"Đơn vị": product.unit,
+					"Tồn trong kho": product.real_quantity,
+					"Tồn thực tế": product.actual_stock,
+					"Số lượng lệch": product.discrepancy_quantity,
+					"Lí do": product.reason,
+					"Ghi chú": product.note
+				};
+			});
+		}).flat(); // Flatten the array because each item has multiple products
+
+		exportExcel(dataExport, "Danh sách phiếu kiểm hàng");
+		alert("Xuất file thành công");
 	};
 
 	const handlePrevPage = () => {
@@ -165,7 +203,7 @@ const GINList = () => {
 			<div className="right__listPage">
 				<div className="right__toolbar">
 					<div className="btn-toolbar">
-						<button className="btn btn-base btn-text">
+						<button className="btn btn-base btn-text" onClick={handleExportExcel}>
 							<span className="btn__label">
 								<span className="btn__icon">{exportIcon}</span>
 								Xuất file
@@ -293,39 +331,40 @@ const GINList = () => {
 								<span className="btn__title">Lưu bộ lọc</span>
 							</button>
 						</div>
-                        {(dataFilters.statues || (dataFilters.created_date_from && dataFilters.created_date_to)) 
-                            && (<div className="box-show-selected-filter">
-                                <div className="box-show-selected-container">
-                                    {dataFilters.statues && (<div className="box-show-selected-item">
-                                        <span> Trạng thái: {dataFilters.statues.map((status, index) => (
-        <span key={index}>{gin_status[status]}{index < dataFilters.statues.length - 1 ? ', ' : ''}</span>
-      ))}</span>
-                                        <div className="box-remove-item">
-                                            <button onClick={() =>setdataFilters((prev) => ({...prev, statues:null}))} className="btn-remove-item" type="button">
-                                                <span>
-                                               <FontAwesomeIcon icon={faXmark} />
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>)}
-                                    {dataFilters.created_date_from && dataFilters.created_date_to && (<div className="box-show-selected-item">
-                                        <span>Ngày tạo: ( 
-                                            <span>{dataFilters.created_date_from}</span> - 
-                                            <span>{dataFilters.created_date_to}</span> 
-    )</span>
-                                        <div className="box-remove-item">
-                                            <button onClick={()=> setdataFilters((prev)=> ({...prev,created_date_from:null,created_date_to:null}))} className="btn-remove-item" type="button">
-                                                <span>
-                                                  <FontAwesomeIcon icon={faXmark} />
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>)}
-                                    
-                                </div>
-                            </div>)
-                        }
-						
+						{(dataFilters.statues || (dataFilters.created_date_from && dataFilters.created_date_to))
+							&& (<div className="box-show-selected-filter">
+								<div className="box-show-selected-container">
+									{dataFilters.statues && (<div className="box-show-selected-item">
+										<span> Trạng thái: {dataFilters.statues.map((status, index) => (
+											<span key={index}>{gin_status[status]}{index < dataFilters.statues.length - 1 ? ', ' : ''} </span>
+										))}
+										</span>
+										<div className="box-remove-item">
+											<button onClick={() => setdataFilters((prev) => ({ ...prev, statues: null }))} className="btn-remove-item" type="button">
+												<span>
+													<FontAwesomeIcon icon={faXmark} />
+												</span>
+											</button>
+										</div>
+									</div>)}
+									{dataFilters.created_date_from && dataFilters.created_date_to && (<div className="box-show-selected-item">
+										<span>Ngày tạo: (
+											<span>{dataFilters.created_date_from}</span> -
+											<span>{dataFilters.created_date_to}</span>
+											)</span>
+										<div className="box-remove-item">
+											<button onClick={() => setdataFilters((prev) => ({ ...prev, created_date_from: null, created_date_to: null }))} className="btn-remove-item" type="button">
+												<span>
+													<FontAwesomeIcon icon={faXmark} />
+												</span>
+											</button>
+										</div>
+									</div>)}
+
+								</div>
+							</div>)
+						}
+
 					</div>
 					<div
 						ref={headersRef}
@@ -477,10 +516,24 @@ const GINList = () => {
 																				{gin[key] == "CHECKING"
 																					? "Đang kiểm kho"
 																					: gin[key] == "BALANCED"
-																					? "Đã cân bằng"
-																					: "Đã xóa"}
+																						? "Đã cân bằng"
+																						: "Đã xóa"}
 																			</span>
 																		</div>
+																	</td>
+																);
+															} else if (key.includes("_at")) {
+																return (
+																	<td
+																		key={key}
+																		className={cn(
+																			"table-data-item",
+																			col[key].align
+																		)}
+																	>
+																		<p className="box-text">
+																			{gin[key] ? formatDateTime(gin[key]) : ""}
+																		</p>
 																	</td>
 																);
 															}
@@ -493,13 +546,13 @@ const GINList = () => {
 																	)}
 																>
 																	<p className="box-text">
-																		{key !== "id" ? (
+																		{key !== "sub_id" ? (
 																			gin[key]
 																		) : (
 																			<a
 																				onClick={() =>
 																					navigate(
-																						`/admin/gins/GIN/${gin[key]}`
+																						`/admin/gins/GIN/${gin.id}`
 																					)
 																				}
 																				className="box-id"

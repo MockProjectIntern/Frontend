@@ -8,7 +8,7 @@ import { faAddressCard } from '@fortawesome/free-regular-svg-icons'
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup'
 import { getAllSupplierByName } from '../../service/SuppliersAPI'
 
-const SearchSupplier = ({setSelectItem}) => {
+const SearchSupplier = ({setSelectItem, setCreateSupplier}) => {
     const [isSupplierPopup, setIsSupplierPopup] = useState(false);
     const supplierBtnRef = useRef(null);
 
@@ -68,6 +68,7 @@ const SearchSupplier = ({setSelectItem}) => {
                         handleSelect={id => setSelectItem(id)}
                         btnRef={supplierBtnRef}
                         closePopup={() => setIsSupplierPopup(false)}
+                        handleCLickCreateProductQuickly={setCreateSupplier}
                     />
                 }
             </div>

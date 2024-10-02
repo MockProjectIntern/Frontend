@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link, useParams,useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import cn from "classnames";
 import Cookies from "js-cookie";
 
@@ -15,18 +15,20 @@ import {
 	faPrint,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
-import { getGINDetail } from "../../service/GINApi";
+import { balanceGIN, deleteGIN, getGINDetail } from "../../service/GINApi";
 import GINProductsTable from "../GINProductsTable/GINProductsTable";
+import { formatDateTime } from "../../utils/DateUtils";
+import { Delete } from "ckeditor5";
+import DeleteConfirmation from "../ConfirmPopup/DeleteConfirmation";
 
 const GINDetail = () => {
 	const [gin, setGin] = useState({});
 	const [activeTab, setActiveTab] = useState("all");
 
-
-
 	const [productsList, setProductsList] = useState([{}]);
 
 	const navigate = useNavigate();
+
 
 	const status = {
 		COMPLETED: "Hoàn thành",
@@ -36,13 +38,41 @@ const GINDetail = () => {
 	};
 	const { ginId } = useParams();
 
+	const [isShowDeleteConfirmation, setIsShowDeleteConfirmation] = useState(false);
+
+	const confimationInfo = useMemo(() => {
+		return {
+			action: "xóa",
+			type: "phiếu kiểm",
+			description: "Thao tác này sẽ xóa phiếu kiểm hàng của bạn. Phiếu kiểm đã xóa sẽ không thể cân bằng kho được nữa.",
+			handleClose : () => setIsShowDeleteConfirmation(false),
+			handleConfirm : async () => {
+				const response = await deleteGIN(ginId);
+				if (response.status_code===200) {
+					setIsShowDeleteConfirmation(false);
+					setGin(prevGin => ({ ...prevGin, status: "DELETED" }));
+				}
+			}
+		};
+	}, [ginId]);
+
+	const handleBalance = async () => {
+		try {
+			const response = await balanceGIN(ginId);
+			if (response.status_code === 200) {
+				setGin(prevGin => ({ ...prevGin, status: "BALANCED" }));
+				alert("Cân bằng kho thành công");
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	const [filteredProducts, setFilteredProducts] = useState([]);
 
 	useEffect(() => {
 		setFilteredProducts(filterProducts(productsList));
 	}, [activeTab, productsList]);
-
-   
 
 	const filterProducts = (products) => {
 		switch (activeTab) {
@@ -61,8 +91,6 @@ const GINDetail = () => {
 		}
 	};
 
-
-
 	useEffect(() => {
 		const fetchGinDetail = async () => {
 			try {
@@ -77,35 +105,31 @@ const GINDetail = () => {
 		fetchGinDetail();
 	}, [ginId]);
 
-
 	return (
 		<>
+		<div className={cn(s.wrapcontainer,{[s.opacity]:isShowDeleteConfirmation})}>
 			<div className="right__navbar">
 				<div className="box-navbar">
 					<div className="btn-toolbar">
-						<Link to="/admin/order_suppliers" className="btn-back">
+						<Link to="/admin/gins" className="btn-back">
 							<FontAwesomeIcon icon={faChevronLeft} />
 							<h6 className="btn-back__title">
-								Quay lại danh sách đơn đặt hàng
+								Quay lại danh sách phiếu kiểm hàng
 							</h6>
 						</Link>
 					</div>
-					<div className="btn-toolbar">
-						
-							<button className="btn btn-outline-danger">
-								<span className="btn__title">Xóa</span>
-							</button>
-						 
-						
-							<button onClick={()=>navigate("edit")} className="btn btn-outline-primary">
-								<span className="btn__title">Sửa</span>
-							</button>
-					
-
-						<button className="btn btn-primary">
+					{(gin.status !== "BALANCED" && gin.status!=="DELETED") && <div className="btn-toolbar">
+						<button onClick={()=>setIsShowDeleteConfirmation(true)} className="btn btn-outline-danger">
+							<span className="btn__title">Xóa</span>
+						</button>
+						<button onClick={() => navigate("edit")} className="btn btn-outline-primary">
+							<span className="btn__title">Sửa</span>
+						</button>
+						<button onClick={handleBalance} className="btn btn-secondary-cyan" style={{ color: "white" }}>
 							<span className="btn__title">Cân bằng kho</span>
 						</button>
-					</div>
+					</div>}
+
 				</div>
 			</div>
 			<div className="right__paperPage">
@@ -164,11 +188,11 @@ const GINDetail = () => {
 										</div>
 										<div className="info-item">
 											<p className="info-title">Ngày tạo</p>
-											<p className="info-value">: {gin.created_at || "---"}</p>
+											<p className="info-value">: {formatDateTime(gin.created_at) || "---"}</p>
 										</div>
 										<div className="info-item">
 											<p className="info-title">Ngày cân bằng</p>
-											<p className="info-value">: {gin.balanced_at || "---"}</p>
+											<p className="info-value">: {formatDateTime(gin.balanced_at) || "---"}</p>
 										</div>
 									</div>
 								</div>
@@ -183,16 +207,16 @@ const GINDetail = () => {
 									<div className="group-info">
 										<div className="info-item">
 											<p className="info-title">Ghi chú</p>
-											
-												<p className="info-value">: {gin?.note}</p>
-											
+
+											<p className="info-value">: {gin?.note}</p>
+
 										</div>
 										<div className="info-item">
 											<p className="info-title">Tags</p>
-											
-												<p className="info-value">: {gin?.tags}</p>
-											
-										
+
+											<p className="info-value">: {gin?.tags}</p>
+
+
 										</div>
 									</div>
 								</div>
@@ -243,6 +267,8 @@ const GINDetail = () => {
 					</div>
 				</div>
 			</div>
+			</div>
+		{isShowDeleteConfirmation && (<DeleteConfirmation  {...confimationInfo} />)}
 		</>
 	);
 };

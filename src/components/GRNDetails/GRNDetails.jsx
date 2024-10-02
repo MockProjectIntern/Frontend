@@ -14,84 +14,12 @@ import { Collapse } from 'reactstrap'
 import TransactionItem from '../TransactionItem/TransactionItem'
 import ProductsTable from '../ProductsTable/ProductsTable'
 import ReturnTable from '../ReturnTable/ReturnTable'
+import { getGRNById } from '../../service/GRNApi'
+import ImportHistoriesPopup from '../ImportHistoriesPopup/ImportHistoriesPopup'
 
 const GRNDetails = () => {
     const { grnId } = useParams();
-    const [grn, setGrn] = useState({
-        created_at: "2024-09-27T10:36:17",
-        updated_at: "2024-09-27T04:12:59",
-        id: "GRN00006",
-        sub_id: "GRN00006",
-        status: "ORDERING",
-        received_status: "NOT_ENTERED",
-        supplierId: "SUP00002",
-        user_created_name: "Tài khoản nhân viên",
-        expected_delivery_at: null,
-        received_at: null,
-        payment_at: null,
-        completed_at: null,
-        cancelled_at: null,
-        total_received_quantity: 15.00,
-        discount: 500000.00,
-        tax_amount: 0.00,
-        total_value: 24635750.00,
-        payment_status: "UNPAID",
-        return_status: "NOT_RETURNED",
-        refund_status: "FULL",
-        note: "Nhập hàng lần đầu từ nhà cung cấp mới",
-        tags: "Nhập hàng, Ưu tiên",
-        import_cost: [
-            {
-                name: "Chi phí vận chuyển",
-                value: 100000.00
-            },
-            {
-                name: "Chi phí bốc xếp",
-                value: 50000.00
-            }
-        ],
-        payment_method: [
-            {
-                method: "Credit Card",
-                amount: 3000000.00,
-                date: "2023-09-10T12:00:00",
-                reference: "REF12345"
-            },
-            {
-                method: "Cash",
-                amount: 2000000.00,
-                date: "2023-09-10T12:00:00",
-                reference: "REF54321"
-            }
-        ],
-        histories: [
-            {
-                date: "2024-09-27T10:36:17",
-                userExecuted: "Tài khoản nhân viên",
-                function: "Nhập hàng",
-                operation: "Tạo đơn nhập hàng"
-            }
-        ],
-        products: [
-            {
-                id: "GRNP00001",
-                sub_id: "GRNP00001",
-                imported_quantity: 10.00,
-                discount: 10000.00,
-                tax: 500.00,
-                price: 2000000.00
-            },
-            {
-                id: "GRNP00002",
-                sub_id: "GRNP00002",
-                imported_quantity: 5.00,
-                discount: 5000.00,
-                tax: 250.00,
-                price: 1000000.00
-            }
-        ]
-    })
-    const [supplier, setSupplier] = useState(null)
+
     const status = {
         COMPLETED: "Hoàn thành",
         ORDERING: "Chưa nhập",
@@ -110,7 +38,7 @@ const GRNDetails = () => {
 
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('filter_products_table');
+        const storedCols = Cookies.get('filter_products_grn_detail');
         return storedCols ? JSON.parse(storedCols) : {
             index: true,
             image: true,
@@ -126,25 +54,45 @@ const GRNDetails = () => {
 
     useEffect(() => {
         setColsToRender((prev) => {
-            const { ordered_quantity, ...rest } = prev; // Tách imported_quantity khỏi state
-            return rest; // Trả về state mới mà không có imported_quantity
+            const { ordered_quantity, ...rest } = prev;
+            return rest;
         });
     }, [])
 
-    // Set required columns to Cookies
     useEffect(() => {
-        Cookies.set('filter_products_table', JSON.stringify(colsToRender));
+        Cookies.set('filter_products_grn_detail', JSON.stringify(colsToRender));
     }, [colsToRender])
 
     const [isReceiveDetail, setIsReceiveDetail] = useState(false)
     const [tab, setTab] = useState("products")
+    const [isHistoriesPopup, setIsHistoriesPopup] = useState(false);
+
+    const [dataDetail, setDataDetail] = useState({});
+
+    const fetchDetailGRN = async () => {
+        const responseAPI = await getGRNById(grnId);
+        const data = {
+            ...responseAPI.data,
+            products: responseAPI.data.products.map((product) => {
+                return {
+                    ...product,
+                    imported_quantity: product.quantity
+                }
+            })
+        };
+        setDataDetail(data);
+    }
+
+    useEffect(() => {
+        fetchDetailGRN();
+    }, [])
 
     return (
         <>
             <div className="right__navbar">
                 <div className="box-navbar">
                     <div className="btn-toolbar">
-                        <Link to='/admin/order_suppliers' className='btn-back'>
+                        <Link to='/admin/grns' className='btn-back'>
                             <FontAwesomeIcon icon={faChevronLeft} />
                             <h6 className="btn-back__title">
                                 Quay lại danh sách nhập hàng
@@ -152,12 +100,27 @@ const GRNDetails = () => {
                         </Link>
                     </div>
                     <div className="btn-toolbar">
-                        <button className="btn btn-outline-primary">
-                            <span className="btn__title">Thoát</span>
-                        </button>
+                        {
+                            dataDetail.received_status === "NOT_ENTERED" ?
+                            <button className="btn btn-outline-danger">
+                                <span className="btn__title">Hủy</span>
+                            </button> :
+                            <button className="btn btn-outline-primary">
+                                <span className="btn__title">Thoát</span>
+                            </button>
+                        }
                         <button className="btn btn-outline-primary">
                             <span className="btn__title">Sửa đơn</span>
                         </button>
+                        {
+                            dataDetail.received_status === "NOT_ENTERED" ?
+                            <button className="btn btn-primary">
+                                <span className="btn__title">Nhập hàng</span>
+                            </button> :
+                            <button className="btn btn-primary">
+                                <span className="btn__title">Hoàn trả</span>
+                            </button>
+                        }
                     </div>
                 </div>
             </div>
@@ -166,10 +129,10 @@ const GRNDetails = () => {
                     <div className={cn("right__paperPage-container", s.container)}>
                         <div className="box-title">
                             <div className="group-details">
-                                <h4 className='box-code'>ORD00001</h4>
-                                <h6 className='box-date'>25/09/2024 00:14</h6>
-                                <div className={cn('box-status', `box-status--${grn.status.toLowerCase()}`)}>
-                                    <span>{status[grn.status]}</span>
+                                <h4 className='box-code'>{dataDetail.sub_id}</h4>
+                                <h6 className='box-date'>{formatDateTime(dataDetail.created_at)}</h6>
+                                <div className={cn('box-status', `box-status--${dataDetail.status?.toLowerCase()}`)}>
+                                    <span>{status[dataDetail.status]}</span>
                                 </div>
                             </div>
                             <div className="btn-toolbar">
@@ -179,7 +142,7 @@ const GRNDetails = () => {
                                             <FontAwesomeIcon icon={faPrint} />
                                         </span>
                                         In đơn
-                                    </span>                                    
+                                    </span>
                                 </button>
                                 <button className="btn btn-base btn-text">
                                     <span className="btn__label">
@@ -187,7 +150,7 @@ const GRNDetails = () => {
                                             <FontAwesomeIcon icon={faCopy} />
                                         </span>
                                         Sao chép
-                                    </span>                                
+                                    </span>
                                 </button>
                             </div>
                         </div>
@@ -199,41 +162,41 @@ const GRNDetails = () => {
                                             <FontAwesomeIcon icon={faCheckCircle} />
                                         </div>
                                         <div className={s.title}>Tạo đơn</div>
-                                        <div className={s.timeRecorder}>{formatDateTime(grn.created_at)}</div>
+                                        <div className={s.timeRecorder}>{formatDateTime(dataDetail.created_at)}</div>
                                     </div>
                                 </div>
                                 <div className={s.boxTime}>
                                     <div className={s.line}></div>
                                     <div className={s.icon}>
                                         {
-                                            grn.received_status === "ENTERED" ?
-                                            <div className={s.checkIcon}>
-                                                <FontAwesomeIcon icon={faCheckCircle} />
-                                            </div> : 
-                                            <div className={s.numberIcon}>2</div>                     
+                                            dataDetail.received_status === "ENTERED" ?
+                                                <div className={s.checkIcon}>
+                                                    <FontAwesomeIcon icon={faCheckCircle} />
+                                                </div> :
+                                                <div className={s.numberIcon}>2</div>
                                         }
                                         <div className={s.title}>Nhập hàng</div>
-                                        {grn.received_status === "ENTERED" && <div className={s.timeRecorder}>{formatDateTime(grn.received_at)}</div>}
+                                        {dataDetail.received_status === "ENTERED" && <div className={s.timeRecorder}>{formatDateTime(dataDetail.received_at)}</div>}
                                     </div>
                                 </div>
                                 <div className={s.boxTime}>
                                     <div className={s.line}></div>
                                     <div className={s.icon}>
                                         {
-                                            grn.status === "COMPLETED" ?
-                                            <div className={s.checkIcon}>
-                                                <FontAwesomeIcon icon={faCheckCircle} />
-                                            </div> : 
-                                            grn.status === "CANCELLED" ?
-                                            <div className={s.closeIcon}>
-                                                <FontAwesomeIcon icon={faXmarkCircle} />
-                                            </div> :
-                                            <div className={s.numberIcon}>3</div>                        
+                                            dataDetail.status === "COMPLETED" ?
+                                                <div className={s.checkIcon}>
+                                                    <FontAwesomeIcon icon={faCheckCircle} />
+                                                </div> :
+                                                dataDetail.status === "CANCELLED" ?
+                                                    <div className={s.closeIcon}>
+                                                        <FontAwesomeIcon icon={faXmarkCircle} />
+                                                    </div> :
+                                                    <div className={s.numberIcon}>3</div>
                                         }
-                                        <div className={s.title}>{grn.status !== "CANCELLED" ? "Hoàn thành" : "Hủy"}</div>
+                                        <div className={s.title}>{dataDetail.status !== "CANCELLED" ? "Hoàn thành" : "Hủy"}</div>
                                         {
-                                            (grn.status === "COMPLETED" || grn.status === "CANCELLED") && 
-                                            <div className={s.timeRecorder}>{formatDateTime(grn.completed_at || grn.cancelled_at)}</div>
+                                            (dataDetail.status === "COMPLETED" || dataDetail.status === "CANCELLED") &&
+                                            <div className={s.timeRecorder}>{formatDateTime(dataDetail.completed_at || dataDetail.cancelled_at)}</div>
                                         }
                                     </div>
                                 </div>
@@ -246,7 +209,7 @@ const GRNDetails = () => {
                                     <p>Thông tin nhà cung cấp</p>
                                 </div>
                                 <div className="paper-content">
-                                    {grn.supplierId && <SupplierInfo supplierId={grn.supplierId} />}
+                                    {dataDetail.supplier_id && <SupplierInfo supplierId={dataDetail.supplier_id} />}
                                 </div>
                             </div>
                         </div>
@@ -259,20 +222,20 @@ const GRNDetails = () => {
                                     <div className="group-info">
                                         <div className="info-item">
                                             <p className="info-title">Nhân viên</p>
-                                            <p className="info-value">: {grn.user_created_name}</p>
+                                            <p className="info-value">: {dataDetail.user_created_name}</p>
                                         </div>
                                         <div className="info-item">
                                             <p className="info-title">Ngày hẹn giao</p>
-                                            <p className="info-value">: {grn.expected_at || "---"}</p>
+                                            <p className="info-value">: {dataDetail.expected_at || "---"}</p>
                                         </div>
                                         <div className="info-item">
                                             <p className="info-title">Ngày nhập</p>
-                                            <p className="info-value">: {grn.received_at || "---"}</p>
+                                            <p className="info-value">: {dataDetail.received_at || "---"}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div className={s.btnHistory}>
-                                    <a>Xem lịch sử đơn hàng</a>
+                                    <a onClick={() => setIsHistoriesPopup(true)}>Xem lịch sử đơn hàng</a>
                                 </div>
                             </div>
                         </div>
@@ -280,14 +243,14 @@ const GRNDetails = () => {
                             <div className="box-paper">
                                 <div className={cn("paper-header", s.boxHeader)}>
                                     {
-                                        grn.received_status === "ENTERED" ? 
-                                        <FontAwesomeIcon className="check-icon" icon={faCheckCircle} /> :
-                                        <FontAwesomeIcon icon={faWarehouse} />
+                                        dataDetail.received_status === "ENTERED" ?
+                                            <FontAwesomeIcon className="check-icon" icon={faCheckCircle} /> :
+                                            <FontAwesomeIcon icon={faWarehouse} />
                                     }
-                                    <p>Đơn nhập hàng {grn.received_status === "ENTERED" ? "đã nhập kho" : "chưa nhập kho"}</p>
+                                    <p>Đơn nhập hàng {dataDetail.received_status === "ENTERED" ? "đã nhập kho" : "chưa nhập kho"}</p>
                                 </div>
                                 {
-                                    grn.received_status === "ENTERED" &&
+                                    dataDetail.received_status === "ENTERED" &&
                                     <div className="paper-content">
                                         <div className={s.listWrapper}>
                                             <div className={s.listItem}>
@@ -304,7 +267,7 @@ const GRNDetails = () => {
                                                                 <FontAwesomeIcon icon={faCaretDown} />
                                                             </span>
                                                         </button>
-                                                        <p className={s.date}>{formatDateTime(grn.received_at)}</p>
+                                                        <p className={s.date}>{formatDateTime(dataDetail.received_at)}</p>
                                                     </div>
                                                     <Collapse className={s.panel} isOpen={isReceiveDetail}>
                                                         <div className={s.collapseItem}>
@@ -312,14 +275,14 @@ const GRNDetails = () => {
                                                                 <p>Nhân viên nhập kho</p>
                                                                 <p>
                                                                     :&nbsp;
-                                                                    {grn.user_created_name}
+                                                                    {dataDetail.user_created_name}
                                                                 </p>
                                                             </div>
                                                             <div className={s.infoItem}>
                                                                 <p>Tổng tiền hàng</p>
                                                                 <p>
                                                                     :&nbsp;
-                                                                    {grn.total_value}
+                                                                    {dataDetail.total_value}
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -334,31 +297,43 @@ const GRNDetails = () => {
                         <div className={s.boxPayment}>
                             <div className="box-paper">
                                 <div className={cn("paper-header", s.boxHeader)}>
-                                    {
-                                        grn.payment_status === "PAID" ? 
-                                        <FontAwesomeIcon className="check-icon" icon={faCheckCircle} /> :
-                                        <FontAwesomeIcon icon={faMoneyBills} />
-                                    }
-                                    <p>Đơn nhập hàng {status[grn.payment_status].toLowerCase()}</p>
+                                    <div className="box-header">
+                                        <div className='d-flex h-100 align-items-center'>
+                                            {
+                                                dataDetail.payment_status === "PAID" ?
+                                                    <FontAwesomeIcon className="check-icon" icon={faCheckCircle} /> :
+                                                    <FontAwesomeIcon icon={faMoneyBills} />
+                                            }
+                                            <p>Đơn nhập hàng {status[dataDetail.payment_status]?.toLowerCase()}</p>
+                                        </div>
+                                        {
+                                            dataDetail.payment_status !== "PAID" &&
+                                            <div className="btn-toolbar">
+                                                <button className="btn btn-primary">
+                                                    <span className="btn__title">Thanh toán</span>
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                                 <div className="paper-content pt-3">
                                     <div className={s.paymentSummary}>
                                         <div className={s.itemSummary}>
                                             <p className={s.summaryTitle}>Tiền cần trả NCC:&nbsp;</p>
-                                            <p className={s.summaryValue}>{grn?.total_value?.toLocaleString('en-US')}</p>
+                                            <p className={s.summaryValue}>{dataDetail?.total_value?.toLocaleString('en-US')}</p>
                                         </div>
                                         <div className={s.itemSummary}>
                                             <p className={s.summaryTitle}>Đã trả:&nbsp;</p>
-                                        <p className={s.summaryValue}>{grn?.payment_method?.reduce((acc, payment) => acc + payment.amount, 0).toLocaleString('en-US')}</p>
+                                            <p className={s.summaryValue}>{dataDetail?.payment_method?.reduce((acc, payment) => acc + payment.amount, 0).toLocaleString('en-US')}</p>
                                         </div>
                                         <div className={s.itemSummary}>
                                             <p className={s.summaryTitle}>Còn phải trả:&nbsp;</p>
-                                            <p className={s.summaryValue}>{(grn?.total_value - grn?.payment_method?.reduce((acc, payment) => acc + payment.amount, 0)).toLocaleString('en-US')}</p>
+                                            <p className={s.summaryValue}>{(dataDetail?.total_value - dataDetail?.payment_method?.reduce((acc, payment) => acc + payment.amount, 0)).toLocaleString('en-US')}</p>
                                         </div>
                                     </div>
                                     <div className={s.listWrapper}>
                                         {
-                                            grn.payment_method?.map((payment, index) => (
+                                            dataDetail.payment_method?.map((payment, index) => (
                                                 <TransactionItem key={index} payment={payment} />
                                             ))
                                         }
@@ -371,7 +346,7 @@ const GRNDetails = () => {
                                 <div className="paper-header">
                                     <div className="box-header">
                                         {
-                                            grn?.return_status === "NOT_RETURN" ? 
+                                            dataDetail?.return_status === "NOT_RETURNED" ?
                                             <p>Thông tin sản phẩm</p> :
                                             <div className="box-scroller">
                                                 <div className="group-scroller-btns">
@@ -392,49 +367,51 @@ const GRNDetails = () => {
                                 </div>
                                 <div className="box-table">
                                     {
-                                        tab === "products" ? 
+                                        tab === "products" ?
                                         <>
-                                            <ProductsTable productsList={grn?.products} colsToRender={colsToRender} isView={true} />
+                                            {dataDetail.products
+                                                && dataDetail.products.length > 0
+                                                && <ProductsTable productsList={dataDetail?.products} colsToRender={colsToRender} isView={true} />}
                                             <div className="box-total">
                                                 <div className="box-total__container">
                                                     <div className="box-subinfo">
                                                         <div className="box-note">
                                                             <p className='box-label'>Ghi chú đơn</p>
-                                                            <p className='box-content'>{grn.note || "Chưa có ghi chú"}</p>
+                                                            <p className='box-content'>{dataDetail.note || "Chưa có ghi chú"}</p>
                                                         </div>
                                                         <div className="box-tags">
                                                             <p className='box-label'>Tags</p>
-                                                            <p className='box-content'>{grn.tags || "Chưa có tags"}</p>
+                                                            <p className='box-content'>{dataDetail.tags || "Chưa có tags"}</p>
                                                         </div>
                                                     </div>
                                                     <div className="box-price-info">
                                                         <div className="info-item">
                                                             <p>Số lượng</p>
-                                                            <p>0</p>
+                                                            <p>{dataDetail.total_received_quantity}</p>
                                                         </div>
                                                         <div className="info-item">
                                                             <p>Tổng tiền</p>
-                                                            <p>350,000</p>
+                                                            <p>{dataDetail.products?.map(item => (item.price - item.discount + item.tax) * item.quantity).reduce((acc, curr) => acc + curr, 0)}</p>
                                                         </div>
                                                         <div className="info-item">
                                                             <p>Chiết khấu</p>
-                                                            <p>0</p>
+                                                            <p>{dataDetail.discount}</p>
                                                         </div>
                                                         <div className="info-item">
                                                             <div className="d-flex">
                                                                 <p>Thuế</p>
                                                             </div>
-                                                            <p>0</p>
+                                                            <p>{dataDetail.tax_amount}</p>
                                                         </div>
                                                         <div className="info-item">
                                                             <p className='total-price'>Tiền cần trả</p>
-                                                            <p className='total-price'>350,000</p>
+                                                            <p className='total-price'>{dataDetail.total_value}</p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </> :
-                                        <ReturnTable />
+                                        <ReturnTable grnId={grnId}/>
                                     }
                                 </div>
                             </div>
@@ -442,6 +419,7 @@ const GRNDetails = () => {
                     </div>
                 </div>
             </div>
+            {isHistoriesPopup && <ImportHistoriesPopup histories={dataDetail.histories} closePopup={() => setIsHistoriesPopup(false)} />}
         </>
     )
 }
