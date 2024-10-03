@@ -15,7 +15,7 @@ import importIcon from '../../assets/icons/ImportIcon'
 import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import StatusFilter from '../GRNList/FiltersPopup/StatusFilter.jsx'
 import { getAllOrders, getDataExport } from '../../service/OrderAPI.jsx'
@@ -269,14 +269,6 @@ const OrdersList = () => {
                                 />
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
-                                        Sản phẩm
-                                        <span className="btn__icon">
-                                            <FontAwesomeIcon icon={faCaretDown} />
-                                        </span>
-                                    </span>
-                                </button>
-                                <button className="btn btn-base btn-filter">
-                                    <span className="btn__label">
                                         Bộ lọc khác
                                         <span className="btn__icon">
                                             {filterIcon}
@@ -288,6 +280,39 @@ const OrdersList = () => {
                                 <span className="btn__title">Lưu bộ lọc</span>
                             </button>
                         </div>
+                        {(dataFilter.statuses || (dataFilter.start_created_at && dataFilter.end_created_at))
+							&& (<div className="box-show-selected-filter">
+								<div className="box-show-selected-container">
+									{dataFilter.statuses && (<div className="box-show-selected-item">
+										<span> Trạng thái: {dataFilter.statuses.map((key, index) => (
+											<span key={index}>{status[key]}{index < dataFilter.statuses.length - 1 ? ', ' : ''} </span>
+										))}
+										</span>
+										<div className="box-remove-item">
+											<button onClick={() => setDataFilter((prev) => ({ ...prev, statuses: null }))} className="btn-remove-item" type="button">
+												<span>
+													<FontAwesomeIcon icon={faXmark} />
+												</span>
+											</button>
+										</div>
+									</div>)}
+									{dataFilter.start_created_at && dataFilter.end_created_at && (<div className="box-show-selected-item">
+										<span>Ngày tạo: (
+											<span>{dataFilter.start_created_at}</span> -
+											<span>{dataFilter.end_created_at}</span>
+											)</span>
+										<div className="box-remove-item">
+											<button onClick={() => setDataFilter((prev) => ({ ...prev, start_created_at: null, end_created_at: null }))} className="btn-remove-item" type="button">
+												<span>
+													<FontAwesomeIcon icon={faXmark} />
+												</span>
+											</button>
+										</div>
+									</div>)}
+
+								</div>
+							</div>)
+						}
                     </div>
                     <div
                         ref={headersRef}
