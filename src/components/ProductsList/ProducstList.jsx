@@ -235,7 +235,7 @@ const ProductList = () => {
 
     useDebouncedEffect(() => {
         fetchProductList();
-    }, 300, [limit, page, dataBody]);
+    }, 300, [limit, page, dataBody]); 
 
     return (
         <>
@@ -530,7 +530,7 @@ const ProductList = () => {
                                                                             }
                                                                         </p>
 
-                                                                    </td> 
+                                                                    </td>
                                                                 )
                                                             }
                                                             return (
@@ -541,7 +541,7 @@ const ProductList = () => {
                                                                     <p className='box-text'>
                                                                         {
                                                                             key !== "name" ? product[key] :
-                                                                            <Link to={`/admin/products/PRD/${product?.id}`} className='box-id'>{product[key]}</Link>
+                                                                                <Link to={`/admin/products/PRD/${product?.id}`} className='box-id'>{product[key]}</Link>
                                                                         }
                                                                     </p>
                                                                 </td>
@@ -573,7 +573,7 @@ const ProductList = () => {
                                     btnRef={limitBtnRef}
                                     closePopup={() => setIsOpenLimitPopup(false)}
                                     limit={limit}
-                                    handleChangeLimit={(limit) => { 
+                                    handleChangeLimit={(limit) => {
                                         setLimit(limit);
                                         setPage(1);
                                     }}
@@ -608,7 +608,14 @@ const ProductList = () => {
                     </div>
                 </div>
             </div>
-            {isFilterPopup && <FilterPopup defaultCols={defaultCols} colGroup={col} colsToRender={colsToRender} setColsToRender={setColsToRender} closePopup={() => setIsFilterPopup(false)} />}
+            {isFilterPopup
+                && <FilterPopup
+                    defaultCols={defaultCols}
+                    colGroup={col}
+                    colsToRender={colsToRender}
+                    setColsToRender={setColsToRender}
+                    closePopup={() => setIsFilterPopup(false)}
+                />}
         </>
     )
 }

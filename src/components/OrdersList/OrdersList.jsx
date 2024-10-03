@@ -22,6 +22,7 @@ import { getAllOrders, getDataExport } from '../../service/OrderAPI.jsx'
 import { formatDateTime } from '../../utils/DateUtils.jsx'
 import { exportExcel } from '../../config/ExportExcel.jsx'
 import SelectDatePopup from '../SelectDatePopup.jsx'
+import FilterPopup from '../FilterPopup/FilterPopup.jsx'
 
 const OrdersList = () => {
     const [limit, setLimit] = useState(10);
@@ -30,35 +31,38 @@ const OrdersList = () => {
     const navigate = useNavigate()
 
     const [isOpenStatusPopup, setIsOpenStatusPopup] = useState(false);
+    const [isFilterPopup, setIsFilterPopup] = useState(false)
 
+    const defaultCols = {
+        id: true,
+        created_at: true,
+        status: true,
+        supplier_name: true,
+        user_created_name: true,
+        quantity: true,
+        price: true,
+        supplier_id: false,
+        user_cancelled_name: false,
+        user_completed_name: false,
+        supplier_phone: false,
+        supplier_address: false,
+        supplier_email: false,
+        note: false,
+        tags: false,
+        expected_at: false,
+        completed_at: false,
+        cancelled_at: false
+    };
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_orders');
-        return storedCols ? JSON.parse(storedCols) : {
-            id: true,
-            created_at: true,
-            status: true,
-            supplier_name: true,
-            user_created_name: true,
-            quantity: true,
-            price: true,
-            supplier_id: false,
-            user_cancelled_name: false,
-            user_completed_name: false,
-            supplier_phone: false,
-            supplier_address: false,
-            supplier_email: false,
-            note: false,
-            tags: false,
-            expected_at: false,
-            completed_at: false,
-            cancelled_at: false
-        }
+        return storedCols ? JSON.parse(storedCols) : defaultCols;
     })
 
     // Set required columns to Cookies
     useEffect(() => {
         Cookies.set('filter_orders', JSON.stringify(colsToRender));
+        fetchOrderList();
     }, [colsToRender])
 
     const headersRef = useRef(null);
@@ -89,10 +93,6 @@ const OrdersList = () => {
                 }
             });
         }
-    }
-
-    const handleColsChange = (name) => {
-        setColsToRender({ ...colsToRender, [name]: !colsToRender[name] })
     }
 
     const status = {
@@ -151,7 +151,7 @@ const OrdersList = () => {
 
     useEffect(() => {
         fetchOrderList();
-    }, [dataFilter, dataPage.page, dataPage.size, colsToRender])
+    }, [dataFilter, dataPage.page, dataPage.size])
 
     const handleExportData = async () => {
         const response = await getDataExport("DEFAULT", dataFilter);
@@ -315,7 +315,7 @@ const OrdersList = () => {
                                 <tr className="group-table-headers">
                                     <th rowSpan={1} className='table-icon'>
                                         <div className="group-icons">
-                                            <button className="btn-icon">
+                                            <button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
                                                 {settingFilterIcon}
                                             </button>
                                             <div className="checkbox__container">
@@ -520,6 +520,14 @@ const OrdersList = () => {
                     </div>
                 </div>
             </div>
+            {isFilterPopup
+                && <FilterPopup
+                    defaultCols={defaultCols}
+                    colGroup={col}
+                    colsToRender={colsToRender}
+                    setColsToRender={setColsToRender}
+                    closePopup={() => setIsFilterPopup(false)}
+                />}
         </>
     )
 }
