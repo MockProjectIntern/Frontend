@@ -15,7 +15,7 @@ import importIcon from '../../assets/icons/ImportIcon'
 import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 import StatusFilter from './FiltersPopup/StatusFilter.jsx'
 import CreatedAtFilter from '../GINList/FiltersPopup/CreatedAtFilter.jsx'
 import { getDataExport, getGRNs } from '../../service/GRNApi.jsx'
@@ -34,7 +34,7 @@ const GRNList = () => {
     const [limit, setLimit] = useState(20);
 
     const [isOpenStatusPopup, setIsOpenStatusPopup] = useState(false);
-    const [statusListFilter, setStatusListFilter] = useState([]);
+    const [statusListFilter, setStatusListFilter] = useState(null);
     const [totalItems, setTotalItems] = useState(0);
 
     const [isOpenCreatedAtPopup, setIsOpenCreatedAtPopup] = useState(false);
@@ -302,6 +302,39 @@ const GRNList = () => {
                                 <span className="btn__title">Lưu bộ lọc</span>
                             </button>
                         </div>
+                        {(filterBody.statuses || (filterBody.start_created_at && filterBody.end_created_at))
+							&& (<div className="box-show-selected-filter">
+								<div className="box-show-selected-container">
+									{filterBody.statuses && (<div className="box-show-selected-item">
+										<span> Trạng thái: {filterBody.statuses.map((key, index) => (
+											<span key={index}>{status[key]}{index < filterBody.statuses.length - 1 ? ', ' : ''} </span>
+										))}
+										</span>
+										<div className="box-remove-item">
+											<button onClick={() => setFilterBody((prev) => ({ ...prev, statuses: null }))} className="btn-remove-item" type="button">
+												<span>
+													<FontAwesomeIcon icon={faXmark} />
+												</span>
+											</button>
+										</div>
+									</div>)}
+									{filterBody.start_created_at && filterBody.end_created_at && (<div className="box-show-selected-item">
+										<span>Ngày tạo: (
+											<span>{filterBody.start_created_at}</span> -
+											<span>{filterBody.end_created_at}</span>
+											)</span>
+										<div className="box-remove-item">
+											<button onClick={() => setFilterBody((prev) => ({ ...prev, start_created_at: null, end_created_at: null }))} className="btn-remove-item" type="button">
+												<span>
+													<FontAwesomeIcon icon={faXmark} />
+												</span>
+											</button>
+										</div>
+									</div>)}
+
+								</div>
+							</div>)
+						}
                     </div>
                     <div
                         ref={headersRef}
