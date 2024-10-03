@@ -19,7 +19,8 @@ const Register = () => {
         full_name: "",
         phone: "",
         password: "",
-        role: "COORDINATOR"
+        role: "COORDINATOR",
+        email: ""
     })
     const navigate = useNavigate();
 
@@ -29,7 +30,8 @@ const Register = () => {
             formData.full_name, 
             formData.phone, 
             formData.password,
-            formData.role
+            formData.role,
+            formData.email
         );
         if (response.status_code === 201) {
             alert("Bạn đã đăng ký thành công");
@@ -78,6 +80,19 @@ const Register = () => {
                                     required
                                     name="phone"
                                     placeholder="Nhập số điện thoại"
+                                />
+                            </FormGroup>
+                            <FormGroup className="my-3">
+                                <FormText>Gmail</FormText>
+                                <Input
+                                    id="email"
+                                    className="input-transparent pl-3 mt-2"
+                                    value={formData.email}
+                                    onChange={(e) => handleChange(e)}
+                                    type="text"
+                                    required
+                                    name="email"
+                                    placeholder="Nhập gmail"
                                 />
                             </FormGroup>
                             <FormGroup className="my-3">

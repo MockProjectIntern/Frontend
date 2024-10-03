@@ -97,6 +97,7 @@ const ProductList = () => {
 	// phan useState quan ly filter loai san pham
 	const [selectedCategories, setSelectedCategories] = useState([]);
 	const [listCategories, setListCategories] = useState([]);
+	const [listCategoryShowFilter, setListCategoryShowFilter] = useState([]);
 	const [isOpenFilterCategoryPopup, setIsOpenFilterCategoryPopup] =
 		useState(false);
 	const [dataFilterCategory, setDataFilterCategory] = useState({
@@ -105,9 +106,11 @@ const ProductList = () => {
 	const [categoryKeyword, setCategoryKeyword] = useState("");
 	const [currentPageFilterCategory, setCurrentPageFilterCategory] = useState(1);
 	const [totalPageFilterCategory, setTotalPageFilterCategory] = useState();
+
 	//phan useState quan ly filter nhan hieu
 	const [selectedBrands, setSelectedBrands] = useState([]);
 	const [listBrands, setListBrands] = useState([]);
+	const [listBrandShowFilter, setListBrandShowFilter] = useState([]);
 	const [isOpenFilterBrandPopup, setIsOpenFilterBrandPopup] = useState(false);
 	const [dataFilterBrand, setDataFilterBrand] = useState({
 		keyword: null,
@@ -163,6 +166,7 @@ const ProductList = () => {
 		);
 		if (categories.status_code === 200) {
 			setListCategories(categories.data.data);
+			setListCategoryShowFilter(categories.data.data);
 			setTotalPageFilterCategory(categories.data.total_page);
 		}
 	};
@@ -174,6 +178,7 @@ const ProductList = () => {
 			dataFilterCategory
 		);
 		setListBrands(brands.data.data);
+		setListBrandShowFilter(brands.data.data);
 		setTotalPageFilterBrand(brands.data.total_page);
 	};
 
@@ -185,6 +190,7 @@ const ProductList = () => {
 				dataFilterCategory
 			);
 			setListCategories((prev) => [...prev, ...categories.data.data]);
+			setListCategoryShowFilter((prev) => [...prev, ...categories.data.data]);
 			setCurrentPageFilterCategory(currentPageFilterCategory + 1);
 			setTotalPageFilterCategory(categories.data.total_page);
 		}
@@ -198,6 +204,7 @@ const ProductList = () => {
 				dataFilterBrand
 			);
 			setListBrands((prev) => [...prev, ...brands.data.data]);
+			setListBrandShowFilter((prev) => [...prev, ...brands.data.data]);
 			setCurrentPageFilterBrand(currentPageFilterBrand + 1);
 			setTotalPageFilterBrand(brands.data.total_page);
 		}
@@ -247,13 +254,9 @@ const ProductList = () => {
 		fetchProductList();
 	}, [colsToRender]);
 
-	useDebouncedEffect(
-		() => {
-			fetchProductList();
-		},
-		300,
-		[limit, page, dataBody]
-	);
+	useDebouncedEffect(() => {
+		fetchProductList();
+	}, 300, [limit, page, dataBody]);
 
 	return (
 		<>
@@ -402,22 +405,18 @@ const ProductList = () => {
 						{((dataBody.category_ids && dataBody.category_ids.length > 0) ||
 							(dataBody.created_date_from && dataBody.created_date_to) ||
 							dataBody.brand_ids) && (
-							<div className="box-show-selected-filter">
-								<div className="box-show-selected-container">
-									{dataBody.category_ids &&
-										dataBody.category_ids.length > 0 && (
-											<div className="box-show-selected-item">
-												<span>
-													{" "}
-													Loại sản phẩm:{" "}
-													{dataBody.category_ids.map((id, index) => {
-														console.log(id);
-														const category = listCategories.find(
-															(cat) => cat.id == id
-														);
-														console.log(category, category?.name);
-														if (category)
-                                                            console.log(category.name);
+								<div className="box-show-selected-filter">
+									<div className="box-show-selected-container">
+										{dataBody.category_ids &&
+											dataBody.category_ids.length > 0 && (
+												<div className="box-show-selected-item">
+													<span>
+														{" "}
+														Loại sản phẩm:{" "}
+														{dataBody.category_ids.map((id, index) => {
+															const category = listCategoryShowFilter.find(
+																(cat) => cat.id == id
+															);
 															return (
 																<span key={index}>
 																	{category?.name}
@@ -426,14 +425,39 @@ const ProductList = () => {
 																		: ""}
 																</span>
 															);
-													})}
+														})}
+													</span>
+													<div className="box-remove-item">
+														<button
+															onClick={() =>
+																setDataBody((prev) => ({
+																	...prev,
+																	category_ids: null,
+																}))
+															}
+															className="btn-remove-item"
+															type="button"
+														>
+															<span>
+																<FontAwesomeIcon icon={faXmark} />
+															</span>
+														</button>
+													</div>
+												</div>
+											)}
+										{dataBody.created_date_from && dataBody.created_date_to && (
+											<div className="box-show-selected-item">
+												<span>
+													Ngày tạo: (<span>{dataBody.created_date_from}</span> -
+													<span>{dataBody.created_date_to}</span>)
 												</span>
 												<div className="box-remove-item">
 													<button
 														onClick={() =>
-															setDataBody((prev) => ({
+															setFilterBody((prev) => ({
 																...prev,
-																category_ids: null,
+																created_date_from: null,
+																created_date_to: null,
 															}))
 														}
 														className="btn-remove-item"
@@ -446,34 +470,47 @@ const ProductList = () => {
 												</div>
 											</div>
 										)}
-									{dataBody.created_date_from && dataBody.created_date_to && (
-										<div className="box-show-selected-item">
-											<span>
-												Ngày tạo: (<span>{dataBody.created_date_from}</span> -
-												<span>{dataBody.created_date_to}</span>)
-											</span>
-											<div className="box-remove-item">
-												<button
-													onClick={() =>
-														setFilterBody((prev) => ({
-															...prev,
-															created_date_from: null,
-															created_date_to: null,
-														}))
-													}
-													className="btn-remove-item"
-													type="button"
-												>
+										{dataBody.brand_ids &&
+											dataBody.brand_ids.length > 0 && (
+												<div className="box-show-selected-item">
 													<span>
-														<FontAwesomeIcon icon={faXmark} />
+														{" "}
+														Thương hiệu:{" "}
+														{dataBody.brand_ids.map((id, index) => {
+															const brand = listBrandShowFilter.find(
+																(cat) => cat.id == id
+															);
+															return (
+																<span key={index}>
+																	{brand?.name}
+																	{index < dataBody.brand_ids.length - 1
+																		? ", "
+																		: ""}
+																</span>
+															);
+														})}
 													</span>
-												</button>
-											</div>
-										</div>
-									)}
+													<div className="box-remove-item">
+														<button
+															onClick={() =>
+																setDataBody((prev) => ({
+																	...prev,
+																	category_ids: null,
+																}))
+															}
+															className="btn-remove-item"
+															type="button"
+														>
+															<span>
+																<FontAwesomeIcon icon={faXmark} />
+															</span>
+														</button>
+													</div>
+												</div>
+											)}
+									</div>
 								</div>
-							</div>
-						)}
+							)}
 					</div>
 					<div
 						ref={headersRef}
@@ -630,8 +667,8 @@ const ProductList = () => {
 																				{product[key] === "ACTIVE"
 																					? "Đang hoạt động"
 																					: product[key] === "INACTIVE"
-																					? "Ngừng giao dịch"
-																					: product[key]}
+																						? "Ngừng giao dịch"
+																						: product[key]}
 																			</span>
 																		</div>
 																	</td>

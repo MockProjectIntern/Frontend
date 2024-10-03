@@ -29,6 +29,7 @@ const CreateSupplier = () => {
         address: null,
         supplier_group_id: null,
         tags: null,
+        note: null,
         status: "INACTIVE",
         supplier_group_name: null, // Không cần truyền vào API
     });
@@ -336,7 +337,7 @@ const CreateSupplier = () => {
                                                 onChange={e => setDataBody(prevState => {
                                                     return {
                                                         ...prevState,
-                                                        tags: e.target.value
+                                                        note: e.target.value
                                                     }
                                                 })}
                                             />

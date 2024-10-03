@@ -13,13 +13,14 @@ export const loginAccount = async (phone, password) => {
     }
 };
 
-export const registerAccount = async (full_name, phone, password, role) => {
+export const registerAccount = async (full_name, phone, password, role, email) => {
     try {
         const response = await axiosInstance.post(`/users/register.json`, {
             full_name,
             phone,
             password,
-            role
+            role,
+            email
         });
         return response.data;
     } catch (error) {
