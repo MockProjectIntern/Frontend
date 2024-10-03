@@ -346,21 +346,6 @@ const CreateGIN = () => {
 															closePopup={() => setIsProductSelectPopup(false)}
 														/>
 													)}
-													<button className="btn btn-base">
-														<span className="btn__label">
-															<p>Chọn nhanh</p>
-														</span>
-													</button>
-												</div>
-												<div className="btn-group group-filter-btns">
-													<button className="btn btn-base btn-filter">
-														<span className="btn__label">
-															Giá nhập
-															<span className="btn__icon">
-																<FontAwesomeIcon icon={faCaretDown} />
-															</span>
-														</span>
-													</button>
 												</div>
 											</div>
 										</div>
@@ -369,8 +354,8 @@ const CreateGIN = () => {
 								<div className="box-table">
 									<GINProductsTable
 										productsList={filteredProducts}
-
 										setProductList={setListProductDetail}
+										onClickShowAdd={() => setIsProductSelectPopup(true)}
 									/>
 								</div>
 							</div>

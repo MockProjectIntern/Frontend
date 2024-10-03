@@ -415,7 +415,15 @@ const SupplierList = () => {
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </span>
                                 </button>
-                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => setLimit(limit)} />}
+                                {isOpenLimitPopup
+                                    && <LimitSelectPopup
+                                        btnRef={limitBtnRef}
+                                        closePopup={() => setIsOpenLimitPopup(false)}
+                                        limit={limit}
+                                        handleChangeLimit={(limit) => {
+                                            setPage(1);
+                                            setLimit(limit)
+                                        }} />}
                             </div>
                             <p>kết quả</p>
                             <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + suppliersList.length} trên tổng {suppliersQuantity}</p>

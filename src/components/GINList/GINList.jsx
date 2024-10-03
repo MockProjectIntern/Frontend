@@ -30,6 +30,7 @@ import { exportExcel } from "../../config/ExportExcel.jsx";
 import { formatDate, formatDateTime } from "../../utils/DateUtils.jsx";
 import { useDebouncedEffect } from "../../utils/CommonUtils.jsx";
 import FilterPopup from "../FilterPopup/FilterPopup.jsx";
+import SelectDatePopup from "../SelectDatePopup.jsx";
 
 const GINList = () => {
 	const [page, setPage] = useState(1);
@@ -72,7 +73,7 @@ const GINList = () => {
 		const updateDataFilters = { ...dataFilters };
 		for (const [key, value] of Object.entries(filters)) {
 			updateDataFilters[key] = value;
-		}
+		}		
 		setdataFilters(updateDataFilters);
 	};
 
@@ -244,7 +245,7 @@ const GINList = () => {
 												return { ...prev, keyword: e.target.value }
 											})
 										}}
-										placeholder="Tìm mã đơn nhập, đơn đặt hàng, tên, SĐT, mã NCC"
+										placeholder="Tìm mã đơn nhập"
 										type="text"
 										name="keyword"
 										id=""
@@ -273,26 +274,15 @@ const GINList = () => {
 										handeChangeDatafilter={handeChangeDatafilter}
 									/>
 								)}
-								<button
-									ref={createdAtRef}
-									onClick={() => setIsOpenCreatedAtPopup(!isOpenCreatedAtPopup)}
-									className="btn btn-base btn-filter"
-								>
-									<span className="btn__label">
-										Ngày tạo
-										<span className="btn__icon">
-											<FontAwesomeIcon icon={faCaretDown} />
-										</span>
-									</span>
-								</button>
-								{isOpenCreatedAtPopup && (
-									<CreatedAtFilter
-										parentCalling="GIN"
-										createdRef={createdAtRef}
-										closePopup={() => setIsOpenCreatedAtPopup(false)}
-										handeChangeDatafilter={handeChangeDatafilter}
-									/>
-								)}
+								<SelectDatePopup
+                                    setDataFilters={(data) => setdataFilters(prev => {
+                                        return {
+                                            ...prev,
+                                            created_date_from: data.date_from,
+                                            created_date_to: data.date_to
+                                        };
+                                    })}
+                                />
 
 								<button className="btn btn-base btn-filter" onClick={() => setdataFilters({
 									keyword: null,

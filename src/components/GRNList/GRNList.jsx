@@ -283,8 +283,6 @@ const GRNList = () => {
                                         };
                                     })}
                                 />
-                                {isOpenCreatedAtPopup && <CreatedAtFilter createdRef={createdAtRef} closePopup={() => setIsOpenCreatedAtPopup(false)} setCreatedMin={setCreatedMin} setCreatedMax={setCreatedMax} />}
-
                                 <button className="btn btn-base btn-filter" onClick={() => setFilterBody({
                                     keyword: null,
                                     statuses: null,
