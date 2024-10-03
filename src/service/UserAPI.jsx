@@ -71,3 +71,13 @@ export const createNewUser = async (dataBody) => {
         throw error;
     }
 }
+
+export const deleteAccount = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`/users/delete-account.json/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

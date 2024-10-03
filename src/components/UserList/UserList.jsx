@@ -6,16 +6,19 @@ import {
 	faCaretDown,
 	faChevronRight,
 	faChevronLeft,
+	faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import cn from "classnames";
-import { getListCategory } from "../../service/CategoryAPI";
-import { useRef, useState } from "react";
+
+import { useRef, useState,useMemo } from "react";
 import { formatDateTime } from "../../utils/DateUtils";
 import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup";
 import { useDebouncedEffect } from "../../utils/CommonUtils";
-import { createNewUser, getListUser } from "../../service/UserAPI";
+import { createNewUser, deleteAccount, getListUser } from "../../service/UserAPI";
 import CreateUserPopup from "../UserListPopup/CreateUserPopup";
 import s from "./UserList.module.scss";
+import { Delete } from "ckeditor5";
+import DeleteConfirmation from "../ConfirmPopup/DeleteConfirmation";
 const UserList = () => {
 	const limitBtnRef = useRef(null);
 
@@ -33,17 +36,54 @@ const UserList = () => {
 		active_status: null,
 	});
 
+	const headersRef = useRef(null);
+	const contentRef = useRef(null);
+
+	const handleScroll = (e, target) => {
+		target.scrollLeft = e.target.scrollLeft;
+	};
+
 	const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false); // State cho popup tạo user
 	const isActive = {
 		true: "Đang làm việc",
 		false: "Đã nghỉ việc",
-	}
+	};
 
 	const role = {
 		COORDINATOR: "Thủ kho",
 		WAREHOUSE_MANAGER: "Nhân viên điều phối",
-		WAREHOUSE_STAFF: "Nhân viên kho"
-	}
+		WAREHOUSE_STAFF: "Nhân viên kho",
+	};
+	const [isShowDeleteConfirmation, setIsShowDeleteConfirmation] = useState(false);
+
+	const selectedId = useRef(null);
+
+	const deleteConfirmation = useMemo(() => {
+		return {
+			action: "xóa",
+			type: "tài khoản",
+			description: "Thao tác này sẽ xóa phiếu kiểm hàng của bạn. Phiếu kiểm đã xóa sẽ không thể cân bằng kho được nữa.",
+			handleClose: () => setIsShowDeleteConfirmation(false),
+			handleConfirm:  async () => {
+				if(selectedId.current === localStorage.getItem("userId")) {
+					alert("Không thể xóa tài khoản đang đăng nhập.");
+					setIsShowDeleteConfirmation(false);
+					return;
+				}
+				try {
+					setIsShowDeleteConfirmation(false);
+					const response = await deleteAccount(selectedId.current);
+					alert(response.message);
+					if (response.status_code === 200) {
+						setUsersList((prev) => prev.filter((user) => user.id !== selectedId.current));
+					}
+				} catch (error) {
+					console.error("Error during product deletion:", error);
+					alert("Đã xảy ra lỗi khi xóa sản phẩm.");
+				}
+			}
+		};
+	}, [selectedId.current]);
 
 	const handlePrevPage = () => {
 		if (page > 1) {
@@ -65,8 +105,12 @@ const UserList = () => {
 
 	const handleCreateUser = async (userData) => {
 		const res = await createNewUser(userData);
+		alert(res.message);
+		if(res.status_code === 201) 
 		fetchUserList();
 	};
+
+
 
 	useDebouncedEffect(
 		() => {
@@ -78,12 +122,15 @@ const UserList = () => {
 
 	return (
 		<>
-			<div className={cn(s.container, { [s.opacity]: isOpenCreatePopup })}>
+			<div className={cn(s.container, { [s.opacity]: isOpenCreatePopup || isShowDeleteConfirmation })}>
 				<Header title={"Loại sản phẩm"} />
 				<div className="right__listPage">
 					<div className="right__toolbar">
 						<div className="btn-toolbar">
-							<button onClick={() => setIsOpenCreatePopup(!isOpenCreatePopup)} className="btn btn-primary">
+							<button
+								onClick={() => setIsOpenCreatePopup(!isOpenCreatePopup)}
+								className="btn btn-primary"
+							>
 								<span className="btn__icon">
 									<FontAwesomeIcon icon={faPlus} />
 								</span>
@@ -154,17 +201,21 @@ const UserList = () => {
 												</span>
 											</span>
 										</button>
-
 									</div>
 								</div>
 							</div>
 						</div>
-						<div className="right__table-headers">
+						<div
+							ref={headersRef}
+							onScroll={(e) => handleScroll(e, contentRef.current)}
+							className="right__table-headers"
+						>
 							<table className="box-table-headers">
 								<colgroup>
 									<col style={{ width: "150px" }} />
 									<col style={{ width: "150px" }} />
 									<col style={{ width: "180px" }} />
+									<col style={{ width: "150px" }} />
 									<col style={{ width: "150px" }} />
 									<col style={{ width: "150px" }} />
 									<col style={{ width: "150px" }} />
@@ -224,7 +275,6 @@ const UserList = () => {
 											Vai trò
 										</th>
 
-
 										<th
 											colSpan={1}
 											rowSpan={1}
@@ -240,18 +290,30 @@ const UserList = () => {
 											Địa chỉ
 										</th>
 
+										<th
+											colSpan={1}
+											rowSpan={1}
+											className={cn("table-header-item", "text-center")}
+										>
+											Thao tác
+										</th>
 									</tr>
 								</thead>
 							</table>
 						</div>
 						<div className="right__table-content">
 							<div className="right__table-data">
-								<div className="table-data__container">
+								<div
+									ref={contentRef}
+									onScroll={(e) => handleScroll(e, headersRef.current)}
+									className="table-data__container"
+								>
 									<table className="box-table-data">
 										<colgroup>
 											<col style={{ width: "150px" }} />
 											<col style={{ width: "150px" }} />
 											<col style={{ width: "180px" }} />
+											<col style={{ width: "150px" }} />
 											<col style={{ width: "150px" }} />
 											<col style={{ width: "150px" }} />
 											<col style={{ width: "150px" }} />
@@ -286,19 +348,55 @@ const UserList = () => {
 														<td className={cn("table-data-item", "text-start")}>
 															<p className="box-text">{user.email}</p>
 														</td>
-														<td className={cn("table-data-item", "text-start",)}>
-															<p className="box-text" style={{ color: "rgb(13, 180, 115)" }}>{isActive[user.is_active]}</p>
+														<td className={cn("table-data-item", "text-start")}>
+															<p
+																className="box-text"
+																style={{ color: "rgb(13, 180, 115)" }}
+															>
+																{isActive[user.is_active]}
+															</p>
 														</td>
 														<td className={cn("table-data-item", "text-start")}>
-															<p className="box-text" style={{ color: "#4d53E0" }}>{role[user.role]}</p>
+															<p
+																className="box-text"
+																style={{ color: "#4d53E0" }}
+															>
+																{role[user.role]}
+															</p>
 														</td>
-
-														<td className={cn("table-data-item", "text-center")}>
+														<td className={cn("table-data-item", "text-start")}>
+															<p className="box-text">{user.address}</p>
+														</td>
+														<td
+															className={cn("table-data-item", "text-center")}
+														>
 															<p className="box-text">
 																{formatDateTime(user.created_at)}
 															</p>
 														</td>
 
+														<td
+															rowSpan={1}
+															className={cn("table-icon", "text-start")}
+														>
+															<div className="group-icons">
+																<div className="checkbox__container">
+																	<div className="checkbox__wrapper">
+																		<button
+																			className="btn-icon"
+																			onClick={()=> {
+																				selectedId.current = user.id;
+																				setIsShowDeleteConfirmation(true);
+																			}
+															
+																			}
+																		>
+																			<FontAwesomeIcon icon={faXmark} />
+																		</button>
+																	</div>
+																</div>
+															</div>
+														</td>
 													</tr>
 												);
 											})}
@@ -339,7 +437,9 @@ const UserList = () => {
 									{usersQuantity}
 								</p>
 								<button
-									className={cn("btn-icon", "btn-page", { inactive: page === 1 })}
+									className={cn("btn-icon", "btn-page", {
+										inactive: page === 1,
+									})}
 									onClick={handlePrevPage}
 								>
 									<FontAwesomeIcon icon={faChevronLeft} />
@@ -366,15 +466,15 @@ const UserList = () => {
 							</div>
 						</div>
 					</div>
-
 				</div>
 			</div>
 			{isOpenCreatePopup && (
-				<CreateUserPopup onCreate={handleCreateUser} // Truyền trạng thái isOpen
+				<CreateUserPopup
+					onCreate={handleCreateUser} // Truyền trạng thái isOpen
 					onClose={() => setIsOpenCreatePopup(false)} // Đóng popup
-
 				/>
 			)}
+			{isShowDeleteConfirmation && (<DeleteConfirmation {...deleteConfirmation}/>)}
 		</>
 	);
 };

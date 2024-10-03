@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import React, { useEffect, useState, useMemo } from 'react'
+import { Link, useParams,useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
 import cn from 'classnames'
 
@@ -14,8 +14,9 @@ import { Collapse } from 'reactstrap'
 import TransactionItem from '../TransactionItem/TransactionItem'
 import ProductsTable from '../ProductsTable/ProductsTable'
 import ReturnTable from '../ReturnTable/ReturnTable'
-import { getGRNById } from '../../service/GRNApi'
+import { deleteGRN, getGRNById } from '../../service/GRNApi'
 import ImportHistoriesPopup from '../ImportHistoriesPopup/ImportHistoriesPopup'
+import DeleteConfirmation from '../ConfirmPopup/DeleteConfirmation'
 
 const GRNDetails = () => {
     const { grnId } = useParams();
@@ -35,6 +36,10 @@ const GRNDetails = () => {
         NOT_REFUNDED: "Chưa hoàn tiền",
         NOT_RETURNED: "Chưa hoàn"
     }
+
+    const navigate = useNavigate();
+
+    const [isShowDeleteConfirmation, setIsShowDeleteConfirmation] = useState(false);
 
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
@@ -87,8 +92,33 @@ const GRNDetails = () => {
         fetchDetailGRN();
     }, [])
 
+    const deleteComfimation = useMemo(() => {
+        return {
+            action: "hủy",
+            type: "đơn nhập hàng",
+            description: "Thao tác này sẽ huỷ đơn nhập hàng của bạn. Bạn không thể nhập hàng hay xác nhận thanh toán cho đơn nữa. Các sản phẩm trên đơn cũng sẽ được trừ kho hàng đang về và phiếu chi đã thanh toán cho đơn nhập sẽ được huỷ (nếu có).",
+            handleClose: () => setIsShowDeleteConfirmation(false),
+            handleConfirm: async () => {
+                try {
+                    setIsShowDeleteConfirmation(false);
+                    const response = await deleteGRN(grnId);
+                    alert(response.message);
+                    if (response.status_code === 200) {
+                        setDataDetail(prev => ({...prev, status: "CANCELLED"}))
+                    } else {
+                        navigate(-1);
+                    }
+                } catch (error) {
+                    console.error("Error during GRN deletion:", error);
+                    alert("Đã xảy ra lỗi khi huỷ đơn nhập hàng.");
+                }
+            }
+        };
+    }, [grnId]);
+
     return (
         <>
+        <div className={cn(s.wrapcontainer,{[s.opacity]:isShowDeleteConfirmation})} >
             <div className="right__navbar">
                 <div className="box-navbar">
                     <div className="btn-toolbar">
@@ -102,7 +132,7 @@ const GRNDetails = () => {
                     <div className="btn-toolbar">
                         {
                             dataDetail.received_status === "NOT_ENTERED" ?
-                            <button className="btn btn-outline-danger">
+                            <button onClick={()=>setIsShowDeleteConfirmation(true)} className="btn btn-outline-danger">
                                 <span className="btn__title">Hủy</span>
                             </button> :
                             <button className="btn btn-outline-primary">
@@ -394,6 +424,8 @@ const GRNDetails = () => {
                 </div>
             </div>
             {isHistoriesPopup && <ImportHistoriesPopup histories={dataDetail.histories} closePopup={() => setIsHistoriesPopup(false)} />}
+        </div>
+        {isShowDeleteConfirmation && <DeleteConfirmation {...deleteComfimation} />}
         </>
     )
 }

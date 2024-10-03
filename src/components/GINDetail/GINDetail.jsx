@@ -40,17 +40,25 @@ const GINDetail = () => {
 
 	const [isShowDeleteConfirmation, setIsShowDeleteConfirmation] = useState(false);
 
-	const confimationInfo = useMemo(() => {
+	const deleteConfirmation = useMemo(() => {
 		return {
 			action: "xóa",
 			type: "phiếu kiểm",
 			description: "Thao tác này sẽ xóa phiếu kiểm hàng của bạn. Phiếu kiểm đã xóa sẽ không thể cân bằng kho được nữa.",
-			handleClose : () => setIsShowDeleteConfirmation(false),
-			handleConfirm : async () => {
-				const response = await deleteGIN(ginId);
-				if (response.status_code===200) {
+			handleClose: () => setIsShowDeleteConfirmation(false),
+			handleConfirm: async () => {
+				try {
 					setIsShowDeleteConfirmation(false);
-					setGin(prevGin => ({ ...prevGin, status: "DELETED" }));
+					const response = await deleteGIN(ginId);
+					alert(response.message);
+					if (response.status_code === 200) {
+						setGin(prevGin => ({ ...prevGin, status: "DELETED" }));
+					} else {
+						navigate(-1);
+					}
+				} catch (error) {
+					console.error("Error during GIN deletion:", error);
+					alert("Đã xảy ra lỗi khi xóa phiếu kiểm.");
 				}
 			}
 		};
@@ -263,7 +271,7 @@ const GINDetail = () => {
 				</div>
 			</div>
 			</div>
-		{isShowDeleteConfirmation && (<DeleteConfirmation  {...confimationInfo} />)}
+		{isShowDeleteConfirmation && (<DeleteConfirmation  {...deleteConfirmation} />)}
 		</>
 	);
 };
