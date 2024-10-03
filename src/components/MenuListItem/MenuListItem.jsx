@@ -44,7 +44,7 @@ const MenuListItem = ({
         if (location.pathname.includes(link)) {
             handleActiveItemChange(title)
         }
-    }, [])
+    }, [location])
 
     if (!childItems) {
         if (isHeader) {
