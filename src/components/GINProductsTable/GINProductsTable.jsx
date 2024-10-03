@@ -24,6 +24,7 @@ const GINProductsTable = ({
 	setProductList,
 	isView,
 	isBalance,
+	onClickShowAdd,
 	setIsProductSelectPopup
 }) => {
 	const handleChangeData = (index, key, value) => {

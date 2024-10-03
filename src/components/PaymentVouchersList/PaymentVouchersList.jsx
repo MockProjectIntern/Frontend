@@ -26,6 +26,7 @@ import { formatDateTime } from '../../utils/DateUtils.jsx'
 import FilterPopup from "../FilterPopup/FilterPopup.jsx";
 import SelectDatePopup from "../SelectDatePopup.jsx";
 import { useDebouncedEffect } from "../../utils/CommonUtils.jsx";
+import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup.jsx";
 
 const PaymentVouchersList = () => {
   const [transactionList, setTransactionList] = useState([]);
@@ -40,11 +41,7 @@ const PaymentVouchersList = () => {
   });
   const navigate = useNavigate();
 
-  const paymentMethods = {
-    "CASH": "Tiền mặt",
-    "BANK_TRANSFER": "Chuyển khoản",
-    "CREDIT_CARD": "Thẻ tín dụng",
-  }
+  const [isShowSelectLimit, setIsShowSelectLimit] = useState(false);
 
   const handleChangeActive = (name) => {
     setActive({
@@ -511,12 +508,19 @@ const PaymentVouchersList = () => {
             <div className="right__table-pagination">
               <p>Hiển thị</p>
               <div className="box-page-limit">
-                <button className="btn-page-limit">
-                  20
+                <button className="btn-page-limit" onClick={() => setIsShowSelectLimit(true)}>
+                  {limit}
                   <span>
                     <FontAwesomeIcon icon={faCaretDown} />
                   </span>
                 </button>
+                {isShowSelectLimit && (
+                  <LimitSelectPopup
+                    limit={limit}
+                    handleChangeLimit={setLimit}
+                    closePopup={() => setIsShowSelectLimit(false)}
+                  />
+                )}
               </div>
               <p>kết quả</p>
               <p className="item-quantity">
