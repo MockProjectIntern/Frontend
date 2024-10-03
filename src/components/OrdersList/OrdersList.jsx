@@ -170,6 +170,7 @@ const OrdersList = () => {
         })
 
         exportExcel(dataExport, "Danh sách đơn đặt hàng nhập");
+        alert("Xuất file thành công");
     }
 
     return (

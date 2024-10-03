@@ -57,13 +57,13 @@ const ReceiptVouchersList = () => {
             recipient_group: true,
             recipient_id: true,
             recipient_name: true,
-            reference_code: false,
-            reference_id: false,
-            payment_method: false,
-            note: false,
-            user_created_name: false,
-            created_at: false,
-            updated_at: false,
+            reference_code: true,
+            reference_id: true,
+            payment_method: true,
+            note: true,
+            user_created_name: true,
+            created_at: true,
+            updated_at: true,
         }
     })
 
@@ -363,9 +363,11 @@ const ReceiptVouchersList = () => {
                                                                 >
                                                                     <p className='box-text'>
                                                                         {
-                                                                            !Array("sub_id", "original_document", "payer_name", "recipient_id").includes(key) ?
+                                                                            !Array("sub_id", "original_document", "payer_name", "recipient_id", "reference_id").includes(key) ?
                                                                                 order[key] :
-                                                                                <a className='box-id'>{order[key]}</a>
+                                                                                key === "reference_id"
+                                                                                    ? <a className='box-id' onClick={() => navigate(`/admin/grns/GRN/${order[key]}`)}>{order[key]}</a>
+                                                                                    : <a className='box-id'>{order[key]} </a>
                                                                         }
                                                                     </p>
                                                                 </td>

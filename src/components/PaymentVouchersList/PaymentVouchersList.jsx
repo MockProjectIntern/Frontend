@@ -16,6 +16,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router-dom'
 import { getListTransaction } from '../../service/TransactionAPI.jsx'
+import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
+import { formatDateTime } from '../../utils/DateUtils.jsx'
 
 const PaymentVouchersList = () => {
     const [transactionList, setTransactionList] = useState([]);
@@ -30,6 +32,12 @@ const PaymentVouchersList = () => {
         cancelled: false
     });
     const navigate = useNavigate();
+
+    const paymentMethods = {
+        "CASH": "Tiền mặt",
+        "BANK_TRANSFER": "Chuyển khoản",
+        "CREDIT_CARD": "Thẻ tín dụng",
+    }
 
     const handleChangeActive = (name) => {
         setActive({
@@ -56,13 +64,13 @@ const PaymentVouchersList = () => {
             recipient_group: true,
             recipient_id: true,
             recipient_name: true,
-            reference_code: false,
-            reference_id: false,
-            payment_method: false,
-            note: false,
-            user_created_name: false,
-            created_at: false,
-            updated_at: false,
+            reference_code: true,
+            reference_id: true,
+            payment_method: true,
+            note: true,
+            user_created_name: true,
+            created_at: true,
+            updated_at: true,
         }
     })
 
@@ -351,6 +359,15 @@ const PaymentVouchersList = () => {
                                                                         <p className='box-text'>{order[key] === "SUP" ? "Nhà cung cấp" : "Khách hàng"}</p>
                                                                     </td>
                                                                 )
+                                                            } else if (key.includes("_at")) {
+                                                                return (
+                                                                    <td
+                                                                        key={key}
+                                                                        className={cn("table-data-item", col[key].align)}
+                                                                    >
+                                                                        <p className='box-text'>{formatDateTime(order[key])}</p>
+                                                                    </td>
+                                                                )
                                                             }
                                                             return (
                                                                 <td
@@ -379,12 +396,17 @@ const PaymentVouchersList = () => {
                         <div className="right__table-pagination">
                             <p>Hiển thị</p>
                             <div className="box-page-limit">
-                                <button className="btn-page-limit">
-                                    20
+                                <button className="btn-page-limit" onClick={() => setIsShowSelectLimit(true)}>
+                                    {limit}
                                     <span>
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </span>
                                 </button>
+                                {isShowSelectLimit && <LimitSelectPopup
+                                    limit={limit}
+                                    handleChangeLimit={setLimit}
+                                    closePopup={() => setIsShowSelectLimit(false)}
+                                />}
                             </div>
                             <p>kết quả</p>
                             <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + transactionList.length} trên tổng {totalItem}</p>

@@ -41,7 +41,7 @@ const paymentVouchersListColgroup = {
     },
     reference_code: {
         name: "Mã chứng từ",
-        width: "120px",
+        width: "0px",
         align: "text-start"
     },
     reference_id: {

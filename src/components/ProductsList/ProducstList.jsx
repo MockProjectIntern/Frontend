@@ -533,7 +533,7 @@ const ProductList = () => {
                                                                             }
                                                                         </p>
 
-                                                                    </td>
+                                                                    </td> 
                                                                 )
                                                             }
                                                             return (
@@ -544,7 +544,7 @@ const ProductList = () => {
                                                                     <p className='box-text'>
                                                                         {
                                                                             key !== "name" ? product[key] :
-                                                                            <Link to={`/admin/products/PRD/${product?.sub_id}`} className='box-id'>{product[key]}</Link>
+                                                                            <Link to={`/admin/products/PRD/${product?.id}`} className='box-id'>{product[key]}</Link>
                                                                         }
                                                                     </p>
                                                                 </td>

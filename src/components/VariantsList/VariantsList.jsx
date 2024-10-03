@@ -11,7 +11,7 @@ import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faL, faMagni
 import Header from '../Header/Header.jsx'
 import SelectFilter from '../SelectFilter/SelectFilter.jsx'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { getVariantList } from '../../service/VariantAPI.jsx'
 import { getListCategory } from '../../service/CategoryAPI.jsx'
 import { getListBrand } from '../../service/BrandAPI.jsx'
@@ -33,6 +33,8 @@ const VariantList = () => {
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_products_manage');
         return storedCols ? JSON.parse(storedCols) : {
+            id: true,
+            sub_id: true,
             images: true,
             name: true,
             status: true,
@@ -535,7 +537,7 @@ const VariantList = () => {
                                                                     <p className='box-text'>
                                                                         {
                                                                             key !== "name" ? variant[key] :
-                                                                                <a className='box-id'>{variant[key]}</a>
+                                                                            <Link to={`/admin/products/PRD/${variant?.id}`} className='box-id'>{variant[key]}</Link>
                                                                         }
                                                                     </p>
                                                                 </td>

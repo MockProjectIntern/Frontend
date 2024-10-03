@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import cn from 'classnames'
 
 import s from './ProductDetails.module.scss'
@@ -8,8 +8,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft, faCopy } from '@fortawesome/free-solid-svg-icons'
 
 import { getProductById } from '../../service/ProductAPI'
+import { formatDateTime } from '../../utils/DateUtils'
 
 const ProductDetails = () => {
+    const navigate = useNavigate();
     const { productId } = useParams();
 
     const status = {
@@ -18,15 +20,16 @@ const ProductDetails = () => {
 
     const [dataDetail, setDataDetail] = useState({});
 
-    // const fetchProductDetails = async () => {
-    //     const response = await getProductById(productId);
-    //     console.log(response);
+    const fetchProductDetails = async () => {
+        const response = await getProductById(productId);
+        setDataDetail(response.data);
+        console.log(response.data.image);
         
-    // }
+    }
 
-    // useEffect(() => {
-    //     fetchProductDetails();
-    // }, [])
+    useEffect(() => {
+        fetchProductDetails();
+    }, [])
 
     return (
         <>
@@ -41,7 +44,7 @@ const ProductDetails = () => {
                         </Link>
                     </div>
                     <div className="btn-toolbar">
-                        <button className="btn btn-outline-primary">
+                        <button className="btn btn-outline-primary" onClick={() => navigate("/admin/products")}>
                             <span className="btn__title">Thoát</span>
                         </button>
                         <button className="btn btn-outline-danger">
@@ -60,16 +63,6 @@ const ProductDetails = () => {
                             <div className="group-details">
                                 <h4 className='box-code'>{dataDetail.name}</h4>
                             </div>
-                            <div className="btn-toolbar">
-                                <button className="btn btn-base btn-text">
-                                    <span className="btn__label">
-                                        <span className="btn__icon">
-                                            <FontAwesomeIcon icon={faCopy} />
-                                        </span>
-                                        Sao chép
-                                    </span>
-                                </button>
-                            </div>
                         </div>
                         <div className="box-paper">
                             <div className="paper-header">
@@ -84,21 +77,21 @@ const ProductDetails = () => {
                                         <p className="info-title">Loại sản phẩm</p>
                                         <p className="info-value">
                                             :&nbsp;
-                                            Áo khoác
+                                            {dataDetail.category_name || '-----'}
                                         </p>
                                     </div>
                                     <div className="info-item">
                                         <p className="info-title">Nhãn hiệu</p>
                                         <p className="info-value">
                                             :&nbsp;
-                                            ---
+                                            {dataDetail.brand_name || '-----'}
                                         </p>
                                     </div>
                                     <div className="info-item">
                                         <p className="info-title">Ghi chú</p>
                                         <p className="info-value">
                                             :&nbsp;
-                                            {dataDetail.created_at}
+                                            {dataDetail.note || '-----'}
                                         </p>
                                     </div>
                                 </div>
@@ -107,27 +100,27 @@ const ProductDetails = () => {
                                         <p className="info-title">Ngày tạo</p>
                                         <p className="info-value">
                                             :&nbsp;
-
+                                            {formatDateTime(dataDetail.created_at) || '-----'}
                                         </p>
                                     </div>
                                     <div className="info-item">
                                         <p className="info-title">Ngày cập nhật cuối</p>
                                         <p className="info-value">
                                             :&nbsp;
-                                            {dataDetail.updated_at}
+                                            {formatDateTime(dataDetail.updated_at) || '-----'}
                                         </p>
                                     </div>
                                     <div className="info-item">
                                         <p className="info-title">Tags</p>
                                         <p className="info-value">
                                             :&nbsp;
-
+                                            {dataDetail.tags  || '-----'}
                                         </p>
                                     </div>
                                 </div>
                                 <div className="box-image">
                                     <div className="image-item">
-                                        <img className={s.image} src="" alt="" />
+                                        <img className={s.image} src={dataDetail.image?.url} alt={dataDetail.image?.alt} />
                                     </div>
                                 </div>
                             </div>
@@ -141,35 +134,35 @@ const ProductDetails = () => {
                                     <p className="info-title">Mã sản phẩm</p>
                                     <p className="info-value">
                                         :&nbsp;
-                                        
+                                        {dataDetail.sub_id}
                                     </p>
                                 </div>
                                 <div className="info-item">
                                     <p className="info-title">Tồn kho</p>
                                     <p className="info-value">
                                         :&nbsp;
-                                        
+                                        {dataDetail.quantity}
                                     </p>
                                 </div>
                                 <div className="info-item">
-                                    <p className="info-title">Khối lượng</p>
+                                    <p className="info-title">Tên sản phẩm</p>
                                     <p className="info-value">
                                         :&nbsp;
-                                        
+                                        {dataDetail.name}
                                     </p>
                                 </div>
                                 <div className="info-item">
                                     <p className="info-title">Đơn vị tính</p>
                                     <p className="info-value">
                                         :&nbsp;
-                                        
+                                        {dataDetail.unit}
                                     </p>
                                 </div>
                                 {
-                                    dataDetail?.types?.map(([key, value]) => {
+                                    dataDetail.types?.map(({name, value}) => {
                                         return (
-                                            <div key={value} className="info-item">
-                                                <p className="info-title">{key}</p>
+                                            <div key={name} className="info-item">
+                                                <p className="info-title">{name}</p>
                                                 <p className="info-value">
                                                     :&nbsp;
                                                     {value}
@@ -190,7 +183,7 @@ const ProductDetails = () => {
                                         <p className="info-title">Giá bản lẻ</p>
                                         <p className="info-value">
                                             :&nbsp;
-                                            
+                                            {dataDetail.cost_price}
                                         </p>
                                     </div>
                                 </div>
@@ -199,7 +192,7 @@ const ProductDetails = () => {
                                         <p className="info-title">Giá bán buôn</p>
                                         <p className="info-value">
                                             :&nbsp;
-                                            
+                                            {dataDetail.wholesale_price}
                                         </p>
                                     </div>
                                 </div>
@@ -209,7 +202,7 @@ const ProductDetails = () => {
                                     <p className="info-title">Giá nhập</p>
                                         <p className="info-value">
                                             :&nbsp;
-                                            
+                                            {dataDetail.retail_price}
                                         </p>
                                     </div>
                                 </div>
