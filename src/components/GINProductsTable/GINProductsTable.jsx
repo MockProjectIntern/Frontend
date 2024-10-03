@@ -23,7 +23,8 @@ const GINProductsTable = ({
 	productsList,
 	setProductList,
 	isView,
-	isBalance
+	isBalance,
+	setIsProductSelectPopup
 }) => {
 	const handleChangeData = (index, key, value) => {
 		const newValue =
@@ -271,7 +272,7 @@ const GINProductsTable = ({
 					) : (
 						<>
 							<p>Bảng chưa có sản phẩm nào</p>
-							<button className="btn btn-outline-primary">
+							<button className="btn btn-outline-primary" onClick={setIsProductSelectPopup}>
 								<span className="btn__label">Thêm sản phẩm</span>
 							</button>
 						</>

@@ -25,6 +25,7 @@ import { createNewGIN } from "../../service/GINApi.jsx";
 import { quickGetProductList } from "../../service/ProductAPI.jsx";
 
 import cn from "classnames";
+import CreateProductFastlyPopup from "../CreateProductFastlyPopup/CreateProductFastlyPopup.jsx";
 const CreateGIN = () => {
 	const handleProductRequestChange = (e) => {
 		const { name, value } = e.target;
@@ -71,6 +72,8 @@ const CreateGIN = () => {
 	});
 	const productSelectBtnRef = useRef(null);
 	const [productSelectList, setProductSelectList] = useState([]);
+	const [isCreateProductQuickly, setIsCreateProductQuickly] = useState(false);
+
 	const fetchProductList = async () => {
 		const response = await quickGetProductList(
 			dataPageProduct.page,
@@ -141,6 +144,16 @@ const CreateGIN = () => {
 
 	return (
 		<>
+			{isCreateProductQuickly && (
+                    <>
+                        <div className="overlay"></div>
+                        <CreateProductFastlyPopup
+                            handleCLickBack={() => setIsCreateProductQuickly(false)}
+                            setListProductDetail={setListProductDetail}
+                        />
+                    </>
+                	)
+			}
 			<div className="right__navbar">
 				<div className="box-navbar">
 					<div className="btn-toolbar">
@@ -314,6 +327,7 @@ const CreateGIN = () => {
 															isSearch={false}
 															isFastCreate={true}
 															dataList={productSelectList}
+															handleCLickCreateProductQuickly={() => setIsCreateProductQuickly(true)}
 															handleSelect={(id) =>
 																setListProductDetail((prev) => {
 																	return [
@@ -369,7 +383,7 @@ const CreateGIN = () => {
 								<div className="box-table">
 									<GINProductsTable
 										productsList={filteredProducts}
-
+										setIsProductSelectPopup={setIsProductSelectPopup}
 										setProductList={setListProductDetail}
 									/>
 								</div>
