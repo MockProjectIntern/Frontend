@@ -24,26 +24,27 @@ import { useNavigate } from "react-router-dom";
 import { getListTransaction } from "../../service/TransactionAPI.jsx";
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import { formatDateTime } from '../../utils/DateUtils.jsx'
+import FilterPopup from "../FilterPopup/FilterPopup.jsx";
 
 const PaymentVouchersList = () => {
-    const [transactionList, setTransactionList] = useState([]);
-    const [page, setPage] = useState(1);
-    const [pageQuantiy, setPageQuantity] = useState(1);
-    const [totalItem, setTotalItem] = useState(0);
-    const [limit, setLimit] = useState(20);
-    const [isShowSelectLimit, setIsShowSelectLimit] = useState(false);
-    const [active, setActive] = useState({
-        all: "active",
-        completed: false,
-        cancelled: false
-    });
-    const navigate = useNavigate();
+  const [transactionList, setTransactionList] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageQuantiy, setPageQuantity] = useState(1);
+  const [totalItem, setTotalItem] = useState(0);
+  const [limit, setLimit] = useState(20);
+  const [isShowSelectLimit, setIsShowSelectLimit] = useState(false);
+  const [active, setActive] = useState({
+    all: "active",
+    completed: false,
+    cancelled: false
+  });
+  const navigate = useNavigate();
 
-    const paymentMethods = {
-        "CASH": "Tiền mặt",
-        "BANK_TRANSFER": "Chuyển khoản",
-        "CREDIT_CARD": "Thẻ tín dụng",
-    }
+  const paymentMethods = {
+    "CASH": "Tiền mặt",
+    "BANK_TRANSFER": "Chuyển khoản",
+    "CREDIT_CARD": "Thẻ tín dụng",
+  }
 
   const handleChangeActive = (name) => {
     setActive({
@@ -58,32 +59,49 @@ const PaymentVouchersList = () => {
         name === "all"
           ? null
           : name === "completed"
-          ? ["COMPLETED"]
-          : ["CANCELLED"],
+            ? ["COMPLETED"]
+            : ["CANCELLED"],
     }));
   };
 
-    // Get list of columns that need redering from Cookies
-    const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('filter_transaction_payment');
-        return storedCols ? JSON.parse(storedCols) : {
-            id: true,
-            sub_id: true,
-            transaction_category_name: true,
-            status: true,
-            amount: true,
-            recipient_group: true,
-            recipient_id: true,
-            recipient_name: true,
-            reference_code: true,
-            reference_id: true,
-            payment_method: true,
-            note: true,
-            user_created_name: true,
-            created_at: true,
-            updated_at: true,
-        }
-    })
+  const [isFilterPopup, setIsFilterPopup] = useState(false)
+  const defaultCols = {
+    id: true,
+    sub_id: true,
+    transaction_category_name: true,
+    status: true,
+    amount: true,
+    recipient_group: true,
+    recipient_id: true,
+    recipient_name: true,
+    reference_code: true,
+    reference_id: true,
+    payment_method: true,
+    note: true,
+    user_created_name: true,
+    created_at: true,
+    updated_at: true,
+  }
+  const [colsToRender, setColsToRender] = useState(() => {
+    const storedCols = Cookies.get('filter_transaction_payment');
+    return storedCols ? JSON.parse(storedCols) : {
+      id: true,
+      sub_id: true,
+      transaction_category_name: true,
+      status: true,
+      amount: true,
+      recipient_group: true,
+      recipient_id: true,
+      recipient_name: true,
+      reference_code: true,
+      reference_id: true,
+      payment_method: true,
+      note: true,
+      user_created_name: true,
+      created_at: true,
+      updated_at: true,
+    }
+  })
 
   const [dataFilter, setDataFilter] = useState({
     keyword: null,
@@ -285,7 +303,9 @@ const PaymentVouchersList = () => {
                 <tr className="group-table-headers">
                   <th rowSpan={1} className="table-icon">
                     <div className="group-icons">
-                      <button className="btn-icon">{settingFilterIcon}</button>
+                      <button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
+                        {settingFilterIcon}
+                      </button>
                       <div className="checkbox__container">
                         <div className="checkbox__wrapper">
                           <input
@@ -423,6 +443,20 @@ const PaymentVouchersList = () => {
                                     </p>
                                   </td>
                                 );
+                              } else if (key.includes("_at")) {
+                                return (
+                                  <td
+                                    key={key}
+                                    className={cn(
+                                      "table-data-item",
+                                      col[key].align
+                                    )}
+                                  >
+                                    <p className="box-text">
+                                      {formatDateTime(order[key])}
+                                    </p>
+                                  </td>
+                                );
                               }
                               return (
                                 <td
@@ -501,6 +535,14 @@ const PaymentVouchersList = () => {
           </div>
         </div>
       </div>
+      {isFilterPopup
+        && <FilterPopup
+          defaultCols={defaultCols}
+          colGroup={col}
+          colsToRender={colsToRender}
+          setColsToRender={setColsToRender}
+          closePopup={() => setIsFilterPopup(false)}
+        />}
     </>
   );
 };

@@ -17,8 +17,10 @@ import { getListCategory } from '../../service/CategoryAPI.jsx'
 import { getListBrand } from '../../service/BrandAPI.jsx'
 import SelectDatePopup from '../SelectDatePopup.jsx'
 import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
+import FilterPopup from '../FilterPopup/FilterPopup.jsx'
 
 const VariantList = () => {
+    const [isFilterPopup, setIsFilterPopup] = useState(false)
 
     // ham format ngay tra ve tu backend
     const formatDate = (dateString) => {
@@ -30,23 +32,24 @@ const VariantList = () => {
         return `${day}/${month}/${year}`;
     };
 
+    const defaultCols = {
+        id: true,
+        sub_id: true,
+        images: true,
+        name: true,
+        status: true,
+        category_name: true,
+        brand_name: true,
+        quantity: true,
+        created_at: true,
+        updated_at: true,
+        cost_price: true,
+        wholesale_price: true,
+        retail_price: true
+    }
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_products_manage');
-        return storedCols ? JSON.parse(storedCols) : {
-            id: true,
-            sub_id: true,
-            images: true,
-            name: true,
-            status: true,
-            category_name: true,
-            brand_name: true,
-            quantity: true,
-            created_at: true,
-            updated_at: true,
-            cost_price: true,
-            wholesale_price: true,
-            retail_price: true
-        }
+        return storedCols ? JSON.parse(storedCols) : defaultCols
     })
 
 
@@ -231,6 +234,7 @@ const VariantList = () => {
 
     useEffect(() => {
         Cookies.set('filter_products_manage', JSON.stringify(colsToRender))
+        fetchVariantList();
     }, [colsToRender])
 
     useDebouncedEffect(() => {
@@ -395,7 +399,7 @@ const VariantList = () => {
                                 <tr className="group-table-headers">
                                     <th rowSpan={1} className='table-icon'>
                                         <div className="group-icons">
-                                            <button className="btn-icon">
+                                            <button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
                                                 {settingFilterIcon}
                                             </button>
                                             <div className="checkbox__container">
@@ -605,7 +609,14 @@ const VariantList = () => {
                     </div>
                 </div>
             </div>
-
+            {isFilterPopup
+                && <FilterPopup
+                    defaultCols={defaultCols}
+                    colGroup={col}
+                    colsToRender={colsToRender}
+                    setColsToRender={setColsToRender}
+                    closePopup={() => setIsFilterPopup(false)}
+                />}
         </>
     )
 }

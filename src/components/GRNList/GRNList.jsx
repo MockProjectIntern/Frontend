@@ -23,6 +23,7 @@ import { formatDateTime } from '../../utils/DateUtils.jsx'
 import { exportExcel } from '../../config/ExportExcel.jsx'
 import SelectDatePopup from '../SelectDatePopup.jsx'
 import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
+import FilterPopup from '../FilterPopup/FilterPopup.jsx'
 
 const grnsQuantity = 4;
 
@@ -112,40 +113,42 @@ const GRNList = () => {
         })
     }, [statusListFilter, createdMin, createdMax])
 
+    const [isFilterPopup, setIsFilterPopup] = useState(false)
+    const defaultCols = {
+        grn_id: true,
+        grn_sub_id: true,
+        grn_status: true,
+        grn_receive_status: true,
+        grn_payment_status: true,
+        grn_return_status: true,
+        grn_refund_status: true,
+        grn_received_at: true,
+        grn_expected_at: true,
+        grn_cancelled_at: true,
+        grn_payment_at: true,
+        grn_total_received_quantity: true,
+        grn_total_value: true,
+        grn_supplier_name: true,
+        grn_supplier_sub_id: true,
+        grn_supplier_phone: true,
+        grn_supplier_email: true,
+        grn_user_created_name: true,
+        grn_user_completed_name: true,
+        grn_user_cancelled_name: true,
+        grn_note: true,
+        grn_tags: true,
+        grn_created_at: true,
+        grn_updated_at: true,
+        grn_order_sub_id: true
+    };
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_grns');
-        return storedCols ? JSON.parse(storedCols) : {
-            grn_id: true,
-            grn_sub_id: true,
-            grn_status: true,
-            grn_receive_status: true,
-            grn_payment_status: true,
-            grn_return_status: true,
-            grn_refund_status: true,
-            grn_received_at: true,
-            grn_expected_at: true,
-            grn_cancelled_at: true,
-            grn_payment_at: true,
-            grn_total_received_quantity: true,
-            grn_total_value: true,
-            grn_supplier_name: true,
-            grn_supplier_sub_id: true,
-            grn_supplier_phone: true,
-            grn_supplier_email: true,
-            grn_user_created_name: true,
-            grn_user_completed_name: true,
-            grn_user_cancelled_name: true,
-            grn_note: true,
-            grn_tags: true,
-            grn_created_at: true,
-            grn_updated_at: true,
-            grn_order_sub_id: true
-        }
-
+        return storedCols ? JSON.parse(storedCols) : defaultCols
     })
 
     useEffect(() => {
         Cookies.set('filter_grns', JSON.stringify(colsToRender));
+        fetchGrnList();
     }, [colsToRender])
 
     const headersRef = useRef(null);
@@ -326,7 +329,7 @@ const GRNList = () => {
                                 <tr className="group-table-headers">
                                     <th rowSpan={1} className='table-icon'>
                                         <div className="group-icons">
-                                            <button className="btn-icon">
+                                            <button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
                                                 {settingFilterIcon}
                                             </button>
                                             <div className="checkbox__container">
@@ -520,6 +523,14 @@ const GRNList = () => {
                     </div>
                 </div>
             </div>
+            {isFilterPopup
+                && <FilterPopup
+                    defaultCols={defaultCols}
+                    colGroup={col}
+                    colsToRender={colsToRender}
+                    setColsToRender={setColsToRender}
+                    closePopup={() => setIsFilterPopup(false)}
+                />}
         </>
     )
 }

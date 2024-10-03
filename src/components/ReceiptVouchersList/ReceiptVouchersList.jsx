@@ -24,6 +24,8 @@ import {
 import { getListTransaction } from "../../service/TransactionAPI.jsx";
 import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup.jsx";
 import { useNavigate } from "react-router-dom";
+import FilterPopup from "../FilterPopup/FilterPopup.jsx";
+import { formatDateTime } from "../../utils/DateUtils.jsx";
 
 const ReceiptVouchersList = () => {
   const [transactionList, setTransactionList] = useState([]);
@@ -52,32 +54,33 @@ const ReceiptVouchersList = () => {
         name === "all"
           ? null
           : name === "completed"
-          ? ["COMPLETED"]
-          : ["CANCELLED"],
+            ? ["COMPLETED"]
+            : ["CANCELLED"],
     }));
   };
 
-    // Get list of columns that need redering from Cookies
-    const [colsToRender, setColsToRender] = useState(() => {
-        const storedCols = Cookies.get('filter_transactions');
-        return storedCols ? JSON.parse(storedCols) : {
-            id: true,
-            sub_id: true,
-            transaction_category_name: true,
-            status: true,
-            amount: true,
-            recipient_group: true,
-            recipient_id: true,
-            recipient_name: true,
-            reference_code: true,
-            reference_id: true,
-            payment_method: true,
-            note: true,
-            user_created_name: true,
-            created_at: true,
-            updated_at: true,
-        }
-    })
+  const [isFilterPopup, setIsFilterPopup] = useState(false)
+  const defaultCols = {
+    id: true,
+    sub_id: true,
+    transaction_category_name: true,
+    status: true,
+    amount: true,
+    recipient_group: true,
+    recipient_id: true,
+    recipient_name: true,
+    reference_code: true,
+    reference_id: true,
+    payment_method: true,
+    note: true,
+    user_created_name: true,
+    created_at: true,
+    updated_at: true,
+  };
+  const [colsToRender, setColsToRender] = useState(() => {
+    const storedCols = Cookies.get('filter_transactions');
+    return storedCols ? JSON.parse(storedCols) : defaultCols
+  })
 
   const [dataFilter, setDataFilter] = useState({
     keyword: null,
@@ -280,7 +283,9 @@ const ReceiptVouchersList = () => {
                 <tr className="group-table-headers">
                   <th rowSpan={1} className="table-icon">
                     <div className="group-icons">
-                      <button className="btn-icon">{settingFilterIcon}</button>
+                      <button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
+                        {settingFilterIcon}
+                      </button>
                       <div className="checkbox__container">
                         <div className="checkbox__wrapper">
                           <input
@@ -419,6 +424,20 @@ const ReceiptVouchersList = () => {
                                     </p>
                                   </td>
                                 );
+                              } else if (key.includes("_at")) {
+                                return (
+                                  <td
+                                    key={key}
+                                    className={cn(
+                                      "table-data-item",
+                                      col[key].align
+                                    )}
+                                  >
+                                    <p className="box-text">
+                                      {formatDateTime(order[key])}
+                                    </p>
+                                  </td>
+                                );
                               }
                               return (
                                 <td
@@ -508,6 +527,14 @@ const ReceiptVouchersList = () => {
           </div>
         </div>
       </div>
+      {isFilterPopup
+        && <FilterPopup
+          defaultCols={defaultCols}
+          colGroup={col}
+          colsToRender={colsToRender}
+          setColsToRender={setColsToRender}
+          closePopup={() => setIsFilterPopup(false)}
+        />}
     </>
   );
 };

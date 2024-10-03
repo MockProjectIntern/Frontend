@@ -29,6 +29,7 @@ import CreatedAtFilter from "./FiltersPopup/CreatedAtFilter.jsx";
 import { exportExcel } from "../../config/ExportExcel.jsx";
 import { formatDate, formatDateTime } from "../../utils/DateUtils.jsx";
 import { useDebouncedEffect } from "../../utils/CommonUtils.jsx";
+import FilterPopup from "../FilterPopup/FilterPopup.jsx";
 
 const GINList = () => {
 	const [page, setPage] = useState(1);
@@ -77,27 +78,31 @@ const GINList = () => {
 
 	const [ginList, setGinList] = useState([]);
 	// Get list of columns that need redering from Cookies
+	const [isFilterPopup, setIsFilterPopup] = useState(false)
+
+	const defaultCols = {
+		id: true,
+		sub_id: true,
+		created_at: true,
+		updated_at: true,
+		status: true,
+		user_created_name: true,
+		user_inspection_name: true,
+		user_balanced_name: true,
+		note: true,
+		balanced_at: true,
+	};
 	const [colsToRender, setColsToRender] = useState(() => {
 		const storedCols = Cookies.get("filter_gins");
 		return storedCols
 			? JSON.parse(storedCols)
-			: {
-				id: true,
-				sub_id: true,
-				created_at: true,
-				updated_at: true,
-				status: true,
-				user_created_name: true,
-				user_inspection_name: true,
-				user_balanced_name: true,
-				note: true,
-				balanced_at: true,
-			};
+			: defaultCols
 	});
 
 	// Set required columns to Cookies
 	useEffect(() => {
 		Cookies.set("filter_gins", JSON.stringify(colsToRender));
+		fetchGinList();
 	}, [colsToRender]);
 
 	const fetchGinList = async () => {
@@ -166,10 +171,6 @@ const GINList = () => {
 		if (page < pageQuantiy) {
 			setPage((prev) => prev + 1);
 		}
-	};
-
-	const handleColsChange = (name) => {
-		setColsToRender({ ...colsToRender, [name]: !colsToRender[name] });
 	};
 
 	return (
@@ -366,7 +367,9 @@ const GINList = () => {
 								<tr className="group-table-headers">
 									<th rowSpan={1} className="table-icon">
 										<div className="group-icons">
-											<button className="btn-icon">{settingFilterIcon}</button>
+											<button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
+												{settingFilterIcon}
+												</button>
 											<div className="checkbox__container">
 												<div className="checkbox__wrapper">
 													<input
@@ -607,6 +610,14 @@ const GINList = () => {
 					</div>
 				</div>
 			</div>
+			{isFilterPopup
+                && <FilterPopup
+                    defaultCols={defaultCols}
+                    colGroup={col}
+                    colsToRender={colsToRender}
+                    setColsToRender={setColsToRender}
+                    closePopup={() => setIsFilterPopup(false)}
+                />}
 		</>
 	);
 };

@@ -10,7 +10,6 @@ import col from '../../assets/colgroup/suppliers-list.js'
 
 // Import Icons
 import exportIcon from '../../assets/icons/ExportIcon'
-import importIcon from '../../assets/icons/ImportIcon'
 import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -18,16 +17,11 @@ import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifying
 import { getAllSupplierByName, getDataExportExcel, getSupplierList } from '../../service/SuppliersAPI.jsx'
 import { useNavigate } from 'react-router-dom'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
-import s from './SupplierFilter.module.scss'
 import { exportExcel } from '../../config/ExportExcel.jsx'
 import { formatDateTime } from '../../utils/DateUtils.jsx'
 import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 import SelectDatePopup from '../SelectDatePopup.jsx'
-
-
-
-
-
+import FilterPopup from '../FilterPopup/FilterPopup.jsx'
 
 const SupplierList = () => {
     const navigate = useNavigate();
@@ -48,22 +42,24 @@ const SupplierList = () => {
             setPage(prev => prev + 1);
         }
     }
-    //Cookies.remove("ordersListCols")
+    
+    const [isFilterPopup, setIsFilterPopup] = useState(false)
+    const defaultCols = {
+        id: true,
+        name: true,
+        phone: false,
+        email: false,
+        address: false,
+        status: true,
+        tags: false,
+        note: false,
+        total_refund: false,
+        created_at: true,
+        updated_at: false
+    };
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_suppliers');
-        return storedCols ? JSON.parse(storedCols) : {
-            id: true,
-            name: true,
-            phone: false,
-            email: false,
-            address: false,
-            status: true,
-            tags: false,
-            note: false,
-            total_refund: false,
-            created_at: true,
-            updated_at: false
-        }
+        return storedCols ? JSON.parse(storedCols) : defaultCols
     })
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
@@ -232,7 +228,7 @@ const SupplierList = () => {
                                 <tr className="group-table-headers">
                                     <th rowSpan={1} className='table-icon'>
                                         <div className="group-icons">
-                                            <button className="btn-icon">
+                                            <button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
                                                 {settingFilterIcon}
                                             </button>
                                             <div className="checkbox__container">
@@ -426,6 +422,14 @@ const SupplierList = () => {
                     </div>
                 </div>
             </div>
+            {isFilterPopup
+                && <FilterPopup
+                    defaultCols={defaultCols}
+                    colGroup={col}
+                    colsToRender={colsToRender}
+                    setColsToRender={setColsToRender}
+                    closePopup={() => setIsFilterPopup(false)}
+                />}
         </>
     )
 }
