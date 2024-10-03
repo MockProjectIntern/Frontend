@@ -18,6 +18,8 @@ import ListSelectPopup from '../ListSelectPopup/ListSelectPopup.jsx'
 import { createNewGRN } from '../../service/GRNApi.jsx'
 import { getOrderById } from '../../service/OrderAPI.jsx'
 import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
+import CreateProductFastlyPopup from '../CreateProductFastlyPopup/CreateProductFastlyPopup.jsx'
+import CreateSupplierPopup from '../CreateSupplierPopup/CreateSupplierPopup.jsx'
 
 const CreateGRN = () => {
     const navigate = useNavigate();
@@ -95,6 +97,8 @@ const CreateGRN = () => {
         Cookies.set('filter_products_table_grn', JSON.stringify(colsToRender));
     }, [colsToRender])
 
+    const [isCreateProductQuickly, setIsCreateProductQuickly] = useState(false);
+    const [isCreateSupplier, setIsCreateSupplier] = useState(false);
     const [isProductSelectPopup, setIsProductSelectPopup] = useState(false)
     const [dataPageProduct, setDataPageProduct] = useState({
         page: 1,
@@ -169,6 +173,16 @@ const CreateGRN = () => {
             }
         })
     }
+    const handleClickBack = () => {
+        setIsCreateProductQuickly(false);
+    }
+
+    const handleClickBackInSupplier = () => {
+        setIsCreateSupplier(false);
+    }
+    const handleClickCreateQuicklylyProduct = () => {
+        setIsCreateProductQuickly(true);
+    }
     const createGRN = async () => {
         const responseAPI = await createNewGRN(dataBody);
         if (responseAPI.status_code === 201) {
@@ -188,9 +202,33 @@ const CreateGRN = () => {
             createGRN();
         }
     }, [dataBody.received_status])
-
     return (
         <>
+                {isCreateProductQuickly && (
+                    <>
+                        <div className="overlay"></div>
+                        <CreateProductFastlyPopup
+                            handleCLickBack={handleClickBack}
+                            setListProductDetail={setListProductDetail}
+                        />
+                    </>
+                )}
+                {isCreateSupplier && (
+                    <>
+                        <div className="overlay"></div>
+                        <CreateSupplierPopup
+                            handleCLickBack={handleClickBackInSupplier}
+                            setSupplerID={(id) => setDataBody((prev) => {
+                                return {
+                                    ...prev,
+                                    supplier_id: id
+                                }
+                            })}
+                        />
+                    </>
+                )
+
+                }
             <div className="right__navbar">
                 <div className="box-navbar">
                     <div className="btn-toolbar">
@@ -231,7 +269,9 @@ const CreateGRN = () => {
                                             })} /> :
                                             <SearchSupplier setSelectItem={id => setDataBody(prev => {
                                                 return { ...prev, supplier_id: id }
-                                            })} />
+                                            })} 
+                                            setCreateSupplier={() => setIsCreateSupplier(true)}
+                                            />
                                     }
                                 </div>
                             </div>
@@ -314,6 +354,7 @@ const CreateGRN = () => {
                                                             isSearch={false}
                                                             isFastCreate={true}
                                                             dataList={productSelectList}
+                                                            handleCLickCreateProductQuickly={handleClickCreateQuicklylyProduct}
                                                             handleSelect={(id) => setListProductDetail(prev => {
                                                                 return [...prev,
                                                                 {
