@@ -247,7 +247,7 @@ const OrderDetails = () => {
                                     </div>
                                 </div>
                                 {
-                                    order.status !== "PENDING" &&
+                                    order.status !== "PENDING" && order.status !== "CANCELLED" &&
                                     <div className="box-table">
                                         <table className={s.table}>
                                             <colgroup>
