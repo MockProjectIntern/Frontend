@@ -327,56 +327,57 @@ input::placeholder {
     }
 }
 
-.group-filter-btns {
-    .btn-filter {
-        min-width: 119px;
-        font-weight: $font-weight-base;
-        border-radius: 3px;
-        border: 1px solid #d3d5d7;
-        display: flex;
-        padding: 0 12px;
-        align-items: center;
-        justify-content: space-between;
+.btn-filter {
+    min-width: 119px;
+    font-weight: $font-weight-base;
+    border-radius: 3px;
+    border: 1px solid #d3d5d7;
+    display: flex;
+    padding: 0 12px;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
 
-        .btn__label {
-            width: 100%;
+    .btn__label {
+        width: 100%;
+        display: inherit;
+        font-size: 1rem;
+        align-items: inherit;
+        text-transform: none;
+        justify-content: inherit;
+        gap: 12px;
+
+        .btn__icon {
             display: inherit;
-            font-size: 1rem;
-            align-items: inherit;
-            text-transform: none;
-            justify-content: inherit;
-            gap: 12px;
+            color: #A3A8AF;
+            height: 24px;
+            width: 24px;
+            align-items: center;
+            justify-content: center;
 
-            .btn__icon {
-                display: inherit;
-                color: #A3A8AF;
-                height: 24px;
-                width: 24px;
-                align-items: center;
-                justify-content: center;
-
-                > svg {
-                    fill: currentColor;
-                    width: 1em;
-                    height: 1em;
-                    display: inline-block;
-                    font-size: 1rem;
-                    transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-                    flex-shrink: 0;
-                    user-select: none;
-                }
+            > svg {
+                fill: currentColor;
+                width: 1em;
+                height: 1em;
+                display: inline-block;
+                font-size: 1rem;
+                transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+                flex-shrink: 0;
+                user-select: none;
             }
         }
+    }
 
-        &:active {
-            border: 1px solid #d3d5d7;
-        }
+    &:active {
+        border: 1px solid #d3d5d7;
     }
 }
 
 .btn-toolbar {
     align-items: center;
     flex-wrap: nowrap;
+    gap: 16px;
+    position: relative;
 }
 
 .btn-tab {
@@ -1280,10 +1281,6 @@ input:focus-within ~ .input-field {
                     line-height: 20px;
                     margin: 0;
                 }
-            }
-
-            .btn-toolbar {
-                gap: 16px;
             }
         }
     }
