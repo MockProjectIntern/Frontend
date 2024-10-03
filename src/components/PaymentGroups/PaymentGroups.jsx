@@ -1,9 +1,7 @@
-import {
-  createSupplierGroup,
-  getListSupplierGroups,
-} from "../../service/SupplierGroupsAPI";
 import Header from "../Header/Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import cn from "classnames";
+import { formatDateTime } from "../../utils/DateUtils";
 import {
   faPlus,
   faMagnifyingGlass,
@@ -11,108 +9,144 @@ import {
   faChevronRight,
   faChevronLeft,
 } from "@fortawesome/free-solid-svg-icons";
-import cn from "classnames";
+import classNames from "classnames";
 import { useEffect, useState, useRef } from "react";
-import { formatDateTime } from "../../utils/DateUtils";
-import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup";
+import {
+  createCategoryTransaction,
+  getCategoryTransactionList,
+} from "../../service/CategoryTransaction";
 import { useDebouncedEffect } from "../../utils/CommonUtils";
-import CreateSupplierGroupPopup from "../CreateSupplierGroupPopup/CreateSupplierGroupPopup";
-
-const SupplierGroupsList = () => {
+import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup";
+import CreateGroups from "../CreateGroups/CreateGroups";
+import { createTransaction } from "../../service/TransactionAPI";
+import UpdateGroups from "../UpdateGroups/UpdateGroups";
+const PaymentGroups = () => {
   const limitBtnRef = useRef(null);
 
   const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
-  const [page, setPage] = useState(1);
-  const [pageQuantiy, setPageQuantity] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const [supplierGroupsQuantity, setSupplierGroupsQuantity] = useState();
-  const [supplierGroupsList, setSupplierGroupsList] = useState([]);
+  const [isCreateGroups, setIsCreateGroups] = useState(false);
+  const [isUpdateGroups, setIsUpdateGroups] = useState(false);
+  const [receiptGroupsList, setReceiptGroupsList] = useState([]);
   const [dataBody, setDataBody] = useState({
     keyword: null,
-    status: "ACTIVE",
+    type: "EXPENSE",
   });
-
-  const [dataCreateSupplierGroup, setDataCreateSupplierGroup] = useState({
+  const [dataPage, setDataPage] = useState({
+    page: 1,
+    size: 10,
+    totalPage: 1,
+    totalItem: 0,
+  });
+  const [dataCreate, setDataCreate] = useState({
+    sub_id: null,
     name: "",
-    note: "",
-    sub_id: "",
+    description: "",
+    type: "EXPENSE",
   });
-  const [isCreateSupplierGroups, setIsCreateSupplierGroups] = useState(false);
+  const [limit, setLimit] = useState(10);
 
-  const handleChangeDataCreateSupplierGroup = (e) => {
+  const [selectedGroups, setSelectedGroups] = useState(null);
+
+  const handleChangeData = (e) => {
     const { name, value } = e.target; // Lấy name và value từ input
-    setDataCreateSupplierGroup((prevData) => ({
+    setDataCreate((prevData) => ({
       ...prevData,
       [name]: value, // Cập nhật giá trị tương ứng với name
     }));
   };
-
   const handleClickBack = () => {
-    setIsCreateSupplierGroups(false);
+    setIsCreateGroups(false);
   };
-
+  const handleClickBackUpdate = () => {
+    setIsUpdateGroups(false);
+  };
   const handleCLickCreate = async () => {
-    const response = await createSupplierGroup(dataCreateSupplierGroup);
-    alert("Tạo nhóm nhà cung cấp thành thành công!");
-    setDataCreateSupplierGroup({
+    const response = await createCategoryTransaction(dataCreate);
+    alert("Tạo phiếu chi thành công");
+    setDataCreate({
+      sub_id: null,
       name: "",
-      note: "",
-      sub_id: "",
+      description: "",
+      type: "EXPENSE",
     });
-    setIsCreateSupplierGroups(false);
+    setIsCreateGroups(false);
   };
-
   const handlePrevPage = () => {
-    if (page > 1) {
-      setPage((prev) => prev - 1);
+    if (dataPage.page > 1) {
+      setDataPage((prevData) => ({
+        ...prevData,
+        page: prevData.page - 1, // Giảm số trang đi 1
+      }));
     }
   };
 
   const handleNextPage = () => {
-    if (page < pageQuantiy) {
-      setPage((prev) => prev + 1);
+    if (dataPage.page < dataPage.totalPage) {
+      setDataPage((prevData) => ({
+        ...prevData,
+        page: prevData.page + 1, // Tăng số trang lên 1
+      }));
     }
   };
-
-  const fetchSupplierGroupsList = async () => {
-    const supplierGroups = await getListSupplierGroups(page, limit, dataBody);
-    setSupplierGroupsList(supplierGroups.data.data);
-    setSupplierGroupsQuantity(supplierGroups.data.total_items);
-    setPageQuantity(supplierGroups.data.total_page);
+  const fetchReceiptGroupsList = async () => {
+    const response = await getCategoryTransactionList(
+      dataPage.page,
+      dataPage.size,
+      dataBody.keyword,
+      dataBody.type
+    );
+    setReceiptGroupsList(response.data.data);
+    console.log(response.data);
+    setDataPage((prevData) => ({
+      ...prevData,
+      totalPage: response.data.total_page,
+      totalItem: response.data.total_items,
+    }));
   };
 
   useDebouncedEffect(
     () => {
-      fetchSupplierGroupsList();
+      fetchReceiptGroupsList();
     },
     300,
-    [limit, page, dataBody, isCreateSupplierGroups]
+    [limit, dataPage.page, dataBody, isCreateGroups, isUpdateGroups]
   );
-
+  console.log(dataCreate);
   return (
     <>
-      {isCreateSupplierGroups && (
+      {isCreateGroups && (
         <>
           <div className="overlay"></div>
-          <CreateSupplierGroupPopup
+          <CreateGroups
+            type={"Loại phiếu chi"}
             handleOnClickBack={handleClickBack}
+            handleOnChange={handleChangeData}
             handleOnClickCreate={handleCLickCreate}
-            handleOnChange={handleChangeDataCreateSupplierGroup}
           />
         </>
       )}
-      <Header title={"Nhóm nhà cung cấp"} />
+      {isUpdateGroups && (
+        <>
+          <div className="overlay"></div>
+          <UpdateGroups
+            type={"Loại phiếu chi"}
+            item={selectedGroups}
+            handleOnClickBack={handleClickBackUpdate}
+          />
+        </>
+      )}
+      <Header title={"Loại phiếu chi"} />
       <div className="right__listPage">
         <div className="right__toolbar">
           <div className="btn-toolbar">
             <button
               className="btn btn-primary"
-              onClick={() => setIsCreateSupplierGroups(!isCreateSupplierGroups)}
+              onClick={() => setIsCreateGroups(true)}
             >
               <span className="btn__icon">
                 <FontAwesomeIcon icon={faPlus} />
               </span>
-              <span className="btn__title">Thêm nhóm nhà cung cấp</span>
+              <span className="btn__title">Thêm loại phiếu chi</span>
             </button>
           </div>
         </div>
@@ -121,7 +155,7 @@ const SupplierGroupsList = () => {
             <div className="box-scroller">
               <div className="group-scroller-btns">
                 <button className="btn-scroller active">
-                  Tất cả nhóm nhà cung cấp
+                  Tất cả loại phiếu chi
                 </button>
               </div>
             </div>
@@ -135,11 +169,12 @@ const SupplierGroupsList = () => {
                       <FontAwesomeIcon icon={faMagnifyingGlass} />
                     </div>
                     <input
-                      placeholder="Tìm kiếm theo mã nhóm, tên nhóm nhà cung cấp"
+                      placeholder="Tìm kiếm theo mã loại, tên loại"
                       type="text"
                       name="search"
                       id=""
                       autoComplete="on"
+                      value={dataBody.keyword || ""} // Đảm bảo giá trị không bị undefined
                       onChange={(e) =>
                         setDataBody({ ...dataBody, keyword: e.target.value })
                       }
@@ -157,7 +192,6 @@ const SupplierGroupsList = () => {
                 <col style={{ width: "233px" }} />
                 <col style={{ width: "233px" }} />
                 <col style={{ width: "295px" }} />
-                <col style={{ width: "233px" }} />
               </colgroup>
               <thead>
                 <tr className="group-table-headers">
@@ -166,35 +200,28 @@ const SupplierGroupsList = () => {
                     rowSpan={1}
                     className={cn("table-header-item", "text-start")}
                   >
-                    Tên nhóm
+                    Mã loại
                   </th>
                   <th
                     colSpan={1}
                     rowSpan={1}
                     className={cn("table-header-item", "text-start")}
                   >
-                    Mã nhóm
-                  </th>
-                  <th
-                    colSpan={1}
-                    rowSpan={1}
-                    className={cn("table-header-item", "text-start")}
-                  >
-                    Ghi chú
+                    Tên loại
                   </th>
                   <th
                     colSpan={1}
                     rowSpan={1}
                     className={cn("table-header-item", "text-center")}
                   >
-                    Số lượng nhà cung cấp
+                    Ngày tạo
                   </th>
                   <th
                     colSpan={1}
                     rowSpan={1}
                     className={cn("table-header-item", "text-start")}
                   >
-                    Ngày tạo
+                    Mô tả
                   </th>
                 </tr>
               </thead>
@@ -204,35 +231,34 @@ const SupplierGroupsList = () => {
             <div className="right__table-data">
               <div className="table-data__container">
                 <table className="box-table-data">
-                  <colgroup>
-                    <col style={{ width: "233px" }} />
-                    <col style={{ width: "233px" }} />
-                    <col style={{ width: "233px" }} />
-                    <col style={{ width: "295px" }} />
-                    <col style={{ width: "233px" }} />
-                  </colgroup>
+                  <col style={{ width: "233px" }} />
+                  <col style={{ width: "233px" }} />
+                  <col style={{ width: "233px" }} />
+                  <col style={{ width: "295px" }} />
                   <tbody>
-                    {supplierGroupsList?.map((supplierGroup, index) => {
+                    {receiptGroupsList?.map((item, index) => {
                       return (
-                        <tr key={index} className="table-data-row">
+                        <tr
+                          key={index}
+                          className="table-data-row"
+                          onClick={() => {
+                            setIsUpdateGroups(true);
+                            setSelectedGroups(item);
+                          }}
+                        >
                           <td className={cn("table-data-item", "text-start")}>
-                            <p className="box-text">{supplierGroup?.name}</p>
+                            <p className="box-text">{item?.sub_id}</p>
                           </td>
                           <td className={cn("table-data-item", "text-start")}>
-                            <p className="box-text">{supplierGroup?.id}</p>
-                          </td>
-                          <td className={cn("table-data-item", "text-start")}>
-                            <p className="box-text">{supplierGroup?.note}</p>
+                            <p className="box-text">{item?.name}</p>
                           </td>
                           <td className={cn("table-data-item", "text-center")}>
                             <p className="box-text">
-                              {supplierGroup?.total_supplier}
+                              {formatDateTime(item?.created_at)}
                             </p>
                           </td>
                           <td className={cn("table-data-item", "text-start")}>
-                            <p className="box-text">
-                              {formatDateTime(supplierGroup?.created_at)}
-                            </p>
+                            <p className="box-text">{item?.description}</p>
                           </td>
                         </tr>
                       );
@@ -269,30 +295,39 @@ const SupplierGroupsList = () => {
               </div>
               <p>Kết quả</p>
               <p className="item-quantity">
-                Từ {(page - 1) * limit + 1} đến{" "}
-                {(page - 1) * limit + supplierGroupsList.length} trên tổng{" "}
-                {supplierGroupsQuantity}
+                Từ {(dataPage.page - 1) * limit + 1} đến{" "}
+                {(dataPage.page - 1) * limit + receiptGroupsList.length} trên
+                tổng {dataPage.totalItem}
               </p>
               <button
-                className={cn("btn-icon", "btn-page", { inactive: page === 1 })}
+                className={cn("btn-icon", "btn-page", {
+                  inactive: dataPage.page === 1,
+                })}
                 onClick={handlePrevPage}
               >
                 <FontAwesomeIcon icon={faChevronLeft} />
               </button>
-              {Array(pageQuantiy)
+              {Array(dataPage.totalPage)
                 .fill(null)
                 .map((_, index) => (
                   <div
                     key={index}
-                    className={cn("box-page", { active: page === index + 1 })}
-                    onClick={() => setPage(index + 1)}
+                    className={cn("box-page", {
+                      active: dataPage.page === index + 1,
+                    })}
+                    onClick={() =>
+                      setDataPage((prevData) => ({
+                        ...prevData,
+                        page: index + 1, // Cập nhật số trang
+                      }))
+                    }
                   >
                     {index + 1}
                   </div>
                 ))}
               <button
                 className={cn("btn-icon", "btn-page", {
-                  inactive: page === pageQuantiy,
+                  inactive: dataPage.page === dataPage.totalPage,
                 })}
                 onClick={handleNextPage}
               >
@@ -305,5 +340,4 @@ const SupplierGroupsList = () => {
     </>
   );
 };
-
-export default SupplierGroupsList;
+export default PaymentGroups;
