@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import Header from "../Header/Header.jsx";
 
 // Import Columns Info
-import col from "../../assets/colgroup/receipt-vouchers-list.js";
+import col from "../../assets/colgroup/receipt-vouchers-list.js"; 
 
 // Import Icons
 import exportIcon from "../../assets/icons/ExportIcon.jsx";

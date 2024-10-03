@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import Header from '../../components/Header/Header'
 
@@ -7,8 +7,25 @@ import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBox, faClipboardList, faSackDollar, faWallet } from '@fortawesome/free-solid-svg-icons'
 import cn from 'classnames'
+import { getDashboard } from '../../service/UserAPI'
 
 const Dashboard = () => {
+    const [data, setData] = React.useState([])
+
+    const fetchDashboard = async () => {
+        try {
+            const response = await getDashboard();
+            setData(response.data);
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    useEffect(() => {
+        fetchDashboard();
+    }, [])
+
     return (
         <>
             <Header title={"Tổng quan"} />
@@ -16,7 +33,7 @@ const Dashboard = () => {
                 <div className={s["wrapper"]}>
                     <div className={s["box-statistics"]}>
                         <div className={s["box-title"]}>
-                            <h6>Thống kế số liệu kho</h6>
+                            <h6>Thống kê số liệu</h6>
                         </div>
                         <div className={s["group-statistics"]}>
                             <div className={cn(s["statistics-item"], s["reports-statistics"])}>
@@ -26,7 +43,7 @@ const Dashboard = () => {
                                     </div>
                                     <div className={s["statistics-content"]}>
                                         <h6>Tiền vốn cửa hàng</h6>
-                                        <h5>0</h5>
+                                        <h5>{(Number(data.total_income) || 0) - (Number(data.total_expense) || 0)}</h5>
                                     </div>
                                 </Link>
                             </div>
@@ -37,7 +54,7 @@ const Dashboard = () => {
                                     </div>
                                     <div className={s["statistics-content"]}>
                                         <h6>Đơn hàng đặt chờ nhập</h6>
-                                        <h5>0</h5>
+                                        <h5>{data.count_order || 0}</h5>
                                     </div>
                                 </Link>
                             </div>
@@ -48,7 +65,7 @@ const Dashboard = () => {
                                     </div>
                                     <div className={s["statistics-content"]}>
                                         <h6>Đơn hàng nhập chưa thanh toán</h6>
-                                        <h5>0</h5>
+                                        <h5>{data.count_grn || 0}</h5>
                                     </div>
                                 </Link>
                             </div>
@@ -59,7 +76,7 @@ const Dashboard = () => {
                                     </div>
                                     <div className={s["statistics-content"]}>
                                         <h6>Đơn kiểm chưa hoàn thành</h6>
-                                        <h5>0</h5>
+                                        <h5>{data.count_gin || 0}</h5>
                                     </div>
                                 </Link>
                             </div>
@@ -71,16 +88,12 @@ const Dashboard = () => {
                         </div>
                         <div className={s["group-info"]}>
                             <div className={s["info-item"]}>
-                                <p className="info-title">Sản phẩm ngừng giao dịch</p>
-                                <h5 className="info-value">0</h5>
+                                <p className="info-title">Sản phẩm đang giao dịch</p>
+                                <h5 className="info-value">{data.count_product || 0}</h5>
                             </div>
                             <div className={s["info-item"]}>
                                 <p className="info-title">Số lượng tồn kho</p>
-                                <h5 className="info-value">0</h5>
-                            </div>
-                            <div className={s["info-item"]}>
-                                <p className="info-title">Giá trị tồn kho</p>
-                                <h5 className="info-value">0</h5>
+                                <h5 className="info-value">{data.sum_quantity || 0}</h5>
                             </div>
                         </div>
                     </div>

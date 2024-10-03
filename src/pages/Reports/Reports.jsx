@@ -95,6 +95,12 @@ const Reports = () => {
     }));
   };
 
+  const [dataTotal, setDataTotal] = useState({
+    total_before: 0,
+    total_income: 0,
+    total_expense: 0,
+  });
+
   const fetchTransactionLists = async () => {
     try {
       const response = await getTotalReport(
@@ -108,6 +114,11 @@ const Reports = () => {
         totalPage: response.data.pagination.total_page,
         totalItem: response.data.pagination.total_items,
       }));
+      setDataTotal({
+        total_before: response.data.total_before,
+        total_income: response.data.total_income,
+        total_expense: response.data.total_expense,
+      });
     } catch (error) {
       console.error("Failed to fetch transactions:", error);
     }
@@ -115,7 +126,7 @@ const Reports = () => {
 
   // Call fetchTransactionLists inside useEffect
   useEffect(() => {
-    fetchTransactionLists();
+    fetchTransactionLists();    
   }, [dataFilter, dataPage.page, dataPage.size, colsToRender]);
 
   return (
@@ -164,7 +175,7 @@ const Reports = () => {
               <p>Số dư đầu kì</p>  
             </div>                
             <div className={s["value"]}>
-              <p>0</p>
+              <p>{dataTotal.total_before}</p>
             </div>
           </div>
           <div className={s["box-function"]}>
@@ -175,7 +186,7 @@ const Reports = () => {
               <p>Tổng thu</p>  
             </div>              
             <div className={cn(s["value"], s["receipt"])}>
-              <p>0</p>
+              <p>{dataTotal.total_income}</p>
             </div>
           </div>
           <div className={s["box-function"]}>
@@ -186,7 +197,7 @@ const Reports = () => {
               <p>Tổng chi</p>  
             </div>              
             <div className={cn(s["value"], s["payment"])}>
-              <p>0</p>
+              <p>{dataTotal.total_expense}</p>
             </div>
           </div>
           <div className={s["box-function"]}>
@@ -197,7 +208,7 @@ const Reports = () => {
               <p>Tồn cuối kì</p>  
             </div>              
             <div className={cn(s["value"], s["result"])}>
-              <p>0</p>
+              <p>{Number(dataTotal.total_before) + Number(dataTotal.total_income) - Number(dataTotal.total_expense)}</p>
             </div>
           </div>
         </div>
