@@ -152,22 +152,7 @@ const GINDetail = () => {
 								</div>
 							</div>
 							<div className="btn-toolbar">
-								<button className="btn btn-base btn-text">
-									<span className="btn__label">
-										<span className="btn__icon">
-											<FontAwesomeIcon icon={faPrint} />
-										</span>
-										In đơn
-									</span>
-								</button>
-								<button className="btn btn-base btn-text">
-									<span className="btn__label">
-										<span className="btn__icon">
-											<FontAwesomeIcon icon={faCopy} />
-										</span>
-										Sao chép
-									</span>
-								</button>
+
 							</div>
 						</div>
 						<div className="box-supplier">

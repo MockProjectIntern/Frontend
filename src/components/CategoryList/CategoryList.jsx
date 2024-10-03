@@ -56,7 +56,7 @@ const CategoryList = () => {
 
     const handleCLickCreate = async () => {
         const response = await createCategory(dataCreateCategory);
-        if (response.status === 201) {
+        if (response.status_code === 201) {
             alert("Tạo loại sản phẩm thành công!");
             setDataCreateCategory({
                 name: "",
@@ -76,7 +76,7 @@ const CategoryList = () => {
 
     useDebouncedEffect(() => {
         fetchCategoriesList();
-    }, 300, [limit, page, dataBody, isCreateCategory]);
+    }, 200, [limit, page, dataBody, isCreateCategory]);
 
     return (
         <>
@@ -146,12 +146,6 @@ const CategoryList = () => {
                                 <tr className="group-table-headers">
                                     <th rowSpan={1} className='table-icon'>
                                         <div className="group-icons">
-                                            <div className="checkbox__container">
-                                                <div className="checkbox__wrapper">
-                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                    <div className="btn-checkbox"></div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </th>
                                     <th
@@ -203,12 +197,6 @@ const CategoryList = () => {
                                                 <tr key={index} className="table-data-row">
                                                     <td rowSpan={1} className='table-icon'>
                                                         <div className="group-icons">
-                                                            <div className="checkbox__container">
-                                                                <div className="checkbox__wrapper">
-                                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                                    <div className="btn-checkbox"></div>
-                                                                </div>
-                                                            </div>
                                                         </div>
                                                     </td>
                                                     <td className={cn("table-data-item", "text-start")}>
@@ -251,7 +239,15 @@ const CategoryList = () => {
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </span>
                                 </button>
-                                {isOpenLimitPopup && <LimitSelectPopup btnRef={limitBtnRef} closePopup={() => setIsOpenLimitPopup(false)} limit={limit} handleChangeLimit={(limit) => { setLimit(limit) }} />}
+                                {isOpenLimitPopup
+                                    && <LimitSelectPopup
+                                        btnRef={limitBtnRef}
+                                        closePopup={() => setIsOpenLimitPopup(false)}
+                                        limit={limit}
+                                        handleChangeLimit={(limit) => {
+                                            setPage(1);
+                                            setLimit(limit)
+                                        }} />}
                             </div>
                             <p>Kết quả</p>
                             <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + categoriesList.length} trên tổng {categoriesQuantity}</p>

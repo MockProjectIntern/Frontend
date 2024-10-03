@@ -40,7 +40,7 @@ const SearchSupplier = ({setSelectItem, setCreateSupplier}) => {
 
     useDebouncedEffect(() => {
         fetchSupplier();
-    }, 300, [dataFilter.keyword]);
+    }, 200, [dataFilter.keyword]);
 
     return (
         <div className={s.container}>

@@ -10,7 +10,6 @@ import col from "../../assets/colgroup/payment-vouchers-list.js";
 
 // Import Icons
 import exportIcon from "../../assets/icons/ExportIcon";
-import filterIcon from "../../assets/icons/FilterIcon";
 import settingFilterIcon from "../../assets/icons/SettingFilterIcon.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,12 +18,14 @@ import {
   faChevronRight,
   faMagnifyingGlass,
   faPlus,
+  faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { getListTransaction } from "../../service/TransactionAPI.jsx";
-import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import { formatDateTime } from '../../utils/DateUtils.jsx'
 import FilterPopup from "../FilterPopup/FilterPopup.jsx";
+import SelectDatePopup from "../SelectDatePopup.jsx";
+import { useDebouncedEffect } from "../../utils/CommonUtils.jsx";
 
 const PaymentVouchersList = () => {
   const [transactionList, setTransactionList] = useState([]);
@@ -32,7 +33,6 @@ const PaymentVouchersList = () => {
   const [pageQuantiy, setPageQuantity] = useState(1);
   const [totalItem, setTotalItem] = useState(0);
   const [limit, setLimit] = useState(20);
-  const [isShowSelectLimit, setIsShowSelectLimit] = useState(false);
   const [active, setActive] = useState({
     all: "active",
     completed: false,
@@ -137,13 +137,13 @@ const PaymentVouchersList = () => {
   // Set required columns to Cookies
   useEffect(() => {
     Cookies.set("filter_transaction_payment", JSON.stringify(colsToRender));
-    const timeoutId = setTimeout(() => {
-      fetchTransactionList();
-    }, 300); // 500ms delay
+    fetchTransactionList();
 
-    // Cleanup function: Clears the timeout if dependencies change before the timeout finishes
-    return () => clearTimeout(timeoutId);
-  }, [colsToRender, page, limit, dataFilter]);
+  }, [colsToRender, page, limit]);
+
+  useDebouncedEffect(() => {
+    fetchTransactionList();
+  }, 200, [dataFilter]);
 
   const headersRef = useRef(null);
   const contentRef = useRef(null);
@@ -248,18 +248,34 @@ const PaymentVouchersList = () => {
                 </div>
               </div>
               <div className="btn-group group-filter-btns">
-                <button className="btn btn-base btn-filter">
+                <SelectDatePopup
+                  setDataFilters={(data) =>
+                    setDataFilter((prev) => {
+                      return {
+                        ...prev,
+                        created_date_from: data.date_from,
+                        created_date_to: data.date_to,
+                      };
+                    })
+                  }
+                />
+                <button className="btn btn-base btn-filter" onClick={() => setDataFilter({
+                  keyword: null,
+                  recipient_groups: null,
+                  payment_methods: null,
+                  created_date_from: null,
+                  created_date_to: null,
+                  updated_date_from: null,
+                  updated_date_to: null,
+                  cancelled_date_from: null,
+                  cancelled_date_to: null,
+                  category_ids: null,
+                  created_user_ids: null,
+                  statuses: null,
+                  type: "EXPENSE",
+                })}>
                   <span className="btn__label">
-                    Ngày tạo
-                    <span className="btn__icon">
-                      <FontAwesomeIcon icon={faCaretDown} />
-                    </span>
-                  </span>
-                </button>
-                <button className="btn btn-base btn-filter">
-                  <span className="btn__label">
-                    Bộ lọc khác
-                    <span className="btn__icon">{filterIcon}</span>
+                    Xóa bộ lọc
                   </span>
                 </button>
               </div>
@@ -267,6 +283,38 @@ const PaymentVouchersList = () => {
                 <span className="btn__title">Lưu bộ lọc</span>
               </button>
             </div>
+            {(dataFilter.created_date_from && dataFilter.created_date_to)
+              && (
+                <div className="box-show-selected-filter">
+                  <div className="box-show-selected-container">
+                    {dataFilter.created_date_from && dataFilter.created_date_to && (
+                      <div className="box-show-selected-item">
+                        <span>
+                          Ngày tạo: (<span>{dataFilter.created_date_from}</span> -
+                          <span>{dataFilter.created_date_to}</span>)
+                        </span>
+                        <div className="box-remove-item">
+                          <button
+                            onClick={() =>
+                              setDataFilter((prev) => ({
+                                ...prev,
+                                created_date_from: null,
+                                created_date_to: null,
+                              }))
+                            }
+                            className="btn-remove-item"
+                            type="button"
+                          >
+                            <span>
+                              <FontAwesomeIcon icon={faXmark} />
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
           </div>
           <div
             ref={headersRef}
@@ -298,17 +346,6 @@ const PaymentVouchersList = () => {
                       <button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
                         {settingFilterIcon}
                       </button>
-                      <div className="checkbox__container">
-                        <div className="checkbox__wrapper">
-                          <input
-                            type="checkbox"
-                            name=""
-                            id=""
-                            className="checkbox__input"
-                          />
-                          <div className="btn-checkbox"></div>
-                        </div>
-                      </div>
                     </div>
                   </th>
                   {Object.entries(colsToRender).map(([key, value]) => {
@@ -379,17 +416,6 @@ const PaymentVouchersList = () => {
                           <td rowSpan={1} className="table-icon">
                             <div className="group-icons">
                               <div className="btn-icon"></div>
-                              <div className="checkbox__container">
-                                <div className="checkbox__wrapper">
-                                  <input
-                                    type="checkbox"
-                                    name=""
-                                    id=""
-                                    className="checkbox__input"
-                                  />
-                                  <div className="btn-checkbox"></div>
-                                </div>
-                              </div>
                             </div>
                           </td>
                           {Object.entries(colsToRender).map(([key, value]) => {

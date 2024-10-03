@@ -108,7 +108,7 @@ const CreateOrder = () => {
 
     useDebouncedEffect(() => {
         fetchProductList();
-    }, 300, [dataPageProduct.keyword])
+    }, 200, [dataPageProduct.keyword])
 
     const [listProductDetail, setListProductDetail] = useState([]);
 

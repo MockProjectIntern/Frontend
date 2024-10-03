@@ -120,7 +120,7 @@ const GINList = () => {
 
 	useDebouncedEffect(() => {
 		fetchGinList();
-	}, 300, [page, limit, dataFilters]);
+	}, 200, [page, limit, dataFilters]);
 
 	const headersRef = useRef(null);
 	const contentRef = useRef(null);
@@ -294,10 +294,19 @@ const GINList = () => {
 									/>
 								)}
 
-								<button className="btn btn-base btn-filter">
+								<button className="btn btn-base btn-filter" onClick={() => setdataFilters({
+									keyword: null,
+									statues: null,
+									created_date_from: null,
+									created_date_to: null,
+									balanced_date_from: null,
+									balanced_date_to: null,
+									user_created_ids: null,
+									user_balanced_ids: null,
+									user_inspection_ids: null,
+								})}>
 									<span className="btn__label">
-										Bộ lọc khác
-										<span className="btn__icon">{filterIcon}</span>
+										Xóa bộ lọc
 									</span>
 								</button>
 							</div>
@@ -369,18 +378,7 @@ const GINList = () => {
 										<div className="group-icons">
 											<button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
 												{settingFilterIcon}
-												</button>
-											<div className="checkbox__container">
-												<div className="checkbox__wrapper">
-													<input
-														type="checkbox"
-														name=""
-														id=""
-														className="checkbox__input"
-													/>
-													<div className="btn-checkbox"></div>
-												</div>
-											</div>
+											</button>
 										</div>
 									</th>
 									{/* Render table headers for columns that exist in ginList */}
@@ -454,17 +452,6 @@ const GINList = () => {
 															<button className="btn-icon">
 																<FontAwesomeIcon icon={faAnglesRight} />
 															</button>
-															<div className="checkbox__container">
-																<div className="checkbox__wrapper">
-																	<input
-																		type="checkbox"
-																		name=""
-																		id=""
-																		className="checkbox__input"
-																	/>
-																	<div className="btn-checkbox"></div>
-																</div>
-															</div>
 														</div>
 													</td>
 													{Object.entries(colsToRender).map(([key, value]) => {
@@ -611,13 +598,13 @@ const GINList = () => {
 				</div>
 			</div>
 			{isFilterPopup
-                && <FilterPopup
-                    defaultCols={defaultCols}
-                    colGroup={col}
-                    colsToRender={colsToRender}
-                    setColsToRender={setColsToRender}
-                    closePopup={() => setIsFilterPopup(false)}
-                />}
+				&& <FilterPopup
+					defaultCols={defaultCols}
+					colGroup={col}
+					colsToRender={colsToRender}
+					setColsToRender={setColsToRender}
+					closePopup={() => setIsFilterPopup(false)}
+				/>}
 		</>
 	);
 };

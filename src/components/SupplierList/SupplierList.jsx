@@ -13,7 +13,7 @@ import exportIcon from '../../assets/icons/ExportIcon'
 import filterIcon from '../../assets/icons/FilterIcon'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { getAllSupplierByName, getDataExportExcel, getSupplierList } from '../../service/SuppliersAPI.jsx'
 import { useNavigate } from 'react-router-dom'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
@@ -42,7 +42,7 @@ const SupplierList = () => {
             setPage(prev => prev + 1);
         }
     }
-    
+
     const [isFilterPopup, setIsFilterPopup] = useState(false)
     const defaultCols = {
         id: true,
@@ -92,7 +92,7 @@ const SupplierList = () => {
 
     useDebouncedEffect(() => {
         fetchSupplierList();
-    }, 300, [page, limit, dataFilter, colsToRender])
+    }, 200, [page, limit, dataFilter, colsToRender])
 
     const handleExport = async () => {
         const responseAPI = await getDataExportExcel("DEFAULT", dataFilter);
@@ -188,12 +188,16 @@ const SupplierList = () => {
                                         };
                                     })}
                                 />
-                                <button className="btn btn-base btn-filter">
+                                <button className="btn btn-base btn-filter" onClick={() => setDataFilter({
+                                    keyword: null,
+                                    statuses: null,
+                                    supplier_group_ids: null,
+                                    created_date_from: null,
+                                    created_date_to: null,
+                                    tags: null
+                                })}>
                                     <span className="btn__label">
-                                        Bộ lọc khác
-                                        <span className="btn__icon">
-                                            {filterIcon}
-                                        </span>
+                                        Xóa bộ lọc
                                     </span>
                                 </button>
                             </div>
@@ -201,6 +205,38 @@ const SupplierList = () => {
                                 <span className="btn__title">Lưu bộ lọc</span>
                             </button>
                         </div>
+                        {(dataFilter.created_date_from && dataFilter.created_date_to)
+                            && (
+                                <div className="box-show-selected-filter">
+                                    <div className="box-show-selected-container">
+                                        {dataFilter.created_date_from && dataFilter.created_date_to && (
+                                            <div className="box-show-selected-item">
+                                                <span>
+                                                    Ngày tạo: (<span>{dataFilter.created_date_from}</span> -
+                                                    <span>{dataFilter.created_date_to}</span>)
+                                                </span>
+                                                <div className="box-remove-item">
+                                                    <button
+                                                        onClick={() =>
+                                                            setDataBody((prev) => ({
+                                                                ...prev,
+                                                                created_date_from: null,
+                                                                created_date_to: null,
+                                                            }))
+                                                        }
+                                                        className="btn-remove-item"
+                                                        type="button"
+                                                    >
+                                                        <span>
+                                                            <FontAwesomeIcon icon={faXmark} />
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                     </div>
                     <div
                         ref={headersRef}
@@ -231,12 +267,6 @@ const SupplierList = () => {
                                             <button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
                                                 {settingFilterIcon}
                                             </button>
-                                            <div className="checkbox__container">
-                                                <div className="checkbox__wrapper">
-                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                    <div className="btn-checkbox"></div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </th>
                                     {/* Render table headers for columns that exist in suppliersList */}
@@ -310,12 +340,6 @@ const SupplierList = () => {
                                                             <button className="btn-icon">
                                                                 <FontAwesomeIcon icon={faAnglesRight} />
                                                             </button>
-                                                            <div className="checkbox__container">
-                                                                <div className="checkbox__wrapper">
-                                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                                    <div className="btn-checkbox"></div>
-                                                                </div>
-                                                            </div>
                                                         </div>
                                                     </td>
                                                     {Object.entries(colsToRender).map(([key, value]) => {

@@ -9,7 +9,6 @@ const SelectDatePopup = ({ data, setDataFilters }) => {
     const [isOpenCreatedAtPopup, setIsOpenCreatedAtPopup] = useState(false);
 
     const handleChangeDataFilter = (filters) => {
-        console.log(filters);
 		setDataFilters(filters);
 	};
 

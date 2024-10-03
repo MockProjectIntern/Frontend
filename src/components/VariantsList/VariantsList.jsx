@@ -7,7 +7,7 @@ import cn from "classnames"
 import Cookies from 'js-cookie'
 import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faL, faMagnifyingGlass, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faL, faMagnifyingGlass, faPlus, faXmark, } from '@fortawesome/free-solid-svg-icons'
 import Header from '../Header/Header.jsx'
 import SelectFilter from '../SelectFilter/SelectFilter.jsx'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
@@ -97,6 +97,7 @@ const VariantList = () => {
     // useState quan li filter loai san pham
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [listCategories, setListCategories,] = useState([]);
+    const [listCategoryShowFilter, setListCategoryShowFilter] = useState([]);
     const [isOpenFilterCategoryPopup, setIsOpenFilterCategoryPopup] = useState(false);
     const [dataFilterCategory, setDataFilterCategory] = useState(
         {
@@ -110,6 +111,7 @@ const VariantList = () => {
     // useState quan li filter nhan hieu
     const [selectedBrands, setSelectedBrands] = useState([]);
     const [listBrands, setListBrands,] = useState([]);
+    const [listBrandShowFilter, setListBrandShowFilter] = useState([]);
     const [isOpenFilterBrandPopup, setIsOpenFilterBrandPopup] = useState(false);
     const [dataFilterBrand, setDataFilterBrand] = useState(
         {
@@ -143,6 +145,7 @@ const VariantList = () => {
     const fetchCategoryList = async () => {
         const categories = await getListCategory(currentPageFilterCategory, 10, dataFilterCategory)
         setListCategories(categories.data.data);
+        setListCategoryShowFilter(categories.data.data);
         setTotalPageFilterCategory(categories.data.total_page)
     }
 
@@ -153,6 +156,7 @@ const VariantList = () => {
                 ...prev,
                 ...categories.data.data,
             ]);
+            setListCategoryShowFilter(prev => [...prev, ...categories.data.data]);
             setCurrentPageFilterCategory(currentPageFilterCategory + 1);
             setTotalPageFilterCategory(categories.data.total_page);
         }
@@ -186,6 +190,7 @@ const VariantList = () => {
     const fetchBrandList = async () => {
         const brands = await getListBrand(currentPageFilterCategory, 10, dataFilterCategory)
         setListBrands(brands.data.data);
+        setListBrandShowFilter(brands.data.data);
         setTotalPageFilterBrand(brands.data.total_page)
     }
 
@@ -196,6 +201,7 @@ const VariantList = () => {
                 ...prev,
                 ...brands.data.data,
             ]);
+            setListBrandShowFilter(prev => [...prev, ...brands.data.data]);
             setCurrentPageFilterBrand(currentPageFilterBrand + 1);
             setTotalPageFilterBrand(brands.data.total_page);
         }
@@ -239,7 +245,7 @@ const VariantList = () => {
 
     useDebouncedEffect(() => {
         fetchVariantList();
-    }, 300, [dataBody, page, limit])
+    }, 200, [dataBody, page, limit])
 
     return (
         <>
@@ -247,14 +253,6 @@ const VariantList = () => {
             <div className='right__listPage'>
                 <div className='right__toolbar'>
                     <div className='btn-toolbar'>
-                        <button className='btn btn-base btn-text'>
-                            <span className="btn__label">
-                                <span className="btn__icon">
-                                    {exportIcon}
-                                </span>
-                                Xuất file
-                            </span>
-                        </button>
                         <button className="btn btn-base btn-text" onClick={() => navigate('/admin/categories')}>
                             <span className="btn__label">
                                 Loại sản phẩm
@@ -359,12 +357,16 @@ const VariantList = () => {
                                         loadMoreData={fetchMoreBrandsList}
                                     />
                                 }
-                                <button className="btn btn-base btn-filter">
+                                <button className="btn btn-base btn-filter" onClick={() => setDataBody({
+                                    keyword: null,
+                                    category_ids: null,
+                                    created_date_from: null,
+                                    created_date_to: null,
+                                    brand_ids: null,
+                                    statues: null
+                                })}>
                                     <span className="btn__label">
-                                        Bộ lọc khác
-                                        <span className="btn__icon">
-                                            {filterIcon}
-                                        </span>
+                                        Xóa bộ lọc
                                     </span>
                                 </button>
                             </div>
@@ -372,6 +374,115 @@ const VariantList = () => {
                                 <span className="btn__title">Lưu bộ lọc</span>
                             </button>
                         </div>
+                        {((dataBody.category_ids && dataBody.category_ids.length > 0) ||
+                            (dataBody.created_date_from && dataBody.created_date_to) ||
+                            dataBody.brand_ids) && (
+                                <div className="box-show-selected-filter">
+                                    <div className="box-show-selected-container">
+                                        {dataBody.category_ids &&
+                                            dataBody.category_ids.length > 0 && (
+                                                <div className="box-show-selected-item">
+                                                    <span>
+                                                        {" "}
+                                                        Loại sản phẩm:{" "}
+                                                        {dataBody.category_ids.map((id, index) => {
+                                                            const category = listCategoryShowFilter.find(
+                                                                (cat) => cat.id == id
+                                                            );
+                                                            return (
+                                                                <span key={index}>
+                                                                    {category?.name}
+                                                                    {index < dataBody.category_ids.length - 1
+                                                                        ? ", "
+                                                                        : ""}
+                                                                </span>
+                                                            );
+                                                        })}
+                                                    </span>
+                                                    <div className="box-remove-item">
+                                                        <button
+                                                            onClick={() =>
+                                                                setDataBody((prev) => ({
+                                                                    ...prev,
+                                                                    category_ids: null,
+                                                                }))
+                                                            }
+                                                            className="btn-remove-item"
+                                                            type="button"
+                                                        >
+                                                            <span>
+                                                                <FontAwesomeIcon icon={faXmark} />
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        {dataBody.created_date_from && dataBody.created_date_to && (
+                                            <div className="box-show-selected-item">
+                                                <span>
+                                                    Ngày tạo: (<span>{dataBody.created_date_from}</span> -
+                                                    <span>{dataBody.created_date_to}</span>)
+                                                </span>
+                                                <div className="box-remove-item">
+                                                    <button
+                                                        onClick={() =>
+                                                            setDataBody((prev) => ({
+                                                                ...prev,
+                                                                created_date_from: null,
+                                                                created_date_to: null,
+                                                            }))
+                                                        }
+                                                        className="btn-remove-item"
+                                                        type="button"
+                                                    >
+                                                        <span>
+                                                            <FontAwesomeIcon icon={faXmark} />
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {dataBody.brand_ids &&
+                                            dataBody.brand_ids.length > 0 && (
+                                                <div className="box-show-selected-item">
+                                                    <span>
+                                                        {" "}
+                                                        Thương hiệu:{" "}
+                                                        {dataBody.brand_ids.map((id, index) => {
+                                                            const brand = listBrandShowFilter.find(
+                                                                (cat) => cat.id == id
+                                                            );
+                                                            return (
+                                                                <span key={index}>
+                                                                    {brand?.name}
+                                                                    {index < dataBody.brand_ids.length - 1
+                                                                        ? ", "
+                                                                        : ""}
+                                                                </span>
+                                                            );
+                                                        })}
+                                                    </span>
+                                                    <div className="box-remove-item">
+                                                        <button
+                                                            onClick={() =>
+                                                                setDataBody((prev) => ({
+                                                                    ...prev,
+                                                                    brand_ids: null,
+                                                                }))
+                                                            }
+                                                            className="btn-remove-item"
+                                                            type="button"
+                                                        >
+                                                            <span>
+                                                                <FontAwesomeIcon icon={faXmark} />
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                    </div>
+                                </div>
+                            )}
                     </div>
                     <div
                         ref={headersRef}
@@ -402,12 +513,6 @@ const VariantList = () => {
                                             <button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
                                                 {settingFilterIcon}
                                             </button>
-                                            <div className="checkbox__container">
-                                                <div className="checkbox__wrapper">
-                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                    <div className="btn-checkbox"></div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </th>
                                     {/* Render table headers for columns that exist in variantsList */}
@@ -481,12 +586,6 @@ const VariantList = () => {
                                                             <button className="btn-icon">
                                                                 <FontAwesomeIcon icon={faAnglesRight} />
                                                             </button>
-                                                            <div className="checkbox__container">
-                                                                <div className="checkbox__wrapper">
-                                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                                    <div className="btn-checkbox"></div>
-                                                                </div>
-                                                            </div>
                                                         </div>
                                                     </td>
                                                     {Object.entries(colsToRender).map(([key, value]) => {
@@ -541,7 +640,7 @@ const VariantList = () => {
                                                                     <p className='box-text'>
                                                                         {
                                                                             key !== "name" ? variant[key] :
-                                                                            <Link to={`/admin/products/PRD/${variant?.id}`} className='box-id'>{variant[key]}</Link>
+                                                                                <Link to={`/admin/products/PRD/${variant?.id}`} className='box-id'>{variant[key]}</Link>
                                                                         }
                                                                     </p>
                                                                 </td>

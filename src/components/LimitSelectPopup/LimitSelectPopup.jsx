@@ -13,8 +13,6 @@ const LimitSelectPopup = ({ btnRef, limit, handleChangeLimit, closePopup, }) => 
     }
 
     useEffect(() => {
-        console.log('useEffect');
-        
         document.addEventListener('mousedown', handleClickOutside);
 
         return () => {

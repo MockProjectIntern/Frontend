@@ -24,18 +24,20 @@ import { exportExcel } from '../../config/ExportExcel.jsx'
 import SelectDatePopup from '../SelectDatePopup.jsx'
 import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 import FilterPopup from '../FilterPopup/FilterPopup.jsx'
-
-const grnsQuantity = 4;
+import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 
 const GRNList = () => {
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const [pageQuantiy, setPageQuantity] = useState(1);
     const [limit, setLimit] = useState(20);
+    const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
 
+    const [isOpenCreatedAtPopup, setIsOpenCreatedAtPopup] = useState(false);
     const [isOpenStatusPopup, setIsOpenStatusPopup] = useState(false);
     const [statusListFilter, setStatusListFilter] = useState(null);
     const [totalItems, setTotalItems] = useState(0);
+    const limitBtnRef = useRef(null);
 
     const [grnList, setGrnList] = useState([])
 
@@ -96,7 +98,7 @@ const GRNList = () => {
 
     useDebouncedEffect(() => {
         fetchGrnList();
-    }, 300, [page, limit, filterBody])
+    }, 200, [page, limit, filterBody])
 
     useEffect(() => {
         setFilterBody(prev => {
@@ -281,12 +283,24 @@ const GRNList = () => {
                                         };
                                     })}
                                 />
-                                <button className="btn btn-base btn-filter">
+                                {isOpenCreatedAtPopup && <CreatedAtFilter createdRef={createdAtRef} closePopup={() => setIsOpenCreatedAtPopup(false)} setCreatedMin={setCreatedMin} setCreatedMax={setCreatedMax} />}
+
+                                <button className="btn btn-base btn-filter" onClick={() => setFilterBody({
+                                    keyword: null,
+                                    statuses: null,
+                                    received_statuses: null,
+                                    supplier_ids: null,
+                                    start_created_at: null,
+                                    end_created_at: null,
+                                    start_expected_at: null,
+                                    end_expected_at: null,
+                                    product_ids: null,
+                                    user_created_ids: null,
+                                    user_completed_ids: null,
+                                    user_cancelled_ids: null
+                                })}>
                                     <span className="btn__label">
-                                        Bộ lọc khác
-                                        <span className="btn__icon">
-                                            {filterIcon}
-                                        </span>
+                                        Xóa bộ lọc
                                     </span>
                                 </button>
                             </div>
@@ -295,38 +309,38 @@ const GRNList = () => {
                             </button>
                         </div>
                         {(filterBody.statuses || (filterBody.start_created_at && filterBody.end_created_at))
-							&& (<div className="box-show-selected-filter">
-								<div className="box-show-selected-container">
-									{filterBody.statuses && (<div className="box-show-selected-item">
-										<span> Trạng thái: {filterBody.statuses.map((key, index) => (
-											<span key={index}>{status[key]}{index < filterBody.statuses.length - 1 ? ', ' : ''} </span>
-										))}
-										</span>
-										<div className="box-remove-item">
-											<button onClick={() => setFilterBody((prev) => ({ ...prev, statuses: null }))} className="btn-remove-item" type="button">
-												<span>
-													<FontAwesomeIcon icon={faXmark} />
-												</span>
-											</button>
-										</div>
-									</div>)}
-									{filterBody.start_created_at && filterBody.end_created_at && (<div className="box-show-selected-item">
-										<span>Ngày tạo: (
-											<span>{filterBody.start_created_at}</span> -
-											<span>{filterBody.end_created_at}</span>
-											)</span>
-										<div className="box-remove-item">
-											<button onClick={() => setFilterBody((prev) => ({ ...prev, start_created_at: null, end_created_at: null }))} className="btn-remove-item" type="button">
-												<span>
-													<FontAwesomeIcon icon={faXmark} />
-												</span>
-											</button>
-										</div>
-									</div>)}
+                            && (<div className="box-show-selected-filter">
+                                <div className="box-show-selected-container">
+                                    {filterBody.statuses && (<div className="box-show-selected-item">
+                                        <span> Trạng thái: {filterBody.statuses.map((key, index) => (
+                                            <span key={index}>{status[key]}{index < filterBody.statuses.length - 1 ? ', ' : ''} </span>
+                                        ))}
+                                        </span>
+                                        <div className="box-remove-item">
+                                            <button onClick={() => setFilterBody((prev) => ({ ...prev, statuses: null }))} className="btn-remove-item" type="button">
+                                                <span>
+                                                    <FontAwesomeIcon icon={faXmark} />
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>)}
+                                    {filterBody.start_created_at && filterBody.end_created_at && (<div className="box-show-selected-item">
+                                        <span>Ngày tạo: (
+                                            <span>{filterBody.start_created_at}</span> -
+                                            <span>{filterBody.end_created_at}</span>
+                                            )</span>
+                                        <div className="box-remove-item">
+                                            <button onClick={() => setFilterBody((prev) => ({ ...prev, start_created_at: null, end_created_at: null }))} className="btn-remove-item" type="button">
+                                                <span>
+                                                    <FontAwesomeIcon icon={faXmark} />
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>)}
 
-								</div>
-							</div>)
-						}
+                                </div>
+                            </div>)
+                        }
                     </div>
                     <div
                         ref={headersRef}
@@ -357,12 +371,6 @@ const GRNList = () => {
                                             <button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
                                                 {settingFilterIcon}
                                             </button>
-                                            <div className="checkbox__container">
-                                                <div className="checkbox__wrapper">
-                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                    <div className="btn-checkbox"></div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </th>
                                     {/* Render table headers for columns that exist in grnList */}
@@ -436,12 +444,6 @@ const GRNList = () => {
                                                             <button className="btn-icon">
                                                                 <FontAwesomeIcon icon={faAnglesRight} />
                                                             </button>
-                                                            <div className="checkbox__container">
-                                                                <div className="checkbox__wrapper">
-                                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                                    <div className="btn-checkbox"></div>
-                                                                </div>
-                                                            </div>
                                                         </div>
                                                     </td>
                                                     {Object.entries(colsToRender).map(([key, value]) => {
@@ -512,12 +514,22 @@ const GRNList = () => {
                         <div className="right__table-pagination">
                             <p>Hiển thị</p>
                             <div className="box-page-limit">
-                                <button className="btn-page-limit">
-                                    20
+                                <button className="btn-page-limit" onClick={() => setIsOpenLimitPopup(!isOpenLimitPopup)}>
+                                    {limit}
                                     <span>
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </span>
                                 </button>
+                                {isOpenLimitPopup
+                                    && <LimitSelectPopup
+                                        btnRef={limitBtnRef}
+                                        closePopup={() => setIsOpenLimitPopup(false)}
+                                        limit={limit}
+                                        handleChangeLimit={(limit) => {
+                                            setPage(1)
+                                            setLimit(limit)
+                                        }}
+                                    />}
                             </div>
                             <p>kết quả</p>
                             <p className="item-quantity">Từ {(page - 1) * limit + 1} đến {(page - 1) * limit + grnList.length} trên tổng {totalItems}</p>

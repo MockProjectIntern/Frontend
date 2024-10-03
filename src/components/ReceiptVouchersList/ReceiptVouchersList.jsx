@@ -20,12 +20,15 @@ import {
   faChevronRight,
   faMagnifyingGlass,
   faPlus,
+  faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import { getListTransaction } from "../../service/TransactionAPI.jsx";
 import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup.jsx";
 import { useNavigate } from "react-router-dom";
 import FilterPopup from "../FilterPopup/FilterPopup.jsx";
 import { formatDateTime } from "../../utils/DateUtils.jsx";
+import { useDebouncedEffect } from "../../utils/CommonUtils.jsx";
+import SelectDatePopup from "../SelectDatePopup.jsx";
 
 const ReceiptVouchersList = () => {
   const [transactionList, setTransactionList] = useState([]);
@@ -116,14 +119,12 @@ const ReceiptVouchersList = () => {
   // Set required columns to Cookies
   useEffect(() => {
     Cookies.set("filter_transactions", JSON.stringify(colsToRender));
+    fetchTransactionList();
+  }, [colsToRender, page, limit]);
 
-    const timeoutId = setTimeout(() => {
-      fetchTransactionList();
-    }, 300); // 500ms delay
-
-    // Cleanup function: Clears the timeout if dependencies change before the timeout finishes
-    return () => clearTimeout(timeoutId);
-  }, [colsToRender, page, limit, dataFilter]);
+  useDebouncedEffect(() => {
+    fetchTransactionList();
+  }, 200, [dataFilter]);
 
   const headersRef = useRef(null);
   const contentRef = useRef(null);
@@ -142,10 +143,6 @@ const ReceiptVouchersList = () => {
     if (page < pageQuantiy) {
       setPage((prev) => prev + 1);
     }
-  };
-
-  const handleColsChange = (name) => {
-    setColsToRender({ ...colsToRender, [name]: !colsToRender[name] });
   };
 
   return (
@@ -228,18 +225,34 @@ const ReceiptVouchersList = () => {
                 </div>
               </div>
               <div className="btn-group group-filter-btns">
-                <button className="btn btn-base btn-filter">
+                <SelectDatePopup
+                  setDataFilters={(data) =>
+                    setDataFilter((prev) => {
+                      return {
+                        ...prev,
+                        created_date_from: data.date_from,
+                        created_date_to: data.date_to,
+                      };
+                    })
+                  }
+                />
+                <button className="btn btn-base btn-filter" onClick={() => setDataFilter({
+                  keyword: null,
+                  recipient_groups: null,
+                  payment_methods: null,
+                  created_date_from: null,
+                  created_date_to: null,
+                  updated_date_from: null,
+                  updated_date_to: null,
+                  cancelled_date_from: null,
+                  cancelled_date_to: null,
+                  category_ids: null,
+                  created_user_ids: null,
+                  statuses: null,
+                  type: "INCOME",
+                })}>
                   <span className="btn__label">
-                    Ngày tạo
-                    <span className="btn__icon">
-                      <FontAwesomeIcon icon={faCaretDown} />
-                    </span>
-                  </span>
-                </button>
-                <button className="btn btn-base btn-filter">
-                  <span className="btn__label">
-                    Bộ lọc khác
-                    <span className="btn__icon">{filterIcon}</span>
+                    Xóa bộ lọc
                   </span>
                 </button>
               </div>
@@ -247,6 +260,38 @@ const ReceiptVouchersList = () => {
                 <span className="btn__title">Lưu bộ lọc</span>
               </button>
             </div>
+            {(dataFilter.created_date_from && dataFilter.created_date_to)
+              && (
+                <div className="box-show-selected-filter">
+                  <div className="box-show-selected-container">
+                    {dataFilter.created_date_from && dataFilter.created_date_to && (
+                      <div className="box-show-selected-item">
+                        <span>
+                          Ngày tạo: (<span>{dataFilter.created_date_from}</span> -
+                          <span>{dataFilter.created_date_to}</span>)
+                        </span>
+                        <div className="box-remove-item">
+                          <button
+                            onClick={() =>
+                              setDataFilter((prev) => ({
+                                ...prev,
+                                created_date_from: null,
+                                created_date_to: null,
+                              }))
+                            }
+                            className="btn-remove-item"
+                            type="button"
+                          >
+                            <span>
+                              <FontAwesomeIcon icon={faXmark} />
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
           </div>
           <div
             ref={headersRef}
@@ -278,17 +323,6 @@ const ReceiptVouchersList = () => {
                       <button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
                         {settingFilterIcon}
                       </button>
-                      <div className="checkbox__container">
-                        <div className="checkbox__wrapper">
-                          <input
-                            type="checkbox"
-                            name=""
-                            id=""
-                            className="checkbox__input"
-                          />
-                          <div className="btn-checkbox"></div>
-                        </div>
-                      </div>
                     </div>
                   </th>
                   {/* Render table headers for columns that exist in receiptVouchersList */}
@@ -360,17 +394,6 @@ const ReceiptVouchersList = () => {
                           <td rowSpan={1} className="table-icon">
                             <div className="group-icons">
                               <div className="btn-icon"></div>
-                              <div className="checkbox__container">
-                                <div className="checkbox__wrapper">
-                                  <input
-                                    type="checkbox"
-                                    name=""
-                                    id=""
-                                    className="checkbox__input"
-                                  />
-                                  <div className="btn-checkbox"></div>
-                                </div>
-                              </div>
                             </div>
                           </td>
                           {Object.entries(colsToRender).map(([key, value]) => {

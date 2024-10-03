@@ -199,22 +199,7 @@ const OrderDetails = () => {
                                 </div>
                             </div>
                             <div className="btn-toolbar">
-                                <button className="btn btn-base btn-text">
-                                    <span className="btn__label">
-                                        <span className="btn__icon">
-                                            <FontAwesomeIcon icon={faPrint} />
-                                        </span>
-                                        In đơn
-                                    </span>
-                                </button>
-                                <button className="btn btn-base btn-text">
-                                    <span className="btn__label">
-                                        <span className="btn__icon">
-                                            <FontAwesomeIcon icon={faCopy} />
-                                        </span>
-                                        Sao chép
-                                    </span>
-                                </button>
+
                             </div>
                         </div>
                         <div className="box-supplier">
@@ -252,7 +237,7 @@ const OrderDetails = () => {
                                     <div className="box-header">
                                         <p>Thông tin nhập hàng</p>
                                         {
-                                            order.status !== "COMPLETED" &&
+                                            order.status !== "COMPLETED" && order.status !== "CANCELLED" &&
                                             <button
                                                 className="btn btn-outline-primary"
                                                 onClick={() => navigate("/admin/grns/create", { state: { orderId: orderId } })}>
@@ -355,18 +340,6 @@ const OrderDetails = () => {
                                 <div className="paper-header">
                                     <div className="box-header">
                                         <p>Thông tin sản phẩm</p>
-                                        <div className="btn-toolbar">
-                                            <div className="checkbox__container">
-                                                <div className="checkbox__wrapper">
-                                                    <input type="checkbox" name="" id="checkBoxInput" className='checkbox__input' />
-                                                    <div className="btn-checkbox"></div>
-                                                </div>
-                                                <label htmlFor='checkBoxInput' className='checkbox__label'>Tách dòng</label>
-                                            </div>
-                                            <button className="btn-icon">
-                                                <FontAwesomeIcon icon={faGear} />
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
                                 <div className="box-table">
