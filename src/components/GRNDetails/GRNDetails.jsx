@@ -160,12 +160,12 @@ const GRNDetails = () => {
                         </button>
                         {
                             dataDetail.received_status === "NOT_ENTERED" ?
-                                <button className="btn btn-primary">
-                                    <span className="btn__title">Nhập hàng</span>
-                                </button> :
-                                <button className="btn btn-primary">
-                                    <span className="btn__title">Hoàn trả</span>
-                                </button>
+                            <button className="btn btn-primary">
+                                <span className="btn__title">Nhập hàng</span>
+                            </button> :
+                            <button onClick={() => navigate(`/admin/grns/returns/create?grnId=${grnId}`)} className="btn btn-primary">
+                                <span className="btn__title">Hoàn trả</span>
+                            </button>
                         }
                     </div>
                 </div>
