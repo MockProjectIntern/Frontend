@@ -110,7 +110,6 @@ const GINDetail = () => {
 
 	return (
 		<>
-		<div className={cn(s.wrapcontainer,{[s.opacity]:isShowDeleteConfirmation})}>
 			<div className="right__navbar">
 				<div className="box-navbar">
 					<div className="btn-toolbar">
@@ -121,8 +120,8 @@ const GINDetail = () => {
 							</h6>
 						</Link>
 					</div>
-					{(gin.status !== "BALANCED" && gin.status!=="DELETED") && <div className="btn-toolbar">
-						<button onClick={()=>setIsShowDeleteConfirmation(true)} className="btn btn-outline-danger">
+					{(gin.status !== "BALANCED" && gin.status !== "DELETED") && <div className="btn-toolbar">
+						<button onClick={() => setIsShowDeleteConfirmation(true)} className="btn btn-outline-danger">
 							<span className="btn__title">Xóa</span>
 						</button>
 						<button onClick={() => navigate("edit")} className="btn btn-outline-primary">
@@ -255,8 +254,7 @@ const GINDetail = () => {
 					</div>
 				</div>
 			</div>
-			</div>
-		{isShowDeleteConfirmation && (<DeleteConfirmation  {...deleteConfirmation} />)}
+			{isShowDeleteConfirmation && (<DeleteConfirmation  {...deleteConfirmation} />)}
 		</>
 	);
 };

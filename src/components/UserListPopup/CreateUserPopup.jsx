@@ -74,122 +74,126 @@ const CreateUserPopup = ({ onClose, onCreate }) => {
 	};
 
 	return (
-		<div className={s.container}>
-			<div className={s.content}>
-				<div className={s.header}>
-					<span className={s.title}>Thêm mới người dùng</span>
-					<span
-						className="modal-close-wrapper"
-						role="button"
-						aria-label="Close dialog"
-						onClick={onClose}
-					>
-						<FontAwesomeIcon icon={faXmark} />
-					</span>
-				</div>
-				<div className={s.body}>
-					<div className={s.row}>
-						<div className={s.infoGroup}>
-							<div>
-								<label>Họ tên
-								<span id="nameCaptionFullName" className="caption-icon">
-									{infoIcon}
-								</span>
-								<UncontrolledTooltip placement="top" target="nameCaptionFullName">
-									Họ tên không được để trống
-								</UncontrolledTooltip>
-								<span className="asterisk-icon">*</span>
-								</label>
-								<input
-									name="full_name"
-									value={userData.full_name}
-									onChange={(e) => handleChange(e.target.name, e.target.value)}
-									placeholder="Nhập họ tên người dùng"
-								/>
-								{errors.full_name && <div className={s.error}>{errors.full_name}</div>}
-							</div>
-							<div>
-								<label>Số điện thoại
-								<span id="phoneCaption" className="caption-icon">
-									{infoIcon}
-								</span>
-								<UncontrolledTooltip placement="top" target="phoneCaption">
-									Số điện thoại không được để trống, có 10 chữ số bắt đầu từ 0
-								</UncontrolledTooltip>
-								<span className="asterisk-icon">*</span>
-								</label>
-								<input
-									name="phone"
-									value={userData.phone}
-									onChange={(e) => handleChange(e.target.name, e.target.value)}
-									placeholder="Nhập số điện thoại người dùng"
-								/>
-								{errors.phone && <div className={s.error}>{errors.phone}</div>}
-							</div>
-						</div>
-						<div className={s.infoGroup}>
-							<div>
-								<label>Password
-								<span id="passwordCaption" className="caption-icon">
-									{infoIcon}
-								</span>
-								<UncontrolledTooltip placement="top" target="passwordCaption">
-									Password không được để trống, ít nhất 8 ký tự và có chữ in hoa
-								</UncontrolledTooltip>
-								<span className="asterisk-icon">*</span>
-								</label>
-								<input
-									name="password"
-									type="password"
-									value={userData.password}
-									onChange={(e) => handleChange(e.target.name, e.target.value)}
-									placeholder="Nhập password người dùng"
-								/>
-								{errors.password && <div className={s.error}>{errors.password}</div>}
-							</div>
-							
-							<div style={{ position: "relative" }}>
-								<label>Vai trò
-								<span id="roleCaption" className="caption-icon">
-									{infoIcon}
-								</span>
-								<UncontrolledTooltip placement="top" target="roleCaption">
-									Vai trò không được để trống
-								</UncontrolledTooltip>
-								<span className="asterisk-icon">*</span>
-								</label>
-								{isOpenRolePopup && (
-									<SelectRolePopup
-										roleBtnRef={roleBtnRef}
-										closePopup={() => setIsOpenRolePopup(false)}
-										handleSelect={handleChange}
+		<>
+			<div className="overlay"></div>
+			<div className={s.container}>
+				<div className={s.content}>
+					<div className={s.header}>
+						<span className={s.title}>Thêm mới người dùng</span>
+						<span
+							className="modal-close-wrapper"
+							role="button"
+							aria-label="Close dialog"
+							onClick={onClose}
+						>
+							<FontAwesomeIcon icon={faXmark} />
+						</span>
+					</div>
+					<div className={s.body}>
+						<div className={s.row}>
+							<div className={s.infoGroup}>
+								<div>
+									<label>Họ tên
+										<span id="nameCaptionFullName" className="caption-icon">
+											{infoIcon}
+										</span>
+										<UncontrolledTooltip placement="top" target="nameCaptionFullName">
+											Họ tên không được để trống
+										</UncontrolledTooltip>
+										<span className="asterisk-icon">*</span>
+									</label>
+									<input
+										name="full_name"
+										value={userData.full_name}
+										onChange={(e) => handleChange(e.target.name, e.target.value)}
+										placeholder="Nhập họ tên người dùng"
 									/>
-								)}
-								<div
-									ref={roleBtnRef}
-									className={cn(s.role, { [s.active]: isOpenRolePopup })}
-									onClick={() => setIsOpenRolePopup(!isOpenRolePopup)}
-								>
-									{role[userData?.role] || "Chọn vai trò"} <FontAwesomeIcon className={cn({ [s.active]: isOpenRolePopup })} icon={faCaretDown} />
+									{errors.full_name && <div className={s.error}>{errors.full_name}</div>}
 								</div>
-								{errors.role && <div className={s.error}>{errors.role}</div>}
+								<div>
+									<label>Số điện thoại
+										<span id="phoneCaption" className="caption-icon">
+											{infoIcon}
+										</span>
+										<UncontrolledTooltip placement="top" target="phoneCaption">
+											Số điện thoại không được để trống, có 10 chữ số bắt đầu từ 0
+										</UncontrolledTooltip>
+										<span className="asterisk-icon">*</span>
+									</label>
+									<input
+										name="phone"
+										value={userData.phone}
+										onChange={(e) => handleChange(e.target.name, e.target.value)}
+										placeholder="Nhập số điện thoại người dùng"
+									/>
+									{errors.phone && <div className={s.error}>{errors.phone}</div>}
+								</div>
+							</div>
+							<div className={s.infoGroup}>
+								<div>
+									<label>Password
+										<span id="passwordCaption" className="caption-icon">
+											{infoIcon}
+										</span>
+										<UncontrolledTooltip placement="top" target="passwordCaption">
+											Password không được để trống, ít nhất 8 ký tự và có chữ in hoa
+										</UncontrolledTooltip>
+										<span className="asterisk-icon">*</span>
+									</label>
+									<input
+										name="password"
+										type="password"
+										value={userData.password}
+										onChange={(e) => handleChange(e.target.name, e.target.value)}
+										placeholder="Nhập password người dùng"
+									/>
+									{errors.password && <div className={s.error}>{errors.password}</div>}
+								</div>
+
+								<div style={{ position: "relative" }}>
+									<label>Vai trò
+										<span id="roleCaption" className="caption-icon">
+											{infoIcon}
+										</span>
+										<UncontrolledTooltip placement="top" target="roleCaption">
+											Vai trò không được để trống
+										</UncontrolledTooltip>
+										<span className="asterisk-icon">*</span>
+									</label>
+									{isOpenRolePopup && (
+										<SelectRolePopup
+											roleBtnRef={roleBtnRef}
+											closePopup={() => setIsOpenRolePopup(false)}
+											handleSelect={handleChange}
+										/>
+									)}
+									<div
+										ref={roleBtnRef}
+										className={cn(s.role, { [s.active]: isOpenRolePopup })}
+										onClick={() => setIsOpenRolePopup(!isOpenRolePopup)}
+									>
+										{role[userData?.role] || "Chọn vai trò"} <FontAwesomeIcon className={cn({ [s.active]: isOpenRolePopup })} icon={faCaretDown} />
+									</div>
+									{errors.role && <div className={s.error}>{errors.role}</div>}
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div className={s.footer}>
-					<div className={s.clearfix}>
-						<button className={s.back} onClick={onClose}>
-							Thoát
-						</button>
+					<div className={s.footer}>
+						<div className={s.clearfix}>
+							<button className={s.back} onClick={onClose}>
+								Thoát
+							</button>
 
-						<button className={s.create} onClick={handleCreate}>
-							Thêm
-						</button>
+							<button className={s.create} onClick={handleCreate}>
+								Thêm
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</>
+
 	);
 };
 
