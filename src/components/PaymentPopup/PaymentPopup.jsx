@@ -4,6 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown, faXmark } from '@fortawesome/free-solid-svg-icons'
 import SelectDatePopup from "../SelectDatePopup";
 import cn from "classnames";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import ListSelectPopup from "../ListSelectPopup/ListSelectPopup";
 
 
 const PaymentPopup = ({
@@ -39,107 +42,88 @@ const PaymentPopup = ({
                 <div className={cn("box-info-item", s["wrapper"])}>
                     <div className={cn("info-header", s["header"])}>
                         <div className={s["box-header"]}>
-                            <p>Điều chỉnh cột hiển thị</p>
+                            <p>Xác nhận thanh toán</p>
                         </div>
                         <div className="btn-toolbar">
-                            <button className="btn-icon">
+                            <button onClick={() => handleOnClickBack()} className="btn-icon">
                                 <FontAwesomeIcon icon={faXmark} />
                             </button>
                         </div>
                     </div>
 
-                    <div className="info-content">
-                        <div className={s["content"]}>
-                            <div className="d-flex">
-                                <div className="form-item">
-                                    <label htmlFor="brand" className="form-label">
+                    <div className={cn("info-content", s["content"])}>
+                        <div className={s["group-form-items"]}>
+                            <div className="form-item">
+                                <label htmlFor="brand" className="form-label">
+                                    Chọn phương thức thanh toán
+                                </label>
+                                <div className="box-select">
+                                    <button ref={paymentMethodBtnRef} onClick={() => setIsPaymentMethodPopup(!isPaymentMethodPopup)} className="btn-select">
                                         Phương thức thanh toán
-                                    </label>
-                                    <div className="box-select">
-                                        <button className="btn-select">
-                                            Phương thức thanh toán
-                                            <FontAwesomeIcon icon={faCaretDown} />
-                                        </button>
-
-                                    </div>
-                                </div>
-
-                                <div className={s["row"]}>
-                                    <label htmlFor="sub_id" className={s["form-label"]}>
-                                        Ngày thanh toán
-                                    </label>
-                                    <div className={s["form-textfield"]}>
-                                        <input
-                                            type="text"
-                                            name="sub_id"
-                                            id="sub_id"
-                                            placeholder="Nhập mã"
-                                            onChange={handleOnChange}
+                                        <FontAwesomeIcon icon={faCaretDown} />
+                                    </button>
+                                    {
+                                        isPaymentMethodPopup &&
+                                        <ListSelectPopup 
+                                            dataList={paymentMethods}
+                                            btnRef={paymentMethodBtnRef}
+                                            closePopup={() => setIsPaymentMethodPopup(false)}
                                         />
-                                        <fieldset className="input-field"></fieldset>
-                                    </div>
-                                    <div className="btn-group group-filter-btns">
-                                        <SelectDatePopup
-                                            setDataFilters={(data) => setDataFilter(prev => {
-                                                return {
-                                                    ...prev,
-                                                    created_date_from: data.date_from,
-                                                    created_date_to: data.date_to
-                                                };
-                                            })}
-                                        />
-                                    </div>
+                                    }
                                 </div>
                             </div>
-
-                            <div className="d-flex">
-                                <div className={s["row"]}>
-                                    <label htmlFor="name" className={s["form-label"]}>
-                                        Số tiền
-                                        <span className="asterisk-icon">*</span>
-                                    </label>
-                                    <div className={s["form-textfield"]}>
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            id="name"
-                                            placeholder="Nhập tên"
-                                            onChange={handleOnChange}
-                                        />
-                                        <fieldset className="input-field"></fieldset>
-                                    </div>
-                                </div>
-                                <div className={s["row"]}>
-                                    <label htmlFor="name" className={s["form-label"]}>
-                                        Tham chiếu
-                                        <span className="asterisk-icon">*</span>
-                                    </label>
-                                    <div className={s["form-textfield"]}>
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            id="name"
-                                            placeholder="Nhập tên"
-                                            onChange={handleOnChange}
-                                        />
-                                        <fieldset className="input-field"></fieldset>
-                                    </div>
+                            <div className="form-item">
+                                <label htmlFor="unit" className="form-label">
+                                    Số tiền
+                                </label>
+                                <div className="form-textfield">
+                                    <input
+                                        type="text"
+                                        name="amount"
+                                        id="amount"
+                                    />
+                                    <fieldset className="input-field"></fieldset>
                                 </div>
                             </div>
                         </div>
-
-                        <div className="d-flex w-100 justify-content-end p-2">
-                            <div className="btn-toolbar">
-                                <button className="btn btn-outline-primary" onClick={handleOnClickBack}>
-                                    <span className="btn__title">Thoát</span>
-                                </button>
-                                <button className="btn btn-primary" onClick={handleOnClickCreate}>
-                                    <span className="btn__title">Thêm</span>
-                                </button>
+                        <div className={s["group-form-items"]}>
+                            <div className="form-item">
+                                <label htmlFor="brand" className="form-label">
+                                    Ngày thanh toán
+                                </label>
+                                <div className="form-textfield">
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DateTimePicker
+                                            
+                                        />
+                                    </LocalizationProvider>
+                                </div>
+                            </div>
+                            <div className="form-item">
+                                <label htmlFor="unit" className="form-label">
+                                    Tham chiếu
+                                </label>
+                                <div className="form-textfield h-100">
+                                    <input
+                                        type="text"
+                                        name="reference"
+                                        id="reference"
+                                    />
+                                    <fieldset className="input-field"></fieldset>
+                                </div>
                             </div>
                         </div>
                     </div>
-
+                    <div className={s["box-btns"]}>
+                        <div className="btn-toolbar">
+                            <button className="btn btn-outline-primary" onClick={handleOnClickBack}>
+                                <span className="btn__title">Thoát</span>
+                            </button>
+                            <button className="btn btn-primary" onClick={handleOnClickCreate}>
+                                <span className="btn__title">Thêm</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

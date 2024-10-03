@@ -64,6 +64,25 @@
     background: #fff;
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     gap: 24px;
+    padding: 16px 24px !important;
+}
+
+.group-form-items {
+    display: flex;
+    width: 100%;
+    gap: 24px;
+    justify-content: space-between;
+}
+
+.box-btns {
+    position: relative;
+    box-sizing: border-box;
+    padding: 24px;
+    display: flex;
+    -webkit-box-pack: end;
+    justify-content: flex-end;
+    -webkit-box-align: center;
+    align-items: center;
 }
