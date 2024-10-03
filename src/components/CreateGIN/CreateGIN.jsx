@@ -162,7 +162,7 @@ const CreateGIN = () => {
 							<span className="btn__title">Tạo</span>
 						</button>
 						<button
-							className="btn btn-secondary-cyan"
+							className="btn btn-primary"
 							style={{ color: "white" }}
 							onClick={() => {
 								setDataBody((prev) => {
