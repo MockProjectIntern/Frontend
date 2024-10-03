@@ -126,7 +126,6 @@ const OrderDetails = () => {
 
     return (
         <>
-        <div className={cn(s.wrapcontainer,{[s.opacity]:isShowDeleteConfirmation})} >
             <div className="right__navbar">
                 <div className="box-navbar">
                     <div className="btn-toolbar">
@@ -137,50 +136,50 @@ const OrderDetails = () => {
                             </h6>
                         </Link>
                     </div>
-                    
+
                     <div className="btn-toolbar">
-  {order?.status === "PENDING" ? (
-    <>
-      <button className="btn btn-outline-danger" onClick={() => setIsShowDeleteConfirmation(true)}>
-        <span className="btn__title">Xóa đơn</span>
-      </button>
+                        {order?.status === "PENDING" ? (
+                            <>
+                                <button className="btn btn-outline-danger" onClick={() => setIsShowDeleteConfirmation(true)}>
+                                    <span className="btn__title">Xóa đơn</span>
+                                </button>
 
-      <button className="btn btn-outline-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}/edit`)}>
-        <span className="btn__title">Sửa đơn</span>
-      </button>
+                                <button className="btn btn-outline-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}/edit`)}>
+                                    <span className="btn__title">Sửa đơn</span>
+                                </button>
 
-      <button className="btn btn-primary">
-        <span className="btn__title">Nhập hàng</span>
-      </button>
-    </>
-  ) : order?.status === "PARTIAL" ? (
-    <>
-      <button className="btn btn-outline-primary">
-        <span className="btn__title">Kết thúc</span>
-      </button>
+                                <button className="btn btn-primary">
+                                    <span className="btn__title">Nhập hàng</span>
+                                </button>
+                            </>
+                        ) : order?.status === "PARTIAL" ? (
+                            <>
+                                <button className="btn btn-outline-primary">
+                                    <span className="btn__title">Kết thúc</span>
+                                </button>
 
-      <button className="btn btn-outline-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}/edit`)}>
-        <span className="btn__title">Sửa đơn</span>
-      </button>
+                                <button className="btn btn-outline-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}/edit`)}>
+                                    <span className="btn__title">Sửa đơn</span>
+                                </button>
 
-      <button className="btn btn-primary" >
-        <span className="btn__title">Nhập hàng</span>
-      </button>
-    </>
-  ) : (
-    <>
-      <button className="btn btn-outline-primary" onClick={() => navigate(-1)}>
-        <span className="btn__title">Thoát</span>
-      </button>
+                                <button className="btn btn-primary" >
+                                    <span className="btn__title">Nhập hàng</span>
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <button className="btn btn-outline-primary" onClick={() => navigate(-1)}>
+                                    <span className="btn__title">Thoát</span>
+                                </button>
 
-      <button className="btn btn-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}/edit`)}>
-        <span className="btn__title">Sửa đơn</span>
-      </button>
-    </>
-  )}
-</div>
+                                <button className="btn btn-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}/edit`)}>
+                                    <span className="btn__title">Sửa đơn</span>
+                                </button>
+                            </>
+                        )}
+                    </div>
 
-                    
+
                 </div>
             </div>
             <div className="right__paperPage">
@@ -422,8 +421,7 @@ const OrderDetails = () => {
                     </div>
                 </div>
             </div>
-        </div>
-        {isShowDeleteConfirmation && <DeleteConfirmation {...deleteComfimation} />}
+            {isShowDeleteConfirmation && <DeleteConfirmation {...deleteComfimation} />}
         </>
     )
 }

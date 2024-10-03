@@ -1,23 +1,26 @@
 @import "../../styles/variables";
+
 .container {
     position: fixed;
     top: 10%;
     left: 35%;
-    z-index: 1000;
+    z-index: 10001;
     width: 600px;
     margin: .5rem;
+
     .content {
         position: relative;
         background-color: #fff;
         background-clip: padding-box;
-        border: 1px solid rgba(0,0,0,.2);
+        border: 1px solid rgba(0, 0, 0, .2);
         border-radius: 6px;
         outline: 0;
-        box-shadow: 0 5px 15px rgba(0,0,0,.5);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
         display: flex;
         flex-direction: column;
         width: 100%;
         pointer-events: auto;
+
         .header {
             border-top-left-radius: 6px;
             border-top-right-radius: 6px;
@@ -28,6 +31,7 @@
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
+
             .title {
                 font-size: 20px;
                 font-weight: 400;
@@ -54,7 +58,7 @@
                 flex-wrap: nowrap;
                 position: relative;
 
-                gap:20px;
+                gap: 20px;
 
                 .infoGroup {
                     display: flex;
@@ -66,7 +70,7 @@
                         margin-top: 5px;
                         color: #FF4D4D;
                     }
-                    
+
                     .role {
                         border: 1px solid #c4cdd5;
                         height: 34px;
@@ -90,12 +94,13 @@
                             &.active {
                                 fill: $violet;
                                 rotate: 180deg;
+
                                 path {
                                     fill: $violet;
                                 }
                             }
 
-                          
+
                         }
                     }
 
@@ -121,10 +126,10 @@
                         display: block;
                         width: 100%;
                         font-size: 13px;
-                        font-family: -apple-system,BlinkMacSystemFont,San Francisco,Segoe UI,Roboto,Helvetica Neue,sans-serif;
+                        font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
                     }
 
-                  
+
                 }
             }
         }
@@ -139,38 +144,41 @@
             .clearfix {
                 padding: 8px 0;
                 height: 35px;
-            
+
                 &::after {
                     content: "";
                     display: block;
                     clear: both;
                 }
-            
+
                 .create,
                 .back {
                     position: relative;
                     box-sizing: border-box;
                     display: inline-block;
 
-                    height: 34px; /* Đặt chiều cao của button */
-                    padding: 0 1.5rem; /* Đặt padding ngang */
+                    height: 34px;
+                    /* Đặt chiều cao của button */
+                    padding: 0 1.5rem;
+                    /* Đặt padding ngang */
                     font-size: 16px;
-                    line-height: normal; /* Đảm bảo rằng line-height không vượt quá chiều cao button */
+                    line-height: normal;
+                    /* Đảm bảo rằng line-height không vượt quá chiều cao button */
                     border-radius: 3px;
                     cursor: pointer;
                     text-align: center;
                     white-space: nowrap;
                     vertical-align: middle;
                 }
-            
+
                 .create {
-                    color: #fff!important;
-                    border: 1px solid $violet!important;
+                    color: #fff !important;
+                    border: 1px solid $violet !important;
                     background: $violet;
                     box-shadow: inset 0 1px 0 0 #1391ff;
                     margin-left: 10px;
                 }
-            
+
                 .back {
                     background: linear-gradient(180deg, #fff, #f9fafb);
                     border: 1px solid #c4cdd5;
@@ -178,12 +186,11 @@
                     color: #212b35;
                 }
             }
-            
 
-         
 
-        
+
+
+
         }
     }
 }
-

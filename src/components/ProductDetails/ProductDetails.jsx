@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { Link, useParams, useNavigate} from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import cn from 'classnames'
 
 import s from './ProductDetails.module.scss'
@@ -30,8 +30,8 @@ const ProductDetails = () => {
     useEffect(() => {
         fetchProductDetails();
     }, [])
-    
-	const deleteComfimation = useMemo(() => {
+
+    const deleteComfimation = useMemo(() => {
         return {
             action: "xóa",
             type: "sản phẩm",
@@ -53,7 +53,6 @@ const ProductDetails = () => {
 
     return (
         <>
-        <div className={cn(s.wrapcontainer,{[s.opacity]:isShowDeleteConfirmation})} >
             <div className="right__navbar">
                 <div className="box-navbar">
                     <div className="btn-toolbar">
@@ -68,7 +67,7 @@ const ProductDetails = () => {
                         <button className="btn btn-outline-primary" onClick={() => navigate("/admin/products")}>
                             <span className="btn__title">Thoát</span>
                         </button>
-                        <button onClick={()=>setIsShowDeleteConfirmation(true)} className="btn btn-outline-danger">
+                        <button onClick={() => setIsShowDeleteConfirmation(true)} className="btn btn-outline-danger">
                             <span className="btn__title">Xóa</span>
                         </button>
                         <button className="btn btn-primary" onClick={() => navigate(`/admin/products/PRD/${productId}/edit`)}>
@@ -76,8 +75,8 @@ const ProductDetails = () => {
                         </button>
                     </div>
                     {/* )} */}
-                    
-              
+
+
                 </div>
             </div>
             <div className="right__paperPage">
@@ -138,7 +137,7 @@ const ProductDetails = () => {
                                         <p className="info-title">Tags</p>
                                         <p className="info-value">
                                             :&nbsp;
-                                            {dataDetail.tags  || '-----'}
+                                            {dataDetail.tags || '-----'}
                                         </p>
                                     </div>
                                 </div>
@@ -183,7 +182,7 @@ const ProductDetails = () => {
                                     </p>
                                 </div>
                                 {
-                                    dataDetail.types?.map(({name, value}) => {
+                                    dataDetail.types?.map(({ name, value }) => {
                                         return (
                                             <div key={name} className="info-item">
                                                 <p className="info-title">{name}</p>
@@ -223,7 +222,7 @@ const ProductDetails = () => {
                                 <hr />
                                 <div className="box-cost-price">
                                     <div className="info-item">
-                                    <p className="info-title">Giá nhập</p>
+                                        <p className="info-title">Giá nhập</p>
                                         <p className="info-value">
                                             :&nbsp;
                                             {dataDetail.retail_price}
@@ -259,8 +258,7 @@ const ProductDetails = () => {
                     </div>
                 </div>
             </div>
-        </div>
-        {isShowDeleteConfirmation && (<DeleteConfirmation  {...deleteComfimation} />)}
+            {isShowDeleteConfirmation && (<DeleteConfirmation  {...deleteComfimation} />)}
         </>
     )
 }
