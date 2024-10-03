@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import cn from 'classnames'
 import Cookies from 'js-cookie'
@@ -11,9 +11,10 @@ import s from './OrderDetails.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft, faGear, faPrint } from '@fortawesome/free-solid-svg-icons'
 import { faCopy } from '@fortawesome/free-regular-svg-icons'
-import { getOrderById } from '../../service/OrderAPI'
+import { cancelOrder, getOrderById } from '../../service/OrderAPI'
 import { formatDate, formatDateTime } from '../../utils/DateUtils'
 import { getAllByOrder } from '../../service/GRNApi'
+import DeleteConfirmation from '../ConfirmPopup/DeleteConfirmation'
 
 const OrderDetails = () => {
     const navigate = useNavigate()
@@ -39,6 +40,9 @@ const OrderDetails = () => {
     }
     const [grnList, setGRNList] = useState()
     const [productsList, setProductsList] = useState([])
+
+
+    const [isShowDeleteConfirmation, setIsShowDeleteConfirmation] = useState(false);
 
     // Get list of columns that need redering from Cookies
     const [colsToRender, setColsToRender] = useState(() => {
@@ -96,8 +100,33 @@ const OrderDetails = () => {
         fetchOrderDetail();
     }, [])
 
+    const deleteComfimation = useMemo(() => {
+        return {
+            action: "hủy",
+            type: "đơn đặt hàng",
+            description: "Thao tác này sẽ huỷ đơn đặt hàng nhập của bạn. Bạn không thể nhập hàng từ đơn đã huỷ được nữa. Các sản phẩm trên đơn cũng sẽ được trừ kho hàng đang về.",
+            handleClose: () => setIsShowDeleteConfirmation(false),
+            handleConfirm: async () => {
+                try {
+                    setIsShowDeleteConfirmation(false);
+                    const response = await cancelOrder(orderId);
+                    alert(response.message);
+                    if (response.status_code === 200) {
+                        setOrder(prevOrder => ({ ...prevOrder, status: "CANCELLED" }));
+                    } else {
+                        navigate(-1);
+                    }
+                } catch (error) {
+                    console.error("Error during order cancellation:", error);
+                    alert("Đã xảy ra lỗi khi huỷ đơn đặt hàng.");
+                }
+            }
+        };
+    }, [orderId]);
+
     return (
         <>
+        <div className={cn(s.wrapcontainer,{[s.opacity]:isShowDeleteConfirmation})} >
             <div className="right__navbar">
                 <div className="box-navbar">
                     <div className="btn-toolbar">
@@ -108,16 +137,50 @@ const OrderDetails = () => {
                             </h6>
                         </Link>
                     </div>
+                    
                     <div className="btn-toolbar">
-                        <button className="btn btn-outline-primary">
-                            <span className="btn__title">Thoát</span>
-                        </button>
-                        <button className="btn btn-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}/edit`)}>
-                            <span className="btn__title">
-                                Sửa đơn
-                            </span>
-                        </button>
-                    </div>
+  {order?.status === "PENDING" ? (
+    <>
+      <button className="btn btn-outline-danger" onClick={() => setIsShowDeleteConfirmation(true)}>
+        <span className="btn__title">Xóa đơn</span>
+      </button>
+
+      <button className="btn btn-outline-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}/edit`)}>
+        <span className="btn__title">Sửa đơn</span>
+      </button>
+
+      <button className="btn btn-primary">
+        <span className="btn__title">Nhập hàng</span>
+      </button>
+    </>
+  ) : order?.status === "PARTIAL" ? (
+    <>
+      <button className="btn btn-outline-primary">
+        <span className="btn__title">Kết thúc</span>
+      </button>
+
+      <button className="btn btn-outline-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}/edit`)}>
+        <span className="btn__title">Sửa đơn</span>
+      </button>
+
+      <button className="btn btn-primary" >
+        <span className="btn__title">Nhập hàng</span>
+      </button>
+    </>
+  ) : (
+    <>
+      <button className="btn btn-outline-primary" onClick={() => navigate(-1)}>
+        <span className="btn__title">Thoát</span>
+      </button>
+
+      <button className="btn btn-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}/edit`)}>
+        <span className="btn__title">Sửa đơn</span>
+      </button>
+    </>
+  )}
+</div>
+
+                    
                 </div>
             </div>
             <div className="right__paperPage">
@@ -359,6 +422,8 @@ const OrderDetails = () => {
                     </div>
                 </div>
             </div>
+        </div>
+        {isShowDeleteConfirmation && <DeleteConfirmation {...deleteComfimation} />}
         </>
     )
 }

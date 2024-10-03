@@ -54,3 +54,13 @@ export const getDataExport = async (mode, dataBody) => {
         throw error;
     }
 }
+
+export const deleteGRN = async (grnId) => {
+    try {
+        const response = await axiosInstance.delete(`/grns/delete.json/${grnId}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import React, { useEffect, useState, useMemo } from 'react'
+import { Link, useParams, useNavigate} from 'react-router-dom'
 import cn from 'classnames'
 
 import s from './ProductDetails.module.scss'
@@ -7,14 +7,18 @@ import s from './ProductDetails.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft, faCopy } from '@fortawesome/free-solid-svg-icons'
 
-import { getProductById } from '../../service/ProductAPI'
-
+import { deleteProductById, getProductById } from '../../service/ProductAPI'
+import DeleteConfirmation from '../ConfirmPopup/DeleteConfirmation'
 const ProductDetails = () => {
     const { productId } = useParams();
 
     const status = {
 
     }
+
+    const navigate = useNavigate();
+
+    const [isShowDeleteConfirmation, setIsShowDeleteConfirmation] = useState(false);
 
     const [dataDetail, setDataDetail] = useState({});
 
@@ -27,9 +31,30 @@ const ProductDetails = () => {
     // useEffect(() => {
     //     fetchProductDetails();
     // }, [])
+    
+	const deleteComfimation = useMemo(() => {
+        return {
+            action: "xóa",
+            type: "sản phẩm",
+            description: "Thao tác này sẽ xóa các sản phẩm bạn đã chọn. Thao tác này không thể khôi phục.",
+            handleClose: () => setIsShowDeleteConfirmation(false),
+            handleConfirm: async () => {
+                try {
+                    setIsShowDeleteConfirmation(false);
+                    const response = await deleteProductById(productId);
+                    alert(response.message);
+                    navigate(-1);
+                } catch (error) {
+                    console.error("Error during product deletion:", error);
+                    alert("Đã xảy ra lỗi khi xóa sản phẩm.");
+                }
+            }
+        };
+    }, [productId]);
 
     return (
         <>
+        <div className={cn(s.wrapcontainer,{[s.opacity]:isShowDeleteConfirmation})} >
             <div className="right__navbar">
                 <div className="box-navbar">
                     <div className="btn-toolbar">
@@ -40,17 +65,21 @@ const ProductDetails = () => {
                             </h6>
                         </Link>
                     </div>
-                    <div className="btn-toolbar">
-                        <button className="btn btn-outline-primary">
+                    {/* {dataDetail?.status === "ACTIVE" && ( */}
+                        <div className="btn-toolbar">
+                        <button onClick={()=>navigate(-1)} className="btn btn-outline-primary">
                             <span className="btn__title">Thoát</span>
                         </button>
-                        <button className="btn btn-outline-danger">
+                        <button onClick={()=>setIsShowDeleteConfirmation(true)} className="btn btn-outline-danger">
                             <span className="btn__title">Xóa</span>
                         </button>
                         <button className="btn btn-primary">
                             <span className="btn__title">Sửa sản phẩm</span>
                         </button>
                     </div>
+                    {/* )} */}
+                    
+              
                 </div>
             </div>
             <div className="right__paperPage">
@@ -242,6 +271,8 @@ const ProductDetails = () => {
                     </div>
                 </div>
             </div>
+        </div>
+        {isShowDeleteConfirmation && (<DeleteConfirmation  {...deleteComfimation} />)}
         </>
     )
 }

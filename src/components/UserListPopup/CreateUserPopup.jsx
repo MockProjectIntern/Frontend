@@ -140,6 +140,7 @@ const CreateUserPopup = ({ onClose, onCreate }) => {
 								</label>
 								<input
 									name="password"
+									type="password"
 									value={userData.password}
 									onChange={(e) => handleChange(e.target.name, e.target.value)}
 									placeholder="Nhập password người dùng"

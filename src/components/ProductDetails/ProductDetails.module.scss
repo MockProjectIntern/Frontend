@@ -1,5 +1,11 @@
 @import '../../styles/helpers';
 
+.wrapcontainer {
+    &.opacity {
+        opacity: 0.4;
+    }
+}
+
 .container {
     display: flex !important;
     flex-direction: column;

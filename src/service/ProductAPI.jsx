@@ -48,3 +48,13 @@ export const getProductById = async (productId) => {
         throw error;
     }
 }
+
+export const deleteProductById = async (productId) => {
+    try {
+        const response = await axiosInstance.delete(`products/delete.json/${productId}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

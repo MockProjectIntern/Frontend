@@ -55,3 +55,13 @@ export const putUpdateOrder = async (id, data) => {
         throw error;
     }
 }
+
+export const cancelOrder = async (id) => {
+    try {
+        const response = await axiosInstance.put(`/orders/cancel.json/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
