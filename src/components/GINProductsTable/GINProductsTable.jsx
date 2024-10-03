@@ -102,7 +102,7 @@ const GINProductsTable = ({
 													<p>{product.name}</p>
 												</div>
 												<div className={s.boxId}>
-													<Link to={`/admin/products/${product.product_id}`}>
+													<Link to={`/admin/products/PRD/${product.product_id}`}>
 														<p>{product.product_id}</p>
 													</Link>
 												</div>

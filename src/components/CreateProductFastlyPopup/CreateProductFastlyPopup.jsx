@@ -1,7 +1,7 @@
 import s from './CreateProductFastlyPopup.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, act } from 'react'
 import SelectListCategoryPopup from './SelectListCategoryPopup/SelectListCategoryPopup'
 import { getListCategory } from '../../service/CategoryAPI'
 import { quickCreateProduct } from '../../service/ProductAPI'
@@ -89,16 +89,22 @@ const CreateProductFastlyPopup = ({ handleCLickBack, setListProductDetail }) => 
 
     const handleQuickCreateProduct = async () => {
         const responseAPI = await quickCreateProduct(dataBody);
+        console.log(responseAPI,responseAPI.data);
         if (responseAPI.status_code === 201) {
             setListProductDetail((prev) => {
+                console.log(dataBody)
                 return [...prev,
                 {
-                    id: responseAPI.data,
+                    product_id: responseAPI.data,
                     name: dataBody.name,
                     image: null,
                     unit: dataBody.unit || "-----",
                     ordered_quantity: dataBody.quantity,
+                    real_quantity: dataBody.quantity,
+                    actual_stock: 0,
+                    discrepancy_quantity: 0,
                     price: dataBody.retail_price,
+                    reason: "Khác",
                     discount: 0,
                     tax: 0,
                     total: 0

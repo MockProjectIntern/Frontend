@@ -193,6 +193,7 @@ const GINDetailUpdate = () => {
 						product_id: product.product_id,
 						unit: product.unit,
 						actual_stock: product.actual_stock,
+						real_quantity: product.real_quantity,
 						discrepancy_quantity: product.discrepancy_quantity,
 						reason: product.reason,
 						note: product.note,
@@ -370,7 +371,7 @@ const GINDetailUpdate = () => {
 																	return [
 																		...prev,
 																		{
-																			id: id,
+																			product_id: id,
 																			name: productSelectList.find(
 																				(product) => product.id === id
 																			)?.name,
@@ -381,7 +382,7 @@ const GINDetailUpdate = () => {
 																				productSelectList.find(
 																					(product) => product.id === id
 																				)?.unit || "------",
-																			quantity:
+																			real_quantity:
 																				productSelectList.find(
 																					(product) => product.id === id
 																				)?.quantity || 0,

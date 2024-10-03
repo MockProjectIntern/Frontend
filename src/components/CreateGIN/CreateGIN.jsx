@@ -104,6 +104,7 @@ const CreateGIN = () => {
 		products: [],
 	});
 	const handleCreateGIN = async () => {
+		console.log(dataBody);
 		const response = await createNewGIN(dataBody);
 
 		if (response.status_code === 201) {
@@ -125,12 +126,14 @@ const CreateGIN = () => {
 	}, [dataBody.is_balance]);
 
 	useEffect(() => {
+		console.log(listProductDetail);
 		setDataBody((prev) => {
 			return {
 				...prev,
 				products: listProductDetail.map((product) => {
+					console.log(product.id);
 					return {
-						product_id: product.id,
+						product_id: product.product_id,
 						unit: product.unit,
 						actual_stock: product.actual_stock,
 						discrepancy_quantity: product.discrepancy_quantity,
@@ -329,11 +332,12 @@ const CreateGIN = () => {
 															dataList={productSelectList}
 															handleCLickCreateProductQuickly={() => setIsCreateProductQuickly(true)}
 															handleSelect={(id) =>
+															{ console.log(id)
 																setListProductDetail((prev) => {
 																	return [
 																		...prev,
 																		{
-																			id: id,
+																			product_id: id,
 																			name: productSelectList.find(
 																				(product) => product.id === id
 																			)?.name,
@@ -354,7 +358,7 @@ const CreateGIN = () => {
 																			note: "",
 																		},
 																	];
-																})
+																})}
 															}
 															btnRef={productSelectBtnRef}
 															closePopup={() => setIsProductSelectPopup(false)}
