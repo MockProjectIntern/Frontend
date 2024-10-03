@@ -20,6 +20,7 @@ import { getOrderById } from '../../service/OrderAPI.jsx'
 import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 import CreateProductFastlyPopup from '../CreateProductFastlyPopup/CreateProductFastlyPopup.jsx'
 import CreateSupplierPopup from '../CreateSupplierPopup/CreateSupplierPopup.jsx'
+import { withAuthorization } from '../../hoc'
 
 const CreateGRN = () => {
     const navigate = useNavigate();
@@ -486,4 +487,4 @@ const CreateGRN = () => {
     )
 }
 
-export default CreateGRN
+export default withAuthorization(CreateGRN, ["ADMIN", "COORDINATOR"])

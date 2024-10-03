@@ -26,6 +26,8 @@ import { quickGetProductList } from "../../service/ProductAPI.jsx";
 
 import cn from "classnames";
 import CreateProductFastlyPopup from "../CreateProductFastlyPopup/CreateProductFastlyPopup.jsx";
+import { withAuthorization } from "../../hoc";
+
 const CreateGIN = () => {
 	const handleProductRequestChange = (e) => {
 		const { name, value } = e.target;
@@ -382,4 +384,4 @@ const CreateGIN = () => {
 	);
 };
 
-export default CreateGIN;
+export default withAuthorization(CreateGIN, ["ADMIN", "WAREHOUSE_STAFF"]);

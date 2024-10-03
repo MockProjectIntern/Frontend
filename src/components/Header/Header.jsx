@@ -63,9 +63,9 @@ const Header = ({ title }) => {
         <Dropdown isOpen={menuOpen} toggle={() => toggleMenu()} nav id="basic-nav-dropdown" className="ms-3">
           <DropdownToggle nav caret className="navbar-dropdown-toggle">
             <span className={`${s.avatar} rounded-circle float-left me-2`}>
-              {fullName[0]}
+              {fullName?.[0] || ''}
             </span>
-            <span className={classNames("d-none d-sm-block", s.fullName)}>{fullName}</span>
+            <span className={classNames("d-none d-sm-block", s.fullName)}>{fullName || ''}</span>
           </DropdownToggle>
           <DropdownMenu className="navbar-dropdown profile-dropdown" style={{ width: "194px" }}>
             <DropdownItem className={s.dropdownProfileItem}>
