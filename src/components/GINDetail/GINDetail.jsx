@@ -120,14 +120,15 @@ const GINDetail = () => {
 							</h6>
 						</Link>
 					</div>
-					{(gin.status !== "BALANCED" && gin.status !== "DELETED") && <div className="btn-toolbar">
+					{(gin.status && gin.status === "CHECKING") && 
+					<div className="btn-toolbar">
 						<button onClick={() => setIsShowDeleteConfirmation(true)} className="btn btn-outline-danger">
 							<span className="btn__title">Xóa</span>
 						</button>
 						<button onClick={() => navigate("edit")} className="btn btn-outline-primary">
 							<span className="btn__title">Sửa</span>
 						</button>
-						<button onClick={handleBalance} className="btn btn-secondary-cyan" style={{ color: "white" }}>
+						<button onClick={handleBalance} className="btn btn-primary" style={{ color: "white" }}>
 							<span className="btn__title">Cân bằng kho</span>
 						</button>
 					</div>}

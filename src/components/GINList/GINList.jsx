@@ -456,14 +456,7 @@ const GINList = () => {
 																		)}
 																	>
 																		<div
-																			className={cn("box-status", {
-																				"box-status--pending":
-																					gin[key] === "CHECKING",
-																				"box-status--balanced":
-																					gin[key] === "BALANCED",
-																				"box-status--deleted":
-																					gin[key] === "DELETED",
-																			})}
+																			className={`box-status box-status--${gin[key].toLowerCase()}`}
 																		>
 																			<span>
 																				{gin[key] == "CHECKING"

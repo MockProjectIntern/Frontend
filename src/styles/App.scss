@@ -2920,7 +2920,6 @@ input:focus-within~.input-field {
     &--not_entered,
     &--not_returned,
     &--not_refunded,
-    &--checking,
     &--ordering {
         border: 1px solid rgb(207, 209, 211);
         background-color: rgb(243, 244, 245);
@@ -2932,6 +2931,7 @@ input:focus-within~.input-field {
 
     &--partial,
     &--partial_paid,
+    &--checking,
     &--trading {
         border: 1px solid rgb(255, 223, 155);
         background-color: rgb(255, 247, 231);
