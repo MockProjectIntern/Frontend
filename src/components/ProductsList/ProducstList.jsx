@@ -17,6 +17,7 @@ import { getListCategory } from '../../service/CategoryAPI.jsx'
 import { getListBrand } from '../../service/BrandAPI.jsx'
 import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 import SelectDatePopup from '../SelectDatePopup.jsx'
+import FilterPopup from '../FilterPopup/FilterPopup.jsx'
 
 const ProductList = () => {
 
@@ -29,20 +30,21 @@ const ProductList = () => {
         return `${day}/${month}/${year}`;
     };
 
+    const defaultCols = {
+        // id: true,
+        // sub_id: true,
+        images: true,
+        name: true,
+        category_name: true,
+        brand_name: true,
+        created_at: true,
+        status: false,
+        updated_at: false,
+        quantity: true
+    }
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_products');
-        return storedCols ? JSON.parse(storedCols) : {
-            id: true,
-            sub_id: true,
-            images: true,
-            name: true,
-            status: true,
-            category_name: true,
-            brand_name: true,
-            quantity: true,
-            created_at: true,
-            updated_at: true
-        }
+        return storedCols ? JSON.parse(storedCols) : defaultCols
     })
 
     const handleScroll = (e, target) => {
@@ -113,6 +115,8 @@ const ProductList = () => {
     const [brandKeyword, setBrandKeyword] = useState("");
     const [currentPageFilterBrand, setCurrentPageFilterBrand] = useState(1);
     const [totalPageFilterBrand, setTotalPageFilterBrand] = useState();
+
+    const [isFilterPopup, setIsFilterPopup] = useState(false)
 
     const handleSelectionChangeCategories = (selected) => {
         setSelectedCategories(selected);
@@ -229,6 +233,7 @@ const ProductList = () => {
 
     useEffect(() => {
         Cookies.set('filter_products', JSON.stringify(colsToRender));
+        fetchProductList();
     }, [colsToRender])
 
     useDebouncedEffect(() => {
@@ -405,7 +410,7 @@ const ProductList = () => {
                                 <tr className="group-table-headers">
                                     <th rowSpan={1} className='table-icon'>
                                         <div className="group-icons">
-                                            <button className="btn-icon">
+                                            <button onClick={() => setIsFilterPopup(true)} className="btn-icon">
                                                 {settingFilterIcon}
                                             </button>
                                             <div className="checkbox__container">
@@ -606,6 +611,7 @@ const ProductList = () => {
                     </div>
                 </div>
             </div>
+            {isFilterPopup && <FilterPopup defaultCols={defaultCols} colGroup={col} colsToRender={colsToRender} setColsToRender={setColsToRender} closePopup={() => setIsFilterPopup(false)} />}
         </>
     )
 }
