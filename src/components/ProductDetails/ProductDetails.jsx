@@ -23,8 +23,6 @@ const ProductDetails = () => {
     const fetchProductDetails = async () => {
         const response = await getProductById(productId);
         setDataDetail(response.data);
-        console.log(response.data.image);
-        
     }
 
     useEffect(() => {
@@ -50,7 +48,7 @@ const ProductDetails = () => {
                         <button className="btn btn-outline-danger">
                             <span className="btn__title">Xóa</span>
                         </button>
-                        <button className="btn btn-primary">
+                        <button className="btn btn-primary" onClick={() => navigate(`/admin/products/PRD/${productId}/edit`)}>
                             <span className="btn__title">Sửa sản phẩm</span>
                         </button>
                     </div>

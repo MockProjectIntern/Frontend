@@ -1389,7 +1389,7 @@ input:focus-within ~ .input-field {
                         border: 0;
                         min-width: 0;
                         background: none;
-                        box-sizing: content-box;
+                        box-sizing: border-box;
                     }
                 }
    

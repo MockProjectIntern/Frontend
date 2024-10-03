@@ -11,8 +11,11 @@ import {
   faMagnifyingGlass,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { getListTransaction } from "../../service/TransactionAPI";
+import { getListTransaction, getTotalReport } from "../../service/TransactionAPI";
+import { formatDateTime } from "../../utils/DateUtils";
+import { useNavigate } from "react-router-dom";
 const Reports = () => {
+  const navigate = useNavigate();
   const [colsToRender, setColsToRender] = useState({
     created_at: true, // Ngày tạo
     updated_at: true, // ngày cập nhật gần nhất
@@ -38,8 +41,8 @@ const Reports = () => {
 
   const modesTab = [
     { key: "all", label: "Tất cả đơn đặt hàng", modes: null },
-    { key: "income", label: "Phiếu thu", modes: ["INCOME"] },
-    { key: "expense", label: "Phiếu chi", modes: ["EXPENSE"] },
+    { key: "income", label: "Phiếu thu", modes: "INCOME" },
+    { key: "expense", label: "Phiếu chi", modes: "EXPENSE" },
   ];
 
   const [dataFilter, setDataFilter] = useState({
@@ -51,6 +54,12 @@ const Reports = () => {
     date_to: "2024-10-10",
     date_type: "CREATED_AT",
   });
+
+  const paymentMethods = {
+    CASH: "Tiền mặt",
+    BANK_TRANSFER: "Chuyển khoản",
+    CREDIT_CARD: "Thẻ tín dụng",
+  }
 
   const [modeActive, setModeActive] = useState("all");
   const [listTransactions, setListTransactions] = useState([]);
@@ -78,20 +87,16 @@ const Reports = () => {
 
   const fetchTransactionLists = async () => {
     try {
-      const response = await getListTransaction(
+      const response = await getTotalReport(
         dataPage.page,
         dataPage.size,
-        "ASC",
-        "created_at",
-        "filter_transactions",
-        JSON.stringify(colsToRender),
         dataFilter
       );
-      setListTransactions(response.data.data);
+      setListTransactions(response.data.pagination.data);
       setDataPage((prevPage) => ({
         ...prevPage,
-        totalPage: response.data.total_page,
-        totalItem: response.data.total_items,
+        totalPage: response.data.pagination.total_page,
+        totalItem: response.data.pagination.total_items,
       }));
     } catch (error) {
       console.error("Failed to fetch transactions:", error);
@@ -102,19 +107,14 @@ const Reports = () => {
   useEffect(() => {
     fetchTransactionLists();
   }, [dataFilter, dataPage.page, dataPage.size, colsToRender]);
-  console.log(listTransactions);
+
   return (
     <>
       <Header title={"Sổ quỹ"} />
       <div className="right__listPage">
         <div className="right__toolbar">
           <div className="btn-toolbar">
-            <button className="btn btn-base btn-text">
-              <span className="btn__label">
-                <span className="btn__icon">{exportIcon}</span>
-                Xuất file
-              </span>
-            </button>
+
           </div>
         </div>
         <div className="right__table">
@@ -124,9 +124,8 @@ const Reports = () => {
                 {modesTab.map(({ key, label, modes }) => (
                   <button
                     key={key}
-                    className={`btn-scroller ${
-                      modeActive === key ? "active" : ""
-                    }`}
+                    className={`btn-scroller ${modeActive === key ? "active" : ""
+                      }`}
                     onClick={() => handleTabClick(key, modes)}
                   >
                     {label}
@@ -294,7 +293,45 @@ const Reports = () => {
                     <col style={{ width: "150px" }} />
                     <col style={{ width: "150px" }} />
                   </colgroup>
-                  <tbody></tbody>
+                  <tbody>
+                    {listTransactions.map((transaction, index) => (
+                      <tr key={index} className="group-table-content">
+                        <td className="table-content-item text-center">
+                          {transaction.sub_id}
+                        </td>
+                        <td className="table-content-item text-center">
+                          {transaction.category_name}
+                        </td>
+                        <td className="table-content-item text-center">
+                          {transaction.type === "INCOME" ? transaction.amount : "-----"}
+                        </td>
+                        <td className="table-content-item text-center">
+                          {transaction.type === "EXPENSE" ? transaction.amount : "-----"}
+                        </td>
+                        <td className="table-content-item text-center">
+                          {paymentMethods[transaction.payment_method]}
+                        </td>
+                        <td className="table-content-item text-center">
+                          {transaction.note}
+                        </td>
+                        <td className="table-content-item text-center">
+                          <p className='box-text'>
+                            <a className='box-id' onClick={() => navigate(`/admin/grns/GRN/${transaction.reference_id}`)}>{transaction.reference_id}</a>
+                          </p>
+                        </td>
+                        <td className="table-content-item text-center">
+                          {transaction.recipient_name}
+                        </td>
+                        <td className="table-content-item text-center">
+                          {formatDateTime(transaction.created_at)}
+                        </td>
+
+                        <td className="table-content-item text-center">
+                          {formatDateTime(transaction.updated_at)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
                 </table>
               </div>
             </div>
