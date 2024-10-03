@@ -175,7 +175,7 @@ const CreateGIN = () => {
 							<span className="btn__title">Tạo</span>
 						</button>
 						<button
-							className="btn btn-secondary-cyan"
+							className="btn btn-primary"
 							style={{ color: "white" }}
 							onClick={() => {
 								setDataBody((prev) => {
@@ -360,21 +360,6 @@ const CreateGIN = () => {
 															closePopup={() => setIsProductSelectPopup(false)}
 														/>
 													)}
-													<button className="btn btn-base">
-														<span className="btn__label">
-															<p>Chọn nhanh</p>
-														</span>
-													</button>
-												</div>
-												<div className="btn-group group-filter-btns">
-													<button className="btn btn-base btn-filter">
-														<span className="btn__label">
-															Giá nhập
-															<span className="btn__icon">
-																<FontAwesomeIcon icon={faCaretDown} />
-															</span>
-														</span>
-													</button>
 												</div>
 											</div>
 										</div>
@@ -385,6 +370,7 @@ const CreateGIN = () => {
 										productsList={filteredProducts}
 										setIsProductSelectPopup={setIsProductSelectPopup}
 										setProductList={setListProductDetail}
+										onClickShowAdd={() => setIsProductSelectPopup(true)}
 									/>
 								</div>
 							</div>

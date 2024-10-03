@@ -25,7 +25,6 @@ import SelectDatePopup from '../SelectDatePopup.jsx'
 import FilterPopup from '../FilterPopup/FilterPopup.jsx'
 
 const OrdersList = () => {
-    const [limit, setLimit] = useState(10);
     const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
     const limitBtnRef = useRef(null);
     const navigate = useNavigate()
@@ -267,12 +266,21 @@ const OrdersList = () => {
                                         };
                                     })}
                                 />
-                                <button className="btn btn-base btn-filter">
+                                <button className="btn btn-base btn-filter" onClick={() => setDataFilter({
+                                    keyword: null,
+                                    statuses: null,
+                                    supplier_ids: null,
+                                    start_created_at: null,
+                                    end_created_at: null,
+                                    start_expected_at: null,
+                                    end_expected_at: null,
+                                    product_ids: null,
+                                    user_created_ids: null,
+                                    user_completed_ids: null,
+                                    user_cancelled_ids: null
+                                })}>
                                     <span className="btn__label">
-                                        Bộ lọc khác
-                                        <span className="btn__icon">
-                                            {filterIcon}
-                                        </span>
+                                        Xóa bộ lọc
                                     </span>
                                 </button>
                             </div>
@@ -281,38 +289,38 @@ const OrdersList = () => {
                             </button>
                         </div>
                         {(dataFilter.statuses || (dataFilter.start_created_at && dataFilter.end_created_at))
-							&& (<div className="box-show-selected-filter">
-								<div className="box-show-selected-container">
-									{dataFilter.statuses && (<div className="box-show-selected-item">
-										<span> Trạng thái: {dataFilter.statuses.map((key, index) => (
-											<span key={index}>{status[key]}{index < dataFilter.statuses.length - 1 ? ', ' : ''} </span>
-										))}
-										</span>
-										<div className="box-remove-item">
-											<button onClick={() => setDataFilter((prev) => ({ ...prev, statuses: null }))} className="btn-remove-item" type="button">
-												<span>
-													<FontAwesomeIcon icon={faXmark} />
-												</span>
-											</button>
-										</div>
-									</div>)}
-									{dataFilter.start_created_at && dataFilter.end_created_at && (<div className="box-show-selected-item">
-										<span>Ngày tạo: (
-											<span>{dataFilter.start_created_at}</span> -
-											<span>{dataFilter.end_created_at}</span>
-											)</span>
-										<div className="box-remove-item">
-											<button onClick={() => setDataFilter((prev) => ({ ...prev, start_created_at: null, end_created_at: null }))} className="btn-remove-item" type="button">
-												<span>
-													<FontAwesomeIcon icon={faXmark} />
-												</span>
-											</button>
-										</div>
-									</div>)}
+                            && (<div className="box-show-selected-filter">
+                                <div className="box-show-selected-container">
+                                    {dataFilter.statuses && (<div className="box-show-selected-item">
+                                        <span> Trạng thái: {dataFilter.statuses.map((key, index) => (
+                                            <span key={index}>{status[key]}{index < dataFilter.statuses.length - 1 ? ', ' : ''} </span>
+                                        ))}
+                                        </span>
+                                        <div className="box-remove-item">
+                                            <button onClick={() => setDataFilter((prev) => ({ ...prev, statuses: null }))} className="btn-remove-item" type="button">
+                                                <span>
+                                                    <FontAwesomeIcon icon={faXmark} />
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>)}
+                                    {dataFilter.start_created_at && dataFilter.end_created_at && (<div className="box-show-selected-item">
+                                        <span>Ngày tạo: (
+                                            <span>{dataFilter.start_created_at}</span> -
+                                            <span>{dataFilter.end_created_at}</span>
+                                            )</span>
+                                        <div className="box-remove-item">
+                                            <button onClick={() => setDataFilter((prev) => ({ ...prev, start_created_at: null, end_created_at: null }))} className="btn-remove-item" type="button">
+                                                <span>
+                                                    <FontAwesomeIcon icon={faXmark} />
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>)}
 
-								</div>
-							</div>)
-						}
+                                </div>
+                            </div>)
+                        }
                     </div>
                     <div
                         ref={headersRef}
@@ -343,12 +351,6 @@ const OrdersList = () => {
                                             <button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
                                                 {settingFilterIcon}
                                             </button>
-                                            <div className="checkbox__container">
-                                                <div className="checkbox__wrapper">
-                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                    <div className="btn-checkbox"></div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </th>
                                     {/* Render table headers for columns that exist in ordersList */}
@@ -422,12 +424,6 @@ const OrdersList = () => {
                                                             <button className="btn-icon">
                                                                 <FontAwesomeIcon icon={faAnglesRight} />
                                                             </button>
-                                                            <div className="checkbox__container">
-                                                                <div className="checkbox__wrapper">
-                                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                                    <div className="btn-checkbox"></div>
-                                                                </div>
-                                                            </div>
                                                         </div>
                                                     </td>
                                                     {Object.entries(colsToRender).map(([key, value]) => {
@@ -499,7 +495,7 @@ const OrdersList = () => {
                                         btnRef={limitBtnRef}
                                         closePopup={() => setIsOpenLimitPopup(false)}
                                         limit={dataPage.size}
-                                        handleChangeLimit={(limit) => {                                            
+                                        handleChangeLimit={(limit) => {
                                             setDataPage(prev => {
                                                 return {
                                                     ...prev,

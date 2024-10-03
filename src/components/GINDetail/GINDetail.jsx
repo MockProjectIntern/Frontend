@@ -110,7 +110,6 @@ const GINDetail = () => {
 
 	return (
 		<>
-		<div className={cn(s.wrapcontainer,{[s.opacity]:isShowDeleteConfirmation})}>
 			<div className="right__navbar">
 				<div className="box-navbar">
 					<div className="btn-toolbar">
@@ -121,14 +120,15 @@ const GINDetail = () => {
 							</h6>
 						</Link>
 					</div>
-					{(gin.status !== "BALANCED" && gin.status!=="DELETED") && <div className="btn-toolbar">
-						<button onClick={()=>setIsShowDeleteConfirmation(true)} className="btn btn-outline-danger">
+					{(gin.status && gin.status === "CHECKING") && 
+					<div className="btn-toolbar">
+						<button onClick={() => setIsShowDeleteConfirmation(true)} className="btn btn-outline-danger">
 							<span className="btn__title">Xóa</span>
 						</button>
 						<button onClick={() => navigate("edit")} className="btn btn-outline-primary">
 							<span className="btn__title">Sửa</span>
 						</button>
-						<button onClick={handleBalance} className="btn btn-secondary-cyan" style={{ color: "white" }}>
+						<button onClick={handleBalance} className="btn btn-primary" style={{ color: "white" }}>
 							<span className="btn__title">Cân bằng kho</span>
 						</button>
 					</div>}
@@ -152,22 +152,7 @@ const GINDetail = () => {
 								</div>
 							</div>
 							<div className="btn-toolbar">
-								<button className="btn btn-base btn-text">
-									<span className="btn__label">
-										<span className="btn__icon">
-											<FontAwesomeIcon icon={faPrint} />
-										</span>
-										In đơn
-									</span>
-								</button>
-								<button className="btn btn-base btn-text">
-									<span className="btn__label">
-										<span className="btn__icon">
-											<FontAwesomeIcon icon={faCopy} />
-										</span>
-										Sao chép
-									</span>
-								</button>
+
 							</div>
 						</div>
 						<div className="box-supplier">
@@ -270,8 +255,7 @@ const GINDetail = () => {
 					</div>
 				</div>
 			</div>
-			</div>
-		{isShowDeleteConfirmation && (<DeleteConfirmation  {...deleteConfirmation} />)}
+			{isShowDeleteConfirmation && (<DeleteConfirmation  {...deleteConfirmation} />)}
 		</>
 	);
 };

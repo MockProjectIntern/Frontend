@@ -6,7 +6,7 @@
     box-shadow: rgba(168, 168, 168, 0.25) 0 0.571429rem 1.14286rem;
     border-radius: 3px;
     position: absolute;
-    z-index: 1000;
+    z-index: 10001;
     left: 35%;
     top: 20%;
 
@@ -77,7 +77,8 @@
         justify-content: flex-end;
         align-items: center;
 
-        .btnCancel, .btnConfirm {
+        .btnCancel,
+        .btnConfirm {
             margin-left: 1.14286rem;
             display: inline-flex;
             justify-content: center;
@@ -93,7 +94,8 @@
             min-width: 4.57143rem;
             overflow: hidden;
             position: relative;
-            > span {
+
+            >span {
                 display: flex;
                 -webkit-box-pack: center;
                 justify-content: center;
@@ -107,14 +109,14 @@
         }
 
         .btnCancel {
-            
+
             border: 1px solid rgb(255, 77, 77);
             background: #fff;
             color: rgb(255, 77, 77);
         }
 
         .btnConfirm {
-            
+
             border: none;
             background: rgb(255, 77, 77);
             color: #fff;

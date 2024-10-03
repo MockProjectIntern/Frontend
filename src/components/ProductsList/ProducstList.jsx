@@ -90,7 +90,7 @@ const ProductList = () => {
 		created_date_from: null,
 		created_date_to: null,
 		brand_ids: null,
-		statuses: null,
+		statuses: ["ACTIVE"],
 		tags: null,
 	});
 
@@ -256,7 +256,7 @@ const ProductList = () => {
 
 	useDebouncedEffect(() => {
 		fetchProductList();
-	}, 300, [limit, page, dataBody]);
+	}, 200, [limit, page, dataBody]);
 
 	return (
 		<>
@@ -264,12 +264,6 @@ const ProductList = () => {
 			<div className="right__listPage">
 				<div className="right__toolbar">
 					<div className="btn-toolbar">
-						<button className="btn btn-base btn-text">
-							<span className="btn__label">
-								<span className="btn__icon">{importIcon}</span>
-								Nhập file
-							</span>
-						</button>
 						<button
 							className="btn btn-base btn-text"
 							onClick={() => navigate("/admin/categories")}
@@ -391,10 +385,17 @@ const ProductList = () => {
 										loadMoreData={fetchMoreBrandsList}
 									/>
 								)}
-								<button className="btn btn-base btn-filter">
+								<button className="btn btn-base btn-filter" onClick={() => setDataBody({
+									keyword: null,
+									category_ids: null,
+									created_date_from: null,
+									created_date_to: null,
+									brand_ids: null,
+									statuses: ["ACTIVE"],
+									tags: null,
+								})}>
 									<span className="btn__label">
-										Bộ lọc khác
-										<span className="btn__icon">{filterIcon}</span>
+										Xóa bộ lọc
 									</span>
 								</button>
 							</div>
@@ -545,17 +546,6 @@ const ProductList = () => {
 											>
 												{settingFilterIcon}
 											</button>
-											<div className="checkbox__container">
-												<div className="checkbox__wrapper">
-													<input
-														type="checkbox"
-														name=""
-														id=""
-														className="checkbox__input"
-													/>
-													<div className="btn-checkbox"></div>
-												</div>
-											</div>
 										</div>
 									</th>
 									{/* Render table headers for columns that exist in productsList */}
@@ -629,17 +619,6 @@ const ProductList = () => {
 															<button className="btn-icon">
 																<FontAwesomeIcon icon={faAnglesRight} />
 															</button>
-															<div className="checkbox__container">
-																<div className="checkbox__wrapper">
-																	<input
-																		type="checkbox"
-																		name=""
-																		id=""
-																		className="checkbox__input"
-																	/>
-																	<div className="btn-checkbox"></div>
-																</div>
-															</div>
 														</div>
 													</td>
 													{Object.entries(colsToRender).map(([key, value]) => {

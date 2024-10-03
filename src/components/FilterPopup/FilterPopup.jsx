@@ -50,7 +50,7 @@ const FilterPopup = ({ defaultCols, colGroup, colsToRender, setColsToRender, clo
                                                         <div className="checkbox__container">
                                                             <div className={cn("checkbox__wrapper", s.checkbox)}>
                                                                 <input 
-                                                                    disabled={key === "id" || colGroup[key].name === "Sản phẩm"}
+                                                                    disabled={key === "id" || key == "sub_id" || colGroup[key].name === "Sản phẩm"}
                                                                     checked={value}
                                                                     onChange={(e) => handleCheck(e.target.name)}
                                                                     type="checkbox" 
@@ -79,7 +79,7 @@ const FilterPopup = ({ defaultCols, colGroup, colsToRender, setColsToRender, clo
                                                         <div className={s["col-item"]}>
                                                             <p className="col-title">{colGroup[key].name}</p>
                                                             {
-                                                                !(key === "id" || colGroup[key].name === "Sản phẩm") &&
+                                                                !(key === "id" || key === "sub_id" || colGroup[key].name === "Sản phẩm") &&
                                                                 <button onClick={() => handleCheck(key)} className="btn-icon">
                                                                     <FontAwesomeIcon icon={faXmark} />
                                                                 </button>

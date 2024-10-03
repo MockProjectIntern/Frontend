@@ -78,7 +78,7 @@ const ListTransactionCategory = () => {
 
     useDebouncedEffect(() => {
         fetchSupplierGroupsList();
-    }, 300, [limit, page, dataBody, isCreateSupplierGroups]);
+    }, 200, [limit, page, dataBody, isCreateSupplierGroups]);
 
     return (
         <>

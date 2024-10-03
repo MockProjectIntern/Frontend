@@ -30,6 +30,7 @@ import { exportExcel } from "../../config/ExportExcel.jsx";
 import { formatDate, formatDateTime } from "../../utils/DateUtils.jsx";
 import { useDebouncedEffect } from "../../utils/CommonUtils.jsx";
 import FilterPopup from "../FilterPopup/FilterPopup.jsx";
+import SelectDatePopup from "../SelectDatePopup.jsx";
 
 const GINList = () => {
 	const [page, setPage] = useState(1);
@@ -72,7 +73,7 @@ const GINList = () => {
 		const updateDataFilters = { ...dataFilters };
 		for (const [key, value] of Object.entries(filters)) {
 			updateDataFilters[key] = value;
-		}
+		}		
 		setdataFilters(updateDataFilters);
 	};
 
@@ -120,7 +121,7 @@ const GINList = () => {
 
 	useDebouncedEffect(() => {
 		fetchGinList();
-	}, 300, [page, limit, dataFilters]);
+	}, 200, [page, limit, dataFilters]);
 
 	const headersRef = useRef(null);
 	const contentRef = useRef(null);
@@ -244,7 +245,7 @@ const GINList = () => {
 												return { ...prev, keyword: e.target.value }
 											})
 										}}
-										placeholder="Tìm mã đơn nhập, đơn đặt hàng, tên, SĐT, mã NCC"
+										placeholder="Tìm mã đơn nhập"
 										type="text"
 										name="keyword"
 										id=""
@@ -273,31 +274,29 @@ const GINList = () => {
 										handeChangeDatafilter={handeChangeDatafilter}
 									/>
 								)}
-								<button
-									ref={createdAtRef}
-									onClick={() => setIsOpenCreatedAtPopup(!isOpenCreatedAtPopup)}
-									className="btn btn-base btn-filter"
-								>
-									<span className="btn__label">
-										Ngày tạo
-										<span className="btn__icon">
-											<FontAwesomeIcon icon={faCaretDown} />
-										</span>
-									</span>
-								</button>
-								{isOpenCreatedAtPopup && (
-									<CreatedAtFilter
-										parentCalling="GIN"
-										createdRef={createdAtRef}
-										closePopup={() => setIsOpenCreatedAtPopup(false)}
-										handeChangeDatafilter={handeChangeDatafilter}
-									/>
-								)}
+								<SelectDatePopup
+                                    setDataFilters={(data) => setdataFilters(prev => {
+                                        return {
+                                            ...prev,
+                                            created_date_from: data.date_from,
+                                            created_date_to: data.date_to
+                                        };
+                                    })}
+                                />
 
-								<button className="btn btn-base btn-filter">
+								<button className="btn btn-base btn-filter" onClick={() => setdataFilters({
+									keyword: null,
+									statues: null,
+									created_date_from: null,
+									created_date_to: null,
+									balanced_date_from: null,
+									balanced_date_to: null,
+									user_created_ids: null,
+									user_balanced_ids: null,
+									user_inspection_ids: null,
+								})}>
 									<span className="btn__label">
-										Bộ lọc khác
-										<span className="btn__icon">{filterIcon}</span>
+										Xóa bộ lọc
 									</span>
 								</button>
 							</div>
@@ -369,18 +368,7 @@ const GINList = () => {
 										<div className="group-icons">
 											<button className="btn-icon" onClick={() => setIsFilterPopup(true)}>
 												{settingFilterIcon}
-												</button>
-											<div className="checkbox__container">
-												<div className="checkbox__wrapper">
-													<input
-														type="checkbox"
-														name=""
-														id=""
-														className="checkbox__input"
-													/>
-													<div className="btn-checkbox"></div>
-												</div>
-											</div>
+											</button>
 										</div>
 									</th>
 									{/* Render table headers for columns that exist in ginList */}
@@ -454,17 +442,6 @@ const GINList = () => {
 															<button className="btn-icon">
 																<FontAwesomeIcon icon={faAnglesRight} />
 															</button>
-															<div className="checkbox__container">
-																<div className="checkbox__wrapper">
-																	<input
-																		type="checkbox"
-																		name=""
-																		id=""
-																		className="checkbox__input"
-																	/>
-																	<div className="btn-checkbox"></div>
-																</div>
-															</div>
 														</div>
 													</td>
 													{Object.entries(colsToRender).map(([key, value]) => {
@@ -479,14 +456,7 @@ const GINList = () => {
 																		)}
 																	>
 																		<div
-																			className={cn("box-status", {
-																				"box-status--pending":
-																					gin[key] === "CHECKING",
-																				"box-status--balanced":
-																					gin[key] === "BALANCED",
-																				"box-status--deleted":
-																					gin[key] === "DELETED",
-																			})}
+																			className={`box-status box-status--${gin[key].toLowerCase()}`}
 																		>
 																			<span>
 																				{gin[key] == "CHECKING"
@@ -611,13 +581,13 @@ const GINList = () => {
 				</div>
 			</div>
 			{isFilterPopup
-                && <FilterPopup
-                    defaultCols={defaultCols}
-                    colGroup={col}
-                    colsToRender={colsToRender}
-                    setColsToRender={setColsToRender}
-                    closePopup={() => setIsFilterPopup(false)}
-                />}
+				&& <FilterPopup
+					defaultCols={defaultCols}
+					colGroup={col}
+					colsToRender={colsToRender}
+					setColsToRender={setColsToRender}
+					closePopup={() => setIsFilterPopup(false)}
+				/>}
 		</>
 	);
 };

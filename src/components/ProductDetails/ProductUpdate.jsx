@@ -610,7 +610,7 @@ const ProductUpdate = () => {
                         </Link>
                     </div>
                     <div className="btn-toolbar">
-                        <button className="btn btn-outline-primary">
+                        <button className="btn btn-outline-primary" onClick={() => navigate(`/admin/products/PRD/${productId}`)}>
                             <span className="btn__title">Thoát</span>
                         </button>
                         <button className="btn btn-primary" onClick={handleUpdateProduct}>

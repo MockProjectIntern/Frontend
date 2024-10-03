@@ -188,12 +188,6 @@ const PriceAdjustmentsList = () => {
                                             <button className="btn-icon">
                                                 {settingFilterIcon}
                                             </button>
-                                            <div className="checkbox__container">
-                                                <div className="checkbox__wrapper">
-                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                    <div className="btn-checkbox"></div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </th>
                                     {/* Render table headers for columns that exist in ordersList */}
@@ -267,12 +261,6 @@ const PriceAdjustmentsList = () => {
                                                             <button className="btn-icon">
                                                                 <FontAwesomeIcon icon={faAnglesRight} />
                                                             </button>
-                                                            <div className="checkbox__container">
-                                                                <div className="checkbox__wrapper">
-                                                                    <input type="checkbox" name="" id="" className='checkbox__input' />
-                                                                    <div className="btn-checkbox"></div>
-                                                                </div>
-                                                            </div>
                                                         </div>
                                                     </td>
                                                     {Object.entries(colsToRender).map(([key, value]) => {

@@ -555,7 +555,7 @@ const CreateProduct = () => {
                         </Link>
                     </div>
                     <div className="btn-toolbar">
-                        <button className="btn btn-outline-primary">
+                        <button className="btn btn-outline-primary" onClick={() => navigate("/admin/products")}>
                             <span className="btn__title">Thoát</span>
                         </button>
                         <button className="btn btn-primary" onClick={handleCreateProduct}>
@@ -805,9 +805,6 @@ const CreateProduct = () => {
                                     <div className="box-header">
                                         <h6>Ảnh sản phẩm {`${images.length > 0 ? `(${images.length})` : ''}`}</h6>
                                     </div>
-                                    {images.length > 0 && <div className="btn-delete-all">
-                                        <p>Xóa tất cả</p>
-                                    </div>}
                                 </div>
                                 <div className="info-content">
                                     {images.length > 0 && <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -964,7 +961,6 @@ const CreateProduct = () => {
                                                             keyword: e.target.value
                                                         })
                                                     }}
-                                                    isFastCreate={true}
                                                     dataList={categoryList}
                                                     handleSelect={(id) => setDataBody({
                                                         ...dataBody,
@@ -999,7 +995,6 @@ const CreateProduct = () => {
                                                             name: e.target.value
                                                         })
                                                     }}
-                                                    isFastCreate={true}
                                                     dataList={brandList}
                                                     btnRef={brandBtnRef}
                                                     handleSelect={(id) => setDataBody({

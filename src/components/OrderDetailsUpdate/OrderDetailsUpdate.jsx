@@ -6,7 +6,7 @@ import Cookies from 'js-cookie'
 import SupplierInfo from '../SupplierInfo/SupplierInfo'
 import ProductsTable from '../ProductsTable/ProductsTable'
 
-import s from '../OrderDetails/OrderDetails.module.scss'
+import s from './OrderDetailsUpdate.module.scss'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft, faGear, faPrint } from '@fortawesome/free-solid-svg-icons'
@@ -26,7 +26,7 @@ const OrderDetailsUpdate = () => {
         // setProductsList(res.order_details)
         setData(res.data);
 
-        setIsView(res.data.status === "COMPLETED")
+        setIsView(res.data.status === "COMPLETED" || res.data.status === "CANCELLED")
 
     };
 
@@ -145,7 +145,7 @@ const OrderDetailsUpdate = () => {
                         </Link>
                     </div>
                     <div className="btn-toolbar">
-                        <button className="btn btn-outline-primary">
+                        <button className="btn btn-outline-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}`)}>
                             <span className="btn__title">Thoát</span>
                         </button>
                         <button className="btn btn-primary" onClick={() => { handleSave() }}>
@@ -216,111 +216,6 @@ const OrderDetailsUpdate = () => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div className={s.boxGRN}>
-                            <div className="box-paper">
-                                <div className="paper-header">
-                                    <div className="box-header">
-                                        <p>Thông tin nhập hàng</p>
-                                        {
-                                            order.status !== "COMPLETED" &&
-                                            <button
-                                                className="btn btn-outline-primary"
-                                                onClick={() => navigate("/admin/grns/create", { state: { orderId: orderId } })}
-                                            >
-                                                <span className="btn__label">Tạo đơn nhập hàng</span>
-                                            </button>
-                                        }
-                                    </div>
-                                </div>
-                                {
-                                    order.status !== "PENDING" &&
-                                    <div className="box-table">
-                                        <table className={s.table}>
-                                            <colgroup>
-                                                <col style={{ width: "60px" }} />
-                                                <col style={{ width: "120px" }} />
-                                                <col style={{ width: "160px" }} />
-                                                <col style={{ width: "160px" }} />
-                                                <col style={{ width: "160px" }} />
-                                                <col style={{ width: "140px" }} />
-                                                <col style={{ width: "190px" }} />
-                                                <col style={{ width: "155px" }} />
-                                            </colgroup>
-                                            <thead className={s.tableHeader}>
-                                                <tr className={s.tableRow}>
-                                                    <th colSpan={1} rowSpan={1} className={cn(s.tableCell, s.tableCellHeader, "text-center")}>
-                                                        <p>STT</p>
-                                                    </th>
-                                                    <th colSpan={1} rowSpan={1} className={cn(s.tableCell, s.tableCellHeader, "text-start")}>
-                                                        <p>Mã đơn nhập</p>
-                                                    </th>
-                                                    <th colSpan={1} rowSpan={1} className={cn(s.tableCell, s.tableCellHeader, "text-start")}>
-                                                        <p>Trạng thái nhập</p>
-                                                    </th>
-                                                    <th colSpan={1} rowSpan={1} className={cn(s.tableCell, s.tableCellHeader, "text-start")}>
-                                                        <p>Ngày tạo</p>
-                                                    </th>
-                                                    <th colSpan={1} rowSpan={1} className={cn(s.tableCell, s.tableCellHeader, "text-start")}>
-                                                        <p>Ngày nhập</p>
-                                                    </th>
-                                                    <th colSpan={1} rowSpan={1} className={cn(s.tableCell, s.tableCellHeader, "text-center")}>
-                                                        <p>SL nhập</p>
-                                                    </th>
-                                                    <th colSpan={1} rowSpan={1} className={cn(s.tableCell, s.tableCellHeader, "text-start")}>
-                                                        <p>Thanh toán</p>
-                                                    </th>
-                                                    <th colSpan={1} rowSpan={1} className={cn(s.tableCell, s.tableCellHeader, "text-start")}>
-                                                        <p>Nhân viên nhập</p>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className={s.tableBody}>
-                                                {grnList?.map((grn, index) => {
-                                                    return (
-                                                        <tr key={index} className={s.tableRow}>
-                                                            <td className={cn(s.tableCell, s.tableCellBody, "text-center")}>
-                                                                <p>{index + 1}</p>
-                                                            </td>
-                                                            <td className={cn(s.tableCell, s.tableCellBody, "text-start")}>
-                                                                <div className={s.boxInfo}>
-                                                                    <div className={s.boxId}>
-                                                                        <Link to={`/admin/grns/GRN/${grn.id}`}>
-                                                                            <p>{grn.id}</p>
-                                                                        </Link>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td className={cn(s.tableCell, s.tableCellBody, "text-start")}>
-                                                                <div className={cn('box-status', `box-status--${grn.received_status?.toLowerCase()}`)}>
-                                                                    <span>{status[grn.received_status]}</span>
-                                                                </div>
-                                                            </td>
-                                                            <td className={cn(s.tableCell, s.tableCellBody, "text-start")}>
-                                                                <p>{formatDateTime(grn.created_at)}</p>
-                                                            </td>
-                                                            <td className={cn(s.tableCell, s.tableCellBody, "text-start")}>
-                                                                <p>{formatDateTime(grn.created_at)}</p>
-                                                            </td>
-                                                            <td className={cn(s.tableCell, s.tableCellBody, "text-center")}>
-                                                                <p>{grn.total_received_quantity}</p>
-                                                            </td>
-                                                            <td className={cn(s.tableCell, s.tableCellBody, "text-start")}>
-                                                                <div className={cn('box-status', `box-status--${grn.payment_status?.toLowerCase()}`)}>
-                                                                    <span>{status[grn.payment_status]}</span>
-                                                                </div>
-                                                            </td>
-                                                            <td className={cn(s.tableCell, s.tableCellBody, "text-start")}>
-                                                                <p>{grn.user_imported_name}</p>
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                })}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                }
                             </div>
                         </div>
                         <div className="box-products">
