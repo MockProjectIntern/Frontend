@@ -17,6 +17,7 @@ import { formatDateTime } from "../../utils/DateUtils";
 import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup";
 import { useDebouncedEffect } from "../../utils/CommonUtils";
 import CreateSupplierGroupPopup from "../CreateSupplierGroupPopup/CreateSupplierGroupPopup";
+import UpdateSupplierGroup from "../UpdateSupplierGroup/UpdateSupplierGroup";
 
 const SupplierGroupsList = () => {
   const limitBtnRef = useRef(null);
@@ -38,7 +39,8 @@ const SupplierGroupsList = () => {
     sub_id: "",
   });
   const [isCreateSupplierGroups, setIsCreateSupplierGroups] = useState(false);
-
+  const [isUpdateSupplierGroups, setIsUpdateSupplierGroups] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const handleChangeDataCreateSupplierGroup = (e) => {
     const { name, value } = e.target; // Lấy name và value từ input
     setDataCreateSupplierGroup((prevData) => ({
@@ -50,16 +52,16 @@ const SupplierGroupsList = () => {
   const handleClickBack = () => {
     setIsCreateSupplierGroups(false);
   };
+  const handleClickBackUpdate = () => {
+    setIsUpdateSupplierGroups(false);
+  };
 
   const handleCLickCreate = async () => {
     const response = await createSupplierGroup(dataCreateSupplierGroup);
-    alert("Tạo nhóm nhà cung cấp thành thành công!");
-    setDataCreateSupplierGroup({
-      name: "",
-      note: "",
-      sub_id: "",
-    });
-    setIsCreateSupplierGroups(false);
+    if (response.status_code === 201) {
+      alert("Tạo nhóm nhà cung cấp thành thành công!");
+      handleClickBack();
+    }
   };
 
   const handlePrevPage = () => {
@@ -86,9 +88,9 @@ const SupplierGroupsList = () => {
       fetchSupplierGroupsList();
     },
     300,
-    [limit, page, dataBody, isCreateSupplierGroups]
+    [limit, page, dataBody, isCreateSupplierGroups, isUpdateSupplierGroups]
   );
-
+  console.log(selectedItem);
   return (
     <>
       {isCreateSupplierGroups && (
@@ -98,6 +100,15 @@ const SupplierGroupsList = () => {
             handleOnClickBack={handleClickBack}
             handleOnClickCreate={handleCLickCreate}
             handleOnChange={handleChangeDataCreateSupplierGroup}
+          />
+        </>
+      )}
+      {isUpdateSupplierGroups && (
+        <>
+          <div className="overlay"></div>
+          <UpdateSupplierGroup
+            handleOnClickBack={handleClickBackUpdate}
+            item={selectedItem}
           />
         </>
       )}
@@ -214,12 +225,19 @@ const SupplierGroupsList = () => {
                   <tbody>
                     {supplierGroupsList?.map((supplierGroup, index) => {
                       return (
-                        <tr key={index} className="table-data-row">
+                        <tr
+                          key={index}
+                          className="table-data-row"
+                          onClick={() => {
+                            setIsUpdateSupplierGroups(true);
+                            setSelectedItem(supplierGroup);
+                          }}
+                        >
                           <td className={cn("table-data-item", "text-start")}>
                             <p className="box-text">{supplierGroup?.name}</p>
                           </td>
                           <td className={cn("table-data-item", "text-start")}>
-                            <p className="box-text">{supplierGroup?.id}</p>
+                            <p className="box-text">{supplierGroup?.sub_id}</p>
                           </td>
                           <td className={cn("table-data-item", "text-start")}>
                             <p className="box-text">{supplierGroup?.note}</p>
@@ -262,6 +280,7 @@ const SupplierGroupsList = () => {
                     closePopup={() => setIsOpenLimitPopup(false)}
                     limit={limit}
                     handleChangeLimit={(limit) => {
+                      setPage(1);
                       setLimit(limit);
                     }}
                   />
