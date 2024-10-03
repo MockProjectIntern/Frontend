@@ -38,8 +38,8 @@ const ProductList = () => {
 	};
 
 	const defaultCols = {
-		// id: true,
-		// sub_id: true,
+		id: true,
+		sub_id: true,
 		images: true,
 		name: true,
 		category_name: true,
@@ -454,7 +454,7 @@ const ProductList = () => {
 												<div className="box-remove-item">
 													<button
 														onClick={() =>
-															setFilterBody((prev) => ({
+															setDataBody((prev) => ({
 																...prev,
 																created_date_from: null,
 																created_date_to: null,
@@ -495,7 +495,7 @@ const ProductList = () => {
 															onClick={() =>
 																setDataBody((prev) => ({
 																	...prev,
-																	category_ids: null,
+																	brand_ids: null,
 																}))
 															}
 															className="btn-remove-item"

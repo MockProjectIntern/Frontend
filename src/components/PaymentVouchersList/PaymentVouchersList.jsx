@@ -258,14 +258,6 @@ const PaymentVouchersList = () => {
                 </button>
                 <button className="btn btn-base btn-filter">
                   <span className="btn__label">
-                    Nhóm người nhận
-                    <span className="btn__icon">
-                      <FontAwesomeIcon icon={faCaretDown} />
-                    </span>
-                  </span>
-                </button>
-                <button className="btn btn-base btn-filter">
-                  <span className="btn__label">
                     Bộ lọc khác
                     <span className="btn__icon">{filterIcon}</span>
                   </span>
