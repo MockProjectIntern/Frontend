@@ -36,3 +36,13 @@ export const getTotalReport = async (page, size, dataFilter) => {
         throw err;
     }
 }
+
+export const paymentGRN = async (dataBody) => {
+    try {
+        const response = await axiosInstance.post(`transactions/payment-grn.json`, dataBody);
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}

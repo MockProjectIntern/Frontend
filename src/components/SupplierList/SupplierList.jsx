@@ -201,9 +201,6 @@ const SupplierList = () => {
                                     </span>
                                 </button>
                             </div>
-                            <button id='btn-save-filter' className="btn btn-primary">
-                                <span className="btn__title">Lưu bộ lọc</span>
-                            </button>
                         </div>
                         {(dataFilter.created_date_from && dataFilter.created_date_to)
                             && (

@@ -302,9 +302,6 @@ const GRNList = () => {
                                     </span>
                                 </button>
                             </div>
-                            <button id='btn-save-filter' className="btn btn-primary">
-                                <span className="btn__title">Lưu bộ lọc</span>
-                            </button>
                         </div>
                         {(filterBody.statuses || (filterBody.start_created_at && filterBody.end_created_at))
                             && (<div className="box-show-selected-filter">

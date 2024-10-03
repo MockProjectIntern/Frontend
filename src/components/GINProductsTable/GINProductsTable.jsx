@@ -273,7 +273,7 @@ const GINProductsTable = ({
 					) : (
 						<>
 							<p>Bảng chưa có sản phẩm nào</p>
-							<button className="btn btn-outline-primary" onClick={setIsProductSelectPopup}>
+							<button className="btn btn-outline-primary" onClick={onClickShowAdd}>
 								<span className="btn__label">Thêm sản phẩm</span>
 							</button>
 						</>

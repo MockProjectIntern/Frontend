@@ -126,34 +126,13 @@ const GRNDetails = () => {
         setIsCreateGroups(false);
     };
 
-    const handleChangeData = (e) => {
-        // const { name, value } = e.target; // Lấy name và value từ input
-        // setDataCreate((prevData) => ({
-        //   ...prevData,
-        //   [name]: value, // Cập nhật giá trị tương ứng với name
-        // }));
-    };
-
-    const handleCLickCreate = async () => {
-        // const response = await createCategoryTransaction(dataCreate);
-        // alert("Tạo phiếu chi thành công");
-        // setDataCreate({
-        //   sub_id: null,
-        //   name: "",
-        //   description: "",
-        //   type: "EXPENSE",
-        // });
-        setIsCreateGroups(false);
-    };
-
     return (
         <>
             {isCreateGroups && (
                 <PaymentPopup
                     type={"Loại phiếu chi"}
                     handleOnClickBack={handleClickBack}
-                    handleOnChange={handleChangeData}
-                    handleOnClickCreate={handleCLickCreate}
+                    grnId={grnId}
                 />
             )}
             <div className="right__navbar">

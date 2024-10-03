@@ -7,33 +7,34 @@ import cn from "classnames";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ListSelectPopup from "../ListSelectPopup/ListSelectPopup";
-
+import { createTransaction, paymentGRN } from "../../service/TransactionAPI";
 
 const PaymentPopup = ({
-    type,
+    grnId,
     handleOnClickBack,
-    handleOnClickCreate,
-    handleOnChange,
 }) => {
-
     const paymentMethods = [
-        { id: 1, name: 'Credit Card' },
-        { id: 2, name: 'Bank Transfer' },
-        { id: 3, name: 'Cash on Delivery' }
+        { id: 1, key: 'CREDIT_CARD', name: "Quẹt thẻ" },
+        { id: 2, key: 'BANK_TRANSFER', name: "Chuyển khoản ngân hàng" },
+        { id: 3, key: 'CASH', name: "Tiền mặt" },
     ];
 
-    const [dataFilter, setDataFilter] = useState({
-        keyword: null,
-        statuses: null,
-        supplier_group_ids: null,
-        created_date_from: null,
-        created_date_to: null,
-        tags: null
+    const [dataCreate, setDataCreate] = useState({
+        grn_id: grnId,
+        payment_method: null,
+        amount: null
     });
 
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
     const [isPaymentMethodPopup, setIsPaymentMethodPopup] = useState(false);
     const paymentMethodBtnRef = useRef(null);
+
+    const handleCreate = async () => {
+        const response = await paymentGRN(dataCreate);
+        if (response.status_code === 201) {
+            alert("Thanh toán đơn nhập hàng thành công");
+            handleOnClickBack();
+        }        
+    };
 
     return (
         <div className={s.popup}>
@@ -59,7 +60,7 @@ const PaymentPopup = ({
                                 </label>
                                 <div className="box-select">
                                     <button ref={paymentMethodBtnRef} onClick={() => setIsPaymentMethodPopup(!isPaymentMethodPopup)} className="btn-select">
-                                        Phương thức thanh toán
+                                        {dataCreate.payment_method ? paymentMethods.find(item => item.key === dataCreate.payment_method).name : "Chọn phương thức thanh toán"}
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </button>
                                     {
@@ -68,6 +69,7 @@ const PaymentPopup = ({
                                             dataList={paymentMethods}
                                             btnRef={paymentMethodBtnRef}
                                             closePopup={() => setIsPaymentMethodPopup(false)}
+                                            handleSelect={(id) => setDataCreate({ ...dataCreate, payment_method: paymentMethods.find(item => item.id === id).key })}
                                         />
                                     }
                                 </div>
@@ -81,33 +83,7 @@ const PaymentPopup = ({
                                         type="text"
                                         name="amount"
                                         id="amount"
-                                    />
-                                    <fieldset className="input-field"></fieldset>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={s["group-form-items"]}>
-                            <div className="form-item">
-                                <label htmlFor="brand" className="form-label">
-                                    Ngày thanh toán
-                                </label>
-                                <div className="form-textfield">
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DateTimePicker
-                                            
-                                        />
-                                    </LocalizationProvider>
-                                </div>
-                            </div>
-                            <div className="form-item">
-                                <label htmlFor="unit" className="form-label">
-                                    Tham chiếu
-                                </label>
-                                <div className="form-textfield h-100">
-                                    <input
-                                        type="text"
-                                        name="reference"
-                                        id="reference"
+                                        onChange={(e) => setDataCreate({ ...dataCreate, amount: e.target.value })}
                                     />
                                     <fieldset className="input-field"></fieldset>
                                 </div>
@@ -119,7 +95,7 @@ const PaymentPopup = ({
                             <button className="btn btn-outline-primary" onClick={handleOnClickBack}>
                                 <span className="btn__title">Thoát</span>
                             </button>
-                            <button className="btn btn-primary" onClick={handleOnClickCreate}>
+                            <button className="btn btn-primary" onClick={handleCreate}>
                                 <span className="btn__title">Thêm</span>
                             </button>
                         </div>
