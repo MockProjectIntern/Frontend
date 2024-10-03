@@ -37,10 +37,6 @@ const GRNList = () => {
     const [statusListFilter, setStatusListFilter] = useState([]);
     const [totalItems, setTotalItems] = useState(0);
 
-    const [isOpenCreatedAtPopup, setIsOpenCreatedAtPopup] = useState(false);
-    const [createdMin, setCreatedMin] = useState(null);
-    const [createdMax, setCreatedMax] = useState(null)
-
     const [grnList, setGrnList] = useState([])
 
     const status = {
@@ -106,12 +102,10 @@ const GRNList = () => {
         setFilterBody(prev => {
             return {
                 ...prev,
-                statuses: statusListFilter,
-                start_created_at: createdMin,
-                end_created_at: createdMax
+                statuses: statusListFilter
             }
         })
-    }, [statusListFilter, createdMin, createdMax])
+    }, [statusListFilter])
 
     const [isFilterPopup, setIsFilterPopup] = useState(false)
     const defaultCols = {
@@ -287,8 +281,6 @@ const GRNList = () => {
                                         };
                                     })}
                                 />
-                                {isOpenCreatedAtPopup && <CreatedAtFilter createdRef={createdAtRef} closePopup={() => setIsOpenCreatedAtPopup(false)} setCreatedMin={setCreatedMin} setCreatedMax={setCreatedMax} />}
-
                                 <button className="btn btn-base btn-filter">
                                     <span className="btn__label">
                                         Bộ lọc khác

@@ -126,7 +126,6 @@ const OrderDetails = () => {
 
     return (
         <>
-        <div className={cn(s.wrapcontainer,{[s.opacity]:isShowDeleteConfirmation})} >
             <div className="right__navbar">
                 <div className="box-navbar">
                     <div className="btn-toolbar">
@@ -422,8 +421,7 @@ const OrderDetails = () => {
                     </div>
                 </div>
             </div>
-        </div>
-        {isShowDeleteConfirmation && <DeleteConfirmation {...deleteComfimation} />}
+            {isShowDeleteConfirmation && <DeleteConfirmation {...deleteComfimation} />}
         </>
     )
 }
