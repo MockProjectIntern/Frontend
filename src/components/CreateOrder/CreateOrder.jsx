@@ -355,11 +355,13 @@ const CreateOrder = () => {
                                                             dataList={productSelectList}
                                                             handleCLickCreateProductQuickly={handleClickCreateQuicklylyProduct}
                                                             handleSelect={(id) => setListProductDetail(prev => {
+                                                                console.log(productSelectList.find(product => product.id === id));
+                                                                
                                                                 return [...prev,
                                                                 {
                                                                     id: id,
                                                                     name: productSelectList.find(product => product.id === id)?.name,
-                                                                    image: productSelectList.find(product => product.id === id)?.images?.[0],
+                                                                    image: productSelectList.find(product => product.id === id)?.image?.[0],
                                                                     unit: productSelectList.find(product => product.id === id)?.unit || "------",
                                                                     ordered_quantity: 0,
                                                                     price: productSelectList.find(product => product.id === id)?.cost_price,
