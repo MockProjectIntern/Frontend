@@ -32,8 +32,6 @@ const UpdateSupplierGroup = ({ handleOnClickBack, item }) => {
     setData(item);
   }, []);
 
-  console.log(data);
-
   return (
     <div className={s["modal-content"]}>
       <div className={s["modal-header"]}>

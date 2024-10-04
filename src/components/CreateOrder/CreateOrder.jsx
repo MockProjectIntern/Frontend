@@ -104,8 +104,6 @@ const CreateOrder = () => {
             }
         })
     }
-    console.log(productSelectList);
-    
     useEffect(() => {
         if (isProductSelectPopup) {
             fetchProductList();
@@ -171,7 +169,6 @@ const CreateOrder = () => {
                         product_id: product.id,
                         quantity: product.ordered_quantity,
                         price: product.price,
-                        image: product.image,
                         discount: product.discount,
                         tax: product.tax,
                         total: (product.price - product.discount + product.tax) * product.ordered_quantity
@@ -180,7 +177,6 @@ const CreateOrder = () => {
             }
         })
     }, [listProductDetail])
-    
     return (
         <>
             <>
@@ -363,7 +359,7 @@ const CreateOrder = () => {
                                                                 {
                                                                     id: id,
                                                                     name: productSelectList.find(product => product.id === id)?.name,
-                                                                    image: productSelectList.find(product => product.id === id)?.image?.[0].url,
+                                                                    image: productSelectList.find(product => product.id === id)?.images?.[0],
                                                                     unit: productSelectList.find(product => product.id === id)?.unit || "------",
                                                                     ordered_quantity: 0,
                                                                     price: productSelectList.find(product => product.id === id)?.cost_price,
@@ -471,4 +467,4 @@ const CreateOrder = () => {
     )
 }
 
-export default withAuthorization(CreateOrder, ["ADMIN","WAREHOUSE_MANAGER"]);
+export default withAuthorization(CreateOrder, ["ADMIN","WAREHOUSE_MANAGER", "WAREHOUSE_STAFF"]);

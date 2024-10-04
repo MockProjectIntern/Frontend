@@ -96,9 +96,6 @@ const ProductUpdate = () => {
         status: "ACTIVE"
     });
 
-    console.log(dataBody);
-    
-
     const handleUpdateProduct = async () => {
         let updatedDataBody = { ...dataBody };
 
@@ -609,9 +606,6 @@ const ProductUpdate = () => {
 
         fetchProductDetails();
     }, []);
-
-    console.log(dataBody);
-
 
     return (
         <>

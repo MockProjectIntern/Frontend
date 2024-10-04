@@ -147,7 +147,6 @@ const CreateSupplierPopup = ({ handleCLickBack, setSupplerID }) => {
                         <div className={s["box-select"]}>
                             <button id='category' ref={selectSupplierGroupRef} onClick={() => setIsSelectSupplierGroupList(!isSelectSupplierGroupList)}>
                                 <span>{dataBody.supplier_group_id ? supplierGroupsList?.find(supplierGroup => supplierGroup.id === dataBody.supplier_group_id)?.name : "Chọn nhóm nhà cung cấp" }</span>
-                                
                                 {isSelectSupplierGroupList ? <FontAwesomeIcon icon={faCaretUp} /> : <FontAwesomeIcon icon={faCaretDown} />}
                             </button>
                             {

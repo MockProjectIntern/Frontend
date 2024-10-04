@@ -108,7 +108,6 @@ const CreateGIN = () => {
 		products: [],
 	});
 	const handleCreateGIN = async () => {
-		console.log(dataBody);
 		const response = await createNewGIN(dataBody);
 
 		if (response.status_code === 201) {
@@ -140,12 +139,10 @@ const CreateGIN = () => {
 	}, [dataBody.is_balance]);
 
 	useEffect(() => {
-		console.log(listProductDetail);
 		setDataBody((prev) => {
 			return {
 				...prev,
 				products: listProductDetail.map((product) => {
-					console.log(product.id);
 					return {
 						product_id: product.product_id,
 						unit: product.unit,
@@ -346,7 +343,6 @@ const CreateGIN = () => {
 															dataList={productSelectList}
 															handleCLickCreateProductQuickly={() => setIsCreateProductQuickly(true)}
 															handleSelect={(id) =>
-															{ console.log(id)
 																setListProductDetail((prev) => {
 																	return [
 																		...prev,

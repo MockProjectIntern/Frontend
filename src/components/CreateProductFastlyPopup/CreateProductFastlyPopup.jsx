@@ -49,7 +49,6 @@ const CreateProductFastlyPopup = ({ handleCLickBack, setListProductDetail }) => 
         if (isSelectCategoryList) {
             fetchCategoryList();
         } else {
-            setCategoryList([]);
             setCategoryDataFilter((prev) => {
                 return (
                     {
@@ -91,10 +90,8 @@ const CreateProductFastlyPopup = ({ handleCLickBack, setListProductDetail }) => 
 
     const handleQuickCreateProduct = async () => {
         const responseAPI = await quickCreateProduct(dataBody);
-        console.log(responseAPI,responseAPI.data);
         if (responseAPI.status_code === 201) {
             setListProductDetail((prev) => {
-                console.log(dataBody)
                 return [...prev,
                 {
                     product_id: responseAPI.data,
@@ -208,7 +205,7 @@ const CreateProductFastlyPopup = ({ handleCLickBack, setListProductDetail }) => 
                         </label>
                         <div className={s["box-select"]}>
                             <button id='category' ref={selectCategoryRef} onClick={() => setIsSelectCategoryList(!isSelectCategoryList)}>
-                            {dataBody.category_id === null ? "Chọn loại sản phẩm" : dataBody.category_id}
+                                <span>{dataBody.category_id ? categoryList?.find(category => category.id === dataBody.category_id)?.name : "Chọn loại sản phẩm" }</span>
                                 {isSelectCategoryList ? <FontAwesomeIcon icon={faCaretDown} /> : <FontAwesomeIcon icon={faCaretUp} />}
                             </button>
                             {

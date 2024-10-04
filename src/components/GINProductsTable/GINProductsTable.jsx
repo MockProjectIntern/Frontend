@@ -49,9 +49,6 @@ const GINProductsTable = ({
 		);
 	};	
 
-	console.log(productsList);
-	
-
 	return (
 		<div className={s.container}>
 			<table className={s.table}>

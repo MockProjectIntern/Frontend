@@ -27,9 +27,6 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView, isD
     const currentUrl = window.location.href;
     const isEditUrl = currentUrl.includes("/edit");    
 
-    console.log(productsList);
-    
-
     return (
         <div className={s.container}>
             <table className={s.table}>

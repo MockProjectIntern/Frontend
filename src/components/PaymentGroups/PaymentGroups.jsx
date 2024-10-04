@@ -108,7 +108,6 @@ const PaymentGroups = () => {
       dataBody.type
     );
     setReceiptGroupsList(response.data.data);
-    console.log(response.data);
     setDataPage((prevData) => ({
       ...prevData,
       totalPage: response.data.total_page,
@@ -123,7 +122,7 @@ const PaymentGroups = () => {
     300,
     [limit, dataPage.page, dataBody, isCreateGroups, isUpdateGroups]
   );
-  console.log(dataCreate);
+  
   return (
     <>
       {isCreateGroups && (

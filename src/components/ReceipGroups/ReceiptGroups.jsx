@@ -130,7 +130,6 @@ const ReceiptGroups = () => {
       dataBody.type
     );
     setReceiptGroupsList(response.data.data);
-    console.log(response.data);
     setDataPage((prevData) => ({
       ...prevData,
       totalPage: response.data.total_page,

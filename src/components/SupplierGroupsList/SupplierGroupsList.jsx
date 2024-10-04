@@ -102,7 +102,7 @@ const SupplierGroupsList = () => {
     300,
     [limit, page, dataBody, isCreateSupplierGroups, isUpdateSupplierGroups]
   );
-  console.log(selectedItem);
+
   return (
     <>
       {isCreateSupplierGroups && (
