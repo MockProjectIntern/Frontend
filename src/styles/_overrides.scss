@@ -489,9 +489,9 @@ input[type="checkbox"] .styled:checked + label::after {
     border: none;
   }
 
-  button.close {
-    font-weight: $font-weight-thin;
-    font-size: 20px;
+  button.btn-close {
+    font-weight: $font-weight-semibold;
+    font-size: 14px;
     text-shadow: none;
     opacity: 1;
     color: #fff;
@@ -501,6 +501,7 @@ input[type="checkbox"] .styled:checked + label::after {
     top: auto;
     right: 16px;
     margin-left: 8px;
+    background-color: transparent;
 
     &.alert-transparent {
       color: inherit;

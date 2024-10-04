@@ -15,6 +15,8 @@ import { cancelOrder, getOrderById } from '../../service/OrderAPI'
 import { formatDate, formatDateTime } from '../../utils/DateUtils'
 import { getAllByOrder } from '../../service/GRNApi'
 import DeleteConfirmation from '../ConfirmPopup/DeleteConfirmation'
+import { toast } from 'react-toastify'
+import Notification from '../Notification/Notification'
 
 const OrderDetails = () => {
     const navigate = useNavigate()
@@ -110,15 +112,46 @@ const OrderDetails = () => {
                 try {
                     setIsShowDeleteConfirmation(false);
                     const response = await cancelOrder(orderId);
-                    alert(response.message);
                     if (response.status_code === 200) {
+                        toast(<Notification 
+                                type={"success"} 
+                                withIcon 
+                                message={"Đã hủy đơn đặt hàng thành công"} 
+                            />,
+                            {
+                                autoClose: 4000,
+                                closeButton: false,
+                                hideProgressBar: true,
+                            }
+                        )
                         setOrder(prevOrder => ({ ...prevOrder, status: "CANCELLED" }));
                     } else {
+                        toast(<Notification 
+                                type={"error"} 
+                                withIcon 
+                                message={"Hủy đơn đặt hàng không thành công. Vui lòng thử lại!"} 
+                            />,
+                            {
+                                autoClose: 4000,
+                                closeButton: false,
+                                hideProgressBar: true,
+                            }
+                        )
                         navigate(-1);
                     }
                 } catch (error) {
                     console.error("Error during order cancellation:", error);
-                    alert("Đã xảy ra lỗi khi huỷ đơn đặt hàng.");
+                    toast(<Notification 
+                            type={"error"} 
+                            withIcon 
+                            message={"Đã xảy ra lỗi khi huỷ đơn đặt hàng"} 
+                        />,
+                        {
+                            autoClose: 4000,
+                            closeButton: false,
+                            hideProgressBar: true,
+                        }
+                    )
                 }
             }
         };

@@ -9,6 +9,8 @@ import { createTransaction } from '../../service/TransactionAPI'
 import { getCategoryTransactionList } from '../../service/CategoryTransaction'
 import { getAllSupplierByName } from '../../service/SuppliersAPI'
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup'
+import { toast } from 'react-toastify'
+import Notification from '../Notification/Notification'
 
 const CreateReceiptVoucher = () => {
     const [keywordRecipient, setKeywordRecipient] = useState("");
@@ -107,7 +109,17 @@ const CreateReceiptVoucher = () => {
     const handleCreateTransaction = async () => {
         const response = await createTransaction(dataBody);
         if (response.status_code == 201) {
-            alert("Tạo phiếu thu thành công");
+            toast(<Notification 
+                    type={"success"} 
+                    withIcon 
+                    message={"Tạo phiếu thu thành công"} 
+                />,
+                {
+                    autoClose: 4000,
+                    closeButton: false,
+                    hideProgressBar: true,
+                }
+            )
             navigate('/admin/receipt_vouchers');
         }
     }

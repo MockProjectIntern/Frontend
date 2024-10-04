@@ -7,6 +7,8 @@ import { quickCreateProduct } from '../../service/ProductAPI'
 import { getListSupplierGroups } from '../../service/SupplierGroupsAPI'
 import SelectListSupplierGroupsPopup from './SelectListGroup/SelectListGroup'
 import { createSupplier } from '../../service/SuppliersAPI'
+import { toast } from 'react-toastify'
+import Notification from '../Notification/Notification'
 
 const CreateSupplierPopup = ({ handleCLickBack, setSupplerID }) => {
 
@@ -99,7 +101,17 @@ const CreateSupplierPopup = ({ handleCLickBack, setSupplerID }) => {
         const responseAPI = await createSupplier(dataBody);
         if (responseAPI.status_code === 201) {
             setSupplerID(responseAPI.data);
-            alert("Thêm nhà cung cấp thành công");
+            toast(<Notification 
+                    type={"success"} 
+                    withIcon 
+                    message={"Thêm nhà cung cấp thành công"} 
+                />,
+                {
+                    autoClose: 4000,
+                    closeButton: false,
+                    hideProgressBar: true,
+                }
+            )
             handleCLickBack();
         }
     }

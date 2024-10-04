@@ -21,6 +21,8 @@ import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 import CreateProductFastlyPopup from '../CreateProductFastlyPopup/CreateProductFastlyPopup.jsx'
 import CreateSupplierPopup from '../CreateSupplierPopup/CreateSupplierPopup.jsx'
 import { withAuthorization } from '../../hoc'
+import { toast } from 'react-toastify'
+import Notification from '../Notification/Notification.jsx'
 
 const CreateGRN = () => {
     const navigate = useNavigate();
@@ -187,7 +189,17 @@ const CreateGRN = () => {
     const createGRN = async () => {
         const responseAPI = await createNewGRN(dataBody);
         if (responseAPI.status_code === 201) {
-            alert(responseAPI.message);
+            toast(<Notification 
+                type={"success"} 
+                withIcon 
+                message={"Tạo đơn nhập hàng thành công!"} 
+            />,
+            {
+                autoClose: 4000,
+                closeButton: false,
+                hideProgressBar: true,
+            }
+        )
             navigate('/admin/grns');
         }
         setDataBody(prev => {
@@ -487,4 +499,4 @@ const CreateGRN = () => {
     )
 }
 
-export default withAuthorization(CreateGRN, ["ADMIN", "COORDINATOR"])
+export default withAuthorization(CreateGRN, ["COORDINATOR"])

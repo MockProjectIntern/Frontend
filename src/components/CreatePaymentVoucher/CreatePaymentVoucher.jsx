@@ -9,6 +9,8 @@ import { getAllSupplierByName } from '../../service/SuppliersAPI'
 import { getCategoryTransactionList } from '../../service/CategoryTransaction'
 import { createTransaction } from '../../service/TransactionAPI'
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup'
+import { toast } from 'react-toastify'
+import Notification from '../Notification/Notification'
 
 const CreatePaymentVoucher = () => {
     const [keywordRecipient, setKeywordRecipient] = useState("");
@@ -108,7 +110,17 @@ const CreatePaymentVoucher = () => {
     const handleCreateTransaction = async () => {
         const response = await createTransaction(dataBody);
         if (response.status_code == 201) {
-            alert("Tạo phiếu chi thành công");
+            toast(<Notification 
+                    type={"success"} 
+                    withIcon 
+                    message={"Tạo phiếu chi thành công"} 
+                />,
+                {
+                    autoClose: 4000,
+                    closeButton: false,
+                    hideProgressBar: true,
+                }
+            )
             navigate('/admin/payment_vouchers');
         }
     }

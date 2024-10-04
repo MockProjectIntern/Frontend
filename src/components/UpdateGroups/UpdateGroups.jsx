@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import s from "./UpdateGroups.module.scss";
 import { updateCategoryTransaction } from "../../service/CategoryTransaction";
+import { toast } from "react-toastify";
+import Notification from "../Notification/Notification";
 const UpdateGroups = ({ type, handleOnClickBack, item }) => {
   const [data, setData] = useState({});
 
@@ -15,9 +17,29 @@ const UpdateGroups = ({ type, handleOnClickBack, item }) => {
     });
     if (response.status_code === 200) {
       if (type === "Loại phiếu thu") {
-        alert("Cập nhật loại phiếu thu thành công");
+        toast(<Notification 
+                type={"success"} 
+                withIcon 
+                message={"Cập nhật loại phiếu thu thành công"} 
+            />,
+            {
+                autoClose: 4000,
+                closeButton: false,
+                hideProgressBar: true,
+            }
+        )
       } else {
-        alert("Cập nhật loại phiếu chi thành công");
+        toast(<Notification 
+                type={"success"} 
+                withIcon 
+                message={"Cập nhật loại phiếu chi thành công"} 
+            />,
+            {
+                autoClose: 4000,
+                closeButton: false,
+                hideProgressBar: true,
+            }
+        )
       }
       handleOnClickBack();
     }

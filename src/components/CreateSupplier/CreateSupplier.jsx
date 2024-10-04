@@ -9,6 +9,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import infoIcon from '../../assets/icons/InfoIcon'
 import { createSupplier, getAllSupplierGroup } from '../../service/SuppliersAPI';
+import { toast } from 'react-toastify'
+import Notification from '../Notification/Notification'
 
 const CreateSupplier = () => {
     const navigate = useNavigate();
@@ -43,8 +45,18 @@ const CreateSupplier = () => {
             ...dataBody,
         });
 
-        if (response.status_code === +201) {
-            alert("Tạo mới nhà cung cấp thành công")
+        if (response.status_code === 201) {
+            toast(<Notification 
+                    type={"success"} 
+                    withIcon 
+                    message={"Tạo mới nhà cung cấp thành công"} 
+                />,
+                {
+                    autoClose: 4000,
+                    closeButton: false,
+                    hideProgressBar: true,
+                }
+            )
             navigate('/admin/suppliers')
         }
     };

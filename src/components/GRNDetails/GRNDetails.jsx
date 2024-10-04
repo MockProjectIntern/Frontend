@@ -18,6 +18,8 @@ import { deleteGRN, getGRNById } from '../../service/GRNApi'
 import ImportHistoriesPopup from '../ImportHistoriesPopup/ImportHistoriesPopup'
 import DeleteConfirmation from '../ConfirmPopup/DeleteConfirmation'
 import PaymentPopup from '../PaymentPopup/PaymentPopup'
+import { toast } from 'react-toastify'
+import Notification from '../Notification/Notification'
 
 const GRNDetails = () => {
     const { grnId } = useParams();
@@ -103,15 +105,46 @@ const GRNDetails = () => {
                 try {
                     setIsShowDeleteConfirmation(false);
                     const response = await deleteGRN(grnId);
-                    alert(response.message);
                     if (response.status_code === 200) {
+                        toast(<Notification 
+                                type={"success"} 
+                                withIcon 
+                                message={"Đã hủy đơn nhập thành công"} 
+                            />,
+                            {
+                                autoClose: 4000,
+                                closeButton: false,
+                                hideProgressBar: true,
+                            }
+                        )
                         setDataDetail(prev => ({ ...prev, status: "CANCELLED" }))
                     } else {
+                        toast(<Notification 
+                                type={"error"} 
+                                withIcon 
+                                message={"Hủy đơn nhập không thành công. Vui lòng thử lại!"} 
+                            />,
+                            {
+                                autoClose: 4000,
+                                closeButton: false,
+                                hideProgressBar: true,
+                            }
+                        )
                         navigate(-1);
                     }
                 } catch (error) {
                     console.error("Error during GRN deletion:", error);
-                    alert("Đã xảy ra lỗi khi huỷ đơn nhập hàng.");
+                    toast(<Notification 
+                            type={"error"} 
+                            withIcon 
+                            message={"Đã xảy ra lỗi khi huỷ đơn nhập hàng"} 
+                        />,
+                        {
+                            autoClose: 4000,
+                            closeButton: false,
+                            hideProgressBar: true,
+                        }
+                    )
                 }
             }
         };

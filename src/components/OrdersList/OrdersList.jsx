@@ -23,6 +23,8 @@ import { formatDateTime } from '../../utils/DateUtils.jsx'
 import { exportExcel } from '../../config/ExportExcel.jsx'
 import SelectDatePopup from '../SelectDatePopup.jsx'
 import FilterPopup from '../FilterPopup/FilterPopup.jsx'
+import { toast } from 'react-toastify'
+import Notification from '../Notification/Notification.jsx'
 
 const OrdersList = () => {
     const [isOpenLimitPopup, setIsOpenLimitPopup] = useState(false);
@@ -169,7 +171,17 @@ const OrdersList = () => {
         })
 
         exportExcel(dataExport, "Danh sách đơn đặt hàng nhập");
-        alert("Xuất file thành công");
+        toast(<Notification 
+                type={"success"} 
+                withIcon 
+                message={"Xuất file thành công"} 
+            />,
+            {
+                autoClose: 4000,
+                closeButton: false,
+                hideProgressBar: true,
+            }
+        )
     }
 
     return (

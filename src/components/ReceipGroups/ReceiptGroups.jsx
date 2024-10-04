@@ -20,6 +20,8 @@ import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup";
 import CreateGroups from "../CreateGroups/CreateGroups";
 import { createTransaction } from "../../service/TransactionAPI";
 import UpdateGroups from "../UpdateGroups/UpdateGroups";
+import { toast } from "react-toastify";
+import Notification from "../Notification/Notification";
 const ReceiptGroups = () => {
   const limitBtnRef = useRef(null);
 
@@ -60,7 +62,17 @@ const ReceiptGroups = () => {
   };
   const handleCLickCreate = async () => {
     const response = await createCategoryTransaction(dataCreate);
-    alert("Tạo phiếu thu thành công");
+    toast(<Notification 
+            type={"success"} 
+            withIcon 
+            message={"Tạo phiếu thu thành công"} 
+        />,
+        {
+            autoClose: 4000,
+            closeButton: false,
+            hideProgressBar: true,
+        }
+    )
     setDataCreate({
       sub_id: null,
       name: "",
@@ -74,7 +86,17 @@ const ReceiptGroups = () => {
   };
   const handleCLickUpdate = async () => {
     const response = await createCategoryTransaction(dataCreate);
-    alert("Tạo phiếu thu thành công");
+    toast(<Notification 
+            type={"success"} 
+            withIcon 
+            message={"Cập nhật phiếu thu thành công"} 
+        />,
+        {
+            autoClose: 4000,
+            closeButton: false,
+            hideProgressBar: true,
+        }
+    )
     setDataCreate({
       sub_id: null,
       name: "",

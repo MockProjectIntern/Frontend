@@ -72,6 +72,8 @@ import ListSelectPopup from '../ListSelectPopup/ListSelectPopup';
 import { getListCategory } from '../../service/CategoryAPI';
 import { getListBrand } from '../../service/BrandAPI';
 import { getProductById } from '../../service/ProductAPI';
+import { toast } from 'react-toastify';
+import Notification from '../Notification/Notification';
 
 const ProductUpdate = () => {
     const navigate = useNavigate();
@@ -120,7 +122,17 @@ const ProductUpdate = () => {
 
         const response = await updateProduct(productId, updatedDataBody);
         if (response.status_code === 200) {
-            alert("Cập nhật sản phẩm thành công!");
+            toast(<Notification 
+                    type={"success"} 
+                    withIcon 
+                    message={"Cập nhật sản phẩm thành công!"} 
+                />,
+                {
+                    autoClose: 4000,
+                    closeButton: false,
+                    hideProgressBar: true,
+                }
+            )
             navigate('/admin/products/PRD/' + productId);
         }
     };

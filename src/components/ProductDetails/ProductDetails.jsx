@@ -10,6 +10,8 @@ import { faChevronLeft, faCopy } from '@fortawesome/free-solid-svg-icons'
 import { deleteProductById, getProductById } from '../../service/ProductAPI'
 import { formatDateTime } from '../../utils/DateUtils'
 import DeleteConfirmation from '../ConfirmPopup/DeleteConfirmation'
+import { toast } from 'react-toastify'
+import Notification from '../Notification/Notification'
 const ProductDetails = () => {
     const navigate = useNavigate();
     const { productId } = useParams();
@@ -41,11 +43,31 @@ const ProductDetails = () => {
                 try {
                     setIsShowDeleteConfirmation(false);
                     const response = await deleteProductById(productId);
-                    alert(response.message);
+                    toast(<Notification 
+                            type={"success"} 
+                            withIcon 
+                            message={"Đã xóa sản phẩm thành công"} 
+                        />,
+                        {
+                            autoClose: 4000,
+                            closeButton: false,
+                            hideProgressBar: true,
+                        }
+                    )
                     navigate(-1);
                 } catch (error) {
                     console.error("Error during product deletion:", error);
-                    alert("Đã xảy ra lỗi khi xóa sản phẩm.");
+                    toast(<Notification 
+                            type={"error"} 
+                            withIcon 
+                            message={"Đã xảy ra lỗi khi xóa sản phẩm"} 
+                        />,
+                        {
+                            autoClose: 4000,
+                            closeButton: false,
+                            hideProgressBar: true,
+                        }
+                    )
                 }
             }
         };
