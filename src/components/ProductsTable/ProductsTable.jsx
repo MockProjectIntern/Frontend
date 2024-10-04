@@ -102,7 +102,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView, isD
                                                             </button>
                                                         </div>
                                                         <div className={s.boxId}>
-                                                            <Link to={`/admin/products/${product.id}`}>
+                                                            <Link to={`/admin/products/PRD/${product.id}`}>
                                                                 <p>{product.id}</p>
                                                             </Link>
                                                         </div>
