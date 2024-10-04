@@ -58,7 +58,7 @@ const CreateReceiptVoucher = () => {
     })
 
     const listRecipientGroup = [{ id: "SUP", name: "Nhà cung cấp" }, { id: "USR", name: "Khách hàng" }, { id: "EMP", name: "Nhân viên" }];
-    const listPaymentMethod = [{ id: "CASH", name: "Tiền mặt" }, { id: "BANK_TRANSFER", name: "Chuyển khoản" }, { id: "CARD", name: "Quẹt thẻ" }];
+    const listPaymentMethod = [{ id: "CASH", name: "Tiền mặt" }, { id: "BANK_TRANSFER", name: "Chuyển khoản" }, { id: "CREDIT_CARD", name: "Quẹt thẻ" }];
 
     const [listRecipient, setListRecipient] = useState([]);
     const fetchRecipient = async () => {
