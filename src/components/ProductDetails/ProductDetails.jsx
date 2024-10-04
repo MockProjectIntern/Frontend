@@ -165,7 +165,7 @@ const ProductDetails = () => {
                                 </div>
                                 <div className="box-image">
                                     <div className="image-item">
-                                        <img className={s.image} src={dataDetail.image?.url} alt={dataDetail.image?.alt} />
+                                        <img className={s.image} src={dataDetail?.image?.url} alt={dataDetail?.image?.alt} />
                                     </div>
                                 </div>
                             </div>
