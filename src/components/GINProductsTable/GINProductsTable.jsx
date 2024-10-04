@@ -47,7 +47,10 @@ const GINProductsTable = ({
 				return product;
 			})
 		);
-	};
+	};	
+
+	console.log(productsList);
+	
 
 	return (
 		<div className={s.container}>
@@ -89,7 +92,7 @@ const GINProductsTable = ({
 											key={key}
 											className={cn(s.tableCell, s.tableCellBody, col.align)}
 										>
-											<img src={product.image} alt="" />
+											<img src={product.image?.url} alt="" />
 										</td>
 									);
 								} else if (key === "name") {

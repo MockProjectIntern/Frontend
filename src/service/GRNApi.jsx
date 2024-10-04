@@ -64,3 +64,13 @@ export const deleteGRN = async (grnId) => {
         throw error;
     }
 }
+
+export const importGRN = async (id) => {
+    try {
+        const response = await axiosInstance.put(`/grns/import.json/${id}`, );
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

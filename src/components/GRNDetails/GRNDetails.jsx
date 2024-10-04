@@ -14,7 +14,7 @@ import { Collapse } from 'reactstrap'
 import TransactionItem from '../TransactionItem/TransactionItem'
 import ProductsTable from '../ProductsTable/ProductsTable'
 import ReturnTable from '../ReturnTable/ReturnTable'
-import { deleteGRN, getGRNById } from '../../service/GRNApi'
+import { deleteGRN, getGRNById, importGRN } from '../../service/GRNApi'
 import ImportHistoriesPopup from '../ImportHistoriesPopup/ImportHistoriesPopup'
 import DeleteConfirmation from '../ConfirmPopup/DeleteConfirmation'
 import PaymentPopup from '../PaymentPopup/PaymentPopup'
@@ -160,6 +160,14 @@ const GRNDetails = () => {
         window.location.reload();
     };
 
+    const handleImportGRN = async () => {
+        const responseAPI = await importGRN(grnId);
+        if (responseAPI.status_code === 200) {
+            alert("Nhập hàng thành công");
+            fetchDetailGRN();
+        } 
+    }
+
     return (
         <>
             {isCreateGroups && (
@@ -194,7 +202,7 @@ const GRNDetails = () => {
                         </button>
                         {
                             dataDetail.received_status === "NOT_ENTERED" ?
-                            <button className="btn btn-primary">
+                            <button className="btn btn-primary" onClick={handleImportGRN}>
                                 <span className="btn__title">Nhập hàng</span>
                             </button> :
                             <button onClick={() => navigate(`/admin/grns/returns/create?grnId=${grnId}`)} className="btn btn-primary">

@@ -48,7 +48,7 @@ const CreateGRN = () => {
             return {
                 id: detail.id,
                 name: detail.name,
-                image: detail.image,
+                image: detail.image.url,
                 price: detail.price,
                 imported_quantity: 0,
                 unit: detail.product_unit ? detail.product_unit : "------",
@@ -161,7 +161,8 @@ const CreateGRN = () => {
                         price: product.price,
                         discount: product.discount,
                         tax: product.tax,
-                        total: (product.price - product.discount + product.tax) * product.imported_quantity
+                        total: (product.price - product.discount + product.tax) * product.imported_quantity,
+                        image: product.image.url
                     }
                 })
             }
@@ -215,6 +216,7 @@ const CreateGRN = () => {
             createGRN();
         }
     }, [dataBody.received_status])
+    
     return (
         <>
                 {isCreateProductQuickly && (
@@ -373,7 +375,7 @@ const CreateGRN = () => {
                                                                 {
                                                                     id: id,
                                                                     name: productSelectList.find(product => product.id === id)?.name,
-                                                                    image: productSelectList.find(product => product.id === id)?.images?.[0],
+                                                                    image: productSelectList.find(product => product.id === id)?.image?.[0].url,
                                                                     unit: productSelectList.find(product => product.id === id)?.unit || "------",
                                                                     imported_quantity: 0,
                                                                     price: productSelectList.find(product => product.id === id)?.cost_price,
