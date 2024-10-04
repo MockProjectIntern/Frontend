@@ -98,6 +98,9 @@ const OrderDetails = () => {
         setGRNList(responseAPI.data.data)
     }
 
+    console.log(productsList);
+    
+
     useEffect(() => {
         fetchOrderDetail();
     }, [])
@@ -180,10 +183,6 @@ const OrderDetails = () => {
                                 <button className="btn btn-outline-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}/edit`)}>
                                     <span className="btn__title">Sửa đơn</span>
                                 </button>
-
-                                <button className="btn btn-primary">
-                                    <span className="btn__title">Nhập hàng</span>
-                                </button>
                             </>
                         ) : order?.status === "PARTIAL" ? (
                             <>
@@ -193,10 +192,6 @@ const OrderDetails = () => {
 
                                 <button className="btn btn-outline-primary" onClick={() => navigate(`/admin/order_suppliers/ORD/${orderId}/edit`)}>
                                     <span className="btn__title">Sửa đơn</span>
-                                </button>
-
-                                <button className="btn btn-primary" >
-                                    <span className="btn__title">Nhập hàng</span>
                                 </button>
                             </>
                         ) : (

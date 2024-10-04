@@ -146,7 +146,7 @@ const CreateGRN = () => {
         import_cost: [],
         payment_method: [],
         products: [],
-        order_id: null,
+        order_id: orderId || null,
         received_status: null
     })
 
@@ -501,4 +501,4 @@ const CreateGRN = () => {
     )
 }
 
-export default withAuthorization(CreateGRN, ["COORDINATOR"])
+export default withAuthorization(CreateGRN, ["ADMIN", "COORDINATOR"])
