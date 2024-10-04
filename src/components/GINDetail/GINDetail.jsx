@@ -123,7 +123,7 @@ const GINDetail = () => {
 
 	useEffect(() => {
 		setFilteredProducts(filterProducts(productsList));
-	}, [activeTab, productsList]);
+	}, [activeTab, productsList]);	
 
 	const filterProducts = (products) => {
 		switch (activeTab) {

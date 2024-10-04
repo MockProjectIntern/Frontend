@@ -96,6 +96,9 @@ const ProductUpdate = () => {
         status: "ACTIVE"
     });
 
+    console.log(dataBody);
+    
+
     const handleUpdateProduct = async () => {
         let updatedDataBody = { ...dataBody };
 
@@ -575,7 +578,7 @@ const ProductUpdate = () => {
                     cost_price: responseAPI.data.cost_price,
                     wholesale_price: responseAPI.data.wholesale_price,
                     retail_price: responseAPI.data.retail_price,
-                    images: responseAPI.data.image || [],
+                    images: [responseAPI.data.image] || [],
                     types: responseAPI.data.types,
                     category_id: responseAPI.data.category_id,
                     brand_id: responseAPI.data.brand_id,
@@ -875,7 +878,7 @@ const ProductUpdate = () => {
                                     </div>
                                 </div>
                             </div>
-                            {dataBody.images.length == 0 && <div className="box-info-item box-images">
+                            {dataBody?.images?.[0] != null && dataBody.images.length == 0 && <div className="box-info-item box-images">
                                 <div className="info-header">
                                     <div className="box-header">
                                         <h6>Ảnh sản phẩm {`${images.length > 0 ? `(${images.length})` : ''}`}</h6>

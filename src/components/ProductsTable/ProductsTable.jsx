@@ -25,7 +25,10 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView, isD
     }    
 
     const currentUrl = window.location.href;
-    const isEditUrl = currentUrl.includes("/edit");
+    const isEditUrl = currentUrl.includes("/edit");    
+
+    console.log(productsList);
+    
 
     return (
         <div className={s.container}>
@@ -75,7 +78,7 @@ const ProductsTable = ({ productsList, setProductList, colsToRender, isView, isD
                                 key={index}
                                 className={s.tableRow}
                             >
-                                {Object.entries(colsToRender).map(([key, value]) => {
+                                {Object.entries(colsToRender).map(([key, value]) => {                                    
                                     if (value) {
                                         if (key === "image") {
                                             return (
