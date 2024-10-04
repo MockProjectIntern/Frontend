@@ -818,6 +818,9 @@ const CreateProduct = () => {
                                     <div className="box-header">
                                         <h6>Ảnh sản phẩm {`${images.length > 0 ? `(${images.length})` : ''}`}</h6>
                                     </div>
+                                    {images.length > 0 && <div onClick={() => setImages([])} className="btn-delete-all">
+                                        <p>Xóa tất cả</p>
+                                    </div>}
                                 </div>
                                 <div className="info-content">
                                     {images.length > 0 && <DragDropContext onDragEnd={handleOnDragEnd}>
