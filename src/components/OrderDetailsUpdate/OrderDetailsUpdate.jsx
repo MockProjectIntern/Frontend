@@ -15,6 +15,8 @@ import { getOrderById, putUpdateOrder } from '../../service/OrderAPI'
 import { formatDate, formatDateTime } from '../../utils/DateUtils'
 import { getAllByOrder } from '../../service/GRNApi'
 import { withAuthorization } from '../../hoc'
+import { toast } from 'react-toastify'
+import Notification from '../Notification/Notification'
 
 const OrderDetailsUpdate = () => {
     const { orderId } = useParams()
@@ -128,7 +130,17 @@ const OrderDetailsUpdate = () => {
         }
         const res = putUpdateOrder(orderId, test);
         if (res) {
-            alert("Cập nhật đơn đặt hàng thành công");
+            toast(<Notification 
+                    type={"success"} 
+                    withIcon 
+                    message={"Cập nhật đơn đặt hàng thành công"} 
+                />,
+                {
+                    autoClose: 4000,
+                    closeButton: false,
+                    hideProgressBar: true,
+                }
+            )
             navigate(`/admin/order_suppliers/ORD/${orderId}`);
         }
     }

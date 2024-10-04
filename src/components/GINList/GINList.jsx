@@ -31,6 +31,8 @@ import { formatDate, formatDateTime } from "../../utils/DateUtils.jsx";
 import { useDebouncedEffect } from "../../utils/CommonUtils.jsx";
 import FilterPopup from "../FilterPopup/FilterPopup.jsx";
 import SelectDatePopup from "../SelectDatePopup.jsx";
+import { toast } from "react-toastify";
+import Notification from "../Notification/Notification.jsx";
 
 const GINList = () => {
 	const [page, setPage] = useState(1);
@@ -159,7 +161,17 @@ const GINList = () => {
 		}).flat(); // Flatten the array because each item has multiple products
 
 		exportExcel(dataExport, "Danh sách phiếu kiểm hàng");
-		alert("Xuất file thành công");
+		toast(<Notification 
+				type={"success"} 
+				withIcon 
+				message={"Xuất file thành công"} 
+			/>,
+			{
+				autoClose: 4000,
+				closeButton: false,
+				hideProgressBar: true,
+			}
+		)
 	};
 
 	const handlePrevPage = () => {

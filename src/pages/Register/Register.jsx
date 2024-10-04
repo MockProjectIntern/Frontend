@@ -13,6 +13,8 @@ import FacebookIcon from '../../assets/icons/FacebookIcon'
 import GithubIcon from '../../assets/icons/GithubIcon'
 import LinkedinIcon from '../../assets/icons/LinkedinIcon'
 import { registerAccount } from '../../service/UserAPI'
+import { toast } from 'react-toastify'
+import Notification from '../../components/Notification/Notification'
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -34,7 +36,17 @@ const Register = () => {
             formData.email
         );
         if (response.status_code === 201) {
-            alert("Bạn đã đăng ký thành công");
+            toast(<Notification 
+                    type={"success"} 
+                    withIcon 
+                    message={"Bạn đã đăng ký thành công"} 
+                />,
+                {
+                    autoClose: 4000,
+                    closeButton: false,
+                    hideProgressBar: true,
+                }
+            )
             navigate('/login');
         }
     }    

@@ -22,6 +22,9 @@ import CreateProductFastlyPopup from '../CreateProductFastlyPopup/CreateProductF
 import CreateSupplierPopup from '../CreateSupplierPopup/CreateSupplierPopup.jsx'
 import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 import withAuthorization from '../../hoc/withAuthorization.jsx'
+import Notification from '../Notification/Notification.jsx'
+import { toast } from 'react-toastify'
+
 const CreateOrder = () => {
     const navigate = useNavigate();
     const [order, setOrder] = useState({
@@ -126,7 +129,17 @@ const CreateOrder = () => {
         const response = await createNewOrder(dataBody);
 
         if (response.status_code === 201) {
-            alert('Tạo đơn đặt hàng thành công');
+            toast(<Notification 
+                type={"success"} 
+                withIcon 
+                message={'Tạo đơn đặt hàng thành công'} 
+            />,
+            {
+                autoClose: 4000,
+                closeButton: false,
+                hideProgressBar: true,
+            }
+        )
             navigate('/admin/order_suppliers');
         }
     }

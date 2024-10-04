@@ -3,6 +3,8 @@ import axios from 'axios';
 import API_CONFIG from '../config/ApiConfig';
 import { refreshToken as refreshAccessToken } from './UserAPI';
 import { logout } from '../actions/auth';
+import { toast } from 'react-toastify';
+import Notification from '../components/Notification/Notification';
 
 let isRefreshing = false; 
 let failedQueue = [];
@@ -80,7 +82,17 @@ axiosInstance.interceptors.response.use(
                 return axiosInstance(originalRequest); // Thực hiện lại request ban đầu
             } catch (refreshError) {
                 processQueue(refreshError, null);
-                alert('Phiên đăng nhập hết hạn, vui lòng đăng nhập lại');
+                toast(<Notification 
+                        type={"error"} 
+                        withIcon 
+                        message={'Phiên đăng nhập hết hạn, vui lòng đăng nhập lại'} 
+                    />,
+                    {
+                        autoClose: 4000,
+                        closeButton: false,
+                        hideProgressBar: true,
+                    }
+                )
                 logout();
                 return Promise.reject(refreshError);
             } finally {
@@ -88,7 +100,17 @@ axiosInstance.interceptors.response.use(
             }
         }
         
-        alert(error.response.data.message);
+        toast(<Notification 
+                type={"error"} 
+                withIcon 
+                message={error.response.data.message} 
+            />,
+            {
+                autoClose: 4000,
+                closeButton: false,
+                hideProgressBar: true,
+            }
+        )
         return Promise.reject(error); // Nếu là lỗi khác, trả về lỗi
     }
 );

@@ -8,6 +8,8 @@ import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ListSelectPopup from "../ListSelectPopup/ListSelectPopup";
 import { createTransaction, paymentGRN } from "../../service/TransactionAPI";
+import { toast } from "react-toastify";
+import Notification from "../Notification/Notification";
 
 const PaymentPopup = ({
     grnId,
@@ -39,7 +41,17 @@ const PaymentPopup = ({
         }
         const response = await paymentGRN(dataCreate);
         if (response.status_code === 201) {
-            alert("Thanh toán đơn nhập hàng thành công");
+            toast(<Notification 
+                    type={"success"} 
+                    withIcon 
+                    message={"Thanh toán đơn nhập hàng thành công"} 
+                />,
+                {
+                    autoClose: 4000,
+                    closeButton: false,
+                    hideProgressBar: true,
+                }
+            )
             handleOnClickBack();
         }        
     };

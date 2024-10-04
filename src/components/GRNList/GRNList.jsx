@@ -25,6 +25,8 @@ import SelectDatePopup from '../SelectDatePopup.jsx'
 import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
 import FilterPopup from '../FilterPopup/FilterPopup.jsx'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
+import Notification from '../Notification/Notification.jsx'
+import { toast } from 'react-toastify'
 
 const GRNList = () => {
     const navigate = useNavigate();
@@ -191,7 +193,17 @@ const GRNList = () => {
         })
 
         exportExcel(dataExport, "Danh sách đơn nhập hàng");
-        alert("Xuất file thành công");
+        toast(<Notification 
+                type={"success"} 
+                withIcon 
+                message={"Xuất file thành công"} 
+            />,
+            {
+                autoClose: 4000,
+                closeButton: false,
+                hideProgressBar: true,
+            }
+        )
     }
 
     return (

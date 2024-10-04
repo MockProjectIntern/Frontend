@@ -20,6 +20,8 @@ import GINProductsTable from "../GINProductsTable/GINProductsTable";
 import { formatDateTime } from "../../utils/DateUtils";
 import { Delete } from "ckeditor5";
 import DeleteConfirmation from "../ConfirmPopup/DeleteConfirmation";
+import { toast } from "react-toastify";
+import Notification from "../Notification/Notification";
 
 const GINDetail = () => {
 	const [gin, setGin] = useState({});
@@ -50,15 +52,46 @@ const GINDetail = () => {
 				try {
 					setIsShowDeleteConfirmation(false);
 					const response = await deleteGIN(ginId);
-					alert(response.message);
 					if (response.status_code === 200) {
+						toast(<Notification 
+								type={"success"} 
+								withIcon 
+								message={"Đã xóa phiếu kiểm thành công!"} 
+							/>,
+							{
+								autoClose: 4000,
+								closeButton: false,
+								hideProgressBar: true,
+							}
+						)
 						setGin(prevGin => ({ ...prevGin, status: "DELETED" }));
 					} else {
+						toast(<Notification 
+								type={"error"} 
+								withIcon 
+								message={"Xóa phiếu kiểm thất bại. Vui lòng thử lại!"} 
+							/>,
+							{
+								autoClose: 4000,
+								closeButton: false,
+								hideProgressBar: true,
+							}
+						)
 						navigate(-1);
 					}
 				} catch (error) {
 					console.error("Error during GIN deletion:", error);
-					alert("Đã xảy ra lỗi khi xóa phiếu kiểm.");
+					toast(<Notification 
+							type={"error"} 
+							withIcon 
+							message={"Đã xảy ra lỗi khi xóa phiếu kiểm"} 
+						/>,
+						{
+							autoClose: 4000,
+							closeButton: false,
+							hideProgressBar: true,
+						}
+					)
 				}
 			}
 		};
@@ -69,7 +102,17 @@ const GINDetail = () => {
 			const response = await balanceGIN(ginId);
 			if (response.status_code === 200) {
 				setGin(prevGin => ({ ...prevGin, status: "BALANCED" }));
-				alert("Cân bằng kho thành công");
+				toast(<Notification 
+						type={"success"} 
+						withIcon 
+						message={"Cân bằng kho thành công"} 
+					/>,
+					{
+						autoClose: 4000,
+						closeButton: false,
+						hideProgressBar: true,
+					}
+				)
 			}
 		} catch (error) {
 			console.error(error);

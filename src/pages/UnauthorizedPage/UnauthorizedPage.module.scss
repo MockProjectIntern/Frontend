@@ -40,13 +40,20 @@
 }
 
 .errorBtn {
-    font-weight: $font-weight-semibold;
-    padding: 8px 32px;
-    height: 40px;
-    background-color: #10182F;
-    color: white;
-    font-size: 16px;
-    box-shadow: 0px 5px 10px rgba(116, 116, 156, 0.35);
-    transition: all 0.2s ease;
-    cursor: pointer;
+    font-weight: $font-weight-semibold !important;
+    padding: 8px 32px !important;
+    height: 40px !important;
+    background-color: #10182F !important;
+    color: white !important;
+    font-size: 16px !important;
+    box-shadow: 0px 5px 10px rgba(116, 116, 156, 0.35) !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+
+    &:hover {
+        box-shadow: 0px 0px 0px rgba(33, 33, 107, 0.35) !important;
+        color: #e4e2ef !important;
+        background-color: var(--bs-btn-hover-bg) !important;
+        border-color: var(--bs-btn-hover-border-color) !important;
+    }
 }

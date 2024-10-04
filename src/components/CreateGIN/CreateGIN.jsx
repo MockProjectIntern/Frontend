@@ -27,6 +27,8 @@ import { quickGetProductList } from "../../service/ProductAPI.jsx";
 import cn from "classnames";
 import CreateProductFastlyPopup from "../CreateProductFastlyPopup/CreateProductFastlyPopup.jsx";
 import { withAuthorization } from "../../hoc";
+import { toast } from "react-toastify";
+import Notification from "../Notification/Notification.jsx";
 
 const CreateGIN = () => {
 	const handleProductRequestChange = (e) => {
@@ -110,7 +112,17 @@ const CreateGIN = () => {
 		const response = await createNewGIN(dataBody);
 
 		if (response.status_code === 201) {
-			alert("Tạo phiếu kiểm hàng thành công");
+			toast(<Notification
+                type={"success"} 
+                withIcon 
+                message={"Tạo phiếu kiểm hàng thành công"} 
+            />,
+            {
+                autoClose: 4000,
+                closeButton: false,
+                hideProgressBar: true,
+            }
+        )
 			navigate("/admin/gins");
 		}
 		setDataBody(prev => {
@@ -388,4 +400,4 @@ const CreateGIN = () => {
 	);
 };
 
-export default withAuthorization(CreateGIN, ["ADMIN", "WAREHOUSE_STAFF"]);
+export default withAuthorization(CreateGIN, ["WAREHOUSE_STAFF"]);

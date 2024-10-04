@@ -8,6 +8,8 @@ import { formatDateTime } from "../../utils/DateUtils"
 import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup";
 import { useDebouncedEffect } from "../../utils/CommonUtils";
 import CreateSupplierGroupPopup from "../CreateSupplierGroupPopup/CreateSupplierGroupPopup";
+import { toast } from "react-toastify";
+import Notification from "./Notification/Notification";
 
 const ListTransactionCategory = () => {
   
@@ -47,7 +49,17 @@ const ListTransactionCategory = () => {
 
     const handleCLickCreate = async () => {
         const response = await createSupplierGroup(dataCreateSupplierGroup);
-        alert("Tạo nhóm nhà cung cấp thành thành công!");
+        toast(<Notification 
+                type={"success"} 
+                withIcon 
+                message={"Tạo nhóm nhà cung cấp thành công!"} 
+            />,
+            {
+                autoClose: 4000,
+                closeButton: false,
+                hideProgressBar: true,
+            }
+        )
         setDataCreateSupplierGroup({
             name: "",
             note: "",

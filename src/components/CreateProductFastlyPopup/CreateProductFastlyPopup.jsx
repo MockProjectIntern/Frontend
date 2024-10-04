@@ -5,6 +5,8 @@ import { useRef, useState, useEffect, act } from 'react'
 import SelectListCategoryPopup from './SelectListCategoryPopup/SelectListCategoryPopup'
 import { getListCategory } from '../../service/CategoryAPI'
 import { quickCreateProduct } from '../../service/ProductAPI'
+import { toast } from 'react-toastify'
+import Notification from '../Notification/Notification'
 
 const CreateProductFastlyPopup = ({ handleCLickBack, setListProductDetail }) => {
     const [isSelectCategoryList, setIsSelectCategoryList] = useState(false);
@@ -110,7 +112,17 @@ const CreateProductFastlyPopup = ({ handleCLickBack, setListProductDetail }) => 
                     total: 0
                 }]
             });
-            alert("Thêm sản phẩm thành công");
+            toast(<Notification 
+                    type={"success"} 
+                    withIcon 
+                    message={"Thêm sản phẩm thành công"} 
+                />,
+                {
+                    autoClose: 4000,
+                    closeButton: false,
+                    hideProgressBar: true,
+                }
+            )
             handleCLickBack();
         }
     }

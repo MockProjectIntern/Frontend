@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import s from "./UpdateSupplierGroup.module.scss";
 import { updateSupplierGroup } from "../../service/SupplierGroupsAPI";
+import { toast } from "react-toastify";
+import Notification from "../Notification/Notification";
 const UpdateSupplierGroup = ({ handleOnClickBack, item }) => {
   const [data, setData] = useState({});
 
@@ -11,7 +13,17 @@ const UpdateSupplierGroup = ({ handleOnClickBack, item }) => {
       note: data.note,
     });
     if (response.status_code === 200) {
-      alert("Cập nhật nhóm nhà cung cấp thành công");
+      toast(<Notification 
+                type={"success"} 
+                withIcon 
+                message={"Cập nhật nhóm nhà cung cấp thành công"} 
+            />,
+            {
+                autoClose: 4000,
+                closeButton: false,
+                hideProgressBar: true,
+            }
+        )
       handleOnClickBack();
     }
   };

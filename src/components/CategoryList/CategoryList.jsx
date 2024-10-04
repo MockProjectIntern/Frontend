@@ -8,6 +8,8 @@ import { formatDateTime } from "../../utils/DateUtils"
 import LimitSelectPopup from "../LimitSelectPopup/LimitSelectPopup"
 import CreateCategoryPopup from "../CreateCategoryPopup/CreateCategoryPopup"
 import { useDebouncedEffect } from "../../utils/CommonUtils"
+import Notification from "../Notification/Notification"
+import { toast } from "react-toastify"
 
 const CategoryList = () => {
 
@@ -57,7 +59,17 @@ const CategoryList = () => {
     const handleCLickCreate = async () => {
         const response = await createCategory(dataCreateCategory);
         if (response.status_code === 201) {
-            alert("Tạo loại sản phẩm thành công!");
+            toast(<Notification 
+                type={"success"} 
+                withIcon 
+                message={"Tạo loại sản phẩm thành công!"} 
+            />,
+            {
+                autoClose: 4000,
+                closeButton: false,
+                hideProgressBar: true,
+            }
+        )
             setDataCreateCategory({
                 name: "",
             });

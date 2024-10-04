@@ -19,6 +19,8 @@ import CreateUserPopup from "../UserListPopup/CreateUserPopup";
 import s from "./UserList.module.scss";
 import { Delete } from "ckeditor5";
 import DeleteConfirmation from "../ConfirmPopup/DeleteConfirmation";
+import { toast } from "react-toastify";
+import Notification from "../Notification/Notification";
 const UserList = () => {
 	const limitBtnRef = useRef(null);
 
@@ -62,24 +64,54 @@ const UserList = () => {
 		return {
 			action: "xóa",
 			type: "tài khoản",
-			description: "Thao tác này sẽ xóa phiếu kiểm hàng của bạn. Phiếu kiểm đã xóa sẽ không thể cân bằng kho được nữa.",
+			description: "Thao tác này sẽ xóa tài khoản nhân viên này. Tài khoản đã xóa sẽ không thể đăng nhập vào trang được nữa.",
 			handleClose: () => setIsShowDeleteConfirmation(false),
 			handleConfirm: async () => {
 				if (selectedId.current === localStorage.getItem("userId")) {
-					alert("Không thể xóa tài khoản đang đăng nhập.");
+					toast(<Notification 
+							type={"error"} 
+							withIcon 
+							message={"Không thể xóa tài khoản đang đăng nhập"} 
+						/>,
+						{
+							autoClose: 4000,
+							closeButton: false,
+							hideProgressBar: true,
+						}
+					)
 					setIsShowDeleteConfirmation(false);
 					return;
 				}
 				try {
 					setIsShowDeleteConfirmation(false);
 					const response = await deleteAccount(selectedId.current);
-					alert(response.message);
 					if (response.status_code === 200) {
+						toast(<Notification 
+								type={"success"} 
+								withIcon 
+								message={"Đã xóa tài khoản thành công"} 
+							/>,
+							{
+								autoClose: 4000,
+								closeButton: false,
+								hideProgressBar: true,
+							}
+						)
 						setUsersList((prev) => prev.filter((user) => user.id !== selectedId.current));
 					}
 				} catch (error) {
-					console.error("Error during product deletion:", error);
-					alert("Đã xảy ra lỗi khi xóa sản phẩm.");
+					console.error("Error during user deletion:", error);
+					toast(<Notification 
+							type={"success"} 
+							withIcon 
+							message={"Đã xảy ra lỗi khi xóa sản phẩm"} 
+						/>,
+						{
+							autoClose: 4000,
+							closeButton: false,
+							hideProgressBar: true,
+						}
+					)
 				}
 			}
 		};
@@ -106,7 +138,17 @@ const UserList = () => {
 	const handleCreateUser = async (userData) => {
 		const res = await createNewUser(userData);
 		if (res.status_code === 201) {
-			alert(res.message);
+			toast(<Notification 
+					type={"success"} 
+					withIcon 
+					message={"Đã tạo tài khoản mới thành công"} 
+				/>,
+				{
+					autoClose: 4000,
+					closeButton: false,
+					hideProgressBar: true,
+				}
+			)
 			setIsOpenCreatePopup(false);
 			fetchUserList();
 		}

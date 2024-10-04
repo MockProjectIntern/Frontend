@@ -72,6 +72,8 @@ import ListSelectPopup from '../ListSelectPopup/ListSelectPopup';
 import { getListCategory } from '../../service/CategoryAPI';
 import { getListBrand } from '../../service/BrandAPI';
 import { withAuthorization } from '../../hoc';
+import { toast } from 'react-toastify';
+import Notification from '../Notification/Notification';
 
 const CreateProduct = () => {
     const navigate = useNavigate();
@@ -116,7 +118,17 @@ const CreateProduct = () => {
             images: uploadedImages
         });
         if (response.status_code === 201) {
-            alert("Tạo sản phẩm thành công!");
+            toast(<Notification 
+                    type={"success"} 
+                    withIcon 
+                    message={"Tạo sản phẩm thành công!"} 
+                />,
+                {
+                    autoClose: 4000,
+                    closeButton: false,
+                    hideProgressBar: true,
+                }
+            )
             navigate('/admin/products');
         }
     };

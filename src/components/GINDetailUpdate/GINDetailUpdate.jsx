@@ -17,6 +17,8 @@ import { quickGetProductList } from "../../service/ProductAPI.jsx";
 
 import cn from "classnames";
 import CreateProductFastlyPopup from "../CreateProductFastlyPopup/CreateProductFastlyPopup.jsx";
+import { toast } from "react-toastify";
+import Notification from "../Notification/Notification.jsx";
 
 const GINDetailUpdate = () => {
 	const [gin, setGin] = useState({})
@@ -168,7 +170,17 @@ const GINDetailUpdate = () => {
 		const response = await updateGIN( dataBody, ginId);
 
 		if (response.status_code === 200) {
-			alert(response.message);
+			toast(<Notification 
+					type={"success"} 
+					withIcon 
+					message={"Đã cập nhật phiếu kiểm thành công"} 
+				/>,
+				{
+					autoClose: 4000,
+					closeButton: false,
+					hideProgressBar: true,
+				}
+			)
 			navigate(-1);
 		}
 	};
@@ -178,7 +190,17 @@ const GINDetailUpdate = () => {
 			const response = await balanceGIN(ginId);
 			if (response.status_code === 200) {
 				setGin(prevGin => ({ ...prevGin, status: "BALANCED" }));
-				alert("Cân bằng kho thành công");
+				toast(<Notification 
+						type={"success"} 
+						withIcon 
+						message={"Cân bằng kho thành công"} 
+					/>,
+					{
+						autoClose: 4000,
+						closeButton: false,
+						hideProgressBar: true,
+					}
+				)
 				navigate(-1);
 			}
 		} catch (error) {
