@@ -396,4 +396,4 @@ const CreateGIN = () => {
 	);
 };
 
-export default withAuthorization(CreateGIN, ["WAREHOUSE_STAFF"]);
+export default withAuthorization(CreateGIN, ["WAREHOUSE_STAFF", "ADMIN"]);
