@@ -154,9 +154,6 @@ const PriceAdjustmentsList = () => {
                                     </span>
                                 </button>
                             </div>
-                            <button id='btn-save-filter' className="btn btn-primary">
-                                <span className="btn__title">Lưu bộ lọc</span>
-                            </button>
                         </div>
                     </div>
                     <div

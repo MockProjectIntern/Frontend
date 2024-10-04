@@ -14,6 +14,7 @@ import { faCopy } from '@fortawesome/free-regular-svg-icons'
 import { getOrderById, putUpdateOrder } from '../../service/OrderAPI'
 import { formatDate, formatDateTime } from '../../utils/DateUtils'
 import { getAllByOrder } from '../../service/GRNApi'
+import { withAuthorization } from '../../hoc'
 
 const OrderDetailsUpdate = () => {
     const { orderId } = useParams()
@@ -299,4 +300,4 @@ const OrderDetailsUpdate = () => {
     )
 }
 
-export default OrderDetailsUpdate
+export default withAuthorization(OrderDetailsUpdate, ["ADMIN","WAREHOUSE_MANAGER"]);

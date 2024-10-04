@@ -300,9 +300,6 @@ const GINList = () => {
 									</span>
 								</button>
 							</div>
-							<button id="btn-save-filter" className="btn btn-primary">
-								<span className="btn__title">Lưu bộ lọc</span>
-							</button>
 						</div>
 						{(dataFilters.statues || (dataFilters.created_date_from && dataFilters.created_date_to))
 							&& (<div className="box-show-selected-filter">

@@ -19,7 +19,7 @@ const Register = () => {
         full_name: "",
         phone: "",
         password: "",
-        role: "COORDINATOR",
+        role: "ADMIN",
         email: ""
     })
     const navigate = useNavigate();

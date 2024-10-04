@@ -72,6 +72,7 @@ import ListSelectPopup from '../ListSelectPopup/ListSelectPopup';
 import { getListCategory } from '../../service/CategoryAPI';
 import { getListBrand } from '../../service/BrandAPI';
 import { getProductById } from '../../service/ProductAPI';
+import { withAuthorization } from '../../hoc';
 
 const ProductUpdate = () => {
     const navigate = useNavigate();
@@ -1158,4 +1159,4 @@ const ProductUpdate = () => {
     )
 }
 
-export default ProductUpdate
+export default withAuthorization(ProductUpdate, ["ADMIN","WAREHOUSE_STAFF"]);

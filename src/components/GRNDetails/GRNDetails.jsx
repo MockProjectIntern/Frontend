@@ -126,34 +126,13 @@ const GRNDetails = () => {
         setIsCreateGroups(false);
     };
 
-    const handleChangeData = (e) => {
-        // const { name, value } = e.target; // Lấy name và value từ input
-        // setDataCreate((prevData) => ({
-        //   ...prevData,
-        //   [name]: value, // Cập nhật giá trị tương ứng với name
-        // }));
-    };
-
-    const handleCLickCreate = async () => {
-        // const response = await createCategoryTransaction(dataCreate);
-        // alert("Tạo phiếu chi thành công");
-        // setDataCreate({
-        //   sub_id: null,
-        //   name: "",
-        //   description: "",
-        //   type: "EXPENSE",
-        // });
-        setIsCreateGroups(false);
-    };
-
     return (
         <>
             {isCreateGroups && (
                 <PaymentPopup
                     type={"Loại phiếu chi"}
                     handleOnClickBack={handleClickBack}
-                    handleOnChange={handleChangeData}
-                    handleOnClickCreate={handleCLickCreate}
+                    grnId={grnId}
                 />
             )}
             <div className="right__navbar">
@@ -181,12 +160,12 @@ const GRNDetails = () => {
                         </button>
                         {
                             dataDetail.received_status === "NOT_ENTERED" ?
-                                <button className="btn btn-primary">
-                                    <span className="btn__title">Nhập hàng</span>
-                                </button> :
-                                <button className="btn btn-primary">
-                                    <span className="btn__title">Hoàn trả</span>
-                                </button>
+                            <button className="btn btn-primary">
+                                <span className="btn__title">Nhập hàng</span>
+                            </button> :
+                            <button onClick={() => navigate(`/admin/grns/returns/create?grnId=${grnId}`)} className="btn btn-primary">
+                                <span className="btn__title">Hoàn trả</span>
+                            </button>
                         }
                     </div>
                 </div>
@@ -373,11 +352,11 @@ const GRNDetails = () => {
                                         </div>
                                         <div className={s.itemSummary}>
                                             <p className={s.summaryTitle}>Đã trả:&nbsp;</p>
-                                            <p className={s.summaryValue}>{dataDetail?.payment_method?.reduce((acc, payment) => acc + payment.amount, 0).toLocaleString('en-US')}</p>
+                                            <p className={s.summaryValue}>{dataDetail?.total_paid?.toLocaleString('en-US')}</p>
                                         </div>
                                         <div className={s.itemSummary}>
                                             <p className={s.summaryTitle}>Còn phải trả:&nbsp;</p>
-                                            <p className={s.summaryValue}>{(dataDetail?.total_value - dataDetail?.payment_method?.reduce((acc, payment) => acc + payment.amount, 0)).toLocaleString('en-US')}</p>
+                                            <p className={s.summaryValue}>{(dataDetail?.total_value - dataDetail?.total_paid).toLocaleString('en-US')}</p>
                                         </div>
                                     </div>
                                     <div className={s.listWrapper}>

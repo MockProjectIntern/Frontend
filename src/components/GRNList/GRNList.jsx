@@ -117,7 +117,7 @@ const GRNList = () => {
         grn_receive_status: true,
         grn_payment_status: true,
         grn_return_status: true,
-        grn_refund_status: true,
+        // grn_refund_status: false,
         grn_received_at: true,
         grn_expected_at: true,
         grn_cancelled_at: true,
@@ -302,9 +302,6 @@ const GRNList = () => {
                                     </span>
                                 </button>
                             </div>
-                            <button id='btn-save-filter' className="btn btn-primary">
-                                <span className="btn__title">Lưu bộ lọc</span>
-                            </button>
                         </div>
                         {(filterBody.statuses || (filterBody.start_created_at && filterBody.end_created_at))
                             && (<div className="box-show-selected-filter">

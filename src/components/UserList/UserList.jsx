@@ -105,9 +105,11 @@ const UserList = () => {
 
 	const handleCreateUser = async (userData) => {
 		const res = await createNewUser(userData);
-		alert(res.message);
-		if (res.status_code === 201)
+		if (res.status_code === 201) {
+			alert(res.message);
+			setIsOpenCreatePopup(false);
 			fetchUserList();
+		}
 	};
 
 
@@ -172,34 +174,6 @@ const UserList = () => {
 										/>
 										<fieldset className="input-field" />
 									</div>
-								</div>
-								<div className="btn-group group-filter-btns">
-									<button className="btn btn-base btn-filter">
-										<span className="btn__label">
-											Trạng thái
-											<span className="btn__icon">
-												<FontAwesomeIcon icon={faCaretDown} />
-											</span>
-										</span>
-									</button>
-
-									<button className="btn btn-base btn-filter">
-										<span className="btn__label">
-											Vai trò
-											<span className="btn__icon">
-												<FontAwesomeIcon icon={faCaretDown} />
-											</span>
-										</span>
-									</button>
-
-									<button className="btn btn-base btn-filter">
-										<span className="btn__label">
-											Ngày tạo
-											<span className="btn__icon">
-												<FontAwesomeIcon icon={faCaretDown} />
-											</span>
-										</span>
-									</button>
 								</div>
 							</div>
 						</div>

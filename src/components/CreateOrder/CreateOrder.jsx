@@ -21,6 +21,7 @@ import { createNewOrder } from '../../service/OrderAPI.jsx'
 import CreateProductFastlyPopup from '../CreateProductFastlyPopup/CreateProductFastlyPopup.jsx'
 import CreateSupplierPopup from '../CreateSupplierPopup/CreateSupplierPopup.jsx'
 import { useDebouncedEffect } from '../../utils/CommonUtils.jsx'
+import withAuthorization from '../../hoc/withAuthorization.jsx'
 const CreateOrder = () => {
     const navigate = useNavigate();
     const [order, setOrder] = useState({
@@ -453,4 +454,4 @@ const CreateOrder = () => {
     )
 }
 
-export default CreateOrder
+export default withAuthorization(CreateOrder, ["ADMIN","WAREHOUSE_MANAGER"]);

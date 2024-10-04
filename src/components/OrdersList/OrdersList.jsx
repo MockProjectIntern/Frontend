@@ -284,9 +284,6 @@ const OrdersList = () => {
                                     </span>
                                 </button>
                             </div>
-                            <button id='btn-save-filter' className="btn btn-primary">
-                                <span className="btn__title">Lưu bộ lọc</span>
-                            </button>
                         </div>
                         {(dataFilter.statuses || (dataFilter.start_created_at && dataFilter.end_created_at))
                             && (<div className="box-show-selected-filter">

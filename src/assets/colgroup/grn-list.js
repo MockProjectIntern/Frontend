@@ -77,7 +77,7 @@ const grn_list_colgroup = {
     },
     grn_refund_status: {
         name: "Trạng thái hoàn tiền",
-        width: "180px",
+        width: "0px",
         align: "text-start"
     },
     grn_note: {

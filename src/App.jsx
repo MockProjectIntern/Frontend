@@ -8,6 +8,7 @@ import PrivateRoute from './components/PrivateRoute/PrivateRoute'
 import Layout from './layout/Layout'
 import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
+import UnauthorizedPage from './pages/UnauthorizedPage/UnauthorizedPage'
 
 // CSS
 import './styles/App.scss'
@@ -28,6 +29,7 @@ const App = () => {
           </Route>
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
+          <Route path='/unauthorized' element={<UnauthorizedPage />} />
         </Routes>
       </BrowserRouter>
     </>
