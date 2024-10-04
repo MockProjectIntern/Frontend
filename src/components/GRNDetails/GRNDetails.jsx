@@ -197,9 +197,9 @@ const GRNDetails = () => {
                                     <span className="btn__title">Thoát</span>
                                 </button>
                         }
-                        <button className="btn btn-outline-primary">
+                        {/* <button className="btn btn-outline-primary">
                             <span className="btn__title">Sửa đơn</span>
-                        </button>
+                        </button> */}
                         {
                             dataDetail.received_status === "NOT_ENTERED" ?
                             <button className="btn btn-primary" onClick={handleImportGRN}>
