@@ -597,6 +597,21 @@ const ProductUpdate = () => {
                     sub_id: null,
                 });
 
+                const fetchAndSetImage = async () => {
+                    const response = await fetch(responseAPI.data?.image?.url);
+                    const blob = await response.blob();
+                    // Tạo File từ Blob
+                    const file = new File([blob], `image-${Date.now()}.jpg`, { type: blob.type });
+                    
+                    // Cập nhật files vào state
+                    setImages(prev => [...prev, {
+                        id: images.length + 1, // Đảm bảo id là duy nhất cho mỗi ảnh
+                        src: file
+                    }]);
+                };
+
+                fetchAndSetImage();
+
                 if (responseAPI.data?.types.length > 0) {
                     setIsTypes(true);
                     setTypes(responseAPI.data.types);
@@ -872,12 +887,12 @@ const ProductUpdate = () => {
                                     </div>
                                 </div>
                             </div>
-                            {dataBody?.images?.[0] != null && dataBody.images.length == 0 && <div className="box-info-item box-images">
+                            <div className="box-info-item box-images">
                                 <div className="info-header">
                                     <div className="box-header">
                                         <h6>Ảnh sản phẩm {`${images.length > 0 ? `(${images.length})` : ''}`}</h6>
                                     </div>
-                                    {images.length > 0 && <div className="btn-delete-all">
+                                    {images.length > 0 && <div onClick={() => setImages([])} className="btn-delete-all">
                                         <p>Xóa tất cả</p>
                                     </div>}
                                 </div>
@@ -901,6 +916,7 @@ const ProductUpdate = () => {
                                                     >
                                                         Kéo thả hoặc tải ảnh
                                                     </UncontrolledTooltip>
+                                                    {}
                                                     {images?.map((image, index) => (
                                                         <Draggable key={image.id} draggableId={image.id.toString()} index={index}>
                                                             {(provided) => (
@@ -952,7 +968,7 @@ const ProductUpdate = () => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>}
+                            </div>
                             <div className="box-info-item box-types">
                                 <div className="info-header">
                                     <div className="box-header">
