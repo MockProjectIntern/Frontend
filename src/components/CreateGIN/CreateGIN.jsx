@@ -342,7 +342,7 @@ const CreateGIN = () => {
 															isFastCreate={true}
 															dataList={productSelectList}
 															handleCLickCreateProductQuickly={() => setIsCreateProductQuickly(true)}
-															handleSelect={(id) =>
+															handleSelect={(id) => {
 																setListProductDetail((prev) => {
 																	return [
 																		...prev,
