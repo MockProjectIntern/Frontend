@@ -21,6 +21,7 @@ import { Delete } from "ckeditor5";
 import DeleteConfirmation from "../ConfirmPopup/DeleteConfirmation";
 import { toast } from "react-toastify";
 import Notification from "../Notification/Notification";
+import { withAuthorization } from "../../hoc";
 const UserList = () => {
 	const limitBtnRef = useRef(null);
 
@@ -169,6 +170,7 @@ const UserList = () => {
 			<Header title={"Loại sản phẩm"} />
 			<div className="right__listPage">
 				<div className="right__toolbar">
+					<div></div>
 					<div className="btn-toolbar">
 						<button
 							onClick={() => setIsOpenCreatePopup(!isOpenCreatePopup)}
@@ -493,4 +495,4 @@ const UserList = () => {
 	);
 };
 
-export default UserList;
+export default withAuthorization(UserList, ["ADMIN"]);
