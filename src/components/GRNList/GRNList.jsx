@@ -116,12 +116,12 @@ const GRNList = () => {
         grn_status: true,
         grn_receive_status: true,
         grn_payment_status: true,
-        grn_return_status: true,
+        grn_return_status: false,
         // grn_refund_status: false,
         grn_received_at: true,
-        grn_expected_at: true,
+        grn_expected_at: false,
         grn_cancelled_at: true,
-        grn_payment_at: true,
+        grn_payment_at: false,
         grn_total_received_quantity: true,
         grn_total_value: true,
         grn_supplier_name: true,
@@ -131,11 +131,11 @@ const GRNList = () => {
         grn_user_created_name: true,
         grn_user_completed_name: true,
         grn_user_cancelled_name: true,
-        grn_note: true,
-        grn_tags: true,
+        grn_note: false,
+        grn_tags: false,
         grn_created_at: true,
-        grn_updated_at: true,
-        grn_order_sub_id: true
+        grn_updated_at: false,
+        grn_order_sub_id: false
     };
     const [colsToRender, setColsToRender] = useState(() => {
         const storedCols = Cookies.get('filter_grns');

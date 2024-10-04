@@ -124,6 +124,7 @@ const GRNDetails = () => {
     }
     const handleClickBack = () => {
         setIsCreateGroups(false);
+        window.location.reload();
     };
 
     return (
@@ -335,7 +336,7 @@ const GRNDetails = () => {
                                             <p>Đơn nhập hàng {status[dataDetail.payment_status]?.toLowerCase()}</p>
                                         </div>
                                         {
-                                            dataDetail.payment_status !== "PAID" &&
+                                            dataDetail.payment_status !== "PAID" && dataDetail.status !== "CANCELLED" &&
                                             <div className="btn-toolbar">
                                                 <button className="btn btn-primary" onClick={handlePayment}>
                                                     <span className="btn__title">Thanh toán</span>
