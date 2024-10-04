@@ -381,15 +381,15 @@ const UserList = () => {
 															{role[user.role]}
 														</p>
 													</td>
-													<td className={cn("table-data-item", "text-start")}>
-														<p className="box-text">{user.address}</p>
-													</td>
 													<td
 														className={cn("table-data-item", "text-center")}
 													>
 														<p className="box-text">
 															{formatDateTime(user.created_at)}
 														</p>
+													</td>
+													<td className={cn("table-data-item", "text-start")}>
+														<p className="box-text">{user.address}</p>
 													</td>
 
 													<td
