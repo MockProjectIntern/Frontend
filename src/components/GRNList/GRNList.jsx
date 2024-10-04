@@ -117,7 +117,7 @@ const GRNList = () => {
         grn_receive_status: true,
         grn_payment_status: true,
         grn_return_status: true,
-        grn_refund_status: true,
+        // grn_refund_status: false,
         grn_received_at: true,
         grn_expected_at: true,
         grn_cancelled_at: true,

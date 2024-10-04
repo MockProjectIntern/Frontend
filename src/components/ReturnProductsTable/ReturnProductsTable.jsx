@@ -5,12 +5,13 @@ const ReturnProductsTable = ({ productsList, dataBody, setDataBody }) => {
         const updatedRefundDetail = [...dataBody.refund_detail];
         updatedRefundDetail[index] = {
             ...updatedRefundDetail[index], 
-            quantity: value > productsList[index].imported_quantity ? Number(productsList[index].imported_quantity) : Number(value)
+            quantity: value > productsList[index].imported_quantity ? Number(productsList[index].imported_quantity) : Number(value),
+            amount: Number(value) * Number(updatedRefundDetail[index].refunded_price),
         };
 
         setDataBody({
             ...dataBody,
-            refund_detail: updatedRefundDetail
+            refund_detail: updatedRefundDetail,
         });
     }
 
@@ -82,7 +83,7 @@ const ReturnProductsTable = ({ productsList, dataBody, setDataBody }) => {
                                                 <p className='box-text'>{dataBody?.refund_detail[index].refunded_price}</p>
                                             </td>
                                             <td className="table-data-item text-end">
-                                                <p className='box-text'>{dataBody?.refund_detail[index].amount}</p>
+                                                <p className='box-text'>{Number(dataBody?.refund_detail[index].quantity) * Number(dataBody.refund_detail[index].refunded_price)}</p>
                                             </td>
                                         </tr>
                                     ))

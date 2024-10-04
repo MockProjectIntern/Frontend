@@ -352,11 +352,11 @@ const GRNDetails = () => {
                                         </div>
                                         <div className={s.itemSummary}>
                                             <p className={s.summaryTitle}>Đã trả:&nbsp;</p>
-                                            <p className={s.summaryValue}>{dataDetail?.payment_method?.reduce((acc, payment) => acc + payment.amount, 0).toLocaleString('en-US')}</p>
+                                            <p className={s.summaryValue}>{dataDetail?.total_paid?.toLocaleString('en-US')}</p>
                                         </div>
                                         <div className={s.itemSummary}>
                                             <p className={s.summaryTitle}>Còn phải trả:&nbsp;</p>
-                                            <p className={s.summaryValue}>{(dataDetail?.total_value - dataDetail?.payment_method?.reduce((acc, payment) => acc + payment.amount, 0)).toLocaleString('en-US')}</p>
+                                            <p className={s.summaryValue}>{(dataDetail?.total_value - dataDetail?.total_paid).toLocaleString('en-US')}</p>
                                         </div>
                                     </div>
                                     <div className={s.listWrapper}>

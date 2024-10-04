@@ -69,7 +69,7 @@ const CreateUserPopup = ({ onClose, onCreate }) => {
 	const handleCreate = () => {
 		if (validate()) {
 			onCreate(userData);
-			onClose(); // Đóng popup sau khi tạo
+			// onClose(); // Đóng popup sau khi tạo
 		}
 	};
 
@@ -79,7 +79,7 @@ const CreateUserPopup = ({ onClose, onCreate }) => {
 			<div className={s.container}>
 				<div className={s.content}>
 					<div className={s.header}>
-						<span className={s.title}>Thêm mới người dùng</span>
+						<span className={s.title}>Thêm mới nhân viên</span>
 						<span
 							className="modal-close-wrapper"
 							role="button"

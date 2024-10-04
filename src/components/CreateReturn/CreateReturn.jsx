@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import cn from 'classnames';
 
 import s from './CreateReturn.module.scss'
@@ -10,16 +10,18 @@ import ReturnProductsTable from '../ReturnProductsTable/ReturnProductsTable';
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup';
 import { getGRNById } from '../../service/GRNApi';
 import { formatPrice } from '../../utils/PriceUtils';
+import { createReturn } from '../../service/RefundInformationAPI';
 
 const CreateReturn = () => {
+    const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const grnId = queryParams.get("grnId");
 
     const paymentMethods = [
-        { id: 1, name: 'Credit Card' },
-        { id: 2, name: 'Bank Transfer' },
-        { id: 3, name: 'Cash on Delivery' }
+        { id: 1, key: 'CREDIT_CARD', name: "Quẹt thẻ" },
+        { id: 2, key: 'BANK_TRANSFER', name: "Chuyển khoản ngân hàng" },
+        { id: 3, key: 'CASH', name: "Tiền mặt" },
     ];
 
     const [isPaymentMethodPopup, setIsPaymentMethodPopup] = useState(false);
@@ -92,9 +94,15 @@ const CreateReturn = () => {
             total_discount: returnOrder.totalDiscount
         })
     }, [returnOrder])
-    console.log(dataBody);
-    
-        
+
+    const handleReturn = async () => {
+        const response = await createReturn(dataBody);
+        if (response.status_code === 201) {
+            alert("Tạo hoàn trả thành công");
+            navigate(`/admin/grns/GRN/${grnId}`);
+        }
+    }
+
     return (
         <>
             <div className="right__navbar">
@@ -108,7 +116,7 @@ const CreateReturn = () => {
                         </Link>
                     </div>
                     <div className="btn-toolbar">
-                        <button className="btn btn-primary">
+                        <button className="btn btn-primary" onClick={handleReturn}>
                             <span className="btn__title">Hoàn trả</span>
                         </button>
                     </div>
@@ -130,7 +138,7 @@ const CreateReturn = () => {
                                     </div>
                                 </div>
                                 <div className="box-table">
-                                    <ReturnProductsTable productsList={dataDetail.products} dataBody={dataBody} setDataBody={setDataBody}/>
+                                    <ReturnProductsTable productsList={dataDetail.products} dataBody={dataBody} setDataBody={setDataBody} />
                                 </div>
                                 <div className="box-total">
                                     <div className="box-total__container">
@@ -173,66 +181,66 @@ const CreateReturn = () => {
                                 </div>
                                 <div className="paper-content">
                                     {
-                                        dataDetail?.payment_status !== "UNPAID" ?
-                                        <p>Bạn không thể nhận tiền hoàn cho đơn nhập chưa có thanh toán</p> :
-                                        <>
-                                            <div className={s["group-form-items"]}>
-                                                <div className="form-item">
-                                                    <label htmlFor="unit" className="form-label">
-                                                        Nhập số tiền nhận lại
-                                                    </label>
-                                                    <div className="form-textfield">
-                                                        <input
-                                                            value={dataBody?.transaction?.amount}
-                                                            onChange={(e) => setDataBody(prev => {
-                                                                return ({
-                                                                    ...prev,
-                                                                    transaction: {
-                                                                        ...prev.transaction,
-                                                                        amount: e.target.value > Number(dataDetail.payment_method.reduce((acc, cur) => acc + cur.amount, 0)) ? 
-                                                                            Number(dataDetail.payment_method.reduce((acc, cur) => acc + cur.amount, 0)) : 
-                                                                            e.target.value                                                                 
-                                                                    }
-                                                                })
-                                                            })}
-                                                            type="text"
-                                                            className='text-end'
-                                                            name="amount"
-                                                            id="amount"
-                                                        />
-                                                        <fieldset className="input-field"></fieldset>
-                                                    </div>
-                                                </div>
-                                                <div className="form-item">
-                                                    <div className="box-select">
-                                                        <button ref={paymentMethodBtnRef} onClick={() => setIsPaymentMethodPopup(!isPaymentMethodPopup)} className="btn-select">
-                                                            {dataBody.transaction.payment_method || "Chọn phương thức thanh toán"}
-                                                            <FontAwesomeIcon icon={faCaretDown} />
-                                                        </button>
-                                                        {
-                                                            isPaymentMethodPopup &&
-                                                            <ListSelectPopup 
-                                                                dataList={paymentMethods}
-                                                                btnRef={paymentMethodBtnRef}
-                                                                closePopup={() => setIsPaymentMethodPopup(false)}
-                                                                handleSelect={(id) => {
-                                                                    setDataBody(prev => {
-                                                                        return ({
-                                                                            ...prev,
-                                                                            transaction: {
-                                                                                ...prev.transaction,
-                                                                                payment_method: paymentMethods.find(method => method.id === id)?.name
-                                                                            }
-                                                                        })
+                                        dataDetail?.payment_status === "UNPAID" ?
+                                            <p>Bạn không thể nhận tiền hoàn cho đơn nhập chưa có thanh toán</p> :
+                                            <>
+                                                <div className={s["group-form-items"]}>
+                                                    <div className="form-item">
+                                                        <label htmlFor="unit" className="form-label">
+                                                            Nhập số tiền nhận lại
+                                                        </label>
+                                                        <div className="form-textfield">
+                                                            <input
+                                                                value={dataBody?.transaction?.amount}
+                                                                onChange={(e) => setDataBody(prev => {
+                                                                    return ({
+                                                                        ...prev,
+                                                                        transaction: {
+                                                                            ...prev.transaction,
+                                                                            amount: e.target.value > Number(dataDetail.payment_method.reduce((acc, cur) => acc + cur.amount, 0)) ?
+                                                                                Number(dataDetail.payment_method.reduce((acc, cur) => acc + cur.amount, 0)) :
+                                                                                e.target.value
+                                                                        }
                                                                     })
-                                                                }}
+                                                                })}
+                                                                type="text"
+                                                                className='text-end'
+                                                                name="amount"
+                                                                id="amount"
                                                             />
-                                                        }
+                                                            <fieldset className="input-field"></fieldset>
+                                                        </div>
+                                                    </div>
+                                                    <div className="form-item">
+                                                        <div className="box-select">
+                                                            <button ref={paymentMethodBtnRef} onClick={() => setIsPaymentMethodPopup(!isPaymentMethodPopup)} className="btn-select">
+                                                                {paymentMethods.find(method => method.key === dataBody.transaction.payment_method)?.name || "Chọn phương thức thanh toán"}
+                                                                <FontAwesomeIcon icon={faCaretDown} />
+                                                            </button>
+                                                            {
+                                                                isPaymentMethodPopup &&
+                                                                <ListSelectPopup
+                                                                    dataList={paymentMethods}
+                                                                    btnRef={paymentMethodBtnRef}
+                                                                    closePopup={() => setIsPaymentMethodPopup(false)}
+                                                                    handleSelect={(id) => {
+                                                                        setDataBody(prev => {
+                                                                            return ({
+                                                                                ...prev,
+                                                                                transaction: {
+                                                                                    ...prev.transaction,
+                                                                                    payment_method: paymentMethods.find(method => method.id === id)?.key
+                                                                                }
+                                                                            })
+                                                                        })
+                                                                    }}
+                                                                />
+                                                            }
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <p>Số tiền có thể nhận lại: {formatPrice(Number(dataDetail.payment_method.reduce((acc, cur) => acc + cur.amount, 0)))}</p>
-                                        </>
+                                                <p>Số tiền có thể nhận lại: {formatPrice(Number(dataDetail.payment_method?.reduce((acc, cur) => acc + cur.amount, 0)))}</p>
+                                            </>
                                     }
                                 </div>
                             </div>

@@ -29,6 +29,14 @@ const PaymentPopup = ({
     const paymentMethodBtnRef = useRef(null);
 
     const handleCreate = async () => {
+        if (!dataCreate.payment_method) {
+            alert("Vui lòng chọn phương thức thanh toán");
+            return;
+        }
+        if (!dataCreate.amount) {
+            alert("Vui lòng nhập số tiền");
+            return;
+        }
         const response = await paymentGRN(dataCreate);
         if (response.status_code === 201) {
             alert("Thanh toán đơn nhập hàng thành công");

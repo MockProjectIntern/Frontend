@@ -90,7 +90,7 @@ const CreateSupplierPopup = ({ handleCLickBack, setSupplerID }) => {
         phone: "",
         email: "",
         address: "",
-        supplier_group_id: "",
+        supplier_group_id: null,
         tags: null,
         note: null
     });
@@ -135,7 +135,7 @@ const CreateSupplierPopup = ({ handleCLickBack, setSupplerID }) => {
                         </label>
                         <div className={s["box-select"]}>
                             <button id='category' ref={selectSupplierGroupRef} onClick={() => setIsSelectSupplierGroupList(!isSelectSupplierGroupList)}>
-                                {dataBody.supplier_group_id === ""? "Chọn loại sản phẩm" : dataBody.supplier_group_id}
+                                {dataBody.supplier_group_id === null? "Chọn nhóm nhà cung cấp" : dataBody.supplier_group_id}
                                 {isSelectSupplierGroupList ? <FontAwesomeIcon icon={faCaretUp} /> : <FontAwesomeIcon icon={faCaretDown} />}
                             </button>
                             {
