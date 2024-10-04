@@ -71,6 +71,7 @@ import { createProduct } from '../../service/ProductAAPI';
 import ListSelectPopup from '../ListSelectPopup/ListSelectPopup';
 import { getListCategory } from '../../service/CategoryAPI';
 import { getListBrand } from '../../service/BrandAPI';
+import { withAuthorization } from '../../hoc';
 
 const CreateProduct = () => {
     const navigate = useNavigate();
@@ -1090,4 +1091,4 @@ const CreateProduct = () => {
     )
 }
 
-export default CreateProduct
+export default withAuthorization(CreateProduct, ["ADMIN","WAREHOUSE_STAFF"]);

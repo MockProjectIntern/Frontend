@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import infoIcon from '../../assets/icons/InfoIcon'
 import { createSupplier, getAllSupplierGroup } from '../../service/SuppliersAPI';
+import { withAuthorization } from '../../hoc'
 
 const CreateSupplier = () => {
     const navigate = useNavigate();
@@ -386,4 +387,4 @@ const CreateSupplier = () => {
     )
 }
 
-export default CreateSupplier
+export default withAuthorization(CreateSupplier, ["ADMIN","WAREHOUSE_MANAGER"]);

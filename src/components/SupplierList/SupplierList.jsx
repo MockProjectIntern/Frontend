@@ -15,7 +15,7 @@ import settingFilterIcon from '../../assets/icons/SettingFilterIcon.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAnglesRight, faCaretDown, faChevronLeft, faChevronRight, faMagnifyingGlass, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { getAllSupplierByName, getDataExportExcel, getSupplierList } from '../../service/SuppliersAPI.jsx'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import LimitSelectPopup from '../LimitSelectPopup/LimitSelectPopup.jsx'
 import { exportExcel } from '../../config/ExportExcel.jsx'
 import { formatDateTime } from '../../utils/DateUtils.jsx'
@@ -384,7 +384,13 @@ const SupplierList = () => {
                                                                     <p className='box-text'>
                                                                         {
                                                                             key !== "id" ? supplier[key] :
-                                                                                <a className='box-id'>{supplier[key]}</a>
+                                                                            <Link
+                                                                                to={`/admin/suppliers/SUP/${supplier?.id}`}
+																				className="box-id"
+                                                                            >
+                                                                                {supplier[key]}
+                                                                            </Link>
+                                                                
                                                                         }
                                                                     </p>
                                                                 </td>
